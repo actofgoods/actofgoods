@@ -85,10 +85,9 @@ def register(request):
         if request.POST['toggle_button'] == "True":
             toggle_button = True;
 
-        #  TODO: get other stuff from request.POST
-
+        user = Users(email=email_value, password="password")
         #   TODO: Add new User Model to Database
-
+        user.save()
         #   TODO: Send User Mail
 
         return redirect('basics:login')
