@@ -27,5 +27,6 @@ urlpatterns = [
     url(r'^profil/$', views.profil, name='profil'),
     url(r'^aboutus/$', views.aboutus, name='aboutus'),
     url(r'^privacy/$', views.privacy, name='privacy'),
+    url(r'^chat/$', views.privacy, name='chat'),
 
 ]
