@@ -48,11 +48,16 @@ def login(request):
     """
 
     #    TODO: Check if Data is Valid if not -> Return to Indexpage
+    if 'toggle_button' and 'email' in request.POST and 'password' in request.POST:
+        email_value = request.POST['email']
+        password_value = request.POST['password']
+        print(request.POST.get('togglebutton', 'False'))
+        if request.POST.get('toggle_button', 'False') == "True":
+            toggle_button = True;
+        print(email_value, password_value, toggle_button)
+        return mainpage(email_value, password_value, toggle_button)
 
-
-
-    return mainpage(email_value, password_value, toggle_button)
-
+    return redirect('basics:index')
 """
     Register:
     -input: request(Email, Password ...)
@@ -61,6 +66,7 @@ def login(request):
 def register(request):
     email_value = ""
     password_value = ""
+    toggle_button = False;
     """
         TODO: Get Email/Password and ToggleButton from request.POST['key']
 
@@ -70,15 +76,18 @@ def register(request):
     if 'email' in request.POST and 'password' in request.POST:
         email_value = request.POST['email']
         password_value = request.POST['password']
-         #  TODO: get other stuff from request.POST
-
-
-         #   TODO: Add new User Model to Database
-
-         #   TODO: Send User Mail
-
-
+        if request.POST['toggle_button'] == "True":
+            toggle_button = True;
         return redirect('basics:login')
+        #  TODO: get other stuff from request.POST
+
+
+        #   TODO: Add new User Model to Database
+
+        #   TODO: Send User Mail
+
+
+
 
     #   TODO: if something wents wrong:
     return redirect('basics:index')

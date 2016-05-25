@@ -120,34 +120,34 @@
 		/*-------------------navbar end-------------------*/
 
 		/* ---------------------- footer start ---------------------- */
-		
+
 		#footer {
 			background-color: rgba(76,78,73,.9);
 			height: 150px;
 			margin-top: 20px;
 			width:100%;
 		}
-				
+
 		.nav-pills > li > a {
 			margin-top: 55px;
 			margin-bottom: 55px;
 			color: #70962c;
 		}
-		
+
 		.nav-pills > li > a:hover, .nav-pills > li > a:focus{
 			color: #bbd153;
 			background-color: #4C4E49;
 		}
-		
+
 		@media(max-width:768px){
-			
+
 			.nav-pills > li > a {
 				padding-top: 15px;
 				padding-bottom: 15px;
 				margin-top: 0px;
 				margin-bottom: 0px;
 			}
-			
+
 		}
 
 		/* ---------------------- footer end ---------------------- */
@@ -187,14 +187,15 @@
 							<li>
 								<div class="row">
 									<div class="col-md-12">
-										<form class="form" role="form" method="post" action="login" accept-charset="UTF-8" id="login-nav">
-											<div class="form-group">
+										<form class="form" role="form" method="post" action="{% url 'basics:login' %}" accept-charset="UTF-8" id="login-nav">
+                      {% csrf_token %}
+                      <div class="form-group">
 												<label class="sr-only" for="InputEmail">Email address</label>
-												<input type="email" class="form-control" id="InputEmail" placeholder="Email address" required>
+												<input type="email" class="form-control" name="email" placeholder="Email address" required>
 											</div>
 											<div class="form-group">
 												<label class="sr-only" for="InputPassword">Password</label>
-												<input type="password" class="form-control" id="InputPassword" placeholder="Password" required>
+												<input type="password" class="form-control" name="password" placeholder="Password" required>
 												<div class="help-block text-right"><a href="">Forget the password?</a></div>						<!--TODO url einfuegen -->
 											</div>
 											<div class="form-group">
@@ -202,7 +203,7 @@
 											</div>
 											<div class="checkbox">
 												<label>
-													<input type="checkbox"> keep me logged-in
+													<input type="checkbox" name="togglebutton"> keep me logged-in
 												</label>
 											</div>
 										</form>
