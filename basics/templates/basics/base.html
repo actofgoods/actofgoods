@@ -14,6 +14,22 @@
 
 	<style>
 
+		* {
+	    		margin: 0;
+    			padding: 0;
+		}
+
+		html, body {
+    			height: 100%;
+		}
+
+		#wrapper{
+			position: relative;
+    			min-height: 100%;
+    			width: 100%;
+    			margin: 0 auto;
+		}
+
 		/*-------------------navbar start-------------------*/
 
 		.navbar{
@@ -118,23 +134,11 @@
 
 		/*-------------------navbar end-------------------*/
 
+		#content {
+			padding-bottom: 150px;
+		}
+
 		/* ---------------------- footer start ---------------------- */
-
-		* {
-    		margin: 0;
-    		padding: 0;
-		}
-
-		html, body {
-    		height: 100%;
-		}
-
-		#wrapper{
-			position: relative;
-    		min-height: 100%;
-    		width: 100%;
-    		margin: 0 auto;
-		}
 
 		#footer {
 			background-color: rgba(76,78,73,.9);
@@ -237,9 +241,11 @@
 		</div><!-- /.container-fluid -->
 	</nav>
 </div>
+
+<div class="container" id="content">
 	{% block content %}
     {% endblock %}
-
+</div>
 	<div id="footer">
 		<div class="row" id="footer-row">
         		<div class="col-lg-12 col-md-12 col-sm-12">
