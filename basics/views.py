@@ -116,4 +116,4 @@ def profil(request):
     return HttpResponse("Here should be our profil page.")
 
 def aboutus(request):
-    return render(request, 'aboutus.html')
+    return render(request, 'basics/aboutus.html')
