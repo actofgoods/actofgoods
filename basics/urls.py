@@ -22,4 +22,5 @@ app_name = 'basics'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^profil/$', views.profil, name='profil'),
+    url(r'^aboutus/$', views.aboutus, name='aboutus'),
 ]

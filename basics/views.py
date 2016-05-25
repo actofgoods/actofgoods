@@ -109,3 +109,6 @@ def mainpage(email, password, toggle_button):
 """
 def profil(request):
     return HttpResponse("Here should be our profil page.")
+
+def aboutus(request):
+    return render(request, 'aboutus.html')
