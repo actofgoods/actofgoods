@@ -8,8 +8,10 @@
     <title>Act of Goods</title>
     {% load staticfiles %}
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="{% static 'basics/css/bootstrap.min.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="{% static 'basics/js/bootstrap.min.' %}"></script>
 
 	<style>
 
@@ -160,8 +162,7 @@
 				</button>
 				<a class="navbar-brand" >
 					<!--TODO url einfuegen -->
-
-					<img src="{% static "basics/AoGLogo.png" %}" alt="Act of Goods"/>
+					<img src="{% static 'basics/images/AoGLogo.png' %}" alt="Act of Goods"/>
 				</a>
 			</div>
 		</div><!-- /.container-fluid -->
