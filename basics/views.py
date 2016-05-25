@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
-
+from django.template import loader
 # Create your views here.
 
 """
@@ -17,8 +17,12 @@ def index(request):
             if 'email' in request.COOKIES and 'password' in request.COOKIES:
                 return HttpResponse("Here should be the Mainpage")#mainpage(EMAIL_VALUE, PASSWORD_VALUE, true)
 
+    template = loader.get_template('basics/base.html')
 
-    return HttpResponse("here should be your Indexpage")
+    context = {
+
+    }
+    return HttpResponse(template.render(context, request))
 
 """
     Login:
@@ -34,7 +38,7 @@ def login(request):
     """
         TODO: Get Email/Password and ToggleButton from request.POST['key']
 
-        if request.POST['toggle_button'] = "true"
+        if 'email' in request.POST and 'password' in request.POST:
             toggle_button = true
     """
 
@@ -49,7 +53,6 @@ def login(request):
     -input: request(Email, Password ...)
     -output: Main- or Indexpage
 """
-
 def register(request):
     email_value = ""
     password_value = ""
@@ -74,7 +77,7 @@ def register(request):
 
     #   TODO: if something wents wrong:
     return redirect('basics:index')
-    
+
 
 """
     Mainpage:

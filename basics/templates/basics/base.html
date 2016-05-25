@@ -6,15 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Act of Goods</title>
-
+    {% load staticfiles %}
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
-	
+
 	<style>
-	
+
 		/*-------------------navbar start-------------------*/
-		
+
 		.navbar{
 			/*background-color: #4C4E49;*/
 			background-color: rgba(76,78,73,.9);
@@ -25,26 +25,26 @@
 			box-shadow: 0 8px 12px rgba(0,0,0,.175);
 			border-radius: 0px;
 		}
-	
+
 		.navbar-toggle{
 			margin-top: 58px;
 			margin-bottom: 58px;
 		}
-	
+
 		.navbar-brand{
 			height:	150px;
 		}
-	
+
 		#brand-image{
 			height: 120px;
 		}
-	
+
 		#navbar-login{
 			line-height: 150px;
 			height: 150px;
 			padding-top: 0px;
 		}
-	
+
 		.navbar-text{
 			margin-top: 65px;
 			margin-bottom: 65px;
@@ -58,28 +58,28 @@
 		}
 
 		#login-dp .help-block{
-			font-size: 12px;   
+			font-size: 12px;
 		}
-		
+
 		#login-dp .form-group {
 			margin-bottom: 10px;
 		}
-		
+
 		/* light green */
 		.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:focus, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > li > a:hover, #login-dp .help-block > a:hover, #login-dp .checkbox > label:hover{
 			color: #bbd153;
 		}
-		
+
 		/* dark green */
 		.navbar-inverse .navbar-nav > li > p, .navbar-inverse .navbar-nav > li > a,  #login-dp .help-block > a, #login-dp .checkbox > label{
 			color: #70962c;
 		}
-	
+
 		/* dark gray */
 		.navbar-inverse .navbar-nav > .open > a:focus, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover{
 			background-color: #4C4E49;
 		}
-	
+
 		/* sign in button */
 		#login-nav .btn-primary{
 			background-color: #bbd153;
@@ -89,43 +89,43 @@
 		#login-nav .btn-primary:hover{
 			background-color: #96B440;
 		}
-	
+
 		/* icon bar */
 		.navbar-inverse .navbar-toggle .icon-bar{
 			background-color: #bbd153;
 		}
-		
-		
+
+
 		@media(max-width:768px){
-				
+
 			.navbar-text{
 				padding-left: 15px;
 				padding-right: 15px;
 				margin-top: 15px;
 				margin-bottom: 15px;
 			}
-		
+
 			#navbar-login{
 				line-height: 50px;
 				height: 50px;
 			}
-		
+
 			#login-dp{
 				background-color: inherit;
 			}
 		}
-		
+
 		/*-------------------navbar end-------------------*/
-		
+
 		/* content */
-		
+
 		#wrapper{
 			margin-top: 250px;
 			margin-bottom: 20px;
 			margin-left: 20px;
 			margin-right: 20px;
 		}
-		
+
 		#description-counter{
 			width: 60%;
 			float: left;
@@ -135,15 +135,15 @@
 			width: 34%;
 			float: right;
 		}
-		
+
 		/* footer */
-		
+
 		footer {
 			clear: both;
 		}
-		
+
 	</style>
-	
+
 
   </head>
 	<body>
@@ -160,7 +160,7 @@
 				</button>
 				<a class="navbar-brand" >
 					<!--TODO url einfuegen -->
-					{% load staticfiles %}
+
 					<img src="{% static "basics/AoGLogo.png" %}" alt="Act of Goods"/>
 				</a>
 			</div>
@@ -168,12 +168,12 @@
 	</nav>
 </header>
 
-<div class="container-fluid" id="wrapper">	
+<div class="container-fluid" id="wrapper">
 	{% block content %}
 	{% endblock %}
 <footer>
 	<div class="container text-center">
-    
+
     <div class="row">
         <div class="col-lg-12">
             <ul class="nav nav-pills nav-justified">
