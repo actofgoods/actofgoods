@@ -21,11 +21,10 @@ app_name = 'basics'
 
 urlpatterns = [
     url(r'^$', views.actofgoods_startpage, name='actofgoods_startpage'),
-    url(r'^$', views.index, name='index'),
     url(r'^login/$', views.login, name='login'),
     url(r'^profil/$', views.profil, name='profil'),
     url(r'^aboutus/$', views.aboutus, name='aboutus'),
     url(r'^privacy/$', views.privacy, name='privacy'),
     url(r'^chat/$', views.privacy, name='chat'),
-
+    url(r'^logout/$', views.logout, name='logout'),
 ]
