@@ -16,7 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from . import views
+
+app_name = 'basics'
+
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^profil/$', views.profil, name='profil')
+    url(r'^profil/$', views.profil, name='profil'),
 ]

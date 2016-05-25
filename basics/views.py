@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
 
 # Create your views here.
@@ -22,7 +22,7 @@ def index(request):
 
 """
     Login:
-    -input: Email, Password, ToggleButton (keep signed in?)
+    -input: request(Email, Password, ToggleButton (keep signed in?))
     -output: Main- or Indexpage
 """
 def login(request):
@@ -40,15 +40,46 @@ def login(request):
 
     #    TODO: Check if Data is Valid if not -> Return to Indexpage
 
-    #    TODO: Add new User Model to Database
 
 
     return mainpage(email_value, password_value, toggle_button)
 
 """
+    Register:
+    -input: request(Email, Password ...)
+    -output: Main- or Indexpage
+"""
+
+def register(request):
+    email_value = ""
+    password_value = ""
+    """
+        TODO: Get Email/Password and ToggleButton from request.POST['key']
+
+        if request.POST['toggle_button'] = "true"
+            toggle_button = true
+    """
+    if 'email' in request.POST and 'password' in request.POST:
+        email_value = request.POST['email']
+        password_value = request.POST['password']
+         #  TODO: get other stuff from request.POST
+
+
+         #   TODO: Add new User Model to Database
+
+         #   TODO: Send User Mail
+
+
+        return redirect('basics:login')
+
+    #   TODO: if something wents wrong:
+    return redirect('basics:index')
+    
+
+"""
     Mainpage:
     -input: email, password, toggle
-    -response: Mainpage, filled with user specific info 
+    -response: Mainpage, filled with user specific info
 """
 def mainpage(email, password, toggle_button):
     response = HttpResponse("here should be Our Mainpage")
