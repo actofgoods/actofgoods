@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
 from django.template import loader
+from django.contrib.auth import authenticate, login as auth_login
 # Create your views here.
 from .models import Users
 """
@@ -12,90 +13,35 @@ from .models import Users
 def actofgoods_startpage(request):
     return render(request, 'basics/actofgoods_startpage.html', {})
 
-
-def index(request):
-    #Todo: Check Cookies; if valid send user to Mainpage else Indexpage
-
-    if 'keep_logged_in' in request.COOKIES:
-        value = request.COOKIES['keep_logged_in']
-        if value == 'true':
-            if 'email' in request.COOKIES and 'password' in request.COOKIES:
-                return HttpResponse("Here should be the Mainpage")#mainpage(EMAIL_VALUE, PASSWORD_VALUE, true)
-
-    template = loader.get_template('basics/actofgoods_startpage.html')
-
-    context = {
-
-    }
-    return HttpResponse(template.render(context, request))
-
 """
     Login:
     -input: request(Email, Password, ToggleButton (keep signed in?))
     -output: Main- or Indexpage
 """
 def login(request):
-    response = HttpResponse("this should return the main Login page.")
-    email_value = ""
-    password_value = ""
-    toggle_button = False;
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        user = authenticate(username=email,password=password)
+        if user is not None:
+            if user.is_active:
+                auth_login(request,user)
+                # TODO right response
+                return HttpResponse(aboutus(request))
+            else:
+                # TODO deactivate user page
+                return HttpResponse(actofgoods_startpage(request))
 
-    """
-        TODO: Get Email/Password and ToggleButton from request.POST['key']
+    # default backfall
+    return HttpResponse(actofgoods_startpage(request))
 
-        if 'email' in request.POST and 'password' in request.POST:
-            toggle_button = true
-    """
-
-    #    TODO: Check if Data is Valid if not -> Return to Indexpage
-    if 'toggle_button' and 'email' in request.POST and 'password' in request.POST:
-        email_value = request.POST['email']
-        password_value = request.POST['password']
-
-        if request.POST.get('toggle_button', 'False') == "True":
-            toggle_button = True;
-
-        try:
-            user = Users.objects.get(email="email_value")
-        except Users.DoesNotExist:
-            #TODO: how to display on frontpage that password OR email was wrong
-            return redirect('basics:index')
-
-        return mainpage(email_value, password_value, toggle_button)
-
-    return redirect('basics:index')
 """
     Register:
     -input: request(Email, Password ...)
     -output: Main- or Indexpage
 """
 def register(request):
-    email_value = ""
-    password_value = ""
-    toggle_button = False;
-    """
-        TODO: Get Email/Password and ToggleButton from request.POST['key']
-
-        if request.POST['toggle_button'] = "true"
-            toggle_button = true
-    """
-    if 'email' in request.POST and 'password' in request.POST:
-        email_value = request.POST['email']
-        password_value = request.POST['password']
-        if request.POST['toggle_button'] == "True":
-            toggle_button = True;
-
-        #  TODO: get other stuff from request.POST
-
-        #   TODO: Add new User Model to Database
-
-        #   TODO: Send User Mail
-
-        return redirect('basics:login')
-
-
-    #   TODO: if something wents wrong:
-    return redirect('basics:index')
+    return render(request, 'basics/actofgoods_startpage.html', {})
 
 
 """

@@ -192,9 +192,9 @@
 									<li>
 										<div class="row">
 											<div class="col-md-12">
-                    										<form class="form" role="form" method="post" action="{% url 'basics:login' %}" accept-charset="UTF-8" id="login-nav">
-                      										{% csrf_token %}
-                      											<div class="form-group">
+                    							<form class="form" role="form" method="post" action="{% url 'basics:login' %}" accept-charset="UTF-8" id="login-nav">
+                      								{% csrf_token %}
+                      								<div class="form-group">
 														<label class="sr-only" for="InputEmail">Email address</label>
 														<input type="email" class="form-control" name="email" placeholder="Email address" required>
 													</div>
