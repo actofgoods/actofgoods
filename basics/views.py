@@ -131,3 +131,5 @@ def profil(request):
 
 def aboutus(request):
     return render(request, 'basics/aboutus.html')
+def privacy(request):
+    return render(request, 'basics/privacy.html')
