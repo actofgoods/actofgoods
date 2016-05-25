@@ -39,12 +39,26 @@
 			margin-top: 58px;
 			margin-bottom: 58px;
 		}
+
 		.navbar-brand{
 			height:	150px;
 		}
+
 		#brand-image{
 			height: 120px;
 		}
+		
+		.navbar-left > li > a {
+			margin-top: 50px;
+			margin-bottom: 50px;
+			font-weight: bold;
+		}
+
+		.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus   {
+			color: #bbd153;
+			background-color: rgba(76,78,73,0);;
+		}
+
 		#navbar-login{
 			line-height: 150px;
 			height: 150px;
@@ -102,6 +116,17 @@
 				line-height: 50px;
 				height: 50px;
 			}
+
+			.navbar-left > li > a {
+				margin: 0;
+				padding: 15;
+			}
+
+			#navbar-aboutus { 
+				border-bottom-width: 1px;
+				border-bottom-style: solid;
+			}
+
 			#login-dp{
 				background-color: inherit;
 			}
@@ -190,6 +215,10 @@
 
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar-collapse">
+						<ul class="nav navbar-nav navbar-left">
+							<li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login'%}">Home</a></li>
+							<li id="navbar-aboutus" {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}">About Us</a></li>						
+						</ul>
 						<ul class="nav navbar-nav navbar-right">
 							<li><p class="navbar-text">Already have an account?</p></li>
 							<li class="dropdown">
