@@ -22,7 +22,7 @@ def index(request):
             if 'email' in request.COOKIES and 'password' in request.COOKIES:
                 return HttpResponse("Here should be the Mainpage")#mainpage(EMAIL_VALUE, PASSWORD_VALUE, true)
 
-    template = loader.get_template('basics/base.html')
+    template = loader.get_template('basics/actofgoods_startpage.html')
 
     context = {
 
@@ -127,7 +127,10 @@ def mainpage(email, password, toggle_button):
     -output: Profilpage
 """
 def profil(request):
-    return HttpResponse("Here should be our profil page.")
+    return render(request, 'basics/profil.html')
+
+def chat(request):
+    return render(request, 'basics/chat.html')
 
 def aboutus(request):
     return render(request, 'basics/aboutus.html')
