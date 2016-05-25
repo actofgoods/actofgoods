@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
 from django.template import loader
 # Create your views here.
-
+from .models import Users
 """
     Index:
     -input: Cookies -> Informationen ob der Nutzer bereits Einlogg daten Hinterlegt hat
@@ -51,10 +51,16 @@ def login(request):
     if 'toggle_button' and 'email' in request.POST and 'password' in request.POST:
         email_value = request.POST['email']
         password_value = request.POST['password']
-        print(request.POST.get('togglebutton', 'False'))
+
         if request.POST.get('toggle_button', 'False') == "True":
             toggle_button = True;
-        print(email_value, password_value, toggle_button)
+
+        try:
+            user = Users.objects.get(email="email_value")
+        except Users.DoesNotExist:
+            #TODO: how to display on frontpage that password OR email was wrong
+            return redirect('basics:index')
+
         return mainpage(email_value, password_value, toggle_button)
 
     return redirect('basics:index')
@@ -78,15 +84,14 @@ def register(request):
         password_value = request.POST['password']
         if request.POST['toggle_button'] == "True":
             toggle_button = True;
-        return redirect('basics:login')
-        #  TODO: get other stuff from request.POST
 
+        #  TODO: get other stuff from request.POST
 
         #   TODO: Add new User Model to Database
 
         #   TODO: Send User Mail
 
-
+        return redirect('basics:login')
 
 
     #   TODO: if something wents wrong:
