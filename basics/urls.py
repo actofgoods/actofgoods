@@ -20,6 +20,6 @@ from . import views
 app_name = 'basics'
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    url(r'^$', views.actofgoods_startpage, name='actofgoods_startpage'),
     url(r'^profil/$', views.profil, name='profil'),
 ]

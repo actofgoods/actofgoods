@@ -8,6 +8,11 @@ from django.template import loader
     -input: Cookies -> Informationen ob der Nutzer bereits Einlogg daten Hinterlegt hat
     -output: Main- or Indexpage
 """
+
+def actofgoods_startpage(request):
+    return render(request, 'basics/actofgoods_startpage.html', {})
+
+
 def index(request):
     #Todo: Check Cookies; if valid send user to Mainpage else Indexpage
 
