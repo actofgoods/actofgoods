@@ -27,4 +27,5 @@ urlpatterns = [
     url(r'^privacy/$', views.privacy, name='privacy'),
     url(r'^chat/$', views.privacy, name='chat'),
     url(r'^logout/$', views.logout, name='logout'),
+    url(r'^register/$', views.register, name='register'),
 ]
