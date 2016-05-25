@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
 from django.template import loader
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 # Create your views here.
 from .models import Users
 """
@@ -33,6 +33,10 @@ def login(request):
                 return HttpResponse(actofgoods_startpage(request))
 
     # default backfall
+    return HttpResponse(actofgoods_startpage(request))
+
+def logout(request):
+    auth_logout(request)
     return HttpResponse(actofgoods_startpage(request))
 
 """
