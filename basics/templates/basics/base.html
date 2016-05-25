@@ -119,6 +119,38 @@
 
 		/*-------------------navbar end-------------------*/
 
+		/* ---------------------- footer start ---------------------- */
+		
+		#footer {
+			background-color: rgba(76,78,73,.9);
+			height: 150px;
+			margin-top: 20px;
+			width:100%;
+		}
+				
+		.nav-pills > li > a {
+			margin-top: 55px;
+			margin-bottom: 55px;
+			color: #70962c;
+		}
+		
+		.nav-pills > li > a:hover, .nav-pills > li > a:focus{
+			color: #bbd153;
+			background-color: #4C4E49;
+		}
+		
+		@media(max-width:768px){
+			
+			.nav-pills > li > a {
+				padding-top: 15px;
+				padding-bottom: 15px;
+				margin-top: 0px;
+				margin-bottom: 0px;
+			}
+			
+		}
+
+		/* ---------------------- footer end ---------------------- */
 
 	</style>
 
@@ -186,6 +218,18 @@
 </header>
 	{% block content %}
     {% endblock %}
+
+	<div id="footer">
+		<div class="row" id="footer-row">
+        		<div class="col-lg-12 col-md-12 col-sm-12">
+				<ul class="nav nav-pills nav-justified">
+					<li><a href="#">Act of Goods</a></li>						<!-- insert url-->
+					<li><a href="#">Privacy</a></li>						<!-- insert url-->
+					<li><a href="#">About Us</a></li>						<!-- insert url-->
+				</ul>
+			</div>
+		</div>
+	</div>
 
      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
