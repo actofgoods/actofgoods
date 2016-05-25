@@ -25,6 +25,6 @@ urlpatterns = [
     url(r'^login/$', views.login, name='login'),
     url(r'^profil/$', views.profil, name='profil'),
     url(r'^aboutus/$', views.aboutus, name='aboutus'),
-    url(r'^privacy/$', views.privacy, name='aboutus'),
+    url(r'^privacy/$', views.privacy, name='privacy'),
 
 ]
