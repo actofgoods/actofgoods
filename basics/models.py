@@ -1,6 +1,5 @@
 from django.db import models
 from datetime import datetime
-
 # Create your models here.
 class Users(models.Model):
     email = models.CharField(max_length=60)

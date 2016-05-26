@@ -90,6 +90,7 @@ def register(request):
             if password == check_password:
                 #   TODO: with Djangos Users we need a username
                 user = User.objects.create_user(username=email, password=password, email="email ")
+
                 return login(request)
 
     return render(request, 'basics/actofgoods_startpage.html', {})
@@ -101,15 +102,31 @@ def register(request):
     -output: Profilpage
 """
 def profil(request):
-    return render(request, 'basics/profil.html')
+    if request.user.is_authenticated():
+        return render(request, 'basics/profil.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
+
 
 def chat(request):
-    return render(request, 'basics/chat.html')
+    if request.user.is_authenticated():
+        return render(request, 'basics/chat.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
 
 def aboutus(request):
-    return render(request, 'basics/aboutus.html')
+    if request.user.is_authenticated():
+        return render(request, 'basics/aboutus.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
 def privacy(request):
-    return render(request, 'basics/privacy.html')
+    if request.user.is_authenticated():
+        return render(request, 'basics/privacy.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
 
 def home(request):
-    return render(request, 'basics/home.html')
+    if request.user.is_authenticated():
+        return render(request, 'basics/home.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
