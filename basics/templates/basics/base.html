@@ -71,7 +71,7 @@
 
 		.nav-pills > li > a:hover, .nav-pills > li > a:focus{
 			color: #bbd153;
-			background-color: rgba(76,78,73,0);/*#4C4E49;*/
+			background-color: rgba(76,78,73,0);
 		}
 
 		@media(max-width:768px){
@@ -116,11 +116,12 @@
 					<div class="collapse navbar-collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
 							<li {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a></li>
-							<li><a href="#"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Needs</a></li>					<!-- insert URL for needs and create if for class = active-->
+							<li><a href="#"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span> Needs</a></li>					<!-- insert URL for needs and create if for class = active-->
 							<li><a href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Information</a></li>				<!-- insert URL for information and create if for class = active-->
-							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Messages</a></li>							
+							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Messages</a></li>
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
+							<li {% if "/help/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:help'%}"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Help</a></li>
 							<li {% if "/profil/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Profil</a></li>
 							<li><a href="{% url 'basics:logout' %}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout</a></li>
 						</ul>
@@ -151,7 +152,7 @@
 					<div class="collapse navbar-collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
 							<li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
-							<li id="navbar-with-divider" {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}">About Us</a></li>
+							<li id="navbar-with-divider" {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}"><span class="glyphicons glyphicons-group" aria-hidden="true"></span> About Us</a></li>
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
 							<li><p class="navbar-text">Already have an account?</p></li>
@@ -170,7 +171,7 @@
 													<div class="form-group">
 														<label class="sr-only" for="InputPassword">Password</label>
 														<input type="password" class="form-control" name="password" placeholder="Password" required>
-														<div class="help-block text-right"><a href="">Forget the password?</a></div>
+														<div class="help-block text-right"><a href="{% url 'basics:reset_password_page'%}">Forget the password?</a></div>
 													</div>
 													<div class="form-group">
 														<button type="submit" class="btn btn-primary btn-block">Sign in</button>

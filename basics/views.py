@@ -117,15 +117,23 @@ def chat(request):
 
     return render(request, 'basics/actofgoods_startpage.html', {})
 
+def home(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/home.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
+
 def aboutus(request):
     return render(request, 'basics/aboutus.html')
 
 def privacy(request):
     return render(request, 'basics/privacy.html')
 
-
-def home(request):
+def help(request):
     if request.user.is_authenticated():
-        return render(request, 'basics/home.html')
+        return render(request, 'basics/help.html')
 
     return render(request, 'basics/actofgoods_startpage.html', {})
+
+def reset_password_page(request):
+    return render(request, 'basics/password_reset.html')

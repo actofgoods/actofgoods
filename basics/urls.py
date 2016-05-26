@@ -30,4 +30,6 @@ urlpatterns = [
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^register/$', views.register, name='register'),
     url(r'^home/$', views.home, name='home'),
+    url(r'^help/$', views.help, name='help'),
+    url(r'^reset_password/$', views.reset_password_page, name='reset_password_page'),
 ]
