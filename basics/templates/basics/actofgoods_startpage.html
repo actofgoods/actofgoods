@@ -11,7 +11,7 @@
   			</div>
   			<div class="modal-body">
   				<form class="form" role="form" method="post" action="{% url 'basics:register' %}" accept-charset="UTF-8" id="login-nav">
-	                {% csrf_token %}
+	          {% csrf_token %}
 	  				<div class="form-group">
 	  					<input type="email" class="form-control input-lg" placeholder="Email" name="email"/>
 	  				</div>

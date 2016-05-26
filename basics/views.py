@@ -5,13 +5,18 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.models import User
 # Create your views here.
 from .models import Users
+
+
 """
     Index:
     -input: Cookies -> Informationen ob der Nutzer bereits Einlogg daten Hinterlegt hat
     -output: Main- or Indexpage
 """
-
 def actofgoods_startpage(request):
+
+    if request.user.is_authenticated():
+        return render(request, 'basics/home.html', {})
+
     return render(request, 'basics/actofgoods_startpage.html', {})
 
 """
