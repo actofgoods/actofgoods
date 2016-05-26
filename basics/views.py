@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.models import User
 # Create your views here.
 from .models import Users
+from .forms import UserFormRegister
 
 
 """
@@ -82,14 +83,16 @@ def register(request):
 
     """
     if request.method == 'POST':
+        form = UserFormRegister(request.POST)
+        form.username = "user#" + (User.objects.count())
+
+
         if 'email' and 'password' and 'check_password'  in request.POST :
-            email = request.POST.get('email',None)
             password = request.POST.get('password',None)
             check_password = request.POST.get('check_password',None)
-            country = request.POST.get('country',None)
             if password == check_password:
+
                 #   TODO: with Djangos Users we need a username
-                user = User.objects.create_user(username=email, password=password, email="email ")
 
                 return login(request)
 
