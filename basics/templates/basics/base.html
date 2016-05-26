@@ -219,14 +219,14 @@
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
-							<li {% if "/chat/" not in request.path and "/profil/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>			<!-- TODO change url to index and update if-->
-							<li><a href="#">Needs</a></li>					<!-- insert URL for needs and create if for class = active-->
-							<li><a href="#">Information</a></li>				<!-- insert URL for information and create if for class = active-->
-							<li id="navbar-with-divider" {% if "/profil/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}">Messages</a></li>				<!-- update if-->
+							<li {% if "/chat/" not in request.path and "/profil/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a></li>			<!-- TODO change url to index and update if-->
+							<li><a href="#"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Needs</a></li>					<!-- insert URL for needs and create if for class = active-->
+							<li><a href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Information</a></li>				<!-- insert URL for information and create if for class = active-->
+							<li id="navbar-with-divider" {% if "/profil/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Messages</a></li>				<!-- update if-->
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
-							<li {% if "/chat/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}">Profil</a></li>
-							<li><a href="{% url 'basics:logout' %}">Logout</a></li>
+							<li {% if "/chat/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Profil</a></li>
+							<li><a href="{% url 'basics:logout' %}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout</a></li>
 						</ul>
 					</div><!-- /.navbar-collapse -->
 				</div><!-- /.container-fluid -->
