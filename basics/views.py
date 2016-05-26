@@ -94,7 +94,7 @@ def register(request):
     -response: Mainpage, filled with user specific info
 """
 def mainpage(email, password, toggle_button):
-    response = HttpResponse("here should be Our Mainpage")
+    response = HttpResponse(render(request, 'basics/home.html'))
     response.set_signed_cookie('keep_logged_in', toggle_button.__str__())
     response.set_signed_cookie('email', email)
     response.set_signed_cookie('password', password)
@@ -126,3 +126,6 @@ def aboutus(request):
     return render(request, 'basics/aboutus.html')
 def privacy(request):
     return render(request, 'basics/privacy.html')
+
+def home(request):
+    return render(request, 'basics/home.html')
