@@ -96,29 +96,6 @@ def register(request):
 
 
 """
-    Mainpage:
-    -input: email, password, toggle
-    -response: Mainpage, filled with user specific info
-"""
-def mainpage(email, password, toggle_button):
-    response = HttpResponse(render(request, 'basics/home.html'))
-    response.set_signed_cookie('keep_logged_in', toggle_button.__str__())
-    response.set_signed_cookie('email', email)
-    response.set_signed_cookie('password', password)
-
-
-
-    #   TODO: Get User specific data from Databases
-
-    #   TODO: Add the Data in the context
-
-    context = {
-        'key': "value",
-    }
-
-    return response
-
-"""
     Profil:
     -input: Cookies ->
     -output: Profilpage
