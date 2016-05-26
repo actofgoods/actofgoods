@@ -130,3 +130,9 @@ def home(request):
         return render(request, 'basics/home.html')
 
     return render(request, 'basics/actofgoods_startpage.html', {})
+
+def help(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/help.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
