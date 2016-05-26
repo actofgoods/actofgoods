@@ -29,7 +29,7 @@
 		}
 
 		#content {
-			padding-bottom: 150px;
+			margin-bottom: 170px;
 		}
 
 		#description-counter{
@@ -85,8 +85,6 @@
 
 		}
 
-
-
 		/* ---------------------- footer end ---------------------- */
 	</style>
 
@@ -109,7 +107,7 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="{% url 'basics:actofgoods_startpage' %}">
+						<a class="navbar-brand" href="{% url 'basics:home' %}">
 							<img id="brand-image" src={% static 'basics/images/AoGLogo.png'%} alt="Act of Goods"/>
 						</a>
 					</div>
@@ -117,13 +115,13 @@
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
-							<li {% if "/chat/" not in request.path and "/profil/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:actofgoods_startpage' %}"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a></li>			<!-- TODO change url to index and update if-->
+							<li {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a></li>
 							<li><a href="#"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Needs</a></li>					<!-- insert URL for needs and create if for class = active-->
 							<li><a href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Information</a></li>				<!-- insert URL for information and create if for class = active-->
-							<li id="navbar-with-divider" {% if "/profil/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Messages</a></li>				<!-- update if-->
+							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Messages</a></li>							
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
-							<li {% if "/chat/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Profil</a></li>
+							<li {% if "/profil/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Profil</a></li>
 							<li><a href="{% url 'basics:logout' %}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout</a></li>
 						</ul>
 					</div><!-- /.navbar-collapse -->
@@ -152,7 +150,7 @@
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
-							<li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}">Home</a></li>
+							<li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
 							<li id="navbar-with-divider" {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}">About Us</a></li>
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
@@ -163,9 +161,9 @@
 									<li>
 										<div class="row">
 											<div class="col-md-12">
-                    							<form class="form" role="form" method="post" action="{% url 'basics:login' %}" accept-charset="UTF-8" id="login-nav">
-                      								{% csrf_token %}
-                      								<div class="form-group">
+												<form class="form" role="form" method="post" action="{% url 'basics:login' %}" accept-charset="UTF-8" id="login-nav">
+                      										{% csrf_token %}
+													<div class="form-group">
 														<label class="sr-only" for="InputEmail">Email address</label>
 														<input type="text" class="form-control" name="email" placeholder="Email address" required>
 													</div>
@@ -204,7 +202,7 @@
 			<div class="row" id="footer-row">
         			<div class="col-lg-12 col-md-12 col-sm-12">
 					<ul class="nav nav-pills nav-justified">
-						<li><a {% if user.is_authenticated %} href="{% url 'basics:login' %}" {% else %} href="{% url 'basics:login' %}" {% endif %}>Act of Goods</a></li>					<!-- change url if user is authenticated to index -->
+						<li><a {% if user.is_authenticated %} href="{% url 'basics:home' %}" {% else %} href="{% url 'basics:login' %}" {% endif %}>Act of Goods</a></li>
 						<li><a href="{% url 'basics:privacy' %}">Privacy</a></li>
 						<li><a href="{% url 'basics:aboutus' %}">About Us</a></li>
 					</ul>

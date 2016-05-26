@@ -1,5 +1,6 @@
 /*-------------------navbar start-------------------*/
-.navbar{
+
+.navbar {
   background-color: rgba(76,78,73,.9);
   border: 0px;
   border-bottom-width: 1px;
@@ -8,16 +9,17 @@
   box-shadow: 0 8px 12px rgba(0,0,0,.175);
   border-radius: 0px;
 }
-.navbar-toggle{
+
+.navbar-toggle {
   margin-top: 58px;
   margin-bottom: 58px;
 }
 
-.navbar-brand{
+.navbar-brand {
   height:	150px;
 }
 
-#brand-image{
+#brand-image {
   height: 120px;
 }
 
@@ -27,65 +29,86 @@
   font-weight: bold;
 }
 
-.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus   {
+.navbar-right > li > a {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  font-weight: bold;
+}
+
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
   color: #bbd153;
   background-color: rgba(76,78,73,0);;
 }
 
-#navbar-login{
+#navbar-login {
   line-height: 150px;
   height: 150px;
   padding-top: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
-.navbar-text{
+
+.navbar-text {
   margin-top: 65px;
   margin-bottom: 65px;
 }
-#login-dp{
+
+#login-dp {
   min-width: 250px;
   padding: 14px 14px 0;
   overflow:hidden;
   background-color: rgba(76,78,73,.9);
 }
-#login-dp .help-block{
+
+#login-dp .help-block {
   font-size: 12px;
 }
+
 #login-dp .form-group {
   margin-bottom: 10px;
 }
+
 /* light green */
-.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:focus, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > li > a:hover, #login-dp .help-block > a:hover, #login-dp .checkbox > label:hover{
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:focus, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > li > a:hover, #login-dp .help-block > a:hover, #login-dp .checkbox > label:hover {
   color: #bbd153;
 }
+
 /* dark green */
-.navbar-inverse .navbar-nav > li > p, .navbar-inverse .navbar-nav > li > a,  #login-dp .help-block > a, #login-dp .checkbox > label{
+.navbar-inverse .navbar-nav > li > p, .navbar-inverse .navbar-nav > li > a,  #login-dp .help-block > a, #login-dp .checkbox > label {
   color: #70962c;
 }
+
 /* dark gray */
-.navbar-inverse .navbar-nav > .open > a:focus, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover{
+.navbar-inverse .navbar-nav > .open > a:focus, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover {
   background-color: #4C4E49;
 }
+
 /* sign in button */
-#login-nav .btn-primary{
+#login-nav .btn-primary {
   background-color: #bbd153;
   border-color: #70962c;
   color: #4C4E49;
 }
-#login-nav .btn-primary:hover{
+
+#login-nav .btn-primary:hover {
   background-color: #96B440;
 }
+
 /* icon bar */
-.navbar-inverse .navbar-toggle .icon-bar{
+.navbar-inverse .navbar-toggle .icon-bar {
   background-color: #bbd153;
 }
-@media(max-width:768px){
-  .navbar-text{
+
+@media(max-width:768px) {
+
+  .navbar-text {
     padding-left: 15px;
     padding-right: 15px;
     margin-top: 15px;
     margin-bottom: 15px;
   }
-  #navbar-login{
+
+  #navbar-login {
     line-height: 50px;
     height: 50px;
   }
@@ -100,8 +123,10 @@
     border-bottom-style: solid;
   }
 
-  #login-dp{
+  #login-dp {
     background-color: inherit;
   }
+
 }
+
 /*-------------------navbar end-------------------*/
