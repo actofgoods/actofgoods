@@ -20,8 +20,8 @@ def actofgoods_startpage(request):
 """
 def login(request):
     if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
+        email = request.POST.get('email',None)
+        password = request.POST.get('password',None)
         user = authenticate(username=email,password=password)
         if user is not None:
             if user.is_active:
@@ -45,6 +45,12 @@ def logout(request):
     -output: Main- or Indexpage
 """
 def register(request):
+    if request.method == 'POST':
+        email = request.POST.get('email',None)
+        password = request.POST.get('password',None)
+        check_password = request.POST.get('check_password',None)
+        country = request.POST.get('country',None)
+
     return render(request, 'basics/actofgoods_startpage.html', {})
 
 
