@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^chat/$', views.privacy, name='chat'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^register/$', views.register, name='register'),
+    url(r'^home/$', views.home, name='home'),
 ]
