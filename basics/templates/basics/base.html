@@ -39,12 +39,26 @@
 			margin-top: 58px;
 			margin-bottom: 58px;
 		}
+
 		.navbar-brand{
 			height:	150px;
 		}
+
 		#brand-image{
 			height: 120px;
 		}
+		
+		.navbar-left > li > a {
+			margin-top: 50px;
+			margin-bottom: 50px;
+			font-weight: bold;
+		}
+
+		.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus   {
+			color: #bbd153;
+			background-color: rgba(76,78,73,0);;
+		}
+
 		#navbar-login{
 			line-height: 150px;
 			height: 150px;
@@ -102,6 +116,17 @@
 				line-height: 50px;
 				height: 50px;
 			}
+
+			.navbar-left > li > a {
+				margin: 0;
+				padding: 15;
+			}
+
+			#navbar-with-divider { 
+				border-bottom-width: 1px;
+				border-bottom-style: solid;
+			}
+
 			#login-dp{
 				background-color: inherit;
 			}
@@ -133,12 +158,18 @@
 			width:100%;
 			bottom: 0;
 			position: absolute;
+			border-top-width: 1px;
+			border-top-style: solid;
+			border-top-color: rgba(0, 0, 0, 0.15);
+			box-shadow: 0 -8px 12px rgba(0,0,0,.175);
 
 		}
 
 		.nav-pills > li > a {
 			margin-top: 55px;
 			margin-bottom: 55px;
+			margin-left: 15px;
+			margin-right: 15px;
 			color: #70962c;
 		}
 
@@ -166,6 +197,8 @@
 	<body>
 
 	<div id="wrapper">
+		{% if user.is_authenticated %} <!-- signed in user -->
+		<!-- TODO if user is normal user, ngo, country or admin -->
 		<div id="header">
 			<nav class="navbar navbar-inverse" role="navigation">
 				<div class="container-fluid" id="navbar-inner">
@@ -177,13 +210,52 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="{% url 'basics:login' %}">																															
+						<a class="navbar-brand" href="{% url 'basics:login' %}">			<!-- TODO change url to index -->
 							<img id="brand-image" src={% static 'basics/images/AoGLogo.png'%} alt="Act of Goods"/>
 						</a>
 					</div>
 
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar-collapse">
+						<ul class="nav navbar-nav navbar-left">
+							<li {% if "/chat/" not in request.path and "/profil/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>			<!-- TODO change url to index and update if-->
+							<li><a href="#">Needs</a></li>					<!-- insert URL for needs and create if for class = active-->
+							<li><a href="#">Information</a></li>				<!-- insert URL for information and create if for class = active-->
+							<li id="navbar-with-divider" {% if "/profil/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}">Messages</a></li>				<!-- update if-->
+						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<li {% if "/chat/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}">Profil</a></li>
+							<li><a href="{% url 'basics:logout' %}">Logout</a></li>
+						</ul>
+					</div><!-- /.navbar-collapse -->
+				</div><!-- /.container-fluid -->
+			</nav>
+		</div>
+		{% else %} <!-- navbar for unsigned user -->
+		<div id="header">
+			<nav class="navbar navbar-inverse" role="navigation">
+				<div class="container-fluid" id="navbar-inner">
+					<!-- Brand and toggle get grouped for better mobile display -->
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="{% url 'basics:login' %}">	
+							<img id="brand-image" src={% static 'basics/images/AoGLogo.png'%} alt="Act of Goods"/>
+						</a>
+					</div>
+
+
+
+					<!-- Collect the nav links, forms, and other content for toggling -->
+					<div class="collapse navbar-collapse" id="navbar-collapse">
+						<ul class="nav navbar-nav navbar-left">
+							<li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
+							<li id="navbar-with-divider" {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}">About Us</a></li>
+						</ul>
 						<ul class="nav navbar-nav navbar-right">
 							<li><p class="navbar-text">Already have an account?</p></li>
 							<li class="dropdown">
@@ -192,16 +264,16 @@
 									<li>
 										<div class="row">
 											<div class="col-md-12">
-                    										<form class="form" role="form" method="post" action="{% url 'basics:login' %}" accept-charset="UTF-8" id="login-nav">
-                      										{% csrf_token %}
-                      											<div class="form-group">
+                    							<form class="form" role="form" method="post" action="{% url 'basics:login' %}" accept-charset="UTF-8" id="login-nav">
+                      								{% csrf_token %}
+                      								<div class="form-group">
 														<label class="sr-only" for="InputEmail">Email address</label>
-														<input type="email" class="form-control" name="email" placeholder="Email address" required>
+														<input type="text" class="form-control" name="email" placeholder="Email address" required>
 													</div>
 													<div class="form-group">
 														<label class="sr-only" for="InputPassword">Password</label>
 														<input type="password" class="form-control" name="password" placeholder="Password" required>
-														<div class="help-block text-right"><a href="">Forget the password?</a></div>						<!--TODO url einfuegen -->
+														<div class="help-block text-right"><a href="">Forget the password?</a></div>
 													</div>
 													<div class="form-group">
 														<button type="submit" class="btn btn-primary btn-block">Sign in</button>
@@ -222,6 +294,7 @@
 				</div><!-- /.container-fluid -->
 			</nav>
 		</div>
+		{% endif %}
 
 		<div class="container" id="content">
 		{% block content %}
@@ -232,7 +305,7 @@
 			<div class="row" id="footer-row">
         			<div class="col-lg-12 col-md-12 col-sm-12">
 					<ul class="nav nav-pills nav-justified">
-						<li><a href="{% url 'basics:login' %}">Act of Goods</a></li>
+						<li><a {% if user.is_authenticated %} href="{% url 'basics:login' %}" {% else %} href="{% url 'basics:login' %}" {% endif %}>Act of Goods</a></li>					<!-- change url if user is authenticated to index -->
 						<li><a href="{% url 'basics:privacy' %}">Privacy</a></li>
 						<li><a href="{% url 'basics:aboutus' %}">About Us</a></li>
 					</ul>
