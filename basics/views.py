@@ -15,7 +15,7 @@ from .models import Users
 def actofgoods_startpage(request):
 
     if request.user.is_authenticated():
-        return render(request, 'basics/home.html', {})
+        return redirect('basics:home')
 
     return render(request, 'basics/actofgoods_startpage.html', {})
 
