@@ -99,6 +99,12 @@
   background-color: #bbd153;
 }
 
+@media (min-width: 768px) and (max-width: 1000px) {
+   .collapse {
+       display: none !important;
+   }
+}
+
 @media(max-width:768px) {
 
   .navbar-text {
