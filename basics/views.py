@@ -115,15 +115,11 @@ def chat(request):
     return render(request, 'basics/actofgoods_startpage.html', {})
 
 def aboutus(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/aboutus.html')
+    return render(request, 'basics/aboutus.html')
 
-    return render(request, 'basics/actofgoods_startpage.html', {})
 def privacy(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/privacy.html')
+    return render(request, 'basics/privacy.html')
 
-    return render(request, 'basics/actofgoods_startpage.html', {})
 
 def home(request):
     if request.user.is_authenticated():
