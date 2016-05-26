@@ -32,14 +32,16 @@ def login(request):
         if user is not None:
             if user.is_active:
                 auth_login(request,user)
-                # TODO right response
+
+        """
+
                 return HttpResponse(aboutus(request))
             else:
                 # TODO deactivate user page
                 return HttpResponse(actofgoods_startpage(request))
-
+        """
     # default backfall
-    return HttpResponse(actofgoods_startpage(request))
+    return redirect('basics:actofgoods_startpage')
 
 def logout(request):
     auth_logout(request)
