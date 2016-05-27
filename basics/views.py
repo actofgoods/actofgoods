@@ -132,5 +132,41 @@ def help(request):
 
     return render(request, 'basics/actofgoods_startpage.html', {})
 
+def needs_all(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/needs_all.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
+
+def needs_new(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/needs_new.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
+
+def needs_timeline(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/needs_timeline.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
+
+def information_all(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/information_all.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
+
+def information_new(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/information_new.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
+
+def information_timeline(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/information_timeline.html')
+
+    return render(request, 'basics/actofgoods_startpage.html', {})
+
 def reset_password_page(request):
     return render(request, 'basics/password_reset.html')
