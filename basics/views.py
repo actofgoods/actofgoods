@@ -168,5 +168,8 @@ def information_timeline(request):
 
     return render(request, 'basics/actofgoods_startpage.html', {})
 
+def immediate_aid(request):
+    return render(request, 'basics/immediate_aid.html')
+
 def reset_password_page(request):
     return render(request, 'basics/password_reset.html')

@@ -37,5 +37,6 @@ urlpatterns = [
     url(r'^information_all/$', views.information_all, name='information_all'),
     url(r'^information_new/$', views.information_new, name='information_new'),
     url(r'^information_timeline/$', views.information_timeline, name='information_timeline'),
+    url(r'^immediate_aid/$', views.immediate_aid, name='immediate_aid'),
     url(r'^reset_password/$', views.reset_password_page, name='reset_password_page'),
 ]
