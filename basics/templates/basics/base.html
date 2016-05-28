@@ -91,35 +91,44 @@
 			margin-top: 40px;
 			display: table;
 			margin-left: auto;
-            margin-right: auto;
+            margin-right: 20px;
 		}
 
 		#immediate-aid-inner {
 			display: table-cell;
 		}
 
-	.immediate-aid-button {
-		box-shadow: 0 4px 12px rgba(0,0,0,.175);
-		border: 3px solid #D36E5A;
-		font-size: 26px;
-		line-height: 26px;
-		color: #bbd153;
-		background-color: #C7483A;
-		margin: auto;
-		border-radius: 50%;
-		height: 150px;
-		width: 150px;
-		position: relative;
-		padding: 49px 6px;
-		font-weight: bold;
-	}
+		@media(max-width:992px) {
+			
+			#immediate-aid-container {
+				margin-left: auto;
+            	margin-right: auto;
+			}
 
-	.btn-default.immediate-aid-button:hover, .btn-default.immediate-aid-button:focus, .btn-default.immediate-aid-button:active {
-		color:  #bbd153;
-		background-color: #C43B31;
-		text-decoration: none;
-		border-color: #D36E5A;
-	}
+		}
+
+		.immediate-aid-button {
+			box-shadow: 0 4px 12px rgba(0,0,0,.175);
+			border: 3px solid #D36E5A;
+			font-size: 26px;
+			line-height: 26px;
+			color: #bbd153;
+			background-color: #C7483A;
+			margin: auto;
+			border-radius: 50%;
+			height: 150px;
+			width: 150px;
+			position: relative;
+			padding: 49px 6px;
+			font-weight: bold;
+		}
+
+		.btn-default.immediate-aid-button:hover, .btn-default.immediate-aid-button:focus, .btn-default.immediate-aid-button:active {
+			color:  #bbd153;
+			background-color: #C43B31;
+			text-decoration: none;
+			border-color: #D36E5A;
+		}
 
 	/* -------------------------- immediate help button end -------------------------- */
 
