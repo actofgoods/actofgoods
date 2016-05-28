@@ -31,5 +31,12 @@ urlpatterns = [
     url(r'^register/$', views.register, name='register'),
     url(r'^home/$', views.home, name='home'),
     url(r'^help/$', views.help, name='help'),
+    url(r'^needs_all/$', views.needs_all, name='needs_all'),
+    url(r'^needs_new/$', views.needs_new, name='needs_new'),
+    url(r'^needs_timeline/$', views.needs_timeline, name='needs_timeline'),
+    url(r'^information_all/$', views.information_all, name='information_all'),
+    url(r'^information_new/$', views.information_new, name='information_new'),
+    url(r'^information_timeline/$', views.information_timeline, name='information_timeline'),
+    url(r'^immediate_aid/$', views.immediate_aid, name='immediate_aid'),
     url(r'^reset_password/$', views.reset_password_page, name='reset_password_page'),
 ]

@@ -6,11 +6,12 @@
 		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 		<title>Act of Goods</title>
 		{% load staticfiles %}
+		<link rel="icon" href="{% static 'basics/images/icon.ico' %}">
 
 		<!-- Bootstrap -->
 		<link rel="stylesheet" href="{% static 'basics/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'basics/css/event-list.css' %}">
-    <link rel="stylesheet" href="{% static 'basics/css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'basics/css/navbar_footer.css' %}">
 	<style>
 		* {
 	    		margin: 0;
@@ -32,7 +33,45 @@
 			margin-bottom: 170px;
 		}
 
-		#description-counter{
+		/* -------------------------- heading and description start -------------------------- */
+
+		#act-of-goods-heading{
+			color: #bbd153;
+			font-size: 84px;
+			font-weight: bold;
+		}
+
+		/* -------------------------- heading and description end -------------------------- */
+
+		/* -------------------------- counter start -------------------------- */
+
+		#counter-container {
+			padding: 20px 20px 30px 20px;
+			display: table;
+			margin-left: auto;
+            margin-right: auto;
+		}
+
+		#counter-inner {
+			display: table-cell;
+		}
+
+		#counter {
+			color:  #D36E5A;
+			font-weight: bold;
+			padding: 15px 20px;
+			background-color: rgba(76,78,73,.05);
+			border-width: 1px;
+			border-style: solid;
+			border-color: rgba(0, 0, 0, 0.15);
+			border-radius: 8px;
+			box-shadow: inset 0px 0px 20px 0px rgba(0,0,0,.1);
+		}		
+
+		/* -------------------------- counter end -------------------------- */
+
+
+		#description-counter-immediate-aid{
 			width: 60%;
 			float: right;
       margin: 30px auto;
@@ -46,46 +85,55 @@
 			width: 34%;
 			float: left;
 		}
-		/* ---------------------- footer start ---------------------- */
-		#footer {
-			background-color: rgba(76,78,73,.9);
-			height: 150px;
-			margin-top: 20px;
-			width:100%;
-			bottom: 0;
-			position: absolute;
-			border-top-width: 1px;
-			border-top-style: solid;
-			border-top-color: rgba(0, 0, 0, 0.15);
-			box-shadow: 0 -8px 12px rgba(0,0,0,.175);
 
+	/* -------------------------- immediate help button start -------------------------- */
+
+		#immediate-aid-container {
+			margin-top: 40px;
+			display: table;
+			margin-left: auto;
+            margin-right: 20px;
 		}
 
-		.nav-pills > li > a {
-			margin-top: 55px;
-			margin-bottom: 55px;
-			margin-left: 15px;
-			margin-right: 15px;
-			color: #70962c;
+		#immediate-aid-inner {
+			display: table-cell;
 		}
 
-		.nav-pills > li > a:hover, .nav-pills > li > a:focus{
-			color: #bbd153;
-			background-color: rgba(76,78,73,0);
-		}
-
-		@media(max-width:768px){
-
-			.nav-pills > li > a {
-				padding-top: 15px;
-				padding-bottom: 15px;
-				margin-top: 0px;
-				margin-bottom: 0px;
+		@media(max-width:992px) {
+			
+			#immediate-aid-container {
+				margin-left: auto;
+            	margin-right: auto;
 			}
 
 		}
 
-		/* ---------------------- footer end ---------------------- */
+		.immediate-aid-button {
+			box-shadow: 0 4px 12px rgba(0,0,0,.175);
+			border: 3px solid #D36E5A;
+			font-size: 26px;
+			line-height: 26px;
+			color: #bbd153;
+			background-color: #C7483A;
+			margin: auto;
+			border-radius: 50%;
+			height: 150px;
+			width: 150px;
+			position: relative;
+			padding: 49px 6px;
+			font-weight: bold;
+		}
+
+		.btn-default.immediate-aid-button:hover, .btn-default.immediate-aid-button:focus, .btn-default.immediate-aid-button:active {
+			color:  #bbd153;
+			background-color: #C43B31;
+			text-decoration: none;
+			border-color: #D36E5A;
+		}
+
+	/* -------------------------- immediate help button end -------------------------- */
+
+
 	</style>
 
 
@@ -116,9 +164,24 @@
 					<div class="collapse navbar-collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
 							<li {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a></li>
-							<li><a href="#"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span> Needs</a></li>					<!-- insert URL for needs and create if for class = active-->
-							<li><a href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Information</a></li>				<!-- insert URL for information and create if for class = active-->
-							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Messages</a></li>
+
+							<li {% if "/needs" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
+								<a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span> Needs <span class="caret"></span></a>
+								<ul id="navbar-dropdown-menu" class="dropdown-menu">
+									<li><a href="{% url 'basics:needs_all' %}">All</a></li>
+									<li><a href="{% url 'basics:needs_new' %}">New</a></li>
+									<li><a href="{% url 'basics:needs_timeline' %}">Timeline</a></li>
+								</ul>
+							</li>					<!-- insert URL for needs and create if for class = active-->
+							<li {% if "/information" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
+								<a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Information <span class="caret"></span></a>
+								<ul id="navbar-dropdown-menu" class="dropdown-menu">
+									<li><a href="{% url 'basics:information_all' %}">All</a></li>
+									<li><a href="{% url 'basics:information_new' %}">New</a></li>
+									<li><a href="{% url 'basics:information_timeline' %}">Timeline</a></li>
+								</ul>
+							</li>					<!-- insert URL for needs and create if for class = active-->
+							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Chats</a></li>
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
 							<li {% if "/help/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:help'%}"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Help</a></li>
@@ -151,7 +214,7 @@
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
-							<li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
+							<li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path and "/immediate_aid/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
 							<li id="navbar-with-divider" {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}"><span class="glyphicons glyphicons-group" aria-hidden="true"></span> About Us</a></li>
 						</ul>
 						<ul class="nav navbar-nav navbar-right">

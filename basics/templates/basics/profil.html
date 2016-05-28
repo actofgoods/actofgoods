@@ -4,8 +4,30 @@
 <!-- Introduction Row -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Profil</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sint, explicabo dolores ipsam aliquam inventore corrupti eveniet quisquam quod totam laudantium repudiandae obcaecati ea consectetur debitis velit facere nisi expedita vel?</p>
-            </div>
+                <h1 class="page-header">Your Profile <small>Note that your profile is exclusively visible for yourself!</small></h1>
+        	</div>
         </div>
+        <div class="row">
+        	<div class="col-lg-4 col-lg-offset-1">
+        		<br>
+        		<b>
+				Name: {{Userdata.pseudonym}} 				<br>
+				Email: {{Userdata.email}}  					<br>
+				Phonenumber: {{Userdata.phone}} 			<br>
+				Registered since: {{Userdata.registertate}}	<br>
+				Default auxiliary radius: 					<br>
+				Notification:								<br><br>
+				</b>
+
+				<button type="button" class="btn btn-danger btn-xs">Delete my profile</button> <button type="button" class="btn btn-warning btn-xs">Edit my profile</button>
+				<br>
+				<br>
+			</div>
+
+		<div class="col-lg-4">
+			{% load staticfiles %}
+        	<img src={% static 'basics/images/profil.jpg' %} height="152"/>	
+       	</div>
+
+	</div>
 {% endblock %}
