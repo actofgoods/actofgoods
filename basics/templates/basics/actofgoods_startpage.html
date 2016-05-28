@@ -4,14 +4,15 @@
 {% block content %}
 <div class="container-fluid" id="wrapper">
 
-    <div class="modal-dialog" id="sign-up">
-  		<div class="modal-content">
-  			<div class="modal-header">
-  				<h1 class="text-center">Welcome</h1>
-  			</div>
-  			<div class="modal-body">
-  				<form class="form" role="form" method="post" action="{% url 'basics:register' %}" accept-charset="UTF-8" id="login-nav">
-	          {% csrf_token %}
+	<!-- sign up -->
+	<div class="modal-dialog" id="sign-up">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="text-center">Sign Up</h1>
+			</div>
+			<div class="modal-body">
+				<form class="form" role="form" method="post" action="{% url 'basics:register' %}" accept-charset="UTF-8" id="login-nav">
+				{% csrf_token %}
 	  				<div class="form-group">
 	  					<input type="email" class="form-control input-lg" placeholder="Email" name="email"/>
 	  				</div>
@@ -25,29 +26,45 @@
 	          		<div class="form-group">
 	  					<input type="password" class="form-control input-lg" placeholder="Country" name="country"/>
 	  				</div>
-            <div class="checkbox" >
-              <label>
-                <input type="checkbox" data-toggle="switch" value="True" name="toggle_button"> keep me logged-in
-              </label>
-            </div>
-	  				<div class="form-group">
-	  					<input type="submit" class="btn btn-block btn-lg btn-primary" value="Register"/>
-	  				</div>
-  				</form>
-  			</div>
-  		</div>
-    </div>
-    <div id="description-counter">
-      <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+					<div class="checkbox" >
+						<label>
+							<input type="checkbox" data-toggle="switch" value="True" name="toggle_button"> keep me logged-in
+						</label>
+					</div>
+					<div class="form-group">
+						<input type="submit" class="btn btn-block btn-lg btn-primary" value="Register"/>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- description counter and immediat aid button -->
+	<div id="description-counter-immediate-aid">
+
+		<h1 id="act-of-goods-heading">Act of Goods</h1>
+
+		<p>is a website to connect people who need help with people who offer help in situations like extraordinary emergency or natural disasters.</p>
+		<p>Number of people who are looking for help:</p>
+		<div id="counter-container">
+			<div id="counter-inner">			
+			<span id="counter">
+				1000230012
+			</span>
+			</div>
+		</div>
+		<p>Maybe you can help someone in your neighborhood!</p>
 
 	<!-- immediate aid button -->
-	<div class="container">
+	<div id="immediate-aid-container">
+		<div id="immediate-aid-inner">
 		<div class="row">
         		<div class="col-md-12">
 				<a class="btn btn-default immediate-aid-button" type="button" href="{% url 'basics:immediate_aid' %}">
 					<div>Immediate<br />Aid</div>
 				</a>
         		</div>   
+		</div>
 		</div>
 	</div>
 
