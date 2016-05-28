@@ -4,8 +4,47 @@
 <!-- Introduction Row -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Profil</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sint, explicabo dolores ipsam aliquam inventore corrupti eveniet quisquam quod totam laudantium repudiandae obcaecati ea consectetur debitis velit facere nisi expedita vel?</p>
-            </div>
+                <h1 class="page-header">Your Profile</h1>
+
+		<p> Note that your profile is exclusively visible for yourself! </p>
+		
+
+        	<div style="height:150px; width:150px; float:right; padding-right:450px;padding-top:20px;">
+			{% load staticfiles %}
+           		<img src={% static 'basics/images/profil.jpg' %} />	
+        	</div>
+
+		<div style="width:350px; float:left; padding-left:50px;">
+			<table style="width:60%;float:left;">
+  			<tr>
+    				<td><b>Name</b></td>
+				<td><b>:</b>{{Userdata.pseudonym}}<td>
+			<tr>
+			<tr>
+    				<td><b>Email</b></td>
+				<td><b>:</b>{{Userdata.email}}<td>
+			<tr>
+			<tr>
+    				<td><b>Phonenumber</b></td>
+				<td><b>:</b>{{Userdata.phone}}<td>
+			<tr>
+			<tr></tr>
+			<tr>
+    				<td><b>Registered since</b></td>
+				<td><b>:</b>{{Userdata.registertate}}<td>
+			<tr>
+    
+			</table>
+	
+                </div>
+
+		<div align="left" style="padding-top:110px;padding-left:10px;"> 
+
+	<button type="button" class="btn btn-danger btn-xs">Delete my profile</button> <button type="button" class="btn btn-warning btn-xs">Edit my profile</button>
+
+		</div>
+
+		
         </div>
+	</div>
 {% endblock %}
