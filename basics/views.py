@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm
 from .models import Userdata, Need, Information
 from django.views.decorators.csrf import csrf_protect
+from django.contrib import messages
 
 
 """
@@ -92,20 +93,22 @@ def register(request):
         # form.data.username = "user#" + str(User.objects.count())
 
         print(form.data)
-        if form.is_valid() and form2.is_valid():
-            # print(form.cleaned_data)
-            password = request.POST.get('password',None)
-            check_password = request.POST.get('check_password',None)
-            if password == check_password:
-                data = form.cleaned_data
-                user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
-                userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
-                userdata.save()
+        if form.is_valid():
+            if form2.is_valid():
+                # print(form.cleaned_data)
+                password = request.POST.get('password',None)
+                check_password = request.POST.get('check_password',None)
+                if password == check_password:
+                    data = form.cleaned_data
+                    user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
+                    userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
+                    userdata.save()
+                    return login(request)
+            else:
+                messages.add_message(request, messages.INFO, 'wrong captcha')
 
-                                
-                #   TODO: with Djangos Users we need a username
-
-                return login(request)
+        else:
+            messages.add_message(request, messages.INFO, 'wrong email or password')
 
     return redirect('basics:actofgoods_startpage')
 
