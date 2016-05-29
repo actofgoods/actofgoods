@@ -46,6 +46,8 @@ def login(request):
                 return HttpResponse(actofgoods_startpage(request))
         """
     # default backfall
+    messages.add_message(request, messages.INFO, 'wrong email or password')
+
     return redirect('basics:actofgoods_startpage')
 
 def logout(request):
