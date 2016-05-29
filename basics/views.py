@@ -4,7 +4,7 @@ from django.template import loader
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
 # Create your views here.
-from .forms import UserFormRegister, NeedFormNew, InformationFormNew
+from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm
 from .models import Userdata, Need, Information
 from django.views.decorators.csrf import csrf_protect
 
@@ -88,10 +88,11 @@ def register(request):
     """
     if request.method == 'POST':
         form = UserFormRegister(request.POST)
+        form2 = CaptchaForm(request.POST)
         # form.data.username = "user#" + str(User.objects.count())
 
         print(form.data)
-        if form.is_valid() :
+        if form.is_valid() and form2.is_valid():
             # print(form.cleaned_data)
             password = request.POST.get('password',None)
             check_password = request.POST.get('check_password',None)
