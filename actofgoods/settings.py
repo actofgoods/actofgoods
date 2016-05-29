@@ -27,11 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+NORECAPTCHA_SITE_KEY = '6LdLNSETAAAAAPANCWc4cOCvtDAL3I6GYWwdI8j8'
+NORECAPTCHA_SECRET_KEY = '6LdLNSETAAAAALihggfxC9idnafiO32CB5GsZ6I9'
 # Application definition
 
 INSTALLED_APPS = [
     'basics',
+    'nocaptcha_recaptcha',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
