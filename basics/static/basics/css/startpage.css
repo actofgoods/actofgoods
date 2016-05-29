@@ -1,0 +1,121 @@
+/* -------------------------- heading and description start -------------------------- */
+
+		#act-of-goods-heading{
+			color: #bbd153;
+			font-size: 84px;
+			font-weight: bold;
+		}
+
+		/* -------------------------- heading and description end -------------------------- */
+
+		/* -------------------------- counter start -------------------------- */
+
+		#counter-container {
+			margin-top: 10px;
+			margin-bottom: 10px;
+			display: table;
+			margin-left: auto;
+            margin-right: auto;
+		}
+
+		#counter-inner {
+			display: table-cell;
+		}
+
+		#counter {
+			color:  #D36E5A;
+			font-weight: bold;
+			padding: 15px 20px;
+			font-size: 24px;
+		}		
+
+		/* -------------------------- counter end -------------------------- */
+
+		/* -------------------------- sign up start -------------------------- */
+
+		#sign-up {
+			min-width:250px;
+			background-color: rgba(76,78,73,.05);
+			border-width: 1px;
+			border-style: solid;
+			border-color: rgba(0, 0, 0, 0.15);
+			border-radius: 8px;
+			box-shadow: 0 8px 12px rgba(0,0,0,.175);
+			margin: 55px 15px;
+		}
+
+		#sign-up .modal-header > h2 {
+			color: #bbd153;
+			font-weight: bold;
+		}
+
+		#sign-up .modal-body .checkbox {
+			color: #70962c;
+		}
+
+		#sign-up .modal-body .checkbox:hover {
+			color: #bbd153;
+		}
+
+		#country-selector {
+			font-size: 18px;
+			width: 100%;
+		}
+
+		@media(max-width:768px) {
+			
+			#sign-up {
+				margin: 20px 15px;
+			}
+
+		}
+
+		/* -------------------------- sign up end -------------------------- */
+
+		/* -------------------------- immediate help button start -------------------------- */
+
+		#immediate-aid-container {
+			margin-top: 20px;
+			margin-bottom: 20px;
+			display: table;
+			margin-left: auto;
+            margin-right: 20px;
+		}
+
+		#immediate-aid-inner {
+			display: table-cell;
+		}
+
+		@media(max-width:992px) {
+			
+			#immediate-aid-container {
+				margin-left: auto;
+            	margin-right: auto;
+			}
+
+		}
+
+		.immediate-aid-button {
+			box-shadow: 0 4px 12px rgba(0,0,0,.175);
+			border: 5px solid #D36E5A;
+			font-size: 34px;
+			line-height: 34px;
+			color: #bbd153;
+			background-color: #C7483A;
+			margin: auto;
+			border-radius: 50%;
+			height: 200px;
+			width: 200px;
+			position: relative;
+			padding: 66px 6px;
+			font-weight: bold;
+		}
+
+		.btn-default.immediate-aid-button:hover, .btn-default.immediate-aid-button:focus, .btn-default.immediate-aid-button:active {
+			color:  #bbd153;
+			background-color: #C43B31;
+			text-decoration: none;
+			border-color: #D36E5A;
+		}
+
+		/* -------------------------- immediate help button end -------------------------- */

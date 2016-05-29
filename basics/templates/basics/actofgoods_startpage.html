@@ -2,13 +2,47 @@
 {% extends 'basics/base.html' %}
 
 {% block content %}
-<div class="container-fluid" id="wrapper">
+ <div class="container-fluid" id="wrapper">
+<div class="row">
+	
 
-	<!-- sign up -->
-	<div class="modal-dialog" id="sign-up">
-		<div class="modal-content">
+	<div class="col-sm-7 col-sm-push-5">
+	<!-- description counter and immediat aid button -->
+	<div id="description-counter-immediate-aid">
+
+		<h1 id="act-of-goods-heading">Act of Goods</h1>
+
+		<p>is a website to connect people who need help with people who offer help in situations like extraordinary emergency or natural disasters.</p>
+		<p>Number of people who are looking for help:</p>
+		<div id="counter-container">
+			<div id="counter-inner">			
+			<div id="counter">
+				1000230012	<!-- TODO hier noch die richtige anzahl einfuegen -->
+			</div>
+			</div>
+		</div>
+		<p>Maybe you can help someone in your neighborhood!</p>
+
+		<!-- immediate aid button -->
+		<div id="immediate-aid-container">
+			<div id="immediate-aid-inner">
+				<div class="row">
+    	    		<div class="col-md-12">
+						<a class="btn btn-default immediate-aid-button" type="button" href="{% url 'basics:immediate_aid' %}">
+							<div>Immediate<br />Aid</div>
+						</a>
+    	    		</div>   
+				</div>
+			</div>
+		</div>
+
+    </div>
+	</div>
+
+	<div class="col-sm-5 col-sm-pull-7">
+		<div id="sign-up">
 			<div class="modal-header">
-				<h1 class="text-center">Sign Up</h1>
+				<h2 class="text-center">Sign Up</h2>
 			</div>
 			<div class="modal-body">
 				<form class="form" role="form" method="post" action="{% url 'basics:register' %}" accept-charset="UTF-8" id="login-nav">
@@ -23,7 +57,7 @@
 	          		<div class="form-group">
 	  					<input type="password" class="form-control input-lg" placeholder="Password" name="check_password"/>
 	  				</div>
-	          		<select class="form-control">
+	          		<select id="country-selector">
 						<option value="Afghanistan">Afghanistan</option>
 						<option value="Åland Islands">Åland Islands</option>
 						<option value="Albania">Albania</option>
@@ -277,38 +311,14 @@
 					</div>
 				</form>
 			</div>
+
+
 		</div>
 	</div>
 
-	<!-- description counter and immediat aid button -->
-	<div id="description-counter-immediate-aid">
 
-		<h1 id="act-of-goods-heading">Act of Goods</h1>
 
-		<p>is a website to connect people who need help with people who offer help in situations like extraordinary emergency or natural disasters.</p>
-		<p>Number of people who are looking for help:</p>
-		<div id="counter-container">
-			<div id="counter-inner">			
-			<div id="counter">
-				1000230012	<!-- TODO hier noch die richtige anzahl einfuegen -->
-			</div>
-			</div>
-		</div>
-		<p>Maybe you can help someone in your neighborhood!</p>
 
-	<!-- immediate aid button -->
-	<div id="immediate-aid-container">
-		<div id="immediate-aid-inner">
-		<div class="row">
-        		<div class="col-md-12">
-				<a class="btn btn-default immediate-aid-button" type="button" href="{% url 'basics:immediate_aid' %}">
-					<div>Immediate<br />Aid</div>
-				</a>
-        		</div>   
-		</div>
-		</div>
-	</div>
-
-    </div>
+</div>
 </div>
 {% endblock %}
