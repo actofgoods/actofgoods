@@ -39,4 +39,5 @@ urlpatterns = [
     url(r'^information_timeline/$', views.information_timeline, name='information_timeline'),
     url(r'^immediate_aid/$', views.immediate_aid, name='immediate_aid'),
     url(r'^reset_password/$', views.reset_password_page, name='reset_password_page'),
+    url(r'^needs_view_edit/(?P<pk>\d+/$)', views.needs_view_edit, name='needs_view_edit')
 ]
