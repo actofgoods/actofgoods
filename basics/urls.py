@@ -21,6 +21,7 @@ app_name = 'basics'
 
 urlpatterns = [
     url(r'^$', views.actofgoods_startpage, name='actofgoods_startpage'),
+    url(r'^admin_page/$', views.admin_page, name='admin_page'),
     url(r'^login/$', views.login, name='login'),
     url(r'^register/$', views.register, name='register'),
     url(r'^profil/$', views.profil, name='profil'),

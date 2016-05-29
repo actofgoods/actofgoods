@@ -220,4 +220,5 @@ def immediate_aid(request):
 def reset_password_page(request):
     return render(request, 'basics/password_reset.html')
 
-
+def admin_page(request):
+    return render(request, 'basics/admin_page.html')
