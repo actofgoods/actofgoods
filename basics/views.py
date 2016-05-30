@@ -288,7 +288,7 @@ def profil_edit(request):
 
 def profil_delete(request):
 	user=request.user
-	user.delete
+	user.delete()
 	return actofgoods_startpage(request)
 
 
