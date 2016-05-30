@@ -1,13 +1,16 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.template import loader
+from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_protect
+import smtplib
 # Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm
 from .models import Userdata, Need, Information
-from django.views.decorators.csrf import csrf_protect
-from django.contrib import messages
+
+
 
 """
     Index:
@@ -48,7 +51,7 @@ def login(request):
                 return HttpResponse(actofgoods_startpage(request))
         """
     # default backfall
-    
+
     return redirect('basics:actofgoods_startpage')
 
 def logout(request):
@@ -116,9 +119,9 @@ def register(request):
 
         elif not form.is_valid() and not capForm.is_valid():
             messages.add_message(request, messages.INFO, 'aw')
-    
+
     return redirect('basics:actofgoods_startpage')
-    
+
 
 
 """
@@ -230,9 +233,36 @@ def information_timeline(request):
 def immediate_aid(request):
     return render(request, 'basics/immediate_aid.html')
 
+
 def reset_password_page(request):
+    #If request.method is POST, reset_password_page will
+    #parse the email provided and send an email
+    #Else the reset_password_page.html is shown
+    if request.method == "POST":
+        #This method is super deprecated we need to make it more secure
+        #it could lead to data sniffing and shitlot of problems;
+        #But to demonstrate our features and only to demonstrate
+        #it will send the given email his password
+        print("shit")
+        if 'email' in request.POST:
+            email = request.POST['email']
+            user = User.objects.get(email = email)
+            if user is not None:
+                content = "The password to your account is %s but it is encrypted so it wont give you a shit and I cant encrypt it because of some riscs or whatever so better dont loose it thanks!"%(user.password)
+                sendmail(email, content)
+        return redirect('basics:reset_password_confirmation')
     return render(request, 'basics/password_reset.html')
 
+def sendmail(email, content):
+    mail = smtplib.SMTP('smtp.gmail.com', 587)
+    mail.ehlo()
+    mail.starttls()
+    mail.login('actofgoods@gmail.com', 'actofgoods123')
+    mail.sendmail('actofgoods@gmail.com', email, content)
+    mail.close()
+
+def reset_password_confirmation(request):
+    return render(request, 'basics/password_reset_confirmation.html')
 def admin_page(request):
     return render(request, 'basics/admin_page.html')
 
