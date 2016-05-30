@@ -1,0 +1,32 @@
+{% extends 'basics/base.html' %}
+
+{% block content %}
+<!-- Introduction Row -->
+	<div class="modal-dialog" id="sign-up">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="text-center">Edit Your Profile</h1>
+			</div>
+			<div class="modal-body">
+				<form class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav">
+				    {% csrf_token %}
+    					<div class="form-group">
+					<input type="description" class="form-control input-lg" placeholder= {{ userdata.pseudonym }} name="pseudo"  >
+						</div>
+					<div class="form-group">
+					{% if userdata.phone == "" %}
+					<input type="description" class="form-control input-lg" placeholder= phonenumber name="phone"  >
+
+					{% else %}
+					<input type="description" class="form-control input-lg" placeholder= {{ userdata.phone }} name="phone"  >
+					{% endif %}
+					</div>
+
+					<div class="form-group">
+						<input type="submit" class="btn btn-block btn-lg btn-primary" value="Save"/>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}

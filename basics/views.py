@@ -4,7 +4,7 @@ from django.template import loader
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
 # Create your views here.
-from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm
+from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm
 from .models import Userdata, Need, Information
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
@@ -239,3 +239,29 @@ def admin_page(request):
 
 def map_testing(request):
     return render(request, 'basics/map_testing.html')
+
+def profil_edit(request):
+	userdata=request.user.userdata
+	if request.method == "POST":
+		form = ProfileForm(request.POST)
+		if form.is_valid() :
+			pseudo=request.POST.get('pseudo',None)
+			phone = request.POST.get('phone',None)
+			if pseudo!= "":
+				userdata.pseudonym=pseudo
+			if phone!= "":
+				userdata.phone=phone
+			userdata.save()
+			return render(request, 'basics/profil.html', {'Userdata':userdata})
+	form = ProfileForm()
+	return render(request, 'basics/profil_edit.html', {'userdata':userdata})
+
+def profil_delete(request):
+	user=request.user
+	user.delete
+	return actofgoods_startpage(request)
+
+
+
+
+
