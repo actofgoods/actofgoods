@@ -1,3 +1,6 @@
+import random
+import smtplib
+import string
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.template import loader
@@ -5,7 +8,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect
-import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.message import MIMEMessage
 # Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm
 from .models import Userdata, Need, Information
@@ -108,6 +113,9 @@ def register(request):
                 user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
                 userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
                 userdata.save()
+                content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000"
+                subject = "Welcome!"
+                sendmail(user.email, content, subject)
                 return login(request)
             else:
                 messages.add_message(request, messages.INFO, 'wp')
@@ -248,24 +256,38 @@ def reset_password_page(request):
             email = request.POST['email']
             user = User.objects.get(email = email)
             if user is not None:
-                content = "The password to your account is %s but it is encrypted so it wont give you a shit and I cant encrypt it because of some riscs or whatever so better dont loose it thanks!"%(user.password)
-                sendmail(email, content)
+                new_password = id_generator(9)
+                user.set_password(new_password)
+                user.save()
+                print(new_password)
+                #Content could also be possibly HTML! this way beautifull emails are possible
+
+                content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
+                subject = "Reset Password - Act Of Goods"
+                sendmail(email, content, subject )
         return redirect('basics:reset_password_confirmation')
     return render(request, 'basics/password_reset.html')
 
-def sendmail(email, content):
+def sendmail(email, content, subject):
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg.attach(MIMEText(content))
+
     mail = smtplib.SMTP('smtp.gmail.com', 587)
     mail.ehlo()
     mail.starttls()
     mail.login('actofgoods@gmail.com', 'actofgoods123')
-    mail.sendmail('actofgoods@gmail.com', email, content)
+    mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
     mail.close()
 
 def reset_password_confirmation(request):
     return render(request, 'basics/password_reset_confirmation.html')
+
 def admin_page(request):
     return render(request, 'basics/admin_page.html')
 
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 def map_testing(request):
     return render(request, 'basics/map_testing.html')
@@ -288,10 +310,5 @@ def profil_edit(request):
 
 def profil_delete(request):
 	user=request.user
-	user.delete
+	user.delete()
 	return actofgoods_startpage(request)
-
-
-
-
-
