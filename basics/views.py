@@ -36,6 +36,9 @@ def login(request):
         if user is not None:
             if user.is_active:
                 auth_login(request,user)
+        else :
+            messages.add_message(request, messages.INFO, 'lw')
+
 
         """
 
@@ -45,14 +48,13 @@ def login(request):
                 return HttpResponse(actofgoods_startpage(request))
         """
     # default backfall
-    messages.add_message(request, messages.INFO, 'wrong email or password')
-
+    
     return redirect('basics:actofgoods_startpage')
 
 def logout(request):
     auth_logout(request)
     return HttpResponse(actofgoods_startpage(request))
-
+    #return render(request, 'basics/actofgoods_startpage.html')
 """
     Register:
     -input: request(Email, Password ...)
@@ -93,7 +95,7 @@ def register(request):
         capForm = CaptchaForm(request.POST)
         # form.data.username = "user#" + str(User.objects.count())
 
-        print(form.data)
+        #print(form.data)
         if form.is_valid() and capForm.is_valid():
             # print(form.cleaned_data)
             password = request.POST.get('password',None)
@@ -104,15 +106,19 @@ def register(request):
                 userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
                 userdata.save()
                 return login(request)
+            else:
+                messages.add_message(request, messages.INFO, 'wp')
         elif form.is_valid() and not capForm.is_valid():
-            messages.add_message(request, messages.INFO, 'wrong captcha')
+            messages.add_message(request, messages.INFO, 'wc')
 
         elif not form.is_valid() and capForm.is_valid():
-            messages.add_message(request, messages.INFO, 'wrong email or password')
-        else :
-            messages.add_message(request, messages.INFO, 'wrong email or password and wrong captcha')
+            messages.add_message(request, messages.INFO, 'eae')
+
+        elif not form.is_valid() and not capForm.is_valid():
+            messages.add_message(request, messages.INFO, 'aw')
     
     return redirect('basics:actofgoods_startpage')
+    
 
 
 """
@@ -229,3 +235,4 @@ def reset_password_page(request):
 
 def admin_page(request):
     return render(request, 'basics/admin_page.html')
+
