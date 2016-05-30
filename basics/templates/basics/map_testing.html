@@ -1,0 +1,239 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <title>Act of Goods</title>
+        {% load staticfiles %}
+        <link rel="icon" href="{% static 'basics/images/icon.ico' %}">
+
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="{% static 'basics/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'basics/css/event-list.css' %}">
+    <link rel="stylesheet" href="{% static 'basics/css/navbar_footer.css' %}">
+    <link rel="stylesheet" href="{% static 'basics/css/startpage.css' %}">
+<script
+src="http://maps.googleapis.com/maps/api/js">
+</script>
+
+<script>
+var map;
+var marker;
+var myCenter=new google.maps.LatLng(51.508742,-0.120850);
+
+function initialize()
+{
+var mapProp = {
+  center:myCenter,
+  zoom:5,
+  mapTypeId:google.maps.MapTypeId.ROADMAP
+  };
+
+  map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+  google.maps.event.addListener(map, 'click', function(event) {
+    placeMarker(event.latLng);
+  });
+}
+
+function placeMarker(location) {
+    if(marker){
+        marker.setPosition(location)
+    } else{
+    marker = new google.maps.Marker({
+    position: location,
+    map: map,
+  });
+}
+  var infowindow = new google.maps.InfoWindow({
+    content: 'Latitude: ' + location.lat() + '<br>Longitude: ' + location.lng()
+  });
+  infowindow.open(map,marker);
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+
+    <style>
+        * {
+                margin: 0;
+                padding: 0;
+        }
+        html, body {        
+            height: 100%;
+            /*font-size: 18px;*/        
+        }
+        #wrapper {
+            position: relative;
+                min-height: 100%;
+                width: 100%;
+                margin: 0 auto;
+                overflow-x: hidden;
+                overflow-y: hidden;
+        }
+
+        #content {
+            margin-bottom: 170px;
+        }
+
+    </style>
+
+
+    </head>
+
+    <body>
+
+    <div id="wrapper">
+        {% if user.is_authenticated %} <!-- signed in user -->
+        <!-- TODO if user is normal user, ngo, country or admin -->
+        <div id="header">
+            <nav class="navbar navbar-inverse" role="navigation">
+                <div class="container-fluid" id="navbar-inner">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="{% url 'basics:home' %}">
+                            <img id="brand-image" src={% static 'basics/images/AoGLogo.png'%} alt="Act of Goods"/>
+                        </a>
+                    </div>
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="navbar-collapse">
+                        <ul class="nav navbar-nav navbar-left">
+                            <li {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a></li>
+
+                            <li {% if "/needs" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
+                                <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span> Needs <span class="caret"></span></a>
+                                <ul id="navbar-dropdown-menu" class="dropdown-menu">
+                                    <li><a href="{% url 'basics:needs_all' %}">All</a></li>
+                                    <li><a href="{% url 'basics:needs_new' %}">New</a></li>
+                                    <li><a href="{% url 'basics:needs_timeline' %}">Timeline</a></li>
+                                </ul>
+                            </li>                   <!-- insert URL for needs and create if for class = active-->
+                            <li {% if "/information" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
+                                <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Information <span class="caret"></span></a>
+                                <ul id="navbar-dropdown-menu" class="dropdown-menu">
+                                    <li><a href="{% url 'basics:information_all' %}">All</a></li>
+                                    <li><a href="{% url 'basics:information_new' %}">New</a></li>
+                                    <li><a href="{% url 'basics:information_timeline' %}">Timeline</a></li>
+                                </ul>
+                            </li>                   <!-- insert URL for needs and create if for class = active-->
+                            <li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Chats</a></li>
+                            {% if user.is_staff %}
+                                <li id="navbar-with-divider" {% if "/admin_page/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:admin_page' %}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Admin</a></li>
+                            {% endif %}
+                        </ul>
+
+                        <ul class="nav navbar-nav navbar-right">
+                            <li {% if "/help/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:help'%}"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Help</a></li>
+                            <li {% if "/profil/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Profil</a></li>
+                            <li><a href="{% url 'basics:logout' %}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout</a></li>
+                        </ul>
+                    </div><!-- /.navbar-collapse -->
+                </div><!-- /.container-fluid -->
+            </nav>
+        </div>
+        {% else %} <!-- navbar for unsigned user -->
+        <div id="header">
+            <nav class="navbar navbar-inverse" role="navigation">
+                <div class="container-fluid" id="navbar-inner">
+                    <!-- Brand and toggle get grouped for better mobile display -->
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="{% url 'basics:login' %}">
+                            <img id="brand-image" src={% static 'basics/images/AoGLogo.png'%} alt="Act of Goods"/>
+                        </a>
+                    </div>
+
+
+
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="navbar-collapse">
+                        <ul class="nav navbar-nav navbar-left">
+                            <li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path and "/immediate_aid/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
+                            <li id="navbar-with-divider" {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}"><span class="glyphicons glyphicons-group" aria-hidden="true"></span> About Us</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><p class="navbar-text">Already have an account?</p></li>
+                            <li class="dropdown">
+                                <a id="navbar-login" href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Login</b> <span class="caret"></span></a>
+                                <ul id="login-dp" class="dropdown-menu">
+                                    <li>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form class="form" role="form" method="post" action="{% url 'basics:login' %}" accept-charset="UTF-8" id="login-nav">
+                                                            {% csrf_token %}
+                                                    <div class="form-group">
+                                                        <label class="sr-only" for="InputEmail">Email address</label>
+                                                        <input type="text" class="form-control" name="email" placeholder="Email address" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="sr-only" for="InputPassword">Password</label>
+                                                        <input type="password" class="form-control" name="password" placeholder="Password" required>
+                                                        <div class="help-block text-right"><a href="{% url 'basics:reset_password_page'%}">Forget the password?</a></div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+                                                    </div>
+                                                    <div class="checkbox" >
+                                                        <label>
+                                                            <input type="checkbox" data-toggle="switch" value="True" name="toggle_button"> keep me logged-in
+                                                        </label>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div><!-- /.navbar-collapse -->
+                </div><!-- /.container-fluid -->
+            </nav>
+        </div>
+        {% endif %}
+
+        <div class="container" id="content">
+       <!-- Introduction Row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Map Testing
+                    <small>First try using GoogleApi</small>
+                </h1>
+               <div id="googleMap" style="width:500px;height:380px;"></div>
+            </div>
+        </div>
+        </div>
+
+        <div id="footer">
+            <div class="row" id="footer-row">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                    <ul class="nav nav-pills nav-justified">
+                        <li><a {% if user.is_authenticated %} href="{% url 'basics:home' %}" {% else %} href="{% url 'basics:login' %}" {% endif %}>Act of Goods</a></li>
+                        <li><a href="{% url 'basics:privacy' %}">Privacy</a></li>
+                        <li><a href="{% url 'basics:aboutus' %}">About Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'basics/js/bootstrap.min.js' %}"></script>
+
+    </body>
+
+</html>
