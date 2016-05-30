@@ -1,13 +1,7 @@
 {% extends 'basics/base.html' %}
 
 {% block content %}
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
+
 <head>
      <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
@@ -19,7 +13,7 @@
 		<div class="col-sm-7 col-sm-push-5">
 			<div id="description-counter-immediate-aid">
 				<h1 id="act-of-goods-heading">Act of Goods</h1>
-				<p>is a website to connect people who need help with people who offer help in situations like extraordinary emergency or natural disasters.</p>
+				<p>is a website to connect people or organizations who need help with people or organizations who offer help in situations like extraordinary emergency or natural disasters. If you are a private Person and want to join us, register right now! If you have an organization and want to join us, <a href="#">contact us</a>.</p>
 				<p>Number of people who are looking for help:</p>
 				<div id="counter-container">
 					<div id="counter-inner">			
@@ -53,14 +47,49 @@
 				<div class="modal-body">
 					<form class="form" role="form" method="post" action="{% url 'basics:register' %}" accept-charset="UTF-8" id="login-nav">
 					{% csrf_token %}
+					<div class="form-group">
+						{% if messages %}
+							<ul class="messages">
+    						{% for message in messages %}
+    							{% if message.message == 'aw' %}
+    								<p>all wrong</p>
+    							{% endif %}
+    						{% endfor %}
+								</ul>
+						{% endif %}
+					</div>
+					<div class="form-group">
+						{% if messages %}
+							<ul class="messages">
+    						{% for message in messages %}
+    							{% if message.message == 'eae' %}
+    								<p>email already exists</p>
+    							{% endif %}
+    						{% endfor %}
+								</ul>
+						{% endif %}
+					</div>
 		  				<div class="form-group">
-		  					<input type="email" class="form-control input-lg" placeholder="Email" name="email"/>
+		  					<input type="email" class="form-control input-lg" placeholder="Email" name="email" required/>
 		  				</div>
+
 		  				<div class="form-group">
-		  					<input type="password" class="form-control input-lg" placeholder="Password" name="password"/>
+						{% if messages %}
+							<ul class="messages">
+    						{% for message in messages %}
+    							{% if message.message == 'wp' %}
+    								<p>passwords don't match</p>
+    							{% endif %}
+    						{% endfor %}
+								</ul>
+						{% endif %}
+					</div>
+
+		  				<div class="form-group">
+		  					<input type="password" class="form-control input-lg" placeholder="Password" name="password" required/>
 		  				</div>
 		          		<div class="form-group">
-		  					<input type="password" class="form-control input-lg" placeholder="Password" name="check_password"/>
+		  					<input type="password" class="form-control input-lg" placeholder="Password" name="check_password" required/>
 		  				</div>
 		          		<select id="country-selector">
 							<option value="Afghanistan">Afghanistan</option>
@@ -312,6 +341,18 @@
 							</label>
 						</div>
       					
+						<div class="form-group">
+						{% if messages %}
+							<ul class="messages">
+    						{% for message in messages %}
+    							{% if message.message == 'wc' %}
+    								<p>wrong captcha</p>
+    							{% endif %}
+    						{% endfor %}
+								</ul>
+						{% endif %}
+					</div>
+
 						<div class="form-group">
 							<div class="g-recaptcha" data-sitekey="6LdLNSETAAAAAPANCWc4cOCvtDAL3I6GYWwdI8j8"></div>
     					
