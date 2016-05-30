@@ -1,9 +1,17 @@
 /* -------------------------- heading and description start -------------------------- */
 
-		#act-of-goods-heading{
+		#act-of-goods-heading {
 			color: #bbd153;
 			font-size: 84px;
 			font-weight: bold;
+		}
+
+		#description-counter-immediate-aid > p > a {
+			color: #70962c;
+		}
+
+		#description-counter-immediate-aid > p > a:hover {
+			color: #bbd153;
 		}
 
 		/* -------------------------- heading and description end -------------------------- */
@@ -60,6 +68,22 @@
 		#country-selector {
 			font-size: 18px;
 			width: 100%;
+		}
+
+		.error-messages {
+			color: #D36E5A;
+		}
+
+		.error-messages > p > a {
+			color: #C43B31;
+		}
+
+		#terms-of-use-privacy-polices, #terms-of-use-privacy-polices > a {
+			color: #70962c;
+		}
+		
+		#terms-of-use-privacy-polices > a:hover {
+			color: #bbd153;
 		}
 
 		@media(max-width:768px) {

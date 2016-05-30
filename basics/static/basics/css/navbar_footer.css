@@ -88,6 +88,10 @@
   margin-bottom: 10px;
 }
 
+#login-error-message {
+  color: #D36E5A;
+}
+
 /* light green */
 .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:focus, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > li > a:hover, #login-dp .help-block > a:hover, #login-dp .checkbox > label:hover {
   color: #bbd153;

@@ -291,7 +291,8 @@ def profil_delete(request):
 	user.delete
 	return actofgoods_startpage(request)
 
-
+def contact_us(request):
+    return render(request, 'basics/contact_us.html')
 
 
 

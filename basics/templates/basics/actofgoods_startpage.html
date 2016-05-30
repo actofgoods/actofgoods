@@ -13,7 +13,7 @@
 		<div class="col-sm-7 col-sm-push-5">
 			<div id="description-counter-immediate-aid">
 				<h1 id="act-of-goods-heading">Act of Goods</h1>
-				<p>is a website to connect people or organizations who need help with people or organizations who offer help in situations like extraordinary emergency or natural disasters. If you are a private Person and want to join us, register right now! If you have an organization and want to join us, <a href="#">contact us</a>.</p>
+				<p>is a website to connect people or organizations that need help with people or organizations who offer help in situations like extraordinary emergency or natural disasters. If you are a private person and want to join us sign up right now! If you have an organization and want to join us, <a href="{% url 'basics:contact_us' %}">contact us</a>.</p>
 				<p>Number of people who are looking for help:</p>
 				<div id="counter-container">
 					<div id="counter-inner">			
@@ -47,43 +47,39 @@
 				<div class="modal-body">
 					<form class="form" role="form" method="post" action="{% url 'basics:register' %}" accept-charset="UTF-8" id="login-nav">
 					{% csrf_token %}
-					<div class="form-group">
+					
 						{% if messages %}
-							<ul class="messages">
     						{% for message in messages %}
     							{% if message.message == 'aw' %}
-    								<p>all wrong</p>
-    							{% endif %}
+									<div class="form-group">
+										<div class="error-messages">																
+    										<p>Enter your email correctly, enter identical passwords and solve the reCAPTCHA.</p>
+										</div>
+									</div>
+								{% elif message.message == 'eae' %}
+									<div class="form-group">
+										<div class="error-messages">																
+    										<p>Email already exists! If you forgot your password use the <a href="{% url 'basics:reset_password_page' %}">reset password funtion</a>.</p>
+										</div>
+									</div>
+								{% endif %}
     						{% endfor %}
-								</ul>
 						{% endif %}
-					</div>
-					<div class="form-group">
-						{% if messages %}
-							<ul class="messages">
-    						{% for message in messages %}
-    							{% if message.message == 'eae' %}
-    								<p>email already exists</p>
-    							{% endif %}
-    						{% endfor %}
-								</ul>
-						{% endif %}
-					</div>
 		  				<div class="form-group">
 		  					<input type="email" class="form-control input-lg" placeholder="Email" name="email" required/>
 		  				</div>
 
-		  				<div class="form-group">
 						{% if messages %}
-							<ul class="messages">
     						{% for message in messages %}
     							{% if message.message == 'wp' %}
-    								<p>passwords don't match</p>
+									<div class="form-group">
+										<div class="error-messages">
+    										<p>Your password does not match with the repeated password.</p>
+										</div>
+									</div>
     							{% endif %}
     						{% endfor %}
-								</ul>
 						{% endif %}
-					</div>
 
 		  				<div class="form-group">
 		  					<input type="password" class="form-control input-lg" placeholder="Password" name="password" required/>
@@ -91,6 +87,7 @@
 		          		<div class="form-group">
 		  					<input type="password" class="form-control input-lg" placeholder="Password" name="check_password" required/>
 		  				</div>
+						<div class="form-group">
 		          		<select id="country-selector">
 							<option value="Afghanistan">Afghanistan</option>
 							<option value="Åland Islands">Åland Islands</option>
@@ -335,28 +332,75 @@
 							<option value="Zambia">Zambia</option>
 							<option value="Zimbabwe">Zimbabwe</option>
 						</select>
+						</div>
+      					
+						{% if messages %}
+    						{% for message in messages %}
+    							{% if message.message == 'wc' %}
+									<div class="form-group">
+										<div class="error-messages">
+    										<p>Proof that you are not a robot by solving the reCAPTCHA.</p>
+									</div>
+								</div>
+    							{% endif %}
+    						{% endfor %}
+						{% endif %}
+
+						<div class="form-group">
+							<div class="g-recaptcha" data-sitekey="6LdLNSETAAAAAPANCWc4cOCvtDAL3I6GYWwdI8j8"></div>
+    					</div>
+
+						<div class="form-group">
+							<p id="terms-of-use-privacy-polices">By clicking on "Register" you accept the <a href="#" data-toggle="modal" data-target=".modal-terms-of-use">Terms of Use</a> and the <a href="#" data-toggle="modal" data-target=".modal-privacy-polices">Privacy Polices</a>!</p>
+						</div>
+						<div class="modal fade modal-terms-of-use"  role="dialog" aria-labelledby="terms-of-use" aria-hidden="true">
+							<div class="modal-dialog modal-lg">  							
+								<div class="modal-content">
+    								<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          									<span aria-hidden="true">&times;</span>
+        								</button>
+										<h2 class="text-center">Terms of Use</h2>
+									</div>
+									<div class="modal-body">
+    								  	<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+										<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+										<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+    								</div>
+									<div class="modal-footer">
+        								<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      								</div>
+  								</div>
+							</div>
+						</div>
+						<div class="modal fade modal-privacy-polices"  role="dialog" aria-labelledby="private-polices" aria-hidden="true">
+							<div class="modal-dialog modal-lg">  							
+								<div class="modal-content">
+    								<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          									<span aria-hidden="true">&times;</span>
+        								</button>
+										<h2 class="text-center">Private Polices</h2>
+									</div>
+									<div class="modal-body">
+    								  	<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+										<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+										<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+    								</div>
+									<div class="modal-footer">
+        								<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      								</div>
+  								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<input type="submit" class="btn btn-block btn-lg btn-primary" value="Register"/>
+						</div>
+
 						<div class="checkbox" >
 							<label>
 								<input type="checkbox" data-toggle="switch" value="True" name="toggle_button"> keep me logged-in
 							</label>
-						</div>
-      					
-						<div class="form-group">
-						{% if messages %}
-							<ul class="messages">
-    						{% for message in messages %}
-    							{% if message.message == 'wc' %}
-    								<p>wrong captcha</p>
-    							{% endif %}
-    						{% endfor %}
-								</ul>
-						{% endif %}
-					</div>
-
-						<div class="form-group">
-							<div class="g-recaptcha" data-sitekey="6LdLNSETAAAAAPANCWc4cOCvtDAL3I6GYWwdI8j8"></div>
-    					
-							<input type="submit" class="btn btn-block btn-lg btn-primary" value="Register"/>
 						</div>
 
 					</form>

@@ -124,16 +124,27 @@
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
 							<li><p class="navbar-text">Already have an account?</p></li>
-							<li class="dropdown">
+							<li class= {% if messages %} {% for message in messages %}{% if message.message == 'lw' %}"dropdown open" {% else %} "dropdown" {% endif %}
+    							{% endfor %}
+							{% endif %}>
 								<a id="navbar-login" href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Login</b> <span class="caret"></span></a>
 								<ul id="login-dp" class="dropdown-menu">
 									<li>
 										<div class="row">
 											<div class="col-md-12">
 												<form class="form" role="form" method="post" action="{% url 'basics:login' %}" accept-charset="UTF-8" id="login-nav">
-                      										{% csrf_token %}
+                      								{% csrf_token %}
+													{% if messages %}
+    													{% for message in messages %}
+    														{% if message.message == 'lw' %}
+																<div class="form-group">
+																	<p id="login-error-message">Enter your email and your password correctly.</p>
+																</div>
+    														{% endif %}
+    													{% endfor %}
+													{% endif %}
 													<div class="form-group">
-														<label class="sr-only" for="InputEmail">Email address</label>
+														<label class="sr-only" for="InputEmail">Email</label>
 														<input type="text" class="form-control" name="email" placeholder="Email address" required>
 													</div>
 													<div class="form-group">
