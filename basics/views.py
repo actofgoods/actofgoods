@@ -122,7 +122,8 @@ def register(request):
 """
 def profil(request):
     if request.user.is_authenticated():
-        return render(request, 'basics/profil.html')
+        userdata=request.user.userdata
+        return render(request, 'basics/profil.html',{'Userdata':userdata})
 
     return redirect('basics:actofgoods_startpage')
 
