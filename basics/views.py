@@ -9,7 +9,6 @@ from .models import Userdata, Need, Information
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 
-
 """
     Index:
     -input: Cookies -> Informationen ob der Nutzer bereits Einlogg daten Hinterlegt hat
@@ -91,27 +90,28 @@ def register(request):
     """
     if request.method == 'POST':
         form = UserFormRegister(request.POST)
-        form2 = CaptchaForm(request.POST)
+        capForm = CaptchaForm(request.POST)
         # form.data.username = "user#" + str(User.objects.count())
 
         print(form.data)
-        if form.is_valid():
-            if form2.is_valid():
-                # print(form.cleaned_data)
-                password = request.POST.get('password',None)
-                check_password = request.POST.get('check_password',None)
-                if password == check_password:
-                    data = form.cleaned_data
-                    user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
-                    userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
-                    userdata.save()
-                    return login(request)
-            else:
-                messages.add_message(request, messages.INFO, 'wrong captcha')
+        if form.is_valid() and capForm.is_valid():
+            # print(form.cleaned_data)
+            password = request.POST.get('password',None)
+            check_password = request.POST.get('check_password',None)
+            if password == check_password:
+                data = form.cleaned_data
+                user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
+                userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
+                userdata.save()
+                return login(request)
+        elif form.is_valid() and not capForm.is_valid():
+            messages.add_message(request, messages.INFO, 'wrong captcha')
 
-        else:
+        elif not form.is_valid() and capForm.is_valid():
             messages.add_message(request, messages.INFO, 'wrong email or password')
-
+        else :
+            messages.add_message(request, messages.INFO, 'wrong email or password and wrong captcha')
+    
     return redirect('basics:actofgoods_startpage')
 
 
