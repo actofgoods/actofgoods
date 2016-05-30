@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Need, Information
+from .models import Need, Information, Userdata
 from nocaptcha_recaptcha.fields import NoReCaptchaField
 
 
@@ -28,3 +28,8 @@ class InformationFormNew(forms.ModelForm):
 
 class CaptchaForm(forms.Form):
     captcha = NoReCaptchaField()
+
+class ProfileForm(forms.Form):
+	class Meta:
+		model = Userdata
+		fields= ['pseudonym','phone',]

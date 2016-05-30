@@ -19,7 +19,8 @@
 				Notification:								<br><br>
 				</b>
 
-				<button type="button" class="btn btn-danger btn-xs">Delete my profile</button> <button type="button" class="btn btn-warning btn-xs">Edit my profile</button>
+				<a class="btn btn-warning btn-sm"href="{% url 'basics:profil_edit' %}">Edit my profile</a>
+				<a class="btn btn-danger btn-sm"href="{% url 'basics:profil_delete' %}">Delete my profile</a>
 				<br>
 				<br>
 			</div>
