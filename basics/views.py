@@ -236,8 +236,6 @@ def reset_password_page(request):
 def admin_page(request):
     return render(request, 'basics/admin_page.html')
 
-<<<<<<< HEAD
-=======
+
 def map_testing(request):
     return render(request, 'basics/map_testing.html')
->>>>>>> 85c51a6e9b0a6957c07a64b2e72050ebb48bbb30
