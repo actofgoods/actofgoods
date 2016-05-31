@@ -4,6 +4,12 @@ Postgressql siehe hier:https://www.digitalocean.com/community/tutorials/how-to-u
 Details zu datenbank stehen in settings.py
 
 
-#TODO
+#Requirements:
 
--Footer Content: [Impressum|Terms of Use| ???]
+pip install requests
+
+pip install django-nocaptcha-recaptcha
+
+If you got problems with database try:
+
+python manage.py makemigrations basics
