@@ -13,7 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
 # Create your views here.
-from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew
+from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm
 from .models import Userdata, Need, Information
 
 
@@ -350,3 +350,26 @@ def sendmail(email, content, subject):
     mail.login('actofgoods@gmail.com', 'actofgoods123')
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
     mail.close()
+
+
+
+def change_password(request):
+	user=request.user
+	if request.method=="POST":
+		form=PasswordForm(request.POST)
+		if form.is_valid():
+			oldpw=request.POST['oldpw']
+			newpw1=request.POST.get('newpw1')
+			newpw2=request.POST.get('newpw2')
+			if (authenticate(username=user.email,password=oldpw)==user) and (newpw1 == newpw2):
+				user.set_password(newpw1)
+				user.save()
+				return render(request, 'basics/profil.html', {'Userdata':user.userdata})
+				
+			else :
+				change=True
+				return render(request,'basics/change_password.html',{'change':change})
+							
+	form=PasswordForm()
+	change=False
+	return render(request,'basics/change_password.html',{'form':form,'change':change})
