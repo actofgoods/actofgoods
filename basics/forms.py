@@ -19,7 +19,7 @@ class UserFormRegister(forms.ModelForm):
 class NeedFormNew(forms.ModelForm):
 	class Meta:
 		model = Need
-		fields = ['headline','text']
+		fields = ['headline','text','categorie']
 
 class InformationFormNew(forms.ModelForm):
 	class Meta:
@@ -32,7 +32,12 @@ class CaptchaForm(forms.Form):
 class ProfileForm(forms.Form):
 	class Meta:
 		model = Userdata
-		fields= ['pseudonym','phone',]
+		fields= ['pseudonym','phone']
+
+class ProfileUserForm(forms.Form):
+    class Meta:
+        model = User
+        fields = ['last_login', 'date_joined']
 
 class ImmediateAidFormNew(forms.ModelForm):
     class Meta:
@@ -49,3 +54,5 @@ class PasswordForm(forms.Form):
 	oldpw = forms.CharField(label='oldpw', max_length=100)
 	newpw1 = forms.CharField(label='newpw1', max_length=100)
 	newpw2 = forms.CharField(label='newpw2', max_length=100)
+
+
