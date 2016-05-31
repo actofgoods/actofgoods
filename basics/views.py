@@ -1,6 +1,7 @@
 import random
 import smtplib
 import string
+import requests
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.template import loader
@@ -29,6 +30,107 @@ def actofgoods_startpage(request):
         return redirect('basics:home')
 
     return render(request, 'basics/actofgoods_startpage.html', {'registerform':registerform})
+
+def aboutus(request):
+    return render(request, 'basics/aboutus.html')
+
+def admin_page(request):
+    return render(request, 'basics/admin_page.html')
+
+def chat(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/chat.html')
+
+    return redirect('basics:actofgoods_startpage')
+
+def contact_us(request):
+    return render(request, 'basics/contact_us.html')
+
+def getLatLng(location):
+    location = location.replace(" ", "%20")
+    req = "https://maps.googleapis.com/maps/api/geocode/json?address=%s" % location #parameter
+    response = requests.get(req)
+    jsongeocode = response.json()
+    return jsongeocode['results'][0]['geometry']['location']['lat'], jsongeocode['results'][0]['geometry']['location']['lng']
+
+def help(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/help.html')
+
+    return redirect('basics:actofgoods_startpage')
+
+def home(request):
+    if request.user.is_authenticated():
+        needs = Need.objects.order_by('date')
+        return render(request, 'basics/home.html', {'needs': needs})
+
+    return redirect('basics:actofgoods_startpage')
+
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+def information_all(request):
+    if request.user.is_authenticated():
+        infos = Information.objects.order_by('date')
+        return render(request, 'basics/information_all.html',{'infos':infos})
+
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def information_new(request):
+    if request.user.is_authenticated():
+        if request.method == "POST":
+            info = InformationFormNew(request.POST)
+
+            if info.is_valid():
+                data = info.cleaned_data
+                infodata = Information(author=request.user, headline=data['headline'], text=data['text'])
+                infodata.save()
+                return redirect('basics:information_all')
+
+        info = InformationFormNew()
+
+        return render(request, 'basics/information_new.html', {'info':info})
+
+    return redirect('basics:actofgoods_startpage')
+
+def information_timeline(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/information_timeline.html')
+
+    return redirect('basics:actofgoods_startpage')
+
+def immediate_aid(request):
+    if request.method == "POST":
+        #This method is super deprecated we need to make it more secure
+        #it could lead to data sniffing and shitlot of problems;
+        #But to demonstrate our features and only to demonstrate
+        #it will send the given email his password
+        need = NeedFormNew(request.POST)
+        user = ImmediateAidFormNew(request.POST)
+        if need.is_valid() and user.is_valid():
+            print("user and need are vaid")
+            data = user.cleaned_data
+            password = id_generator(9)
+            user = User.objects.create_user(username=data['email'], password=password, email=data['email'])
+            userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
+            userdata.save()
+
+            data = need.cleaned_data
+            needdata = Need(author=user, headline=data['headline'], text=data['text'])
+            needdata.save()
+
+            #Content could also be possibly HTML! this way beautifull emails are possible
+            content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password)
+            subject = "Welcome!"
+            sendmail(user.email, content, subject)
+
+            print(password)
+
+
+            sendmail(user.email, content, subject )
+        #TODO: redirect user to the correct page
+    return render(request, 'basics/immediate_aid.html')
 
 """
     Login:
@@ -63,6 +165,85 @@ def logout(request):
     auth_logout(request)
     return HttpResponse(actofgoods_startpage(request))
     #return render(request, 'basics/actofgoods_startpage.html')
+
+def map_testing(request):
+    return render(request, 'basics/map_testing.html')
+
+def needs_all(request):
+    if request.user.is_authenticated():
+        needs = Need.objects.order_by('date')
+        return render(request, 'basics/needs_all.html',{'needs':needs})
+
+    return redirect('basics:actofgoods_startpage')
+
+# Must to change fpr render
+def needs_view_edit(request):
+    if request.user.is_authenticated:
+        return render (request, 'basics/needs_view_edit')
+
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def needs_new(request):
+    if request.user.is_authenticated():
+        if request.method == "POST":
+            need = NeedFormNew(request.POST)
+
+            if need.is_valid():
+                data = need.cleaned_data
+                needdata = Need(author=request.user, headline=data['headline'], text=data['text'])
+                needdata.save()
+                return redirect('basics:needs_all')
+
+        need = NeedFormNew()
+
+        return render(request, 'basics/needs_new.html', {'need':need})
+
+    return redirect('basics:actofgoods_startpage')
+
+def needs_timeline(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/needs_timeline.html')
+
+    return redirect('basics:actofgoods_startpage')
+
+
+def privacy(request):
+    return render(request, 'basics/privacy.html')
+
+"""
+    Profil:
+    -input: Cookies ->
+    -output: Profilpage
+"""
+def profil(request):
+    if request.user.is_authenticated():
+        userdata=request.user.userdata
+        return render(request, 'basics/profil.html',{'Userdata':userdata})
+
+    return redirect('basics:actofgoods_startpage')
+
+def profil_edit(request):
+	userdata=request.user.userdata
+	if request.method == "POST":
+		form = ProfileForm(request.POST)
+		if form.is_valid() :
+			pseudo=request.POST.get('pseudo',None)
+			phone = request.POST.get('phone',None)
+			if pseudo!= "":
+				userdata.pseudonym=pseudo
+			if phone!= "":
+				userdata.phone=phone
+			userdata.save()
+			return render(request, 'basics/profil.html', {'Userdata':userdata})
+	form = ProfileForm()
+	return render(request, 'basics/profil_edit.html', {'userdata':userdata})
+
+def profil_delete(request):
+	user=request.user
+	user.delete()
+	return actofgoods_startpage(request)
+
 """
     Register:
     -input: request(Email, Password ...)
@@ -130,147 +311,6 @@ def register(request):
 
     return redirect('basics:actofgoods_startpage')
 
-
-
-"""
-    Profil:
-    -input: Cookies ->
-    -output: Profilpage
-"""
-def profil(request):
-    if request.user.is_authenticated():
-        userdata=request.user.userdata
-        return render(request, 'basics/profil.html',{'Userdata':userdata})
-
-    return redirect('basics:actofgoods_startpage')
-
-
-def chat(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/chat.html')
-
-    return redirect('basics:actofgoods_startpage')
-
-def home(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/home.html')
-
-    return redirect('basics:actofgoods_startpage')
-
-def aboutus(request):
-    return render(request, 'basics/aboutus.html')
-
-def privacy(request):
-    return render(request, 'basics/privacy.html')
-
-def help(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/help.html')
-
-    return redirect('basics:actofgoods_startpage')
-
-def needs_all(request):
-    if request.user.is_authenticated():
-        needs = Need.objects.order_by('date')
-        return render(request, 'basics/needs_all.html',{'needs':needs})
-
-    return redirect('basics:actofgoods_startpage')
-
-# Must to change fpr render
-def needs_view_edit(request):
-    if request.user.is_authenticated:
-        return render (request, 'basics/needs_view_edit')
-
-    return redirect('basics:actofgoods_startpage')
-
-@csrf_protect
-def needs_new(request):
-    if request.user.is_authenticated():
-        if request.method == "POST":
-            need = NeedFormNew(request.POST)
-
-            if need.is_valid():
-                data = need.cleaned_data
-                needdata = Need(author=request.user, headline=data['headline'], text=data['text'])
-                needdata.save()
-                return redirect('basics:needs_all')
-
-        need = NeedFormNew()
-
-        return render(request, 'basics/needs_new.html', {'need':need})
-
-    return redirect('basics:actofgoods_startpage')
-
-def needs_timeline(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/needs_timeline.html')
-
-    return redirect('basics:actofgoods_startpage')
-
-def information_all(request):
-    if request.user.is_authenticated():
-        infos = Information.objects.order_by('date')
-        return render(request, 'basics/information_all.html',{'infos':infos})
-
-    return redirect('basics:actofgoods_startpage')
-
-@csrf_protect
-def information_new(request):
-    if request.user.is_authenticated():
-        if request.method == "POST":
-            info = InformationFormNew(request.POST)
-
-            if info.is_valid():
-                data = info.cleaned_data
-                infodata = Information(author=request.user, headline=data['headline'], text=data['text'])
-                infodata.save()
-                return redirect('basics:information_all')
-
-        info = InformationFormNew()
-
-        return render(request, 'basics/information_new.html', {'info':info})
-
-    return redirect('basics:actofgoods_startpage')
-
-def information_timeline(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/information_timeline.html')
-
-    return redirect('basics:actofgoods_startpage')
-
-def immediate_aid(request):
-    if request.method == "POST":
-        #This method is super deprecated we need to make it more secure
-        #it could lead to data sniffing and shitlot of problems;
-        #But to demonstrate our features and only to demonstrate
-        #it will send the given email his password
-        need = NeedFormNew(request.POST)
-        user = ImmediateAidFormNew(request.POST)
-        if need.is_valid() and user.is_valid():
-            print("user and need are vaid")
-            data = user.cleaned_data
-            password = id_generator(9)
-            user = User.objects.create_user(username=data['email'], password=password, email=data['email'])
-            userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
-            userdata.save()
-
-            data = need.cleaned_data
-            needdata = Need(author=user, headline=data['headline'], text=data['text'])
-            needdata.save()
-
-            #Content could also be possibly HTML! this way beautifull emails are possible
-            content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password)
-            subject = "Welcome!"
-            sendmail(user.email, content, subject)
-
-            print(password)
-
-
-            sendmail(user.email, content, subject )
-        #TODO: redirect user to the correct page
-    return render(request, 'basics/immediate_aid.html')
-
-
 def reset_password_page(request):
     #If request.method is POST, reset_password_page will
     #parse the email provided and send an email
@@ -296,6 +336,9 @@ def reset_password_page(request):
         return redirect('basics:reset_password_confirmation')
     return render(request, 'basics/password_reset.html')
 
+def reset_password_confirmation(request):
+    return render(request, 'basics/password_reset_confirmation.html')
+
 def sendmail(email, content, subject):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = subject
@@ -307,39 +350,3 @@ def sendmail(email, content, subject):
     mail.login('actofgoods@gmail.com', 'actofgoods123')
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
     mail.close()
-
-def reset_password_confirmation(request):
-    return render(request, 'basics/password_reset_confirmation.html')
-
-def admin_page(request):
-    return render(request, 'basics/admin_page.html')
-
-def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
-
-def map_testing(request):
-    return render(request, 'basics/map_testing.html')
-
-def profil_edit(request):
-	userdata=request.user.userdata
-	if request.method == "POST":
-		form = ProfileForm(request.POST)
-		if form.is_valid() :
-			pseudo=request.POST.get('pseudo',None)
-			phone = request.POST.get('phone',None)
-			if pseudo!= "":
-				userdata.pseudonym=pseudo
-			if phone!= "":
-				userdata.phone=phone
-			userdata.save()
-			return render(request, 'basics/profil.html', {'Userdata':userdata})
-	form = ProfileForm()
-	return render(request, 'basics/profil_edit.html', {'userdata':userdata})
-
-def profil_delete(request):
-	user=request.user
-	user.delete()
-	return actofgoods_startpage(request)
-
-def contact_us(request):
-    return render(request, 'basics/contact_us.html')
