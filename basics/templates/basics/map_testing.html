@@ -68,21 +68,40 @@ function placeMarker(location) {
     document.getElementById("lng").innerHTML = "Longitude: " + location.lng();
 }
 
+$(".modal-choose-location").on("shown.bs.modal", function () {
+    google.maps.event.trigger(map, "resize");
+});
+
+
 google.maps.event.addDomListener(window, 'load', initialize);
 </script>
 
-
-       <!-- Introduction Row -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Map Testing
-                    <small>First try using GoogleApi</small>
-                </h1>
-                <button onclick="getLocation()">Get My Location</button>
-                <p id="lat">Latitude: </p)<br>
-                <p id="lng">Longitude: </p)<br>
-               <div id="googleMap" style="width:500px;height:380px;"></div>
-            </div>
-        </div>
+	<button type="button" class="btn btn-info" data-toggle="modal" data-target=".modal-choose-location">choose location</button>
+		<div class="modal fade modal-choose-location"  role="dialog" aria-labelledby="choose-location" aria-hidden="true">
+			<div class="modal-dialog modal-lg">  							
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h2 class="text-center">Choose your Location</h2>
+					</div>
+					<div class="modal-body">
+				  	<!-- Introduction Row -->
+				       	<div class="row">
+				            <div class="col-lg-12">
+				                <button onclick="getLocation()">Get My Location</button>
+				                <p id="lat">Latitude: </p)<br>
+				                <p id="lng">Longitude: </p)<br>
+			               <div id="googleMap" style="width:500px;height:380px;"></div>
+			            </div>
+			        </div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
        
 {% endblock %}
