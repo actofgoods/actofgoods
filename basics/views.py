@@ -281,11 +281,10 @@ def register(request):
     """
     if request.method == 'POST':
         form = UserFormRegister(request.POST)
-        capForm = CaptchaForm(request.POST)
         # form.data.username = "user#" + str(User.objects.count())
 
         #print(form.data)
-        if form.is_valid() and capForm.is_valid():
+        if form.is_valid():
             # print(form.cleaned_data)
             password = request.POST.get('password',None)
             check_password = request.POST.get('check_password',None)
@@ -300,14 +299,10 @@ def register(request):
                 return login(request)
             else:
                 messages.add_message(request, messages.INFO, 'wp')
-        elif form.is_valid() and not capForm.is_valid():
-            messages.add_message(request, messages.INFO, 'wc')
-
-        elif not form.is_valid() and capForm.is_valid():
+        
+        elif not form.is_valid():
             messages.add_message(request, messages.INFO, 'eae')
 
-        elif not form.is_valid() and not capForm.is_valid():
-            messages.add_message(request, messages.INFO, 'aw')
 
     return redirect('basics:actofgoods_startpage')
 
@@ -316,24 +311,29 @@ def reset_password_page(request):
     #parse the email provided and send an email
     #Else the reset_password_page.html is shown
     if request.method == "POST":
+        capForm = CaptchaForm(request.POST)
         #This method is super deprecated we need to make it more secure
         #it could lead to data sniffing and shitlot of problems;
         #But to demonstrate our features and only to demonstrate
         #it will send the given email his password
         if 'email' in request.POST:
-            email = request.POST['email']
-            user = User.objects.get(email = email)
-            if user is not None:
-                new_password = id_generator(9)
-                user.set_password(new_password)
-                user.save()
-                print(new_password)
-                #Content could also be possibly HTML! this way beautifull emails are possible
+            if capForm.is_valid():
+                email = request.POST['email']
+                user = User.objects.get(email = email)
+                if user is not None:
+                    new_password = id_generator(9)
+                    user.set_password(new_password)
+                    user.save()
+                    print(new_password)
+                    #Content could also be possibly HTML! this way beautifull emails are possible
 
-                content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
-                subject = "Reset Password - Act Of Goods"
-                sendmail(email, content, subject )
-        return redirect('basics:reset_password_confirmation')
+                    content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
+                    subject = "Reset Password - Act Of Goods"
+                    sendmail(email, content, subject )
+                    return redirect('basics:reset_password_confirmation')
+            elif not capForm.is_valid():
+                messages.add_message(request, messages.INFO, 'wc')
+        
     return render(request, 'basics/password_reset.html')
 
 def reset_password_confirmation(request):

@@ -2,9 +2,6 @@
 
 {% block content %}
 
-<head>
-     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-</head>
   
 <div class="container-fluid" id="wrapper">
 	<div class="row">
@@ -50,13 +47,8 @@
 					
 						{% if messages %}
     						{% for message in messages %}
-    							{% if message.message == 'aw' %}
-									<div class="form-group">
-										<div class="error-messages">																
-    										<p>Enter your email correctly, enter identical passwords and solve the reCAPTCHA.</p>
-										</div>
-									</div>
-								{% elif message.message == 'eae' %}
+    							
+								{% if message.message == 'eae' %}
 									<div class="form-group">
 										<div class="error-messages">																
     										<p>Email already exists! If you forgot your password use the <a href="{% url 'basics:reset_password_page' %}">reset password funtion</a>.</p>
@@ -334,22 +326,6 @@
 						</select>
 						</div>
       					
-						{% if messages %}
-    						{% for message in messages %}
-    							{% if message.message == 'wc' %}
-									<div class="form-group">
-										<div class="error-messages">
-    										<p>Proof that you are not a robot by solving the reCAPTCHA.</p>
-									</div>
-								</div>
-    							{% endif %}
-    						{% endfor %}
-						{% endif %}
-
-						<div class="form-group">
-							<div class="g-recaptcha" data-sitekey="6LdLNSETAAAAAPANCWc4cOCvtDAL3I6GYWwdI8j8"></div>
-    					</div>
-
 						<div class="form-group">
 							<p id="terms-of-use-privacy-polices">By clicking on "Register" you accept the <a href="#" data-toggle="modal" data-target=".modal-terms-of-use">Terms of Use</a> and the <a href="#" data-toggle="modal" data-target=".modal-privacy-polices">Privacy Polices</a>!</p>
 						</div>
