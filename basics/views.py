@@ -244,24 +244,30 @@ def immediate_aid(request):
         #it could lead to data sniffing and shitlot of problems;
         #But to demonstrate our features and only to demonstrate
         #it will send the given email his password
-        if 'email' in request.POST:
-            need = NeedFormNew(request.POST)
-            user = ImmediateAidFormNew(request.POST)
-            if need.is_valid() and user.is_valid():
-                data = user.cleaned_data
-                password = id_generator(9)
-                user = User.objects.create_user(username=data['email'], password=password, email=data['email'])
-                userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
-                userdata.save()
-                #Content could also be possibly HTML! this way beautifull emails are possible
-                content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password)
-                subject = "Welcome!"
-                sendmail(user.email, content, subject)
+        need = NeedFormNew(request.POST)
+        user = ImmediateAidFormNew(request.POST)
+        if need.is_valid() and user.is_valid():
+            print("user and need are vaid")
+            data = user.cleaned_data
+            password = id_generator(9)
+            user = User.objects.create_user(username=data['email'], password=password, email=data['email'])
+            userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
+            userdata.save()
 
-                print(password)
+            data = need.cleaned_data
+            needdata = Need(author=user, headline=data['headline'], text=data['text'])
+            needdata.save()
+
+            #Content could also be possibly HTML! this way beautifull emails are possible
+            content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password)
+            subject = "Welcome!"
+            sendmail(user.email, content, subject)
+
+            print(password)
 
 
-                sendmail(email, content, subject )
+            sendmail(user.email, content, subject )
+        #TODO: redirect user to the correct page
     return render(request, 'basics/immediate_aid.html')
 
 
