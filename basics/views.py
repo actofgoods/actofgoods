@@ -14,7 +14,7 @@ from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
 # Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm
-from .models import Userdata, Need, Information
+from .models import Userdata, Need, Information, Group, CategoriesNeeds
 
 
 
@@ -191,13 +191,11 @@ def needs_new(request):
 
             if need.is_valid():
                 data = need.cleaned_data
-                needdata = Need(author=request.user, headline=data['headline'], text=data['text'])
+                needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'])
                 needdata.save()
                 return redirect('basics:needs_all')
-
         need = NeedFormNew()
-
-        return render(request, 'basics/needs_new.html', {'need':need})
+        return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
     return redirect('basics:actofgoods_startpage')
 

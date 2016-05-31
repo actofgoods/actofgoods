@@ -33,8 +33,8 @@ class Groupdata(models.Model):
 	adresse = models.CharField(max_length=254)
 
 class Need(models.Model):
-	author = models.ForeignKey(User, on_delete=models.CASCADE)
-	group = models.ForeignKey(Group, on_delete=models.CASCADE)
+	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
 	headline = models.CharField(max_length=30, default='')
 	text = models.TextField(default='')
 	closed = models.BooleanField(default=False)
@@ -42,8 +42,8 @@ class Need(models.Model):
 	categorie = models.ForeignKey(CategoriesNeeds)
 
 class Information(models.Model):
-	author = models.ForeignKey(User, on_delete=models.CASCADE)
-	group = models.ForeignKey(Group, on_delete=models.CASCADE)
+	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
 	headline = models.CharField(max_length=30, default='')
 	text = models.TextField(default='')
 	closed = models.BooleanField(default=False)
