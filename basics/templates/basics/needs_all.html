@@ -36,11 +36,10 @@
         Category <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
-        <li><a href="#">Water</a></li>
-        <li><a href="#">Energy</a></li>
-        <li><a href="#">Pokemon</a></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="#">Separated link</a></li>
+        <li><a href="{% url 'basics:needs_all' %}">All</a></li>
+        {%for c in categorie%}
+          <li><a href="#">{{c.name}}</a></li>
+        {%endfor%}
       </ul>
     </div>
     <div class="btn-group pull-right">

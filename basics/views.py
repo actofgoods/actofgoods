@@ -172,7 +172,7 @@ def map_testing(request):
 def needs_all(request):
     if request.user.is_authenticated():
         needs = Need.objects.order_by('date')
-        return render(request, 'basics/needs_all.html',{'needs':needs})
+        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all})
 
     return redirect('basics:actofgoods_startpage')
 
