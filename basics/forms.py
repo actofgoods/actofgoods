@@ -44,3 +44,8 @@ class ImmediateAidFormNew(forms.ModelForm):
         if email and User.objects.filter(email=email).count():
             raise forms.ValidationError(u'Email addresses must be unique.')
         return email
+
+class PasswordForm(forms.Form):
+	oldpw = forms.CharField(label='oldpw', max_length=100)
+	newpw1 = forms.CharField(label='newpw1', max_length=100)
+	newpw2 = forms.CharField(label='newpw2', max_length=100)
