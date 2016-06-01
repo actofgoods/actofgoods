@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{% static 'basics/css/event-list.css' %}">
     <link rel="stylesheet" href="{% static 'basics/css/navbar_footer.css' %}">
 	<link rel="stylesheet" href="{% static 'basics/css/startpage.css' %}">
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 	<style>
 		* {
 	    		margin: 0;
@@ -90,7 +91,9 @@
 
 						<ul class="nav navbar-nav navbar-right">
 							<li {% if "/help/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:help'%}"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Help</a></li>
+							{% if not user.is_superuser %}
 							<li {% if "/profil/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Profil</a></li>
+							{% endif %}
 							<li><a href="{% url 'basics:logout' %}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout</a></li>
 						</ul>
 					</div><!-- /.navbar-collapse -->
@@ -175,7 +178,7 @@
 
 		<div class="container" id="content">
 		{% block content %}
-    		{% endblock %}
+    	{% endblock %}
 		</div>
 
 		<div id="footer">

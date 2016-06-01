@@ -2,14 +2,33 @@
 
 {% block content %}
 <!-- Introduction Row -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">create new Information or Question</h1>
-                <form class="informationform" role="form" method="post">
-                	{%csrf_token%}
-                	{{info}}
-                	<input type="submit" value="Submit" />
-            	</form>
-            </div>
-        </div>
+	<div class="modal-dialog" id="sign-up">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="text-center">create new Information or Question</h1>
+			</div>
+			<div class="modal-body">
+				<form class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav">
+					{%csrf_token%}
+					<p style="font-size:160%;"> description <p\>
+						<div class="form-group">
+							<input type="description" class="form-control input-lg" placeholder="headline" name="headline"  rows="4"></textarea>
+						</div>
+					<div class="form-group">
+						<textarea type="description" class="form-control input-lg" placeholder="description" name="text"  rows="4"></textarea>
+					</div>
+					<p style="font-size:160%;"> location <p\>
+					<div class="checkbox" >
+							<label>
+								<input type="checkbox" data-toggle="switch" value="True" name="toggle_button"> use my current location
+							</label>
+					</div>
+
+					<div class="form-group">
+						<input type="submit" class="btn btn-block btn-lg btn-primary" value="Create & Send"/>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 {% endblock %}

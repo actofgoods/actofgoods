@@ -13,8 +13,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
 # Create your views here.
-from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew
-from .models import Userdata, Need, Information
+from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm
+from .models import Userdata, Need, Information, Group, CategoriesNeeds
 
 
 
@@ -172,7 +172,7 @@ def map_testing(request):
 def needs_all(request):
     if request.user.is_authenticated():
         needs = Need.objects.order_by('date')
-        return render(request, 'basics/needs_all.html',{'needs':needs})
+        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -191,13 +191,11 @@ def needs_new(request):
 
             if need.is_valid():
                 data = need.cleaned_data
-                needdata = Need(author=request.user, headline=data['headline'], text=data['text'])
+                needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'])
                 needdata.save()
                 return redirect('basics:needs_all')
-
         need = NeedFormNew()
-
-        return render(request, 'basics/needs_new.html', {'need':need})
+        return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -281,11 +279,10 @@ def register(request):
     """
     if request.method == 'POST':
         form = UserFormRegister(request.POST)
-        capForm = CaptchaForm(request.POST)
         # form.data.username = "user#" + str(User.objects.count())
 
         #print(form.data)
-        if form.is_valid() and capForm.is_valid():
+        if form.is_valid():
             # print(form.cleaned_data)
             password = request.POST.get('password',None)
             check_password = request.POST.get('check_password',None)
@@ -300,14 +297,10 @@ def register(request):
                 return login(request)
             else:
                 messages.add_message(request, messages.INFO, 'wp')
-        elif form.is_valid() and not capForm.is_valid():
-            messages.add_message(request, messages.INFO, 'wc')
-
-        elif not form.is_valid() and capForm.is_valid():
+        
+        elif not form.is_valid():
             messages.add_message(request, messages.INFO, 'eae')
 
-        elif not form.is_valid() and not capForm.is_valid():
-            messages.add_message(request, messages.INFO, 'aw')
 
     return redirect('basics:actofgoods_startpage')
 
@@ -316,24 +309,29 @@ def reset_password_page(request):
     #parse the email provided and send an email
     #Else the reset_password_page.html is shown
     if request.method == "POST":
+        capForm = CaptchaForm(request.POST)
         #This method is super deprecated we need to make it more secure
         #it could lead to data sniffing and shitlot of problems;
         #But to demonstrate our features and only to demonstrate
         #it will send the given email his password
         if 'email' in request.POST:
-            email = request.POST['email']
-            user = User.objects.get(email = email)
-            if user is not None:
-                new_password = id_generator(9)
-                user.set_password(new_password)
-                user.save()
-                print(new_password)
-                #Content could also be possibly HTML! this way beautifull emails are possible
+            if capForm.is_valid():
+                email = request.POST['email']
+                user = User.objects.get(email = email)
+                if user is not None:
+                    new_password = id_generator(9)
+                    user.set_password(new_password)
+                    user.save()
+                    print(new_password)
+                    #Content could also be possibly HTML! this way beautifull emails are possible
 
-                content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
-                subject = "Reset Password - Act Of Goods"
-                sendmail(email, content, subject )
-        return redirect('basics:reset_password_confirmation')
+                    content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
+                    subject = "Reset Password - Act Of Goods"
+                    sendmail(email, content, subject )
+                    return redirect('basics:reset_password_confirmation')
+            elif not capForm.is_valid():
+                messages.add_message(request, messages.INFO, 'wc')
+        
     return render(request, 'basics/password_reset.html')
 
 def reset_password_confirmation(request):
@@ -350,3 +348,26 @@ def sendmail(email, content, subject):
     mail.login('actofgoods@gmail.com', 'actofgoods123')
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
     mail.close()
+
+
+
+def change_password(request):
+	user=request.user
+	if request.method=="POST":
+		form=PasswordForm(request.POST)
+		if form.is_valid():
+			oldpw=request.POST['oldpw']
+			newpw1=request.POST.get('newpw1')
+			newpw2=request.POST.get('newpw2')
+			if (authenticate(username=user.email,password=oldpw)==user) and (newpw1 == newpw2):
+				user.set_password(newpw1)
+				user.save()
+				return render(request, 'basics/profil.html', {'Userdata':user.userdata})
+				
+			else :
+				change=True
+				return render(request,'basics/change_password.html',{'change':change})
+							
+	form=PasswordForm()
+	change=False
+	return render(request,'basics/change_password.html',{'form':form,'change':change})
