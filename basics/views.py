@@ -25,11 +25,10 @@ from .models import Userdata, Need, Information, Group, CategoriesNeeds, Categor
 """
 def actofgoods_startpage(request):
     registerform = UserFormRegister()
-
+    needs = Need.objects.all()
     if request.user.is_authenticated():
         return redirect('basics:home')
-
-    return render(request, 'basics/actofgoods_startpage.html', {'registerform':registerform})
+    return render(request, 'basics/actofgoods_startpage.html', {'counter':len(needs),'registerform':registerform})
 
 def aboutus(request):
     return render(request, 'basics/aboutus.html')
