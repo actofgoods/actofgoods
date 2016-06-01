@@ -68,8 +68,12 @@ class Report(models.Model):
 	Comment = models.ForeignKey(Comment)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-
-
+class Address(models.Model):
+	street = models.TextField(default='')
+	city = models.TextField(default='')
+	state = models.TextField(default='')
+	postcode = models.TextField(default='')
+	country = models.TextField(default='')
 
 
 
