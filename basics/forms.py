@@ -19,7 +19,7 @@ class UserFormRegister(forms.ModelForm):
 class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
-        fields = ['street','city','state','postcode']
+        fields = ['street','city','state','postcode','country']
 
 class NeedFormNew(forms.ModelForm):
 	class Meta:

@@ -73,7 +73,7 @@ class Address(models.Model):
 	city = models.TextField(default='')
 	state = models.TextField(default='')
 	postcode = models.TextField(default='')
-
+	country = models.TextField(default='')
 
 
 
