@@ -18,10 +18,7 @@
 		color: #4C4E49;
 	}	
 
-	#location-form {
-		margin-top: 15px;
-		margin-bottom: 15px;
-	}
+	
 
 	.modal-header > h2 {
 		color: #bbd153;
@@ -32,20 +29,83 @@
 		color: #70962c;
 	}
 
+	@media(max-width:768px) {
+
+		#postcode {
+			margin-top: 15px;
+		}
+
+	}
+
 </style>
 </head>
 
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#location-map-modal">Choose location</button>
 <!-- Modal -->
-  <div class="modal fade" id="location-map-modal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h2 class="text-center">Choose your Location via</h2>
-        </div>
-        <div class="modal-body">
-			<ul class="nav nav-tabs">
+<div class="modal fade" id="location-map-modal">
+   	<div class="modal-dialog modal-lg">
+   		<div class="modal-content">
+       		<div class="modal-header">
+       			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+       			<h2 class="text-center">Choose your Location</h2>
+      		</div>
+       		<div class="modal-body">
+
+				<div class="form-group" id="location-form">
+					<p id="option"><b>1. Option: </b>The easiest way to get your location is to use the autolocation function.<button type="button" class="btn btn-primary" style="margin-left: 15px; margin-right: 15px" onclick="getLocation()">Get my Location</button></p>
+				</div>			
+				<div class="form-group" id="location-form">
+					<p id="option"><b>2. Option: </b>Insert your Address.</p>
+					<div class="row" style="margin: 0px">
+					 	<form class="form-horizontal" role="form">
+
+       						<!-- Text input-->
+       						<div class="form-group" id="location-form">
+           						<label class="col-sm-2 control-label" for="textinput">Str. Addr.</label>
+           							<div class="col-sm-9">
+          	 						<input type="text" placeholder="Street Address" class="form-control">
+       							</div>
+       						</div>
+
+							<!-- Text input-->
+							<div class="form-group" id="location-form">
+								<label class="col-sm-2 control-label" for="textinput">City</label>
+								<div class="col-sm-9">
+									<input type="text" placeholder="City" class="form-control">
+								</div>
+							</div>
+
+       						<!-- Text input-->
+       						<div class="form-group" id="location-form">
+           						<label class="col-sm-2 control-label" for="textinput">State</label>
+           						<div class="col-sm-4">
+           							<input type="text" placeholder="State/Province/Region" class="form-control">
+           						</div>
+           						<label class="col-sm-2 control-label" for="textinput" id="postcode">Postcode</label>
+           						<div class="col-sm-3">
+									<input type="text" placeholder="Post Code" class="form-control">
+           						</div>
+       						</div>
+
+       						<!-- Text input-->
+       						<div class="form-group" id="location-form">
+           						<label class="col-sm-2 control-label" for="textinput">Country</label>
+           							<div class="col-sm-9">
+           								<input type="text" placeholder="Country" class="form-control">
+           							</div>
+       							</div>
+							</div>
+
+						</form>
+					</div>			
+					<div class="form-group" id="location-form">
+						<p id="option"><b>3. Option: </b>Click the map at your disired location.</p>
+						<div id="map-container"></div>
+					</div>
+				</div>
+				
+       		
+<!--			<ul class="nav nav-tabs">
   				<li role="presentation" class="active"><a href="#autolocation-map" aria-controls="autolocation-map" role="tab" data-toggle="tab">Autolocation or Map</a></li>
   				<li role="presentation"><a href="#address" aria-controls="address" role="tab" data-toggle="tab">Address</a></li>
 			</ul>
@@ -55,8 +115,6 @@
 						<div class="form-group" id="location-form">
 							The easiest way to get your location is to use the autolocation function. <button type="button" class="btn btn-primary" style="margin-left: 15px; margin-right: 15px" onclick="getLocation()">Get my Location</button> <br> Or click the map at your disired location.
 						</div>						
-<!--						<p id="lat">Latitude: </p)</br>
-						<p id="lng">Longitude: </p)</br>-->
 						<div class="form-group" id="location-form">
 							<div id="map-container"></div>
 						</div>
@@ -67,50 +125,34 @@
 						<div class="row" style="margin: 0px">
 						 <form class="form-horizontal" role="form">
 
-
-          					<!-- Text input-->
           					<div class="form-group" id="location-form">
-            					<label class="col-sm-2 control-label" for="textinput">Line 1</label>
-            					<div class="col-sm-10">
-              						<input type="text" placeholder="Address Line 1" class="form-control">
-            					</div>
-          					</div>
-
-          					<!-- Text input-->
-          					<div class="form-group" id="location-form">
-            					<label class="col-sm-2 control-label" for="textinput">Line 2</label>
-            						<div class="col-sm-10">
-             	 					<input type="text" placeholder="Address Line 2" class="form-control">
+            					<label class="col-sm-2 control-label" for="textinput">Str. Addr.</label>
+            						<div class="col-sm-9">
+             	 					<input type="text" placeholder="Street Address" class="form-control">
            						</div>
           					</div>
 
-          <!-- Text input-->
-          <div class="form-group" id="location-form">
-            <label class="col-sm-2 control-label" for="textinput">City</label>
-            <div class="col-sm-10">
-              <input type="text" placeholder="City" class="form-control">
-            </div>
-          </div>
+							<div class="form-group" id="location-form">
+								<label class="col-sm-2 control-label" for="textinput">City</label>
+								<div class="col-sm-9">
+									<input type="text" placeholder="City" class="form-control">
+								</div>
+							</div>
 
-          <!-- Text input-->
-          <div class="form-group" id="location-form">
-            <label class="col-sm-2 control-label" for="textinput">State</label>
-            <div class="col-sm-4">
-              <input type="text" placeholder="State" class="form-control">
-            </div>
+          					<div class="form-group" id="location-form">
+            					<label class="col-sm-2 control-label" for="textinput">State</label>
+            					<div class="col-sm-4">
+              						<input type="text" placeholder="State/Province/Region" class="form-control">
+            					</div>
+            					<label class="col-sm-2 control-label" for="textinput" id="postcode">Postcode</label>
+            					<div class="col-sm-3">
+									<input type="text" placeholder="Post Code" class="form-control">
+            					</div>
+          					</div>
 
-            <label class="col-sm-2 control-label" for="textinput">Postcode</label>
-            <div class="col-sm-4">
-              <input type="text" placeholder="Post Code" class="form-control">
-            </div>
-          </div>
-
-
-
-          					<!-- Text input-->
           					<div class="form-group" id="location-form">
             					<label class="col-sm-2 control-label" for="textinput">Country</label>
-            						<div class="col-sm-10">
+            						<div class="col-sm-9">
              							<input type="text" placeholder="Country" class="form-control">
             						</div>
           						</div>
@@ -120,15 +162,16 @@
 						</form>
 						</div>
 					</div>
-        		</div>
-        <div class="modal-footer">
-			<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-          	<button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-</div><!-- /container -->
+        		</div>-->
+
+	        	<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+	          		<button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+	        	</div>
+	      	</div><!-- /.modal-content -->
+	    </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+</div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -201,11 +244,11 @@
 	            infowindow = new google.maps.InfoWindow({content: results[1].formatted_address});
 	            infowindow.open(map,marker);
 	        })
-	       	map.setZoom(5);
+	       	map.setZoom(6);
 	    }
 		map.setCenter(marker.getPosition());   
-	    document.getElementById("lat").innerHTML = "Latitude: " + location.lat();
-	    document.getElementById("lng").innerHTML = "Longitude: " + location.lng();
+//	    document.getElementById("lat").innerHTML = "Latitude: " + location.lat();
+//	    document.getElementById("lng").innerHTML = "Longitude: " + location.lng();
 	}
 
 	google.maps.event.addDomListener(window, 'load', initialize);

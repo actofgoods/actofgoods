@@ -207,7 +207,7 @@ def needs_timeline(request):
 
 
 def privacy(request):
-    return render(request, 'basics/privacy.html')
+	return render(request, 'basics/privacy.html')
 
 """
     Profil:
