@@ -201,8 +201,8 @@
 	            infowindow = new google.maps.InfoWindow({content: results[1].formatted_address});
 	            infowindow.open(map,marker);
 	        })
+	       	map.setZoom(5);
 	    }
-	    map.setZoom(5);
 		map.setCenter(marker.getPosition());   
 	    document.getElementById("lat").innerHTML = "Latitude: " + location.lat();
 	    document.getElementById("lng").innerHTML = "Longitude: " + location.lng();
