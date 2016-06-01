@@ -14,7 +14,7 @@ from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
 # Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm
-from .models import Userdata, Need, Information, Group, CategoriesNeeds
+from .models import Userdata, Need, Information, Group, CategoriesNeeds, CategoriesRep, CategoriesInf
 
 
 
@@ -218,7 +218,6 @@ def profil(request):
     if request.user.is_authenticated():
         userdata=request.user.userdata
         return render(request, 'basics/profil.html',{'Userdata':userdata})
-
     return redirect('basics:actofgoods_startpage')
 
 def profil_edit(request):
