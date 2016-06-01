@@ -1,10 +1,9 @@
-{% extends 'basics/base.html' %}
-{% block content %}
+
 <head>
 <style>
-  
-	#map-container { 
-		height: 450px; 
+
+	#map-container {
+		height: 450px;
 	}
 
 	button, .btn-primary, .btn-primary:focus {
@@ -12,19 +11,19 @@
   		border-color: #70962c;
   		color: #4C4E49;
 	}
-	
+
 	.btn-primary:hover, .btn-primary:active:focus {
 		background-color: #96B440;
 		color: #4C4E49;
-	}	
+	}
 
-	
+
 
 	.modal-header > h2 {
 		color: #bbd153;
 		font-weight: bold;
 	}
-	
+
 	.nav-tabs > li > a, .nav-tabs > li > a:hover, .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
 		color: #70962c;
 	}
@@ -53,7 +52,7 @@
 
 				<div class="form-group" id="location-form">
 					<p id="option"><b>1. Option: </b>The easiest way to get your location is to use the autolocation function.<button type="button" class="btn btn-primary" style="margin-left: 15px; margin-right: 15px" onclick="getLocation()">Get my Location</button></p>
-				</div>			
+				</div>
 				<div class="form-group" id="location-form">
 					<p id="option"><b>2. Option: </b>Insert your Address.</p>
 					<div class="row" style="margin: 0px">
@@ -340,7 +339,7 @@
 							</div>
 
 						</form>
-					</div>			
+					</div>
 					<div class="form-group" id="location-form">
 						<p id="option"><b>3. Option: </b>Click the map at your disired location.</p>
 						<div id="map-container"></div>
@@ -395,7 +394,7 @@
 	function getLocation() {
     	if (navigator.geolocation) {
     	    navigator.geolocation.getCurrentPosition(showPosition);
-    	} else { 
+    	} else {
     	    x.innerHTML = "Geolocation is not supported";
     	    y.innerHTML = "by this browser.";
     	}
@@ -416,8 +415,8 @@
 	        geocoder.geocode({'location': location}, function(results, status){
 	            infowindow.setContent(results[1].formatted_address);
 	            infowindow.open(map,marker);
-	        })   
-	    } 
+	        })
+	    }
 	    else{
 	        marker = new google.maps.Marker({
 	        position: location,
@@ -429,13 +428,13 @@
 	        })
 	       	map.setZoom(6);
 	    }
-		map.setCenter(marker.getPosition());   
+		map.setCenter(marker.getPosition());
 //	    document.getElementById("lat").innerHTML = "Latitude: " + location.lat();
 //	    document.getElementById("lng").innerHTML = "Longitude: " + location.lng();
 	}
 
 	google.maps.event.addDomListener(window, 'load', initialize);
-      
+
     //start of modal google map
     $('#location-map-modal').on('shown.bs.modal', function () {
     	google.maps.event.trigger(map, "resize");
@@ -443,6 +442,3 @@
     });
 
 </script>
-
-       
-{% endblock %}

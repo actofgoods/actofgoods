@@ -2,10 +2,10 @@
 
 {% block content %}
 
-  
+
 <div class="container-fluid" id="wrapper">
 	<div class="row">
-	
+
 		<!-- description counter and immediat aid button -->
 		<div class="col-sm-7 col-sm-push-5">
 			<div id="description-counter-immediate-aid">
@@ -13,7 +13,7 @@
 				<p>is a website to connect people or organizations that need help with people or organizations who offer help in situations like extraordinary emergency or natural disasters. If you are a private person and want to join us sign up right now! If you have an organization and want to join us, <a href="{% url 'basics:contact_us' %}">contact us</a>.</p>
 				<p>Number of people who are looking for help:</p>
 				<div id="counter-container">
-					<div id="counter-inner">			
+					<div id="counter-inner">
 						<div id="counter">
 							{{counter}}	<!-- TODO hier noch die richtige anzahl einfuegen -->
 						</div>
@@ -29,7 +29,7 @@
 								<a class="btn btn-default immediate-aid-button" type="button" href="{% url 'basics:immediate_aid' %}">
 									<div>Immediate<br />Aid</div>
 								</a>
-    		    			</div>   
+    		    			</div>
 						</div>
 					</div>
 				</div>
@@ -44,13 +44,13 @@
 				<div class="modal-body">
 					<form class="form" role="form" method="post" action="{% url 'basics:register' %}" accept-charset="UTF-8" id="login-nav">
 					{% csrf_token %}
-					
+
 						{% if messages %}
     						{% for message in messages %}
-    							
+
 								{% if message.message == 'eae' %}
 									<div class="form-group">
-										<div class="error-messages">																
+										<div class="error-messages">
     										<p>Email already exists! If you forgot your password use the <a href="{% url 'basics:reset_password_page' %}">reset password funtion</a>.</p>
 										</div>
 									</div>
@@ -325,12 +325,12 @@
 							<option value="Zimbabwe">Zimbabwe</option>
 						</select>
 						</div>
-      					
+
 						<div class="form-group">
 							<p id="terms-of-use-privacy-polices">By clicking on "Register" you accept the <a href="#" data-toggle="modal" data-target=".modal-terms-of-use">Terms of Use</a> and the <a href="#" data-toggle="modal" data-target=".modal-privacy-polices">Privacy Polices</a>!</p>
 						</div>
 						<div class="modal fade modal-terms-of-use"  role="dialog" aria-labelledby="terms-of-use" aria-hidden="true">
-							<div class="modal-dialog modal-lg">  							
+							<div class="modal-dialog modal-lg">
 								<div class="modal-content">
     								<div class="modal-header">
 										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -350,7 +350,7 @@
 							</div>
 						</div>
 						<div class="modal fade modal-privacy-polices"  role="dialog" aria-labelledby="private-polices" aria-hidden="true">
-							<div class="modal-dialog modal-lg">  							
+							<div class="modal-dialog modal-lg">
 								<div class="modal-content">
     								<div class="modal-header">
 										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -381,7 +381,7 @@
 
 					</form>
 				</div>
-	
+        
 			</div>
 		</div>
 	</div>
