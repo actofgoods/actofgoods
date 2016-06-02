@@ -17,12 +17,10 @@
 					<div class="form-group">
 						<textarea type="description" class="form-control input-lg" placeholder="description" name="text"  rows="4"></textarea>
 					</div>
-					<p style="font-size:160%;"> location <p\>
-					<div class="checkbox" >
-							<label>
-								<input type="checkbox" data-toggle="switch" value="True" name="toggle_button"> use my current location
-							</label>
-					</div>
+					<div class="form-group">
+             				<p id="choose-location-text">If this information is not for your standard location from your profile choose an other one.
+      					{% include "basics/map_testing.html" %}</p>
+					</div>	
 
 					<div class="form-group">
 						<input type="submit" class="btn btn-block btn-lg btn-primary" value="Create & Send"/>
