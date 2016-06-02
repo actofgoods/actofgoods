@@ -220,12 +220,17 @@ def profil(request):
     return redirect('basics:actofgoods_startpage')
 
 def profil_edit(request):
+	user=request.user
 	userdata=request.user.userdata
 	if request.method == "POST":
 		form = ProfileForm(request.POST)
 		if form.is_valid() :
+			email= request.POST.get('email')
 			pseudo=request.POST.get('pseudo',None)
 			phone = request.POST.get('phone',None)
+			if email!="":
+				user.email=email
+				user.save()
 			if pseudo!= "":
 				userdata.pseudonym=pseudo
 			if phone!= "":
