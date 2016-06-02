@@ -36,6 +36,27 @@ def aboutus(request):
 def admin_page(request):
     return render(request, 'basics/admin_page.html')
 
+def change_password(request):
+	user=request.user
+	if request.method=="POST":
+		form=PasswordForm(request.POST)
+		if form.is_valid():
+			oldpw=request.POST['oldpw']
+			newpw1=request.POST.get('newpw1')
+			newpw2=request.POST.get('newpw2')
+			if (authenticate(username=user.email,password=oldpw)==user) and (newpw1 == newpw2):
+				user.set_password(newpw1)
+				user.save()
+				return render(request, 'basics/profil.html', {'Userdata':user.userdata})
+
+			else :
+				change=True
+				return render(request,'basics/change_password.html',{'change':change})
+
+	form=PasswordForm()
+	change=False
+	return render(request,'basics/change_password.html',{'form':form,'change':change})
+
 def chat(request):
     if request.user.is_authenticated():
         return render(request, 'basics/chat.html')
@@ -210,7 +231,7 @@ def privacy(request):
 
 """
     Profil:
-    -input: Cookies ->
+    -input: request (user)
     -output: Profilpage
 """
 def profil(request):
@@ -219,26 +240,36 @@ def profil(request):
         return render(request, 'basics/profil.html',{'Userdata':userdata})
     return redirect('basics:actofgoods_startpage')
 
+"""
+    Input: request (user, email, pseudonym, phonenumber)
+
+    If user is not authenticated redirect to startpage.
+    Else this method will check if user the given data is valid.
+    if not it will render the profil_edit page again
+    otherwise the profil will be changed.
+"""
 def profil_edit(request):
-	user=request.user
-	userdata=request.user.userdata
-	if request.method == "POST":
-		form = ProfileForm(request.POST)
-		if form.is_valid() :
-			email= request.POST.get('email')
-			pseudo=request.POST.get('pseudo',None)
-			phone = request.POST.get('phone',None)
-			if email!="":
-				user.email=email
-				user.save()
-			if pseudo!= "":
-				userdata.pseudonym=pseudo
-			if phone!= "":
-				userdata.phone=phone
-			userdata.save()
-			return render(request, 'basics/profil.html', {'Userdata':userdata})
-	form = ProfileForm()
-	return render(request, 'basics/profil_edit.html', {'userdata':userdata})
+    if request.user.is_authenticated():
+    	user=request.user
+    	userdata=request.user.userdata
+    	if request.method == "POST":
+    		form = ProfileForm(request.POST)
+    		if form.is_valid() :
+    			email= request.POST.get('email')
+    			pseudo=request.POST.get('pseudo',None)
+    			phone = request.POST.get('phone',None)
+    			if email!="":
+    				user.email=email
+    				user.save()
+    			if pseudo!= "":
+    				userdata.pseudonym=pseudo
+    			if phone!= "":
+    				userdata.phone=phone
+    			userdata.save()
+    			return render(request, 'basics/profil.html', {'Userdata':userdata})
+    	form = ProfileForm()
+    	return render(request, 'basics/profil_edit.html', {'userdata':userdata})
+    return redirect('basics:actofgoods_startpage')
 
 def profil_delete(request):
 	user=request.user
@@ -247,39 +278,11 @@ def profil_delete(request):
 
 """
     Register:
-    -input: request(Email, Password ...)
+    -input: request(email, password, check_password)
     -output: Main- or Indexpage
 """
 @csrf_protect
 def register(request):
-    """
-    email_value = ""
-    password_value = ""
-    toggle_button = False;
-
-        TODO: Get Email/Password and ToggleButton from request.POST['key']
-
-        if request.POST['toggle_button'] = "true"
-            toggle_button = true
-
-    if 'email' in request.POST and 'password' in request.POST:
-        email_value = request.POST['email']
-        password_value = request.POST['password']
-        if request.POST['toggle_button'] == "True":
-            toggle_button = True;
-
-        user = Users(email=email_value, password="password")
-        #   TODO: Add new User Model to Database
-        user.save()
-        #   TODO: Send User Mail
-
-        return redirect('basics:login')
-
-
-    #   TODO: if something wents wrong:
-    return redirect('basics:index')
-
-    """
     if request.method == 'POST':
         form = UserFormRegister(request.POST)
         # form.data.username = "user#" + str(User.objects.count())
@@ -289,6 +292,16 @@ def register(request):
             # print(form.cleaned_data)
             password = request.POST.get('password',None)
             check_password = request.POST.get('check_password',None)
+            #TODO: check if address is in POST
+            address = request.POST.get('address', None)
+            lat = request.POST.get('lat', None)
+            lng = request.POST.get('lng', None)
+            if not address == "":
+                lat, lng = getLatLng(address)
+                print(lat, lng)
+            if not lat == "":
+                lat = lat
+                print(float(lat))
             if password == check_password:
                 data = form.cleaned_data
                 user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
@@ -307,6 +320,12 @@ def register(request):
 
     return redirect('basics:actofgoods_startpage')
 
+"""
+    Input: request
+    Output: if the method is POST and captcher and email are valid, a new
+    password is generated and send via his email. He then will be redirected
+    to reset_password_confirmation page.
+"""
 def reset_password_page(request):
     #If request.method is POST, reset_password_page will
     #parse the email provided and send an email
@@ -336,10 +355,18 @@ def reset_password_page(request):
                 messages.add_message(request, messages.INFO, 'wc')
 
     return render(request, 'basics/password_reset.html')
-
+"""
+    Renders password_reset_confirmation.html and returns it.
+"""
 def reset_password_confirmation(request):
     return render(request, 'basics/password_reset_confirmation.html')
 
+"""
+    Input: email, content: What will be the message body, subject
+
+    sendmail, will send an email via the GMAIL smtp server and the
+    our GmailAccount to the given email-address.
+"""
 def sendmail(email, content, subject):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = subject
@@ -351,26 +378,3 @@ def sendmail(email, content, subject):
     mail.login('actofgoods@gmail.com', 'actofgoods123')
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
     mail.close()
-
-
-
-def change_password(request):
-	user=request.user
-	if request.method=="POST":
-		form=PasswordForm(request.POST)
-		if form.is_valid():
-			oldpw=request.POST['oldpw']
-			newpw1=request.POST.get('newpw1')
-			newpw2=request.POST.get('newpw2')
-			if (authenticate(username=user.email,password=oldpw)==user) and (newpw1 == newpw2):
-				user.set_password(newpw1)
-				user.save()
-				return render(request, 'basics/profil.html', {'Userdata':user.userdata})
-
-			else :
-				change=True
-				return render(request,'basics/change_password.html',{'change':change})
-
-	form=PasswordForm()
-	change=False
-	return render(request,'basics/change_password.html',{'form':form,'change':change})
