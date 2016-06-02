@@ -278,7 +278,7 @@ def register(request):
     if request.method == 'POST':
         form = UserFormRegister(request.POST)
         # form.data.username = "user#" + str(User.objects.count())
-
+        print(request.POST)
         #print(form.data)
         if form.is_valid():
             # print(form.cleaned_data)
@@ -295,7 +295,7 @@ def register(request):
                 return login(request)
             else:
                 messages.add_message(request, messages.INFO, 'wp')
-        
+
         elif not form.is_valid():
             messages.add_message(request, messages.INFO, 'eae')
 
@@ -329,7 +329,7 @@ def reset_password_page(request):
                     return redirect('basics:reset_password_confirmation')
             elif not capForm.is_valid():
                 messages.add_message(request, messages.INFO, 'wc')
-        
+
     return render(request, 'basics/password_reset.html')
 
 def reset_password_confirmation(request):
@@ -361,11 +361,11 @@ def change_password(request):
 				user.set_password(newpw1)
 				user.save()
 				return render(request, 'basics/profil.html', {'Userdata':user.userdata})
-				
+
 			else :
 				change=True
 				return render(request,'basics/change_password.html',{'change':change})
-							
+
 	form=PasswordForm()
 	change=False
 	return render(request,'basics/change_password.html',{'form':form,'change':change})

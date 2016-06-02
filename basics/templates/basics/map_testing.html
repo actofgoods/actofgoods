@@ -348,7 +348,7 @@
 
 	        	<div class="modal-footer">
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-	          		<button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+	          		<button type="button" onclick="addressInput()" class="btn btn-primary" data-dismiss="modal">Save</button>
 	        	</div>
 	      	</div><!-- /.modal-content -->
 	    </div><!-- /.modal-dialog -->
@@ -427,6 +427,14 @@
 	}
 	google.maps.event.addDomListener(window, 'load', initialize);
 
+  function addressInput(){
+    if(marker != null){
+      $('#address-input').val(marker.getPosition().lng() + " , " +marker.getPosition().lat() )
+    }
+    else{
+      $('#address-input').val("some address here")
+    }
+  }
 </script>
 <script type='text/javascript'>
  	$('#location-map-modal').on('shown.bs.modal', function(e) {
