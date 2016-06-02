@@ -63,11 +63,8 @@
      <ul class="event-list">
        {% for info in infos%}
        <li>
-          <time datetime="2014-07-20 2000">
-             <span class="day">20</span>
-             <span class="month">Jan</span>
-             <span class="year">2014</span>
-             <span class="time">9:41 PM</span>
+          <time>
+             <div>{{ info.date }}</div>
            </time>
          <div class="info">
            <h2 class="title">{{ info.headline }}</h2>
