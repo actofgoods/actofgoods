@@ -42,7 +42,7 @@
 					<h2 class="text-center">Sign Up</h2>
 				</div>
 				<div class="modal-body">
-					<form class="form" role="form" method="post" action="{% url 'basics:register' %}" accept-charset="UTF-8" id="login-nav">
+					<form class="form" role="form" id="register_form" method="post" action="{% url 'basics:register' %}" accept-charset="UTF-8" id="login-nav">
 					{% csrf_token %}
 
 						{% if messages %}
@@ -80,10 +80,9 @@
 		  					<input type="password" class="form-control input-lg" placeholder="Password" name="check_password" required/>
 		  				</div>
 
-		  				<div class="alert alert-info " role="alert">We need a location to provide you best information. Add here.
+              <div class="alert alert-info " role="alert">We need a location to provide you best information. Add here.
         					{% include "basics/map_testing.html" %}
-      					</div>
-
+    					</div>
 						<div class="form-group">
 							<p id="terms-of-use-privacy-polices">By clicking on "Register" you accept the <a href="#" data-toggle="modal" data-target=".modal-terms-of-use">Terms of Use</a> and the <a href="#" data-toggle="modal" data-target=".modal-privacy-polices">Privacy Polices</a>!</p>
 						</div>
@@ -128,7 +127,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<input type="submit" class="btn btn-block btn-lg btn-primary" value="Register"/>
+							<input type="submit" onclick="register()" class="btn btn-block btn-lg btn-primary" value="Register"/>
 						</div>
 
 						<div class="checkbox" >
@@ -144,4 +143,12 @@
 		</div>
 	</div>
 </div>
+
+<script>
+  //because shit is not working
+  function register(){
+    $("#register_form").submit();
+  }
+</script>
+
 {% endblock %}
