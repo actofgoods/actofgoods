@@ -30,42 +30,80 @@ def actofgoods_startpage(request):
         return redirect('basics:home')
     return render(request, 'basics/actofgoods_startpage.html', {'counter':len(needs),'registerform':registerform})
 
+"""
+    Input: request
+
+    aboutus page will be rendered and returned.
+"""
 def aboutus(request):
     return render(request, 'basics/aboutus.html')
 
+"""
+    Input: request
+
+    admin_page will be rendered and returned.
+"""
 def admin_page(request):
     return render(request, 'basics/admin_page.html')
 
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    ...
+"""
 def change_password(request):
-	user=request.user
-	if request.method=="POST":
-		form=PasswordForm(request.POST)
-		if form.is_valid():
-			oldpw=request.POST['oldpw']
-			newpw1=request.POST.get('newpw1')
-			newpw2=request.POST.get('newpw2')
-			if (authenticate(username=user.email,password=oldpw)==user) and (newpw1 == newpw2):
-				user.set_password(newpw1)
-				user.save()
-				return render(request, 'basics/profil.html', {'Userdata':user.userdata})
+    if request.user.is_authenticated():
+        user=request.user
+        if request.method=="POST":
+        	form=PasswordForm(request.POST)
+        	if form.is_valid():
+        		oldpw=request.POST['oldpw']
+        		newpw1=request.POST.get('newpw1')
+        		newpw2=request.POST.get('newpw2')
+        		if (authenticate(username=user.email,password=oldpw)==user) and (newpw1 == newpw2):
+        			user.set_password(newpw1)
+        			user.save()
+        			return render(request, 'basics/profil.html', {'Userdata':user.userdata})
 
-			else :
-				change=True
-				return render(request,'basics/change_password.html',{'change':change})
+        		else :
+        			change=True
+        			return render(request,'basics/change_password.html',{'change':change})
 
-	form=PasswordForm()
-	change=False
-	return render(request,'basics/change_password.html',{'form':form,'change':change})
+        form=PasswordForm()
+        change=False
+        return render(request,'basics/change_password.html',{'form':form,'change':change})
+    return redirect('basics:actofgoods_startpage')
+"""
+    Needs authentication!
 
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise the chat page will be rendered and returned.
+"""
 def chat(request):
     if request.user.is_authenticated():
         return render(request, 'basics/chat.html')
 
     return redirect('basics:actofgoods_startpage')
 
+"""
+    Input: request
+
+    contact_us page will be rendered and returned.
+"""
 def contact_us(request):
     return render(request, 'basics/contact_us.html')
 
+"""
+    Input: String with an address
+
+    getLatLng will send an request to googleapis and recieve an json containing
+    latitude and longditude.
+"""
 def getLatLng(location):
     location = location.replace(" ", "%20")
     req = "https://maps.googleapis.com/maps/api/geocode/json?address=%s" % location #parameter
@@ -73,12 +111,29 @@ def getLatLng(location):
     jsongeocode = response.json()
     return jsongeocode['results'][0]['geometry']['location']['lat'], jsongeocode['results'][0]['geometry']['location']['lng']
 
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise the help page will be rendered and returned.
+"""
 def help(request):
     if request.user.is_authenticated():
         return render(request, 'basics/help.html')
 
     return redirect('basics:actofgoods_startpage')
 
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise a list of needs will be pult out of the database and added to ...
+    The home page will be rendered and returned.
+"""
 def home(request):
     if request.user.is_authenticated():
         needs = Need.objects.order_by('date')
@@ -86,9 +141,21 @@ def home(request):
 
     return redirect('basics:actofgoods_startpage')
 
+"""
+    id_generator generates a random string 6 chars long if no other size is provided.
+"""
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise a list of needs will be pult out of the database and added to ...
+    The needs_all page will be rendered and returned.
+"""
 def information_all(request):
     if request.user.is_authenticated():
         infos = Information.objects.order_by('date')
@@ -96,6 +163,16 @@ def information_all(request):
 
     return redirect('basics:actofgoods_startpage')
 
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    If request method is POST 'immediate_aid' will check info form.
+    All being well, a new information is created and stored in database.
+
+"""
 @csrf_protect
 def information_new(request):
     if request.user.is_authenticated():
@@ -114,12 +191,28 @@ def information_new(request):
 
     return redirect('basics:actofgoods_startpage')
 
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise the information_timeline page will be rendered and returned.
+"""
 def information_timeline(request):
     if request.user.is_authenticated():
         return render(request, 'basics/information_timeline.html')
 
     return redirect('basics:actofgoods_startpage')
 
+"""
+    Input: request(Email, Password)
+
+    If request method is POST 'immediate_aid' will check the need and user form.
+    Is everything valid, the method will proceed by creating a new password and user,
+    creating a new need and finaly send an email to the new created user, providing
+    greatings and his password.
+"""
 def immediate_aid(request):
     if request.method == "POST":
         #This method is super deprecated we need to make it more secure
@@ -153,9 +246,11 @@ def immediate_aid(request):
     return render(request, 'basics/immediate_aid.html')
 
 """
-    Login:
-    -input: request(Email, Password, ToggleButton (keep signed in?))
-    -output: Main- or Indexpage
+    Input: request(Email, Password)
+
+    If request method is POST 'login' will authenticate a user with the
+    email and password provided. If a suitable user is found it will be logged in.
+    Otherwise the login page will be returned with an error above login form.
 """
 @csrf_protect
 def login(request):
@@ -168,27 +263,34 @@ def login(request):
                 auth_login(request,user)
         else :
             messages.add_message(request, messages.INFO, 'lw')
-
-
-        """
-
-                return HttpResponse(aboutus(request))
-            else:
-                # TODO deactivate user page
-                return HttpResponse(actofgoods_startpage(request))
-        """
-    # default backfall
-
     return redirect('basics:actofgoods_startpage')
 
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    Current user will be loged out.
+"""
 def logout(request):
     auth_logout(request)
     return HttpResponse(actofgoods_startpage(request))
     #return render(request, 'basics/actofgoods_startpage.html')
-
+"""
+    will return map_testing for resing purposes
+"""
 def map_testing(request):
     return render(request, 'basics/map_testing.html')
 
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise a list of needs will be pult out of the database and added to ...
+    The needs_all page will be rendered and returned.
+"""
 def needs_all(request):
     if request.user.is_authenticated():
         needs = Need.objects.order_by('date')
@@ -196,13 +298,30 @@ def needs_all(request):
 
     return redirect('basics:actofgoods_startpage')
 
-# Must to change fpr render
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise the needs_view_edit page will be rendered and returned.
+"""
 def needs_view_edit(request):
     if request.user.is_authenticated:
         return render (request, 'basics/needs_view_edit')
 
     return redirect('basics:actofgoods_startpage')
 
+"""
+    Needs authentication!
+
+    Input: request (user, headline, text: will be maintext of the need)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise POST requests will be checked if the form is correctly delivered.
+    If so, a new need is created in the database and the user will be redirected
+    to needs_all.
+"""
 @csrf_protect
 def needs_new(request):
     if request.user.is_authenticated():
@@ -219,20 +338,33 @@ def needs_new(request):
 
     return redirect('basics:actofgoods_startpage')
 
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise the profil page will be rendered and returned.
+"""
 def needs_timeline(request):
     if request.user.is_authenticated():
         return render(request, 'basics/needs_timeline.html')
 
     return redirect('basics:actofgoods_startpage')
 
-
+"""
+    privacy, will render and return privacy.html
+"""
 def privacy(request):
 	return render(request, 'basics/privacy.html')
 
 """
-    Profil:
-    -input: request (user)
-    -output: Profilpage
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise the profil page will be rendered and returned.
 """
 def profil(request):
     if request.user.is_authenticated():
@@ -241,6 +373,8 @@ def profil(request):
     return redirect('basics:actofgoods_startpage')
 
 """
+    Needs authentication!
+
     Input: request (user, email, pseudonym, phonenumber)
 
     If user is not authenticated redirect to startpage.
@@ -279,7 +413,10 @@ def profil_delete(request):
 """
     Register:
     -input: request(email, password, check_password)
-    -output: Main- or Indexpage
+
+    register, will check the data submitted from the form. If correct a new user
+    will be created and an email send to the email-address submitted.
+
 """
 @csrf_protect
 def register(request):
@@ -355,6 +492,7 @@ def reset_password_page(request):
                 messages.add_message(request, messages.INFO, 'wc')
 
     return render(request, 'basics/password_reset.html')
+    
 """
     Renders password_reset_confirmation.html and returns it.
 """
