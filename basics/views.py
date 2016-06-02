@@ -252,34 +252,6 @@ def profil_delete(request):
 """
 @csrf_protect
 def register(request):
-    """
-    email_value = ""
-    password_value = ""
-    toggle_button = False;
-
-        TODO: Get Email/Password and ToggleButton from request.POST['key']
-
-        if request.POST['toggle_button'] = "true"
-            toggle_button = true
-
-    if 'email' in request.POST and 'password' in request.POST:
-        email_value = request.POST['email']
-        password_value = request.POST['password']
-        if request.POST['toggle_button'] == "True":
-            toggle_button = True;
-
-        user = Users(email=email_value, password="password")
-        #   TODO: Add new User Model to Database
-        user.save()
-        #   TODO: Send User Mail
-
-        return redirect('basics:login')
-
-
-    #   TODO: if something wents wrong:
-    return redirect('basics:index')
-
-    """
     if request.method == 'POST':
         form = UserFormRegister(request.POST)
         # form.data.username = "user#" + str(User.objects.count())
@@ -289,6 +261,16 @@ def register(request):
             # print(form.cleaned_data)
             password = request.POST.get('password',None)
             check_password = request.POST.get('check_password',None)
+            #TODO: check if address is in POST
+            address = request.POST.get('address', None)
+            lat = request.POST.get('lat', None)
+            lng = request.POST.get('lng', None)
+            if not address == "":
+                lat, lng = getLatLng(address)
+                print(lat, lng)
+            if not lat == "":
+                lat = lat
+                print(float(lat))
             if password == check_password:
                 data = form.cleaned_data
                 user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
