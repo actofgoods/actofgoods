@@ -430,24 +430,23 @@ def register(request):
             password = request.POST.get('password',None)
             check_password = request.POST.get('check_password',None)
             #TODO: check if address is in POST
-            address = request.POST.get('address', None)
-            lat = request.POST.get('lat', None)
-            lng = request.POST.get('lng', None)
-            if not address == "":
-                lat, lng = getLatLng(address)
-                print(lat, lng)
-            if not lat == "":
-                lat = lat
-                print(float(lat))
+
+
+
             if password == check_password:
-                data = form.cleaned_data
-                user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
-                userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
-                userdata.save()
-                content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000"
-                subject = "Welcome!"
-                sendmail(user.email, content, subject)
-                return login(request)
+                lat, lng = getAddress(request)
+                print(lat, lng)
+                if lat != None and lng != None:
+                    data = form.cleaned_data
+                    user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
+                    userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
+                    userdata.save()
+                    content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000"
+                    subject = "Welcome!"
+                    sendmail(user.email, content, subject)
+                    return login(request)
+                else:
+                    messages.add_message(request, messages.INFO, 'location_failed')
             else:
                 messages.add_message(request, messages.INFO, 'wp')
 
@@ -456,6 +455,21 @@ def register(request):
 
 
     return redirect('basics:actofgoods_startpage')
+
+def getAddress(request):
+    try:
+        address = request.POST['address']
+        lat = request.POST['lat']
+        lng = request.POST['lng']
+        if not lat == "" and not lng == "":
+            lat = float(lat)
+            lng = float(lng)
+        elif address != "":
+            lat, lng = getLatLng(address)
+        return lat, lng
+    except:
+        return None, None
+
 
 """
     Input: request
@@ -492,7 +506,7 @@ def reset_password_page(request):
                 messages.add_message(request, messages.INFO, 'wc')
 
     return render(request, 'basics/password_reset.html')
-    
+
 """
     Renders password_reset_confirmation.html and returns it.
 """
