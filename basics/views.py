@@ -14,7 +14,7 @@ from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
 # Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm
-from .models import Userdata, Need, Information, Group, CategoriesNeeds, CategoriesRep, CategoriesInf
+from .models import *
 
 
 
@@ -435,11 +435,11 @@ def register(request):
 
             if password == check_password:
                 lat, lng = getAddress(request)
-                print(lat, lng)
                 if lat != None and lng != None:
                     data = form.cleaned_data
-                    user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
-                    userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
+                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
+                    userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())), address=address)
                     userdata.save()
                     content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000"
                     subject = "Welcome!"

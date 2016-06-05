@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Need, Information, Userdata, Address
+from .models import Need, Information, Userdata
 from nocaptcha_recaptcha.fields import NoReCaptchaField
 
 
@@ -15,11 +15,6 @@ class UserFormRegister(forms.ModelForm):
         if email and User.objects.filter(email=email).count():
             raise forms.ValidationError(u'Email addresses must be unique.')
         return email
-
-class AddressForm(forms.ModelForm):
-    class Meta:
-        model = Address
-        fields = ['street','city','state','postcode','country']
 
 class NeedFormNew(forms.ModelForm):
 	class Meta:
@@ -59,5 +54,3 @@ class PasswordForm(forms.Form):
 	oldpw = forms.CharField(label='oldpw', max_length=100)
 	newpw1 = forms.CharField(label='newpw1', max_length=100)
 	newpw2 = forms.CharField(label='newpw2', max_length=100)
-
-
