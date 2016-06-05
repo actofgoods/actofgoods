@@ -4,8 +4,20 @@
   <div class="row">
 
     <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
-  	<p>{{need.headline}}</p>
-    <p>{{need.text}}</p>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="text-center">{{need.headline}}</h1>
+      </div>
+      <div class="modal-body">
+        {{need.text}}
+        <ul>
+         <li style="width:20%;">comments (3)</li>
+         <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-map-marker"></span>Location</a></li>
+         <li style="width:20%;"> <span class="glyphicon glyphicon-thumbs-up"></span> Like</li>
+         <li style="width:20%;"><a id="help-link" href="{% url 'basics:chat' %}">Help</a><span class="fa fa-question"></span></li>
+        </ul>
+      </div>
+    </div>
   	</div>
   </div>
 {% endblock %}
