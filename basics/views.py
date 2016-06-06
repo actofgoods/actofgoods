@@ -285,6 +285,9 @@ def logout(request):
 def map_testing(request):
     return render(request, 'basics/map_testing.html')
 
+def fill_needs(request):
+    return redirect()
+
 """
     Needs authentication!
 

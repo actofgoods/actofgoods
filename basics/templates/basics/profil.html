@@ -112,31 +112,10 @@
     		marker=null;
 
     		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
-    		google.maps.event.addListener(map, 'click', function(event) {
-      		placeMarker(event.latLng);
 
-    		});
         placeMarker(new google.maps.LatLng(parseFloat("{{ Userdata.address.latitude }}".replace(",", ".")), parseFloat("{{ Userdata.address.longditude }}".replace(",", "."))));
         //console.log(lat + " " + {{ Userdata.address.longditude}});
   	}
-
-  	function getLocation() {
-      	if (navigator.geolocation) {
-      	    navigator.geolocation.getCurrentPosition(showPosition);
-      	} else {
-      	    x.innerHTML = "Geolocation is not supported";
-      	    y.innerHTML = "by this browser.";
-      	}
-  	}
-
-  	function showPosition(position) {
-      	var latlng={lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)};
-      	placeMarker(latlng);
-  	}
-
-    $( document ).ready(function() {
-
-  	});
 
   	function placeMarker(location) {
   	    if(marker){
