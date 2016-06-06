@@ -178,12 +178,15 @@ def information_new(request):
     if request.user.is_authenticated():
         if request.method == "POST":
             info = InformationFormNew(request.POST)
-
             if info.is_valid():
-                data = info.cleaned_data
-                infodata = Information(author=request.user, headline=data['headline'], text=data['text'])
-                infodata.save()
-                return redirect('basics:information_all')
+                lat, lng = getAddress(request)
+                print(lat,lng)
+                if lat != None and lng != None:
+                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    data = info.cleaned_data
+                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address)
+                    infodata.save()
+                    return redirect('basics:information_all')
 
         info = InformationFormNew()
 
@@ -324,15 +327,19 @@ def needs_view_edit(request):
 """
 @csrf_protect
 def needs_new(request):
+    #cat = CategoriesNeeds.objects.create(name="cool")
     if request.user.is_authenticated():
         if request.method == "POST":
             need = NeedFormNew(request.POST)
 
             if need.is_valid():
-                data = need.cleaned_data
-                needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'])
-                needdata.save()
-                return redirect('basics:needs_all')
+                lat, lng = getAddress(request)
+                if lat != None and lng != None:
+                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    data = need.cleaned_data
+                    needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address)
+                    needdata.save()
+                    return redirect('basics:needs_all')
         need = NeedFormNew()
         return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
