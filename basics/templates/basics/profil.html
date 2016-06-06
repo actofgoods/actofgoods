@@ -1,34 +1,184 @@
 {% extends 'basics/base.html' %}
 
 {% block content %}
-<!-- Introduction Row -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Your Profile <small>Note that your profile is exclusively visible for yourself!</small></h1>
-        	</div>
-        </div>
-        <div class="row">
-        	<div class="col-lg-4 col-lg-offset-1">
-        		<br>
-        		<b>
-				Name: {{Userdata.pseudonym}} 				<br>
-				Email: {{user.email}}  						<br>
-				Phonenumber: {{Userdata.phone}} 			<br>
-				Registered since: {{user.date_joined}}		<br>
-				Default auxiliary radius: 					<br>
-				Notification:								<br><br>
-				</b>
+<style>
 
-				<a class="btn btn-warning btn-sm"href="{% url 'basics:profil_edit' %}">Edit my profile</a>
-				<a class="btn btn-danger btn-sm"href="{% url 'basics:profil_delete' %}">Delete my profile</a>
-				<br>
-				<br>
+	#map-container {
+		height: 450px;
+	}
+
+	button, .btn-primary, .btn-primary:focus {
+		background-color: #bbd153;
+  		border-color: #70962c;
+  		color: #4C4E49;
+	}
+
+	.btn-primary:hover, .btn-primary:active:focus {
+		background-color: #96B440;
+		color: #4C4E49;
+	}
+
+	.modal-header > h2 {
+		color: #bbd153;
+		font-weight: bold;
+	}
+
+	.nav-tabs > li > a, .nav-tabs > li > a:hover, .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+		color: #70962c;
+	}
+
+
+
+	#address-label, #address-input {
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	#address-label {
+		margin-top: 12px;
+		margin-bottom: 12px;
+	}
+
+	@media(max-width:768px) {
+
+		#address-input {
+			margin-top: 0px;
+		}
+
+		#address-label {
+			margin-bottom: 5px;
+		}
+
+	}
+
+</style>
+
+<!-- Introduction Row -->
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Your Profile <small>Note that your profile is exclusively visible for yourself!</small></h1>
+	</div>
+</div>
+<div class="row">
+	<div class="col-lg-4 col-lg-offset-1">
+  		<br>
+  		<b>
+			Name: {{Userdata.pseudonym}} 				<br>
+			Email: {{user.email}}  						<br>
+			Phonenumber: {{Userdata.phone}} 			<br>
+			Registered since: {{user.date_joined}}		<br>
+			Default auxiliary radius: 					<br>
+			Notification:								<br><br>
+      latitude: {{ Userdata.address.latitude }}					<br>
+      longditude: {{ Userdata.address.longditude }} 					<br>
+			</b>
+
+			<a class="btn btn-warning btn-sm"href="{% url 'basics:profil_edit' %}">Edit my profile</a>
+			<a class="btn btn-danger btn-sm"href="{% url 'basics:profil_delete' %}">Delete my profile</a>
+			<br>
+			<br>
 			</div>
 
-		<div class="col-lg-4">
-			{% load staticfiles %}
-        	<img src={% static 'basics/images/profil.jpg' %} height="152"/>	
+    		<div class="col-lg-4">
+    			{% load staticfiles %}
+        	<img src={% static 'basics/images/profil.jpg' %} height="152"/>
        	</div>
-
+        <div id="map-container"></div>
 	</div>
+
+  <script src="http://maps.googleapis.com/maps/api/js"></script>
+  <script>
+
+
+  	var map;
+  	var marker;
+  	var myCenter=new google.maps.LatLng(51.508742,-0.120850);
+  	var geocoder;
+  	var infowindow;
+    var directionsService = new google.maps.DirectionsService;
+    var directionsDisplay = new google.maps.DirectionsRenderer;
+    function initialize() {
+      	geocoder = new google.maps.Geocoder()
+  		var mapProp = {
+    			center:myCenter,
+    			zoom:2,
+    			mapTypeId:google.maps.MapTypeId.ROADMAP,
+  			mapTypeControl: false,
+              panControl:false,
+              rotateControl:false,
+  			mapTypeControl:true,
+              streetViewControl: false
+    		};
+    		marker=null;
+
+    		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
+    		google.maps.event.addListener(map, 'click', function(event) {
+      		placeMarker(event.latLng);
+
+    		});
+        placeMarker(new google.maps.LatLng(parseFloat("{{ Userdata.address.latitude }}".replace(",", ".")), parseFloat("{{ Userdata.address.longditude }}".replace(",", "."))));
+        //console.log(lat + " " + {{ Userdata.address.longditude}});
+  	}
+
+  	function getLocation() {
+      	if (navigator.geolocation) {
+      	    navigator.geolocation.getCurrentPosition(showPosition);
+      	} else {
+      	    x.innerHTML = "Geolocation is not supported";
+      	    y.innerHTML = "by this browser.";
+      	}
+  	}
+
+  	function showPosition(position) {
+      	var latlng={lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)};
+      	placeMarker(latlng);
+  	}
+
+    $( document ).ready(function() {
+
+  	});
+
+  	function placeMarker(location) {
+  	    if(marker){
+  	        infowindow.close();
+  	        marker.setPosition(location);
+  	        geocoder.geocode({'location': location}, function(results, status){
+  	            infowindow.setContent(results[0].formatted_address);
+  	            infowindow.open(map,marker);
+  	        })
+  	    }
+  	    else{
+  	        marker = new google.maps.Marker({
+  	        position: location,
+  	        map: map,
+  	        });
+  	        geocoder.geocode({'location': location}, function(results, status){
+  	            infowindow = new google.maps.InfoWindow({content: results[0].formatted_address});
+  	            infowindow.open(map,marker);
+  	        })
+  	       	map.setZoom(6);
+  	    }
+  		map.setCenter(marker.getPosition());
+  	}
+  	google.maps.event.addDomListener(window, 'load', initialize);
+
+    function addressInput(){
+      if(marker != null){
+        $('#lng').val(marker.getPosition().lng());
+        $('#lat').val(marker.getPosition().lat());
+      }
+      else if($('#State').val() != "" && $('#City').val() != ""){
+  			var state = $('#State').val();
+  			var city = $('#City').val();
+        $('#addressinput').val(state+ " " + city);
+      }
+    }
+  </script>
+  <script type='text/javascript'>
+   	$('#location-map-modal').on('shown.bs.modal', function(e) {
+          initialize();
+      });
+
+  </script>
+
 {% endblock %}

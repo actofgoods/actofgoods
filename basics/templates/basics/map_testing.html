@@ -381,15 +381,15 @@
 
 	function initialize() {
     	geocoder = new google.maps.Geocoder()
-		var mapProp = {
+			var mapProp = {
   			center:myCenter,
   			zoom:2,
   			mapTypeId:google.maps.MapTypeId.ROADMAP,
-			mapTypeControl: false,
-            panControl:false,
-            rotateControl:false,
-			mapTypeControl:true,
-            streetViewControl: false
+				mapTypeControl: false,
+        panControl:false,
+        rotateControl:false,
+				mapTypeControl:true,
+        streetViewControl: false
   		};
   		marker=null;
 
@@ -398,6 +398,8 @@
     		placeMarker(event.latLng);
   		});
 	}
+
+	
 
 	function getLocation() {
     	if (navigator.geolocation) {
