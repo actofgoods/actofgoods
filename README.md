@@ -13,3 +13,22 @@ pip install django-nocaptcha-recaptcha
 If you got problems with database try:
 
 python manage.py makemigrations basics
+
+=== CHANNEL install ===
+
+pip install -U channels
+
+=== Redis Layer install ===
+
+pip install asgi_redis
+
+wget http://download.redis.io/redis-stable.tar.gz
+
+tar xvzf redis-stable.tar.gz
+
+cd redis-stable
+
+make
+
+sudo make install
+
