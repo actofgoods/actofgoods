@@ -15,10 +15,15 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from . import views
+
+app_name = 'administration'
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^', include('basics.urls')),
-    url(r'^', include('administration.urls')),
-
+    url(r'^administration/mails$', views.mails, name='mails'),
+    url(r'^administration/categories$', views.categories, name='categories'),
+    url(r'^administration/needs$', views.needs, name='needs'),
+    url(r'^administration/informations$', views.informations, name='informations'),
+    url(r'^administration/users$', views.users, name='users'),
+    url(r'^administration/groups$', views.groups, name='groups'),
 ]
