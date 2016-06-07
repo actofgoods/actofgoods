@@ -20,10 +20,10 @@ from . import views
 app_name = 'administration'
 
 urlpatterns = [
-    url(r'^administration/mails$', views.mails, name='mails'),
-    url(r'^administration/categories$', views.categories, name='categories'),
-    url(r'^administration/needs$', views.needs, name='needs'),
-    url(r'^administration/informations$', views.informations, name='informations'),
-    url(r'^administration/users$', views.users, name='users'),
-    url(r'^administration/groups$', views.groups, name='groups'),
+    url(r'^administration/mails/$', views.mails, name='mails'),
+    url(r'^administration/categories/$', views.categories, name='categories'),
+    url(r'^administration/needs/$', views.needs, name='needs'),
+    url(r'^administration/informations/$', views.informations, name='informations'),
+    url(r'^administration/users/$', views.users, name='users'),
+    url(r'^administration/groups/$', views.groups, name='groups'),
 ]
