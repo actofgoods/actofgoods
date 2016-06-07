@@ -439,10 +439,7 @@ def register(request):
             # print(form.cleaned_data)
             password = request.POST.get('password',None)
             check_password = request.POST.get('check_password',None)
-            #TODO: check if address is in POST
-
-
-
+            
             if password == check_password:
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
@@ -474,8 +471,13 @@ def getAddress(request):
         if not lat == "" and not lng == "":
             lat = float(lat)
             lng = float(lng)
+            print(lat,lng)
         elif address != "":
             lat, lng = getLatLng(address)
+        else:
+            lat = None
+            lng = None
+
         return lat, lng
     except:
         return None, None
