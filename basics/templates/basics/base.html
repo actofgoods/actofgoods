@@ -49,7 +49,6 @@
 
 	<div id="wrapper">
 		{% if user.is_authenticated %} <!-- signed in user -->
-		<!-- TODO if user is normal user, ngo, country or admin -->
 		<div id="header">
 			<nav class="navbar navbar-inverse" role="navigation">
 				<div class="container-fluid" id="navbar-inner">
@@ -92,7 +91,7 @@
 
 						<ul class="nav navbar-nav navbar-right">
 							{% if user.is_staff %}
-								<li id="navbar-with-divider" {% if "/admin_page/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:admin_page' %}">Administration</a></li>
+								<li id="navbar-with-divider" {% if "/administration/mails/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:mails' %}">Administration</a></li>
 							{% else %}
 							<li {% if "/help/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:help'%}">Help</a></li>
 							{% endif %}
