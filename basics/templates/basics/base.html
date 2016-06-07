@@ -24,6 +24,7 @@
 		}
 		html, body {
 			height: 100%;
+			/*font-size: 1em;*/
 			/*font-size: 18px;*/
 		}
 		#wrapper {
@@ -68,10 +69,10 @@
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
-							<li {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a></li>
+							<li {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}">Home</a></li>
 
 							<li {% if "/needs" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
-								<a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span> Needs <span class="caret"></span></a>
+								<a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Needs <span class="caret"></span></a>
 								<ul id="navbar-dropdown-menu" class="dropdown-menu">
 									<li><a href="{% url 'basics:needs_all' %}">All</a></li>
 									<li><a href="{% url 'basics:needs_new' %}">New</a></li>
@@ -79,25 +80,26 @@
 								</ul>
 							</li>					<!-- insert URL for needs and create if for class = active-->
 							<li {% if "/information" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
-								<a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Information <span class="caret"></span></a>
+								<a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Information <span class="caret"></span></a>
 								<ul id="navbar-dropdown-menu" class="dropdown-menu">
 									<li><a href="{% url 'basics:information_all' %}">All</a></li>
 									<li><a href="{% url 'basics:information_new' %}">New</a></li>
 									<li><a href="{% url 'basics:information_timeline' %}">Timeline</a></li>
 								</ul>
 							</li>					<!-- insert URL for needs and create if for class = active-->
-							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Chats</a></li>
-							{% if user.is_staff %}
-								<li id="navbar-with-divider" {% if "/admin_page/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:admin_page' %}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Admin</a></li>
-							{% endif %}
+							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}">Chats</a></li>
 						</ul>
 
 						<ul class="nav navbar-nav navbar-right">
-							<li {% if "/help/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:help'%}"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Help</a></li>
-							{% if not user.is_superuser %}
-							<li {% if "/profil/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Profil</a></li>
+							{% if user.is_staff %}
+								<li id="navbar-with-divider" {% if "/admin_page/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:admin_page' %}">Administration</a></li>
+							{% else %}
+							<li {% if "/help/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:help'%}">Help</a></li>
 							{% endif %}
-							<li><a href="{% url 'basics:logout' %}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logout</a></li>
+							{% if not user.is_superuser %}
+							<li {% if "/profil/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}">Profil</a></li>
+							{% endif %}
+							<li><a href="{% url 'basics:logout' %}">Logout</a></li>
 						</ul>
 					</div><!-- /.navbar-collapse -->
 				</div><!-- /.container-fluid -->
