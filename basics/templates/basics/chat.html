@@ -1,159 +1,202 @@
 {% extends 'basics/base.html' %}
 
 {% block content %}
+
+<style>
+
+.chat {
+  background: #F2F5F8;
+  color: #434651;
+}
+.chat .chat-header {
+  padding: 20px;
+}
+
+.chat .chat-header .chat-with {
+  font-weight: bold;
+  font-size: 16px;
+}
+.chat .chat-header .chat-num-messages {
+  color: #92959E;
+}
+
+.chat .chat-history {
+  padding: 30px 30px 20px;
+  overflow-y: scroll;
+  height: 50%;
+}
+.chat .chat-history .message-data {
+  margin-bottom: 15px;
+}
+.chat .chat-history .message-data-time {
+  color: #a8aab1;
+  padding-left: 6px;
+}
+.chat .chat-history .message {
+  color: white;
+  padding: 18px 20px;
+  line-height: 26px;
+  font-size: 16px;
+  border-radius: 7px;
+  margin-bottom: 30px;
+  width: 90%;
+  position: relative;
+}
+
+.chat .chat-history .my-message {
+  background: #6F952B;
+}
+.chat .chat-history .other-message {
+  background: #B8CE52;
+}
+
+.chat .chat-message {
+  padding: 10px;
+}
+.chat .chat-message textarea {
+  width: 100%;
+  border: none;
+  padding: 10px 20px;
+  font: 14px/22px "Lato", Arial, sans-serif;
+  margin-bottom: 10px;
+  resize: none;
+}
+.chat .chat-message .fa-file-o,
+.chat .chat-message .fa-file-image-o {
+  font-size: 16px;
+  color: gray;
+  cursor: pointer;
+}
+.chat .chat-message button {
+  float: right;
+  color: #71972C;
+  font-size: 16px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: #F2F5F8;
+}
+.chat .chat-message button:hover {
+  color: #75b1e8;
+}
+
+.me {
+  margin-right: 3px;
+  font-size: 10px;
+}
+
+
+.me {
+  color: #94C2ED;
+}
+
+.align-left {
+  text-align: left;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.float-right {
+  float: right;
+}
+
+.alight-center {
+  text-align: center;
+}
+
+.test{
+  background-color: #5E5F5B;
+}
+
+    </style>
+
 <!-- Introduction Row -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Chats</h1>
-
-            </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="test">
+      <div class="row">
+        <div class="col-md-3 alight-center">
+          <h1>Rooms</h1>
         </div>
-  <div class="row">
+        <div class="col-md-9">
+              <div class="chat">
+      <div class="chat-header clearfix">
+        
+        <div class="chat-about">
+          <div class="chat-with">Chat with User#2</div>
+          <div class="chat-num-messages">already 1902 messages</div>
+        </div>
+        <i class="fa fa-star"></i>
+      </div> <!-- end chat-header -->
+      
+      <div class="chat-history">
+        <ul class ="list-unstyled">
+          <li class="clearfix">
+            <div class="message-data align-right">
+              <span class="message-data-time" >10:10 AM, Today</span> &nbsp; &nbsp;
+              <span class="message-data-name" >User#1</span> <i class="fa fa-circle me"></i>
+              
+            </div>
+            <div class="message other-message float-right">
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+            </div>
+          </li>
+          
+          <li>
+            <div class="message-data">
+              <span class="message-data-name"><i class="fa fa-circle online"></i> User#2</span>
+              <span class="message-data-time">10:12 AM, Today</span>
+            </div>
+            <div class="message my-message">
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+            </div>
+          </li>
+          
+          <li class="clearfix">
+            <div class="message-data align-right">
+              <span class="message-data-time" >10:14 AM, Today</span> &nbsp; &nbsp;
+              <span class="message-data-name" >User#1</span> <i class="fa fa-circle me"></i>
+              
+            </div>
+            <div class="message other-message float-right">
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+            </div>
+          </li>
+          
+          <li>
+            <div class="message-data">
+              <span class="message-data-name">User#2</span>
+              <span class="message-data-time">10:20 AM, Today</span>
+            </div>
+            <div class="message my-message">
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+            </div>
+          </li>
+          
+        </ul>
+        
+      </div> <!-- end chat-history -->
+      
+      <div class="chat-message clearfix">
+        <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" rows="3"></textarea>
+                
+        <i class="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
+        <i class="fa fa-file-image-o"></i>
+        
+        <button>Send</button>
 
-    <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
-  	<!--<div class="btn-group">
-    	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      	Action <span class="caret"></span>
-    	</button>
-    	<ul class="dropdown-menu">
-      	<li><a href="#">Action</a></li>
-      	<li><a href="#">Another action</a></li>
-      	<li><a href="#">Something else here</a></li>
-      	<li role="separator" class="divider"></li>
-      	<li><a href="#">Separated link</a></li>
-    	</ul>
-
-  	</div>
-  	-->
-    	<div class="btn-group">
-      	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        	Visibility <span class="caret"></span>
-      	</button>
-      	<ul class="dropdown-menu">
-        	<li><a href="#">All</a></li>
-        	<li><a href="#">Completed</a></li>
-        	<li><a href="#">Aktive</a></li>
-        	<li><a href="#">Canceled</a></li>		
-      	</ul>
-    	</div>
-	<div class="btn-group pull-right">
-      	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        	Cards per Page <span class="caret"></span>
-      	</button>
-      	<ul class="dropdown-menu">
-        	<li><a href="#">10</a></li>
-        	<li><a href="#">25</a></li>
-        	<li><a href="#">50</a></li>
-        	<li role="separator" class="divider"></li>
-        	<li><a href="#">All</a></li>
-      	</ul>
-    	</div>
- 	</div>
+      </div> <!-- end chat-message -->
+      
+    </div> <!-- end chat -->
+        </div>
+      </div>
+    </div>
+    </div>
   </div>
-  <br>
-  <div class="row">
- 		 <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
- 			 <ul class="event-list">
- 				 <li>
- 					 <time datetime="2014-07-20 2000">
- 						 <span class="day">20</span>
- 						 <span class="month">Jan</span>
- 						 <span class="year">2014</span>
- 						 <span class="time">8:00 PM</span>
- 					 </time>
 
- 					 <div class="info">
- 						 <h2 class="title">Beispielbeschreibung</h2>
- 						 <p class="desc">letzeNachricht</p>
-        	<ul>
- 							 <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-pencil"></span> keep writing</a></li>
-               <li style="width:20%;"> <span class="glyphicon glyphicon-ok"></span> Completed?</li>
-	<li style="width:20%;"> <span class="glyphicon glyphicon-flag"></span> Report</li>
- 						 </ul>
- 					 </div>
 
- 				 </li>
 
- 				 <li>
- 					 <time datetime="2014-07-20 2000">
- 						 <span class="day">20</span>
- 						 <span class="month">Jan</span>
- 						 <span class="year">2014</span>
- 						 <span class="time">8:00 PM</span>
- 					 </time>
-
- 					 <div class="info">
- 						 <h2 class="title">Beispielbeschreibung</h2>
- 						 <p class="desc">letzeNachricht</p>
-        	<ul>
- 							 <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-pencil"></span> keep writing</a></li>
-               <li style="width:20%;"> <span class="glyphicon glyphicon-ok"></span> Completed?</li>
-	<li style="width:20%;"> <span class="glyphicon glyphicon-flag"></span> Report</li>
- 						 </ul>
- 					 </div>
-
- 				 </li>
-
- 				 <li>
- 					 <time datetime="2014-07-20 2000">
- 						 <span class="day">20</span>
- 						 <span class="month">Jan</span>
- 						 <span class="year">2014</span>
- 						 <span class="time">8:00 PM</span>
- 					 </time>
-
- 					 <div class="info">
- 						 <h2 class="title">Beispielbeschreibung</h2>
- 						 <p class="desc">letzeNachricht</p>
-        	<ul>
- 							 <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-pencil"></span> keep writing</a></li>
-               <li style="width:20%;"> <span class="glyphicon glyphicon-ok"></span> Completed?</li>
-	<li style="width:20%;"> <span class="glyphicon glyphicon-flag"></span> Report</li>
- 						 </ul>
- 					 </div>
-
- 				 </li>
-
- 				 <li>
- 					 <time datetime="2014-07-20 2000">
- 						 <span class="day">20</span>
- 						 <span class="month">Jan</span>
- 						 <span class="year">2014</span>
- 						 <span class="time">8:00 PM</span>
- 					 </time>
-
- 					 <div class="info">
- 						 <h2 class="title">Beispielbeschreibung</h2>
- 						 <p class="desc">letzeNachricht</p>
-        	<ul>
- 							 <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-pencil"></span> keep writing</a></li>
-               <li style="width:20%;"> <span class="glyphicon glyphicon-ok"></span> Completed?</li>
-	<li style="width:20%;"> <span class="glyphicon glyphicon-flag"></span> Report</li>
- 						 </ul>
- 					 </div>
-
- 				 </li>
- 			 </ul>
- 		 </div>
- 	 </div>
-
-  <div class="row">
-  	<div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ] text-center">
-    	<nav>
-      	<ul class="pagination">
-        	<li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-        	<li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
-        	<li><a href="#">2</a></li>
-        	<li><a href="#">3</a></li>
-        	<li><a href="#">4</a></li>
-        	<li><a href="#">5</a></li>
-        	<li>
-          	<a href="#" aria-label="Next">
-            	<span aria-hidden="true">&raquo;</span>
-          	</a>
-        	</li>
-      	</ul>
-    	</nav>
-  	</div>
-  </div>
 {% endblock %}
