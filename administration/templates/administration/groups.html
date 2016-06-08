@@ -15,8 +15,8 @@
                 <tbody>
                     {% for group in groups %}
                     <tr>
-                        <th>{{ group.name }}</th>
-                        <th></th>
+                        <th>{{ group.group.name }}</th>
+                        <th>{{ group.email }}</th>
                         <th>
                             <a href="#" class="btn btn-warning btn-sm" title="edit">
                                 <span class="glyphicon glyphicon-pencil"></span>

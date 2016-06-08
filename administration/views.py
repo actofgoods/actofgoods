@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from basics.models import Userdata, Groupdata
 from django.contrib.auth.models import User, Group
-#from .forms import GroupForm
+from administration.forms import GroupFormRegister
 from basics.views import getAddress
+from basics.models import Address
 
 
 # Create your views here.
@@ -11,7 +12,7 @@ def categories(request):
 	return render(request, 'administration/categories.html')
 
 def groups(request):
-	groups = Group.objects.all()
+	groups = Groupdata.objects.all()
 	return render(request, 'administration/groups.html', {'groups': groups})
 
 def informations(request):
@@ -35,4 +36,22 @@ def user_delete(request, pk):
 	return redirect('administration:users')
 
 def new_group(request):
+	if request.user.is_authenticated():
+		if request.method == "POST":
+			form = GroupFormRegister(request.POST)
+			print('request')
+			if form.is_valid() :
+				print('formvalid')
+				lat, lng = getAddress(request)
+				if lat != None and lng != None:
+					address = Address.objects.create(latitude=lat, longditude=lng)
+					#data = cleaned_data <- this doesnt work?
+					email = request.POST.get('email')
+					phone = request.POST.get('phone')
+					name = request.POST.get('name')
+					group = Group.objects.create(name=name)
+					gdata = Groupdata(group=group, email=email, phone=phone, address=address)
+					gdata.save()
+					return redirect('administration:groups')
 	return render(request, 'administration/new_group.html')
+
