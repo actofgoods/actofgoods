@@ -1,0 +1,4 @@
+channels == 0.14.0
+Django == 1.9.7
+django_nocaptcha_recaptcha == 0.0.19
+requests == 2.10.0

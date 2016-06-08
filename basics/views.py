@@ -24,6 +24,7 @@ from .models import *
     -output: Main- or Indexpage
 """
 def actofgoods_startpage(request):
+
     registerform = UserFormRegister()
     needs = Need.objects.all()
     if request.user.is_authenticated():
@@ -257,12 +258,14 @@ def immediate_aid(request):
 """
 @csrf_protect
 def login(request):
+
     if request.method == 'POST':
         email = request.POST.get('email',None)
         password = request.POST.get('password',None)
         user = authenticate(username=email,password=password)
         if user is not None:
             if user.is_active:
+                
                 auth_login(request,user)
         else :
             messages.add_message(request, messages.INFO, 'lw')
@@ -284,6 +287,9 @@ def logout(request):
 """
 def map_testing(request):
     return render(request, 'basics/map_testing.html')
+
+def fill_needs(request):
+    return redirect()
 
 """
     Needs authentication!
@@ -434,34 +440,32 @@ def register(request):
         #print(form.data)
         if form.is_valid():
             # print(form.cleaned_data)
-            password = request.POST.get('password',None)
-            check_password = request.POST.get('check_password',None)
-            #TODO: check if address is in POST
-
-
-
-            if password == check_password:
-                lat, lng = getAddress(request)
-                if lat != None and lng != None:
-                    data = form.cleaned_data
-                    address = Address.objects.create(latitude=lat, longditude=lng)
-                    user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
-                    userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())), address=address)
-                    userdata.save()
-                    content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000"
-                    subject = "Welcome!"
-                    sendmail(user.email, content, subject)
-                    return login(request)
+            password = request.POST.get('password', "")
+            check_password = request.POST.get('check_password', "")
+            if password != "" and check_password != "" and request.POST.get('email', "") != "":
+                if password == check_password:
+                    lat, lng = getAddress(request)
+                    if lat != None and lng != None:
+                        data = form.cleaned_data
+                        address = Address.objects.create(latitude=lat, longditude=lng)
+                        user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
+                        userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())), address=address)
+                        userdata.save()
+                        content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000"
+                        subject = "Welcome!"
+                        sendmail(user.email, content, subject)
+                        return login(request)
+                    else:
+                        messages.add_message(request, messages.INFO, 'location_failed')
                 else:
-                    messages.add_message(request, messages.INFO, 'location_failed')
-            else:
-                messages.add_message(request, messages.INFO, 'wp')
+                    messages.add_message(request, messages.INFO, 'wp')
 
         elif not form.is_valid():
             messages.add_message(request, messages.INFO, 'eae')
 
 
     return redirect('basics:actofgoods_startpage')
+
 
 def getAddress(request):
     try:
@@ -471,8 +475,13 @@ def getAddress(request):
         if not lat == "" and not lng == "":
             lat = float(lat)
             lng = float(lng)
+            print(lat,lng)
         elif address != "":
             lat, lng = getLatLng(address)
+        else:
+            lat = None
+            lng = None
+
         return lat, lng
     except:
         return None, None
