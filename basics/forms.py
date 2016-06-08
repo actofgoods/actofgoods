@@ -9,7 +9,6 @@ class UserFormRegister(forms.ModelForm):
         model = User
         fields = ['password','email']
 
-
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email and User.objects.filter(email=email).count():

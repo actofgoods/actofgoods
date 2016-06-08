@@ -1,4 +1,37 @@
 {% extends 'administration/base_admin.html' %}
 {% block content %}
-
+		<div class="container">
+            <h3>Normal Users</h3>
+            <table class = "table table-hover">
+                <thead>
+                    <tr>
+                        <th>Pseudonym</th>
+                        <th>E-Mail</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <th>{{ user.pseudonym }}</th>
+                        <th>{{ user.user }}</th>
+                        <th>
+                            <a href="#" class="btn btn-warning btn-sm" title="edit">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                            <a href="{% url 'administration:user_delete' pk=user.pk %}" class="btn btn-danger btn-sm" title="delete">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                            <a href="#" class="btn btn-primary btn-sm" title="add to group">
+                                G
+                            </a>
+                            <a href="#" class="btn btn-primary btn-sm" title="make user to admin">
+                                A
+                            </a>
+                        </th>
+                    </tr>
+                    {% endfor %}
+                 </tbody>
+            </table>
+        </div>
 {% endblock %}

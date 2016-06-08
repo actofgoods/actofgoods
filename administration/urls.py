@@ -26,4 +26,6 @@ urlpatterns = [
     url(r'^administration/informations/$', views.informations, name='informations'),
     url(r'^administration/users/$', views.users, name='users'),
     url(r'^administration/groups/$', views.groups, name='groups'),
+    url(r'^administration/new_group/$', views.new_group, name='new_group'),
+    url(r'^administration/users/(?P<pk>\d+)/delete/$', views.user_delete, name='user_delete'),
 ]

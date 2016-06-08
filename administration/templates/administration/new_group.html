@@ -1,0 +1,31 @@
+{% extends 'administration/base_admin.html' %}
+{% block content %}
+
+	<div class="modal-dialog" id="sign-up">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="text-center">create new Group</h1>
+			</div>
+			<div class="modal-body">
+				<form class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav">
+					{%csrf_token%}
+					<p style="font-size:160%;"> description <p\>
+					<div class="form-group">
+		  				<input type="email" class="form-control input-lg" placeholder="Email" name="email" required/>
+		  			</div>
+					<div class="form-group">
+						<input type="phone" class="form-control input-lg" placeholder="phonenumber" name="#"  rows="4" required></textarea>
+					</div>		
+					<div class="form-group">
+             				<p id="choose-location-text">If you do not like to use your standard location choose an other one.
+      					{% include "basics/map_testing.html" %}</p>
+					</div>	
+
+					<div class="form-group">
+						<input type="submit" class="btn btn-block btn-lg btn-primary" value="Create & Send"/>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}
