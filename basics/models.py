@@ -19,6 +19,9 @@ class Userdata(models.Model):
 	GENDER = (('m', 'Male'),('f', 'Female'),)
 	gender = models.CharField(max_length=1, choices=GENDER)
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
+	def __unicode__(self):
+		return self.pseudonym
+
 
 class CategoriesNeeds(models.Model):
 	name = models.CharField(max_length=50)
@@ -74,3 +77,21 @@ class Report(models.Model):
 	info = models.ForeignKey(Information)
 	Comment = models.ForeignKey(Comment)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Room(models.Model):
+	name = models.CharField(primary_key=True , max_length=20)
+	user_req = models.ForeignKey(User)
+	need = models.ForeignKey(Need)
+	slug = models.SlugField()
+	act_req = models.BooleanField(default=False)
+	act_off = models.BooleanField(default=False)
+
+	def __unicode__(self):
+		return self.name
+
+class ChatMessage(models.Model):
+	author = models.ForeignKey(Userdata)
+	messageid = models.AutoField(primary_key=True)
+	date = models.DateTimeField(auto_now = True)
+	room = models.ForeignKey(Room)
+	text=models.TextField(default='', max_length=500)

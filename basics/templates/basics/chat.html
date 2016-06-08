@@ -134,47 +134,35 @@
       
       <div class="chat-history">
         <ul class ="list-unstyled">
-          <li class="clearfix">
-            <div class="message-data align-right">
-              <span class="message-data-time" >10:10 AM, Today</span> &nbsp; &nbsp;
-              <span class="message-data-name" >User#1</span> <i class="fa fa-circle me"></i>
-              
-            </div>
-            <div class="message other-message float-right">
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
-            </div>
-          </li>
-          
-          <li>
-            <div class="message-data">
-              <span class="message-data-name"><i class="fa fa-circle online"></i> User#2</span>
-              <span class="message-data-time">10:12 AM, Today</span>
-            </div>
-            <div class="message my-message">
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
-            </div>
-          </li>
-          
-          <li class="clearfix">
-            <div class="message-data align-right">
-              <span class="message-data-time" >10:14 AM, Today</span> &nbsp; &nbsp;
-              <span class="message-data-name" >User#1</span> <i class="fa fa-circle me"></i>
-              
-            </div>
-            <div class="message other-message float-right">
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
-            </div>
-          </li>
-          
-          <li>
-            <div class="message-data">
-              <span class="message-data-name">User#2</span>
-              <span class="message-data-time">10:20 AM, Today</span>
-            </div>
-            <div class="message my-message">
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
-            </div>
-          </li>
+
+           {% for message in messages%}
+
+            {% if request.user != message.author %}
+              <li>
+                <div class="message-data">
+                  <span class="message-data-name"><i class="fa fa-circle online"></i> {{message.author}}</span>
+                  <span class="message-data-time">{{message.date}}</span>
+                </div>
+                <div class="message my-message">
+                  {{message.text}}
+                </div>
+              </li>
+
+              {% else %}
+                <li class="clearfix">
+                  <div class="message-data align-right">
+                    <span class="message-data-time" >{{message.author}}</span> &nbsp; &nbsp;
+                    <span class="message-data-name" >{{message.date}}</span> <i class="fa fa-circle me"></i>
+                    
+                  </div>
+                  <div class="message other-message float-right">
+                    {{message.text}}
+                  </div>
+              </li>
+              {% endif %}
+            {% endfor %}
+
+        
           
         </ul>
         
