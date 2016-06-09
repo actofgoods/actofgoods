@@ -47,7 +47,7 @@
 }
 
 
-#login-dp .help-block, .checkbox {
+#login-dp .help-block > a, #login-dp .checkbox {
     font-size: 0.875em;
 }
 
