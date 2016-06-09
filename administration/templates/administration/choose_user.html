@@ -1,0 +1,163 @@
+
+<style>
+
+	#map-container {
+		height: 450px;
+	}
+
+	button, .btn-primary, .btn-primary:focus {
+		background-color: #bbd153;
+  		border-color: #70962c;
+  		color: #4C4E49;
+	}
+
+	.btn-primary:hover, .btn-primary:active:focus {
+		background-color: #96B440;
+		color: #4C4E49;
+	}
+
+	.modal-header > h2 {
+		color: #bbd153;
+		font-weight: bold;
+	}
+
+	.nav-tabs > li > a, .nav-tabs > li > a:hover, .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+		color: #70962c;
+	}
+
+
+
+	#address-label, #address-input {
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	#address-label {
+		margin-top: 12px;
+		margin-bottom: 12px;
+	}
+
+	@media(max-width:768px) {
+
+		#address-input {
+			margin-top: 0px;
+		}
+
+		#address-label {
+			margin-bottom: 5px;
+		}
+
+	}
+
+</style>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#location-map-modal">Add User</button>
+<!-- Modal -->
+<div class="modal fade" id="location-map-modal">
+   	<div class="modal-dialog modal-lg">
+   		<div class="modal-content">
+       		<div class="modal-body">
+        
+			</div>
+		</div><!-- modal-body -->
+	        <div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+	        	<button type="button" onclick="addressInput()" class="btn btn-primary" data-dismiss="modal">Save</button>
+	        </div>
+      	</div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css"></script>
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+<script>
+
+
+	var map;
+	var marker;
+	var myCenter=new google.maps.LatLng(51.508742,-0.120850);
+	var geocoder;
+	var infowindow;
+
+	function initialize() {
+    	geocoder = new google.maps.Geocoder()
+			var mapProp = {
+  			center:myCenter,
+  			zoom:2,
+  			mapTypeId:google.maps.MapTypeId.ROADMAP,
+				mapTypeControl: false,
+        panControl:false,
+        rotateControl:false,
+				mapTypeControl:true,
+        streetViewControl: false
+  		};
+  		marker=null;
+
+  		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
+  		google.maps.event.addListener(map, 'click', function(event) {
+    		placeMarker(event.latLng);
+  		});
+	}
+
+	
+
+	function getLocation() {
+    	if (navigator.geolocation) {
+    	    navigator.geolocation.getCurrentPosition(showPosition);
+    	} else {
+    	    x.innerHTML = "Geolocation is not supported";
+    	    y.innerHTML = "by this browser.";
+    	}
+	}
+
+	function showPosition(position) {
+    	var latlng={lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)};
+    	placeMarker(latlng);
+	}
+
+
+	function placeMarker(location) {
+	    if(marker){
+	        infowindow.close();
+	        marker.setPosition(location);
+	        geocoder.geocode({'location': location}, function(results, status){
+	            infowindow.setContent(results[0].formatted_address);
+	            infowindow.open(map,marker);
+	        })
+	    }
+	    else{
+	        marker = new google.maps.Marker({
+	        position: location,
+	        map: map,
+	        });
+	        geocoder.geocode({'location': location}, function(results, status){
+	            infowindow = new google.maps.InfoWindow({content: results[0].formatted_address});
+	            infowindow.open(map,marker);
+	        })
+	       	map.setZoom(6);
+	    }
+		map.setCenter(marker.getPosition());
+	}
+	google.maps.event.addDomListener(window, 'load', initialize);
+
+  function addressInput(){
+    if(marker != null){
+      $('#lng').val(marker.getPosition().lng());
+      $('#lat').val(marker.getPosition().lat());
+    }
+    else if($('#State').val() != "" && $('#City').val() != ""){
+			var state = $('#State').val();
+			var city = $('#City').val();
+      $('#addressinput').val(state+ " " + city);
+    }
+  }
+</script>
+<script type='text/javascript'>
+ 	$('#location-map-modal').on('shown.bs.modal', function(e) {
+        initialize();
+    });
+
+</script>

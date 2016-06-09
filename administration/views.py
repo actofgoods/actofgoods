@@ -55,3 +55,12 @@ def new_group(request):
 					return redirect('administration:groups')
 	return render(request, 'administration/new_group.html')
 
+def group_delete(request, pk):
+	groupDa = get_object_or_404(Groupdata, pk=pk)
+	group = groupDa.group
+	group.delete()
+	return redirect('administration:groups')
+
+def group_addUser(request, pk):
+
+	pass
