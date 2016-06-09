@@ -49,6 +49,8 @@ def new_group(request):
 						data = form.cleaned_data
 						group = Group.objects.create(name=name)
 						user = User.objects.get(email=email)
+						user.is_staff = True
+						user.save()
 						group.user_set.add(user)
 						gdata = Groupdata(group=group, address=address)
 						gdata.save()

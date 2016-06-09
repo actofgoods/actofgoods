@@ -46,4 +46,5 @@ urlpatterns = [
     url(r'^reset_password/$', views.reset_password_page, name='reset_password_page'),
     url(r'^reset_password_confirmation/$', views.reset_password_confirmation, name='reset_password_confirmation'),
 	url(r'^contact_us/$', views.contact_us, name='contact_us'),
+    url(r'^groups/$', views.groups, name='groups'),
 ]

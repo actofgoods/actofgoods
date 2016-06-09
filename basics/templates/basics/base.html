@@ -85,10 +85,11 @@
 								</ul>
 							</li>					<!-- insert URL for needs and create if for class = active-->
 							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}">Chats</a></li>
+							<li {% if "/groups/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:groups' %}">Groups</a></li>
 						</ul>
 
 						<ul class="nav navbar-nav navbar-right">
-							{% if user.is_staff %}
+							{% if user.is_superuser %}
 								<li id="navbar-with-divider" {% if "/administration/mails/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:mails' %}">Administration</a></li>
 							{% else %}
 							<li {% if "/help/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:help'%}">Help</a></li>
