@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, Group
 from administration.forms import GroupFormRegister
 from basics.views import getAddress
 from basics.models import Address
-
+from django.contrib import messages
 
 # Create your views here.
 
@@ -39,20 +39,26 @@ def new_group(request):
 	if request.user.is_authenticated():
 		if request.method == "POST":
 			form = GroupFormRegister(request.POST)
-			print('request')
 			if form.is_valid() :
-				print('formvalid')
 				lat, lng = getAddress(request)
+				email = request.POST.get('email')
+				name = request.POST.get('name')
 				if lat != None and lng != None:
-					address = Address.objects.create(latitude=lat, longditude=lng)
-					#data = cleaned_data <- this doesnt work?
-					email = request.POST.get('email')
-					phone = request.POST.get('phone')
-					name = request.POST.get('name')
-					group = Group.objects.create(name=name)
-					gdata = Groupdata(group=group, email=email, phone=phone, address=address)
-					gdata.save()
-					return redirect('administration:groups')
+					if {'email': email} in User.objects.values('email'):
+						address = Address.objects.create(latitude=lat, longditude=lng)
+						data = form.cleaned_data
+						group = Group.objects.create(name=name)
+						user = User.objects.get(email=email)
+						group.user_set.add(user)
+						gdata = Groupdata(group=group, address=address)
+						gdata.save()
+						return redirect('administration:groups')
+					else:
+						messages.add_message(request, messages.INFO, 'wrong_email')
+				else:
+					messages.add_message(request, messages.INFO, 'location_failed')
+			else:
+				messages.add_message(request, messages.INFO, 'wrong_form')
 	return render(request, 'administration/new_group.html')
 
 def group_delete(request, pk):
@@ -60,7 +66,3 @@ def group_delete(request, pk):
 	group = groupDa.group
 	group.delete()
 	return redirect('administration:groups')
-
-def group_addUser(request, pk):
-
-	pass

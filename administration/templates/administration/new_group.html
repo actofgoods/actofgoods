@@ -11,14 +11,44 @@
 					{%csrf_token%}
 					<p style="font-size:160%;"> description <p\>
 					<div class="form-group">
-		  				<input type="name" class="form-control input-lg" placeholder="Name" name="name" required/>
+		  				<input type="name" class="form-control input-lg" placeholder="Group Name" name="name" required/>
 		  			</div>
+		  			{% if messages %}
+    					{% for message in messages %}
+							{% if message.message == 'wrong_email' %}
+								<div class="form-group">
+									<div class="error-messages">
+    									<p>User with this E-Mail doesn't exist</p>
+									</div>
+								</div>
+							{% endif %}
+    					{% endfor %}
+					{% endif %}
+					{% if messages %}
+    					{% for message in messages %}
+							{% if message.message == 'wrong_form' %}
+								<div class="form-group">
+									<div class="error-messages">
+    									<p>You need to fill in all Fields!</p>
+									</div>
+								</div>
+							{% endif %}
+    					{% endfor %}
+					{% endif %}
 					<div class="form-group">
-		  				<input type="email" class="form-control input-lg" placeholder="Email" name="email" required/>
+		  				<input type="email" class="form-control input-lg" placeholder="Email from Group User" name="email" required/>
 		  			</div>
-					<div class="form-group">
-						<input type="phone" class="form-control input-lg" placeholder="Phonenumber" name="phone" required></textarea>
-					</div>		
+		  			{% if messages %}
+    					{% for message in messages %}
+							{% if message.message == 'location_failed' %}
+								<div class="form-group">
+									<div class="error-messages">
+    									<p>You Need a location for your Group!</p>
+									</div>
+								</div>
+							{% endif %}
+    					{% endfor %}
+					{% endif %}
 					<div class="form-group">
              				<p id="choose-location-text">If you do not like to use your standard location choose an other one.
       					{% include "basics/map_testing.html" %}</p>

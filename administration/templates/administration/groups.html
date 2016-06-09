@@ -24,8 +24,6 @@
                             <a href="{% url 'administration:group_delete' pk=group.pk %}" class="btn btn-danger btn-sm" title="delete">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </a>
-                            <p id="choose-user-text">
-                            {% include "administration/choose_user.html" %}</p>
                         </th>
                     </tr>
                     {% endfor %}
