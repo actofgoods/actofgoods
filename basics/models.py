@@ -81,6 +81,7 @@ class ContactUs(models.Model):
     email = models.EmailField(max_length=254)
     headline = models.CharField(max_length=30, default='')
     text = models.TextField(default='')
+    works_on = models.ForeignKey(User,null=True,default=None)
     create_date = models.DateTimeField(default = timezone.now)#timezone.now()#models.DateTimeField(default = timezone.now
 
     def save(self, *args, **kwargs):
