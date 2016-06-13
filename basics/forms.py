@@ -1,6 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
+<<<<<<< HEAD
 from .models import Need, Information, Userdata, ContactUs
+=======
+from .models import Need, Information, Userdata, CategoriesNeeds
+>>>>>>> 1280faad1da2c74f8202670f803386719a73efb1
 from nocaptcha_recaptcha.fields import NoReCaptchaField
 
 
@@ -58,3 +62,8 @@ class ContactUsForm(forms.Form):
     class Meta:
         model = ContactUs
         fields = ['email','headline','text']
+
+class CategoriesForm(forms.Form):
+    class Meta:
+        model = CategoriesNeeds
+        fields = ['name']

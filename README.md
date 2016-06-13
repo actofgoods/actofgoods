@@ -6,6 +6,12 @@ Details zu datenbank stehen in settings.py
 
 #Requirements:
 
+PACKAGE-INSTALL:
+pip install -r requirements.txt
+
+
+ALTERNATIVE:
+
 pip install requests
 
 pip install django-nocaptcha-recaptcha

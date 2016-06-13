@@ -1,15 +1,16 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from basics.models import Userdata, Groupdata, ContactUs
+from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
+from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs
 from django.contrib.auth.models import User, Group
 from administration.forms import GroupFormRegister
 from basics.views import getAddress
 from basics.models import Address
-
+from django.contrib import messages
 
 # Create your views here.
 
 def categories(request):
-	return render(request, 'administration/categories.html')
+	categories = CategoriesNeeds.objects.all()
+	return render(request, 'administration/categories.html', {'categories':categories})
 
 def groups(request):
 	groups = Groupdata.objects.all()
@@ -26,34 +27,42 @@ def needs(request):
 	return render(request, 'administration/needs.html')
 
 def users(request):
-	users = Userdata.objects.order_by('pseudonym')
+	users = get_list_or_404(User)
 	return render(request, 'administration/users.html', {'users': users})
 
 def user_delete(request, pk):
 	# User somehow doesn't have attribute pk (only Userdata has), so we get the email from userdata and with that we get the user and can delete him
-	userDa = get_object_or_404(Userdata, pk=pk)
-	user = User.objects.get(username=userDa.user)
+	user = get_object_or_404(User, pk=pk)
 	user.delete()
-	return redirect('administration:users')
+	users = get_list_or_404(User)
+	return render(request, 'administration/users.html', {'users':users})
 
 def new_group(request):
 	if request.user.is_authenticated():
 		if request.method == "POST":
 			form = GroupFormRegister(request.POST)
-			print('request')
 			if form.is_valid() :
-				print('formvalid')
 				lat, lng = getAddress(request)
+				email = request.POST.get('email')
+				name = request.POST.get('name')
 				if lat != None and lng != None:
-					address = Address.objects.create(latitude=lat, longditude=lng)
-					#data = cleaned_data <- this doesnt work?
-					email = request.POST.get('email')
-					phone = request.POST.get('phone')
-					name = request.POST.get('name')
-					group = Group.objects.create(name=name)
-					gdata = Groupdata(group=group, email=email, phone=phone, address=address)
-					gdata.save()
-					return redirect('administration:groups')
+					if {'email': email} in User.objects.values('email'):
+						address = Address.objects.create(latitude=lat, longditude=lng)
+						data = form.cleaned_data
+						group = Group.objects.create(name=name)
+						user = User.objects.get(email=email)
+						user.is_staff = True
+						user.save()
+						group.user_set.add(user)
+						gdata = Groupdata(group=group, address=address)
+						gdata.save()
+						return redirect('administration:groups')
+					else:
+						messages.add_message(request, messages.INFO, 'wrong_email')
+				else:
+					messages.add_message(request, messages.INFO, 'location_failed')
+			else:
+				messages.add_message(request, messages.INFO, 'wrong_form')
 	return render(request, 'administration/new_group.html')
 
 def group_delete(request, pk):
@@ -62,6 +71,10 @@ def group_delete(request, pk):
 	group.delete()
 	return redirect('administration:groups')
 
-def group_addUser(request, pk):
 
-	pass
+def make_admin(request, pk):
+	user = get_object_or_404(User, pk=pk)
+	user.is_superuser = True
+	user.save()
+	users = get_list_or_404(User)
+	return render(request, 'administration/users.html', {'users':users})

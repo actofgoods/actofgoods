@@ -13,22 +13,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for group in groups %}
-                    <tr>
-                        <th>{{ group.group.name }}</th>
-                        <th>{{ group.email }}</th>
-                        <th>
-                            <a href="#" class="btn btn-warning btn-sm" title="edit">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </a>
-                            <a href="{% url 'administration:group_delete' pk=group.pk %}" class="btn btn-danger btn-sm" title="delete">
-                                <span class="glyphicon glyphicon-remove"></span>
-                            </a>
-                            <p id="choose-user-text">
-                            {% include "administration/choose_user.html" %}</p>
-                        </th>
-                    </tr>
-                    {% endfor %}
+                    {% if user.is_superuser %}
+                        {% for group in groups %}
+                            <tr>
+                                <th>{{ group.group.name }}</th>
+                                <th>{{ group.email }}</th>
+                                <th>
+                                    <a href="#" class="btn btn-warning btn-sm" title="edit">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                    <a href="{% url 'administration:group_delete' pk=group.pk %}" class="btn btn-danger btn-sm" title="delete">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                </th>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
                  </tbody>
             </table>
         </div>

@@ -557,3 +557,6 @@ def sendmail(email, content, subject):
     mail.login('actofgoods@gmail.com', 'actofgoods123')
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
     mail.close()
+
+def groups(request):
+    return render(request, 'basics/groups.html')
