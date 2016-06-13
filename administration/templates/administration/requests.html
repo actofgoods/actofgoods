@@ -23,7 +23,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <h4 class="list-group-item-heading">{{ request.headline }}</h4>
-                        <p class="list-group-item-text">{{ request|get_short_text:130 }}</p>
+                        <p class="list-group-item-text">{{ request|get_short_text:112 }}</p>
                     </div>
                     <div class="col-sm-10">
                         <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
@@ -53,7 +53,7 @@
                 </div>
             </div>
         {% empty %}
-            <h4>watch the table below to work on a request</h4>
+            <h4>Watch the table below to work on a request.</h4>
         {% endfor %}
     </div>
 
@@ -65,7 +65,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <h4 class="list-group-item-heading">{{ request.headline }}</h4>
-                        <p class="list-group-item-text">{{ request|get_short_text:130 }}</p>
+                        <p class="list-group-item-text">{{ request|get_short_text:112 }}</p>
                     </div>
                     <div class="col-sm-10">
                         <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
@@ -95,10 +95,11 @@
                 </div>
             </div>
         {% empty %}
-            <h4>no new requests</h4>
+            <h4>No new requests.</h4>
         {% endfor %}
 
     </div>
+
     <script>
         function add_worker(element){
             var id = element.parentElement.parentElement.id;

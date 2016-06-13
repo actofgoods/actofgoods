@@ -21,27 +21,26 @@
 		</div>
 	</div>
 
-	<div class="container">
-        <h3>Categories</h3>
-        	<table class = "table table-hover">
-            	<thead>
-                	<tr>
-                    	<th>Categorie Name</th>
-                    	<th></th>
-                	</tr>
-            	</thead>
-            	<tbody>
-                	{% for categorie in categories %}
-                    	<tr>
-                        	<th>{{ categorie.name }}</th>
-                        	<th>
-                        		<a href="{% url 'administration:categories_delete' pk=categorie.pk %}" class="btn btn-danger btn-sm" title="delete">
-                                    <span class="glyphicon glyphicon-remove"></span>
-                                </a>
-                            </th>
-                    	</tr>
-                	{% endfor %}
-            	</tbody>
-        	</table>
+    <div class="container">
+
+        <h2 id="table-headline">Categories</h2>
+
+        <div class="list-group">
+            {% for categorie in categories %}
+                <div class="list-group-item">
+                    <div class="row">
+                        <div class="col-sm-10">
+                            {{ categorie.name }}
+                        </div>
+                        <div class="col-sm-2">
+                            <a class="btn btn-default btn-sml" href="{% url 'administration:categories_delete' pk=categorie.pk %}" title="delete"><span class="glyphicon glyphicon-remove"></span></a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <h4>No categories available. Create some.</h4>
+            {% endfor %}
+        </div>
+
     </div>
 {% endblock %}

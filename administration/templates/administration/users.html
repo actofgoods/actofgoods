@@ -1,31 +1,28 @@
 {% extends 'administration/base_admin.html' %}
 {% block content %}
-		<div class="container">
-            <h3>Normal Users</h3>
-            <table class = "table table-hover">
-                <thead>
-                    <tr>
-                        <th>E-Mail</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                        {% if not user.is_superuser %}
-                        <tr>
-                            <th>{{ user.email }}</th>
-                            <th>
-                                <a href="{% url 'administration:user_delete' pk=user.pk %}" class="btn btn-danger btn-sm" title="delete">
-                                    <span class="glyphicon glyphicon-remove"></span>
-                                </a>
-                                <a href="{% url 'administration:make_admin' pk=user.pk %}" class="btn btn-primary btn-sm" title="make user to admin">
-                                    <span class="glyphicon glyphicon-hand-up"></span>
-                                </a>
-                            </th>
-                        </tr>
-                        {% endif %}
-                    {% endfor %}
-                 </tbody>
-            </table>
+
+    <div class="container">
+
+        <h2 id="table-headline">Normal Users</h2>
+
+        <div class="list-group">
+            {% for user in users %}
+                {% if not user.is_superuser %}
+                    <div class="list-group-item">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                {{ user.email }}
+                            </div>
+                            <div class="col-sm-2">
+                                <a class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="delete"><span class="glyphicon glyphicon-remove"></span></a>
+                                <a type="button" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="make user to admin"><span class="glyphicon glyphicon-hand-up"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
+
+    </div>
+
 {% endblock %}
