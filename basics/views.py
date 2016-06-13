@@ -14,7 +14,7 @@ from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
 # Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm
-from .models import Userdata, Need, Information, Group, CategoriesNeeds, CategoriesRep, CategoriesInf
+from .models import *
 
 
 
@@ -24,6 +24,7 @@ from .models import Userdata, Need, Information, Group, CategoriesNeeds, Categor
     -output: Main- or Indexpage
 """
 def actofgoods_startpage(request):
+
     registerform = UserFormRegister()
     needs = Need.objects.all()
     if request.user.is_authenticated():
@@ -178,12 +179,15 @@ def information_new(request):
     if request.user.is_authenticated():
         if request.method == "POST":
             info = InformationFormNew(request.POST)
-
             if info.is_valid():
-                data = info.cleaned_data
-                infodata = Information(author=request.user, headline=data['headline'], text=data['text'])
-                infodata.save()
-                return redirect('basics:information_all')
+                lat, lng = getAddress(request)
+                print(lat,lng)
+                if lat != None and lng != None:
+                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    data = info.cleaned_data
+                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address)
+                    infodata.save()
+                    return redirect('basics:information_all')
 
         info = InformationFormNew()
 
@@ -254,12 +258,14 @@ def immediate_aid(request):
 """
 @csrf_protect
 def login(request):
+
     if request.method == 'POST':
         email = request.POST.get('email',None)
         password = request.POST.get('password',None)
         user = authenticate(username=email,password=password)
         if user is not None:
             if user.is_active:
+                
                 auth_login(request,user)
         else :
             messages.add_message(request, messages.INFO, 'lw')
@@ -281,6 +287,9 @@ def logout(request):
 """
 def map_testing(request):
     return render(request, 'basics/map_testing.html')
+
+def fill_needs(request):
+    return redirect()
 
 """
     Needs authentication!
@@ -325,15 +334,19 @@ def needs_view(request, pk):
 """
 @csrf_protect
 def needs_new(request):
+    #cat = CategoriesNeeds.objects.create(name="cool")
     if request.user.is_authenticated():
         if request.method == "POST":
             need = NeedFormNew(request.POST)
 
             if need.is_valid():
-                data = need.cleaned_data
-                needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'])
-                needdata.save()
-                return redirect('basics:needs_all')
+                lat, lng = getAddress(request)
+                if lat != None and lng != None:
+                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    data = need.cleaned_data
+                    needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address)
+                    needdata.save()
+                    return redirect('basics:needs_all')
         need = NeedFormNew()
         return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
@@ -428,35 +441,52 @@ def register(request):
         #print(form.data)
         if form.is_valid():
             # print(form.cleaned_data)
-            password = request.POST.get('password',None)
-            check_password = request.POST.get('check_password',None)
-            #TODO: check if address is in POST
-            address = request.POST.get('address', None)
-            lat = request.POST.get('lat', None)
-            lng = request.POST.get('lng', None)
-            if not address == "":
-                lat, lng = getLatLng(address)
-                print(lat, lng)
-            if not lat == "":
-                lat = lat
-                print(float(lat))
-            if password == check_password:
-                data = form.cleaned_data
-                user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
-                userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
-                userdata.save()
-                content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000"
-                subject = "Welcome!"
-                sendmail(user.email, content, subject)
-                return login(request)
-            else:
-                messages.add_message(request, messages.INFO, 'wp')
+            password = request.POST.get('password', "")
+            check_password = request.POST.get('check_password', "")
+            if password != "" and check_password != "" and request.POST.get('email', "") != "":
+                if password == check_password:
+                    lat, lng = getAddress(request)
+                    if lat != None and lng != None:
+                        data = form.cleaned_data
+                        address = Address.objects.create(latitude=lat, longditude=lng)
+                        user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
+                        userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())), address=address)
+                        userdata.save()
+                        content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000"
+                        subject = "Welcome!"
+                        sendmail(user.email, content, subject)
+                        return login(request)
+                    else:
+                        messages.add_message(request, messages.INFO, 'location_failed')
+                else:
+                    messages.add_message(request, messages.INFO, 'wp')
 
         elif not form.is_valid():
             messages.add_message(request, messages.INFO, 'eae')
 
 
     return redirect('basics:actofgoods_startpage')
+
+
+def getAddress(request):
+    try:
+        address = request.POST['address']
+        lat = request.POST['lat']
+        lng = request.POST['lng']
+        if not lat == "" and not lng == "":
+            lat = float(lat)
+            lng = float(lng)
+            print(lat,lng)
+        elif address != "":
+            lat, lng = getLatLng(address)
+        else:
+            lat = None
+            lng = None
+
+        return lat, lng
+    except:
+        return None, None
+
 
 """
     Input: request
@@ -493,7 +523,7 @@ def reset_password_page(request):
                 messages.add_message(request, messages.INFO, 'wc')
 
     return render(request, 'basics/password_reset.html')
-    
+
 """
     Renders password_reset_confirmation.html and returns it.
 """

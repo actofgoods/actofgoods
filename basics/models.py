@@ -6,6 +6,10 @@ from django.contrib.auth.models import User, Group
 class Message(models.Model):
 	text = models.CharField(max_length=300)
 
+class Address(models.Model):
+	latitude = models.FloatField()
+	longditude = models.FloatField()
+
 # Not acces now errors incomings
 class Userdata(models.Model):
 	user = models.OneToOneField(User,on_delete=models.CASCADE)
@@ -14,6 +18,7 @@ class Userdata(models.Model):
 	messages= models.ManyToManyField(Message)
 	GENDER = (('m', 'Male'),('f', 'Female'),)
 	gender = models.CharField(max_length=1, choices=GENDER)
+	address = models.ForeignKey(Address, on_delete=models.CASCADE)
 
 class CategoriesNeeds(models.Model):
 	name = models.CharField(max_length=50)
@@ -40,6 +45,7 @@ class Need(models.Model):
 	closed = models.BooleanField(default=False)
 	date = models.DateTimeField(auto_now=True)
 	categorie = models.ForeignKey(CategoriesNeeds)
+	address = models.ForeignKey(Address, on_delete=models.CASCADE)
 
 class Information(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -48,6 +54,7 @@ class Information(models.Model):
 	text = models.TextField(default='')
 	closed = models.BooleanField(default=False)
 	date = models.DateTimeField(auto_now=True)
+	address = models.ForeignKey(Address, on_delete=models.CASCADE)
 
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)
@@ -67,13 +74,3 @@ class Report(models.Model):
 	info = models.ForeignKey(Information)
 	Comment = models.ForeignKey(Comment)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-class Address(models.Model):
-	street = models.TextField(default='')
-	city = models.TextField(default='')
-	state = models.TextField(default='')
-	postcode = models.TextField(default='')
-	country = models.TextField(default='')
-
-
-

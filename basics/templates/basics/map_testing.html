@@ -38,7 +38,7 @@
 	}
 
 	@media(max-width:768px) {
-		
+
 		#address-input {
 			margin-top: 0px;
 		}
@@ -50,7 +50,15 @@
 	}
 
 </style>
-
+<div class="form-group" style="display: none;">
+	<input type="text" class="form-control input-lg"   id="addressinput" name="address"/>
+</div>
+<div class="form-group" style="display: none;">
+	<input type="float" class="form-control input-lg"  id="lng" name="lng"/>
+</div>
+<div class="form-group" style="display: none;">
+	<input type="float" class="form-control input-lg"  id="lat" name="lat"/>
+</div>
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#location-map-modal">Choose location</button>
 <!-- Modal -->
 <div class="modal fade" id="location-map-modal">
@@ -80,12 +88,12 @@
 
 						<label class="col-sm-2 control-label" for="textinput" id="address-label">City</label>
 						<div class="col-sm-9" id="address-input">
-							<input type="text" placeholder="City" class="form-control">
+							<input type="text" placeholder="City" id="City" class="form-control">
 						</div>
 
    						<label class="col-sm-2 control-label" for="textinput" id="address-label">State</label>
        					<div class="col-sm-4" id="address-input">
-       						<input type="text" placeholder="State/Province/Region" class="form-control">
+       						<input type="text" placeholder="State/Province/Region" id="State" class="form-control">
        					</div>
    						<label class="col-sm-2 control-label" for="textinput" id="address-label">Postcode</label>
        					<div class="col-sm-3" id="address-input">
@@ -340,7 +348,7 @@
 							</select>
        					</div>
 					</div>
-				</div>	
+				</div>
 				<div class="form-group" id="location-form">
 					<p id="option"><b>3. Option: </b>Click the map at your disired location.</p>
 					<div id="map-container"></div>
@@ -373,15 +381,15 @@
 
 	function initialize() {
     	geocoder = new google.maps.Geocoder()
-		var mapProp = {
+			var mapProp = {
   			center:myCenter,
   			zoom:2,
   			mapTypeId:google.maps.MapTypeId.ROADMAP,
-			mapTypeControl: false,
-            panControl:false,
-            rotateControl:false,
-			mapTypeControl:true,
-            streetViewControl: false
+				mapTypeControl: false,
+        panControl:false,
+        rotateControl:false,
+				mapTypeControl:true,
+        streetViewControl: false
   		};
   		marker=null;
 
@@ -390,6 +398,8 @@
     		placeMarker(event.latLng);
   		});
 	}
+
+	
 
 	function getLocation() {
     	if (navigator.geolocation) {
@@ -435,8 +445,10 @@
       $('#lng').val(marker.getPosition().lng());
       $('#lat').val(marker.getPosition().lat());
     }
-    else if($('#state').val != "" && $('#city').val != ""){
-      $('#address-input').val($('#state').val + ", " + $('#city').val);
+    else if($('#State').val() != "" && $('#City').val() != ""){
+			var state = $('#State').val();
+			var city = $('#City').val();
+      $('#addressinput').val(state+ " " + city);
     }
   }
 </script>
