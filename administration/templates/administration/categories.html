@@ -1,8 +1,47 @@
 {% extends 'administration/base_admin.html' %}
 {% block content %}
 
-{% for categorie in categories %}
-	{{ categorie.name }}
-{% endfor %}
+	<div class="modal-dialog" id="sign-up">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="text-center">create new Categorie</h1>
+			</div>
+			<div class="modal-body">
+				<form class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav">
+					{%csrf_token%}
+					<p style="font-size:160%;"> description <p\>
+					<div class="form-group">
+		  				<input type="name" class="form-control input-lg" placeholder="Categorie Name" name="name" required/>
+		  			</div>
+					<div class="form-group">
+						<input type="submit" class="btn btn-block btn-lg btn-primary" value="Create & Send"/>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
+	<div class="container">
+        <h3>Categories</h3>
+        	<table class = "table table-hover">
+            	<thead>
+                	<tr>
+                    	<th>Categorie Name</th>
+                    	<th></th>
+                	</tr>
+            	</thead>
+            	<tbody>
+                	{% for categorie in categories %}
+                    	<tr>
+                        	<th>{{ categorie.name }}</th>
+                        	<th>
+                        		<a href="{% url 'administration:categories_delete' pk=categorie.pk %}" class="btn btn-danger btn-sm" title="delete">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </a>
+                            </th>
+                    	</tr>
+                	{% endfor %}
+            	</tbody>
+        	</table>
+    </div>
 {% endblock %}

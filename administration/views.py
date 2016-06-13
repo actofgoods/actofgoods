@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect, get_list_or_40
 from basics.models import Userdata, Groupdata, CategoriesNeeds
 from django.contrib.auth.models import User, Group
 from administration.forms import GroupFormRegister
+from basics.forms import CategoriesForm
 from basics.views import getAddress
 from basics.models import Address
 from django.contrib import messages
@@ -9,6 +10,19 @@ from django.contrib import messages
 # Create your views here.
 
 def categories(request):
+	if request.user.is_authenticated():
+		if request.method == 'POST':
+			form = CategoriesForm(request.POST)
+			if form.is_valid():
+				name = request.POST.get('name')
+				categorie = CategoriesNeeds.objects.create(name=name)
+				categorie.save()
+	categories = CategoriesNeeds.objects.all()
+	return render(request, 'administration/categories.html', {'categories':categories})
+
+def categories_delete(request, pk):
+	categorie = get_object_or_404(CategoriesNeeds, pk=pk)
+	categorie.delete()
 	categories = CategoriesNeeds.objects.all()
 	return render(request, 'administration/categories.html', {'categories':categories})
 
