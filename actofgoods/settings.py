@@ -51,6 +51,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'basics.middleware.timezone_select.UserTimezoneMiddleware'
 ]
 
 ROOT_URLCONF = 'actofgoods.urls'

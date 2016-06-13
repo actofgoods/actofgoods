@@ -190,7 +190,6 @@ def information_new(request):
                     return redirect('basics:information_all')
 
         info = InformationFormNew()
-
         return render(request, 'basics/information_new.html', {'info':info})
 
     return redirect('basics:actofgoods_startpage')
@@ -348,6 +347,8 @@ def needs_new(request):
                     needdata.save()
                     return redirect('basics:needs_all')
         need = NeedFormNew()
+        c = CategoriesNeeds(name="Others")
+        c.save
         return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
     return redirect('basics:actofgoods_startpage')
