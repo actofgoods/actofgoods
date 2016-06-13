@@ -1,5 +1,5 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from basics.models import Userdata, Groupdata
+from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
+from basics.models import Userdata, Groupdata, CategoriesNeeds
 from django.contrib.auth.models import User, Group
 from administration.forms import GroupFormRegister
 from basics.views import getAddress
@@ -9,7 +9,8 @@ from django.contrib import messages
 # Create your views here.
 
 def categories(request):
-	return render(request, 'administration/categories.html')
+	categories = CategoriesNeeds.objects.all()
+	return render(request, 'administration/categories.html', {'categories':categories})
 
 def groups(request):
 	groups = Groupdata.objects.all()
@@ -25,15 +26,15 @@ def needs(request):
 	return render(request, 'administration/needs.html')
 
 def users(request):
-	users = Userdata.objects.order_by('pseudonym')
+	users = get_list_or_404(User)
 	return render(request, 'administration/users.html', {'users': users})
 
 def user_delete(request, pk):
 	# User somehow doesn't have attribute pk (only Userdata has), so we get the email from userdata and with that we get the user and can delete him
-	userDa = get_object_or_404(Userdata, pk=pk)
-	user = User.objects.get(username=userDa.user)
+	user = get_object_or_404(User, pk=pk)
 	user.delete()
-	return redirect('administration:users')
+	users = get_list_or_404(User)
+	return render(request, 'administration/users.html', {'users':users})
 
 def new_group(request):
 	if request.user.is_authenticated():
@@ -68,3 +69,11 @@ def group_delete(request, pk):
 	group = groupDa.group
 	group.delete()
 	return redirect('administration:groups')
+
+
+def make_admin(request, pk):
+	user = get_object_or_404(User, pk=pk)
+	user.is_superuser = True
+	user.save()
+	users = get_list_or_404(User)
+	return render(request, 'administration/users.html', {'users':users})

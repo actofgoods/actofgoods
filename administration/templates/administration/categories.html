@@ -1,4 +1,8 @@
 {% extends 'administration/base_admin.html' %}
 {% block content %}
 
+{% for categorie in categories %}
+	{{ categorie.name }}
+{% endfor %}
+
 {% endblock %}

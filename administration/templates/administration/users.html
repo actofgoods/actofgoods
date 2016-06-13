@@ -5,25 +5,25 @@
             <table class = "table table-hover">
                 <thead>
                     <tr>
-                        <th>Pseudonym</th>
                         <th>E-Mail</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in users %}
-                    <tr>
-                        <th>{{ user.pseudonym }}</th>
-                        <th>{{ user.user }}</th>
-                        <th>
-                            <a href="{% url 'administration:user_delete' pk=user.pk %}" class="btn btn-danger btn-sm" title="delete">
-                                <span class="glyphicon glyphicon-remove"></span>
-                            </a>
-                            <a href="#" class="btn btn-primary btn-sm" title="make user to admin">
-                                <span class="glyphicon glyphicon-hand-up"></span>
-                            </a>
-                        </th>
-                    </tr>
+                        {% if not user.is_superuser %}
+                        <tr>
+                            <th>{{ user.email }}</th>
+                            <th>
+                                <a href="{% url 'administration:user_delete' pk=user.pk %}" class="btn btn-danger btn-sm" title="delete">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </a>
+                                <a href="{% url 'administration:make_admin' pk=user.pk %}" class="btn btn-primary btn-sm" title="make user to admin">
+                                    <span class="glyphicon glyphicon-hand-up"></span>
+                                </a>
+                            </th>
+                        </tr>
+                        {% endif %}
                     {% endfor %}
                  </tbody>
             </table>
