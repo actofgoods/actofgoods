@@ -59,7 +59,7 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="{% url 'administration:mails' %}">
+						<a class="navbar-brand" href="{% url 'administration:requests' %}">
 							<img id="brand-image" src={% static 'basics/images/AoGLogo.png'%} alt="Act of Goods"/>
 						</a>
 					</div>
@@ -68,7 +68,7 @@
 					<div class="collapse navbar-collapse" id="navbar-collapse">
                         <div id="navbar-with-divider">
 						    <ul class="nav navbar-nav navbar-left">
-							    <li {% if "/administration/mails/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:mails' %}">Mails</a></li>
+							    <li {% if "/administration/requests/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:requests' %}">Requests</a></li>
 							    <li {% if "/administration/needs/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:needs' %}">Needs</a></li>
 							    <li {% if "/administration/informations/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:informations' %}">Informations</a></li>
 							    <li {% if "/administration/users/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:users' %}">Users</a></li>
@@ -95,7 +95,7 @@
 			<div class="row" id="footer-row">
         			<div class="col-lg-12 col-md-12 col-sm-12">
 					<ul class="nav nav-pills nav-justified">
-						<li><a {% if user.is_authenticated %} href="{% url 'administration:mails' %}" {% else %} href="{% url 'basics:login' %}" {% endif %}>Act of Goods</a></li>
+						<li><a {% if user.is_authenticated %} href="{% url 'administration:requests' %}" {% else %} href="{% url 'basics:login' %}" {% endif %}>Act of Goods</a></li>
 						<li><a href="{% url 'basics:privacy' %}">Privacy</a></li>
 						<li><a href="{% url 'basics:aboutus' %}">About Us</a></li>
 					</ul>

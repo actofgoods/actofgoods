@@ -2,7 +2,7 @@ import random
 import smtplib
 import string
 import requests
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.template import loader
 from django.contrib import messages
@@ -12,8 +12,9 @@ from django.views.decorators.csrf import csrf_protect
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
+from django.utils import timezone
 # Create your views here.
-from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm
+from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm, ContactUsForm
 from .models import *
 
 
@@ -96,7 +97,17 @@ def chat(request):
 
     contact_us page will be rendered and returned.
 """
+@csrf_protect
 def contact_us(request):
+    if request.method == "POST":
+        form = ContactUsForm(request.POST)
+        if form.is_valid() :
+            email = request.POST.get('email')
+            headline = request.POST.get('headline')
+            text = request.POST.get('text')
+            contactUsData = ContactUs(email=email, headline=headline, text=text)
+            contactUsData.save()
+            return render(request, 'basics/actofgoods_startpage.html')
     return render(request, 'basics/contact_us.html')
 
 """
@@ -265,7 +276,7 @@ def login(request):
         user = authenticate(username=email,password=password)
         if user is not None:
             if user.is_active:
-                
+
                 auth_login(request,user)
         else :
             messages.add_message(request, messages.INFO, 'lw')
@@ -315,9 +326,10 @@ def needs_all(request):
     If user is not authenticated redirect to startpage.
     Otherwise the needs_view_edit page will be rendered and returned.
 """
-def needs_view_edit(request):
+def needs_view(request, pk):
     if request.user.is_authenticated:
-        return render (request, 'basics/needs_view_edit')
+        need = get_object_or_404(Need, pk=pk)
+        return render (request, 'basics/needs_view.html', {'need':need})
 
     return redirect('basics:actofgoods_startpage')
 

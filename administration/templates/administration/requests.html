@@ -1,0 +1,102 @@
+{% extends 'administration/base_admin.html' %}
+{% block content %}
+<head>
+
+    <style>
+        #table-headline {
+            font-weight: bold;
+            color: #bbd153;
+        }
+    </style>
+
+</head>
+
+<div class="container">
+
+    <h2 id="table-headline">Requests in progress</h2>
+
+    <div class="list-group">
+        {% for request in requests %}
+            <a href="#" class="list-group-item" data-toggle="modal" data-target=".{{ request.id }}">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="list-group-item-heading">{{ request.headline }}</h4>
+                        <p class="list-group-item-text">{{ request.text }}</p>
+                    </div>
+                    <div class="col-sm-10">
+                        <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-default btn-sml" style="float: right;">work on</button>
+                    </div>
+                </div>
+            </a>
+            <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h2>{{request.headline}}</h2>
+                            <h6>by {{ request.email }} from {{ request.create_date }}</h6>
+                        </div>
+                        <div class="modal-body">
+                            <p>{{ request.text }}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <h4>watch the table below to work on a request</h4>
+        {% endfor %}
+    </div>
+
+    <h2 id="table-headline">Requests</h2>
+
+    <div class="list-group">
+        {% for request in requests %}
+            <a href="#" class="list-group-item" data-toggle="modal" data-target=".{{ request.id }}">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4 class="list-group-item-heading">{{ request.headline }}</h4>
+                        <p class="list-group-item-text">{{ request.text }}</p>
+                    </div>
+                    <div class="col-sm-10">
+                        <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-default btn-sml" style="float: right;">work on</button>
+                    </div>
+                </div>
+            </a>
+            <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h2>{{request.headline}}</h2>
+                            <h6>by {{ request.email }} from {{ request.create_date }}</h6>
+                        </div>
+                        <div class="modal-body">
+                            <p>{{ request.text }}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <h4>no new requests</h4>
+        {% endfor %}
+
+    </div>
+
+</div>
+{% endblock %}

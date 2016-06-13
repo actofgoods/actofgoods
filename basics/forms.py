@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Need, Information, Userdata, CategoriesNeeds
+from .models import Need, Information, Userdata, ContactUs, CategoriesNeeds
 from nocaptcha_recaptcha.fields import NoReCaptchaField
 
 
@@ -54,6 +54,10 @@ class PasswordForm(forms.Form):
 	newpw1 = forms.CharField(label='newpw1', max_length=100)
 	newpw2 = forms.CharField(label='newpw2', max_length=100)
 
+class ContactUsForm(forms.Form):
+    class Meta:
+        model = ContactUs
+        fields = ['email','headline','text']
 
 class CategoriesForm(forms.Form):
     class Meta:

@@ -62,22 +62,25 @@
 
      <ul class="event-list">
        {% for need in needs%}
-       <li>
-          <time>
-             <div>{{ need.date }}</div>
-           </time>
-         <div class="info">
-           <h2 class="title">{{ need.headline }}</h2>
-           <p class="desc">{{ need.text }}</p>
-          <ul>
-             <li style="width:20%;">comments (3)</li>
-             <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-map-marker"></span>Location</a></li>
-             <li style="width:20%;"> <span class="glyphicon glyphicon-thumbs-up"></span> Like</li>
-             <li style="width:20%;"><a id="help-link" href="{% url 'basics:chat' %}">Help</a><span class="fa fa-question"></span></li>
-           </ul>
-         </div>
-
-       </li>
+       
+         <li>
+            <time>
+               <div>{{ need.date }}</div>
+             </time>
+            
+           <div class="info">
+             <h2 class="title"><a  href="{% url 'basics:needs_view' pk=need.pk %}">{{ need.headline }}</a></h2>
+             <p class="desc">{{ need.text }}</p>
+            <ul>
+               <li style="width:20%;">comments (3)</li>
+               <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-map-marker"></span>Location</a></li>
+               <li style="width:20%;"> <span class="glyphicon glyphicon-thumbs-up"></span> Like</li>
+               <li style="width:20%;"><a id="help-link" href="{% url 'basics:chat' %}">Help</a><span class="fa fa-question"></span></li>
+             </ul>
+           </div>
+          
+         </li>
+       
        {% endfor %}
      </ul>
    </div>

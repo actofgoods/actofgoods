@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
-from basics.models import Userdata, Groupdata, CategoriesNeeds
+from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs
 from django.contrib.auth.models import User, Group
 from administration.forms import GroupFormRegister
 from basics.forms import CategoriesForm
@@ -33,8 +33,9 @@ def groups(request):
 def informations(request):
 	return render(request, 'administration/informations.html')
 
-def mails(request):
-	return render(request, 'administration/mails.html')
+def requests(request):
+    requests = ContactUs.objects.all()
+    return render(request, 'administration/requests.html', {'requests': requests})
 
 def needs(request):
 	return render(request, 'administration/needs.html')

@@ -20,7 +20,7 @@ from . import views
 app_name = 'administration'
 
 urlpatterns = [
-    url(r'^administration/mails/$', views.mails, name='mails'),
+    url(r'^administration/requests/$', views.requests, name='requests'),
     url(r'^administration/categories/$', views.categories, name='categories'),
     url(r'^administration/needs/$', views.needs, name='needs'),
     url(r'^administration/informations/$', views.informations, name='informations'),
