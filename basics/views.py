@@ -12,8 +12,9 @@ from django.views.decorators.csrf import csrf_protect
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
+from django.utils import timezone
 # Create your views here.
-from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm
+from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm, ContactUsForm
 from .models import *
 
 
@@ -96,7 +97,17 @@ def chat(request):
 
     contact_us page will be rendered and returned.
 """
+@csrf_protect
 def contact_us(request):
+    if request.method == "POST":
+        form = ContactUsForm(request.POST)
+        if form.is_valid() :
+            email = request.POST.get('email')
+            headline = request.POST.get('headline')
+            text = request.POST.get('text')
+            contactUsData = ContactUs(email=email, headline=headline, text=text)
+            contactUsData.save()
+            return render(request, 'basics/actofgoods_startpage.html')
     return render(request, 'basics/contact_us.html')
 
 """
@@ -265,7 +276,7 @@ def login(request):
         user = authenticate(username=email,password=password)
         if user is not None:
             if user.is_active:
-                
+
                 auth_login(request,user)
         else :
             messages.add_message(request, messages.INFO, 'lw')

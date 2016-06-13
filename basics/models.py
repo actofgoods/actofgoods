@@ -1,5 +1,7 @@
 from django.db import models
 from datetime import datetime
+from django.utils import timezone
+from django.utils.timezone import now
 from django.contrib.auth.models import User, Group
 
 # Create your models here.
@@ -74,3 +76,14 @@ class Report(models.Model):
 	info = models.ForeignKey(Information)
 	Comment = models.ForeignKey(Comment)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class ContactUs(models.Model):
+    email = models.EmailField(max_length=254)
+    headline = models.CharField(max_length=30, default='')
+    text = models.TextField(default='')
+    create_date = models.DateTimeField(default = timezone.now)#timezone.now()#models.DateTimeField(default = timezone.now
+
+    def save(self, *args, **kwargs):
+        # if not self.id:
+        self.create_date = now()
+        super(ContactUs, self).save(*args, **kwargs)
