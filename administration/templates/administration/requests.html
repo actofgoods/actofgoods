@@ -18,21 +18,25 @@
     <h2 id="table-headline">Requests in progress</h2>
 
     <div class="list-group">
-        {% for request in requests %}
-            <a href="#" class="list-group-item" data-toggle="modal" data-target=".{{ request.id }}">
+        {% for request in works_on %}
+
                 <div class="row">
-                    <div class="col-sm-12">
-                        <h4 class="list-group-item-heading">{{ request.headline }}</h4>
-                        <p class="list-group-item-text">{{ request|get_short_text:112 }}</p>
-                    </div>
-                    <div class="col-sm-10">
-                        <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
-                    </div>
-                    <div class="col-sm-2">
-                        <button type="button" class="btn btn-default btn-sml" style="float: right;">Done</button>
-                    </div>
+
+                    <a href="#" class="list-group-item" data-toggle="modal" data-target=".{{ request.id }}">
+                      <div class="col-sm-12">
+                          <h4 class="list-group-item-heading">{{ request.headline }}</h4>
+                          <p class="list-group-item-text">{{ request|get_short_text:130 }}</p>
+                      </div>
+                      <div class="col-sm-10">
+                          <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
+                      </div>
+                    </a>
+                      <div class="col-sm-2">
+                          <button type="button" class="btn btn-default btn-sml" style="float: right;">Done</button>
+                      </div>
+
                 </div>
-            </a>
+
             <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -61,8 +65,9 @@
 
     <div class="list-group">
         {% for request in requests %}
-            <a href="#" class="list-group-item" data-toggle="modal" data-target=".{{ request.id }}">
+
                 <div class="row">
+                  <a href="#" class="list-group-item" data-toggle="modal" data-target=".{{ request.id }}">
                     <div class="col-sm-12">
                         <h4 class="list-group-item-heading">{{ request.headline }}</h4>
                         <p class="list-group-item-text">{{ request|get_short_text:112 }}</p>
@@ -70,11 +75,13 @@
                     <div class="col-sm-10">
                         <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
                     </div>
+                  </a>
                     <div class="col-sm-2">
-                        <button type="button" class="btn btn-default btn-sml" style="float: right;" onclick="add_worker(this)">Work On</button>
+                        <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml" href="" style="float: right;" onclick="add_worker(this)">Work On</button>
                     </div>
+
                 </div>
-            </a>
+
             <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -99,16 +106,16 @@
         {% endfor %}
 
     </div>
-
-    <script>
-        function add_worker(element){
-            var id = element.parentElement.parentElement.id;
-            console.log(id)
-            $.post("{% url 'administration:work_on_request' % }", {id:id}, function(data){
-                //no need for this method but if we want to get a callback this is the correct position
-            })
-
-        }
-    </script>
 </div>
+<script>
+  function add_worker(element){
+      var id = element.id;
+      console.log(id);
+      $.post("{% url 'administration:work_on_request' %}", {id:id}, function(data){
+          //no need for this method but if we want to get a callback this is the correct position
+          location.href = "{% url 'administration:requests' %}";
+      });
+
+  }
+</script>
 {% endblock %}

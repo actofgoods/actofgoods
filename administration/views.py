@@ -6,7 +6,7 @@ from basics.forms import CategoriesForm
 from basics.views import getAddress
 from basics.models import Address
 from django.contrib import messages
-
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 def categories(request):
@@ -35,8 +35,9 @@ def informations(request):
 	return render(request, 'administration/informations.html')
 
 def requests(request):
-    requests = ContactUs.objects.all()
-    return render(request, 'administration/requests.html', {'requests': requests})
+    requests = ContactUs.objects.all().exclude(works_on=request.user)
+    works_on = ContactUs.objects.filter(works_on=request.user)
+    return render(request, 'administration/requests.html', {'requests': requests, 'works_on':works_on})
 
 def needs(request):
 	return render(request, 'administration/needs.html')
@@ -94,3 +95,12 @@ def make_admin(request, pk):
 	user.save()
 	users = get_list_or_404(User)
 	return render(request, 'administration/users.html', {'users':users})
+
+#TODO: If we want to call this function from js we need a solution for csrf for test purposes i added csrf_exempt witch will ignore it
+@csrf_exempt
+def work_on_request(request):
+	request_id = request.POST['id']
+	contact = ContactUs.objects.get(id=request_id)
+	contact.works_on = request.user
+	contact.save()
+	return redirect('administration:groups')
