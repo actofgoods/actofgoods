@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect, get_list_or_40
 from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs
 from django.contrib.auth.models import User, Group
 from administration.forms import GroupFormRegister
+from basics.forms import CategoriesForm
 from basics.views import getAddress
 from basics.models import Address
 from django.contrib import messages
@@ -9,8 +10,22 @@ from django.contrib import messages
 # Create your views here.
 
 def categories(request):
+	if request.user.is_authenticated():
+		if request.method == 'POST':
+			form = CategoriesForm(request.POST)
+			if form.is_valid():
+				name = request.POST.get('name')
+				categorie = CategoriesNeeds.objects.create(name=name)
+				categorie.save()
 	categories = CategoriesNeeds.objects.all()
 	return render(request, 'administration/categories.html', {'categories':categories})
+
+def categories_delete(request, pk):
+	categorie = get_object_or_404(CategoriesNeeds, pk=pk)
+	categorie.delete()
+	categories = CategoriesNeeds.objects.all()
+	return redirect('administration:categories')
+	#return render(request, 'administration/categories.html', {'categories':categories})
 
 def groups(request):
 	groups = Groupdata.objects.all()
@@ -35,7 +50,8 @@ def user_delete(request, pk):
 	user = get_object_or_404(User, pk=pk)
 	user.delete()
 	users = get_list_or_404(User)
-	return render(request, 'administration/users.html', {'users':users})
+	#return render(request, 'administration/users.html', {'users':users})
+	return redirect('administration:users')
 
 def new_group(request):
 	if request.user.is_authenticated():
