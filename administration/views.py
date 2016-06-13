@@ -24,7 +24,8 @@ def categories_delete(request, pk):
 	categorie = get_object_or_404(CategoriesNeeds, pk=pk)
 	categorie.delete()
 	categories = CategoriesNeeds.objects.all()
-	return render(request, 'administration/categories.html', {'categories':categories})
+	return redirect('administration:categories')
+	#return render(request, 'administration/categories.html', {'categories':categories})
 
 def groups(request):
 	groups = Groupdata.objects.all()
@@ -49,7 +50,8 @@ def user_delete(request, pk):
 	user = get_object_or_404(User, pk=pk)
 	user.delete()
 	users = get_list_or_404(User)
-	return render(request, 'administration/users.html', {'users':users})
+	#return render(request, 'administration/users.html', {'users':users})
+	return redirect('administration:users')
 
 def new_group(request):
 	if request.user.is_authenticated():
