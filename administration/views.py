@@ -15,7 +15,7 @@ def categories(request):
 			form = CategoriesForm(request.POST)
 			if form.is_valid():
 				name = request.POST.get('name')
-				if not {'name':name} in CategoriesNeeds.objects.values('name'): 
+				if not {'name':name} in CategoriesNeeds.objects.values('name'):
 					categorie = CategoriesNeeds.objects.create(name=name)
 					categorie.save()
 				else:
@@ -71,8 +71,8 @@ def informations(request):
 	return render(request, 'administration/informations.html')
 
 def requests(request):
-    requests = ContactUs.objects.all().exclude(works_on=request.user)
-    works_on = ContactUs.objects.filter(works_on=request.user)
+    requests = ContactUs.objects.all().exclude(works_on=request.user).order_by('create_date')
+    works_on = ContactUs.objects.filter(works_on=request.user).order_by('create_date')
     return render(request, 'administration/requests.html', {'requests': requests, 'works_on':works_on})
 
 def needs(request):
