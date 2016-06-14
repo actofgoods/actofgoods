@@ -37,7 +37,7 @@ class Groupdata(models.Model):
 	phone = models.CharField(max_length=15)
 	is_NGO = models.BooleanField(default=True)
 	# mabye changed
-	address = models.ForeignKey(Address, on_delete=models.CASCADE)
+	address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
 
 class Need(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)

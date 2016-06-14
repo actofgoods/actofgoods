@@ -13,3 +13,7 @@ class GroupFormRegister(forms.Form):
 			raise forms.ValidationError(u'Email address must be from registered User')
 		return email
 		
+class SearchUserForm(forms.Form):
+	class Meta:
+		model = Userdata
+		fields = ['email']

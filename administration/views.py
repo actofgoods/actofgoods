@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
 from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs, Need
 from django.contrib.auth.models import User, Group
-from administration.forms import GroupFormRegister
+from administration.forms import GroupFormRegister, SearchUserForm
 from basics.forms import CategoriesForm
 from basics.views import getAddress
 from basics.models import Address
@@ -46,14 +46,14 @@ def groups(request):
 				email = request.POST.get('email')
 				name = request.POST.get('name')
 				if {'email': email} in User.objects.values('email') and not Group.objects.filter(name='teeest'):
-					address = Address.objects.create(latitude=0.0, longditude=0.0)
+					#address = Address.objects.create(latitude=0.0, longditude=0.0)
 					data = form.cleaned_data
 					group = Group.objects.create(name=name)
 					user = User.objects.get(email=email)
 					user.is_staff = True
 					user.save()
 					group.user_set.add(user)
-					gdata = Groupdata(group=group, address=address)
+					gdata = Groupdata(group=group)
 					gdata.save()
 					return redirect('administration:groups')
 				elif not {'email': email} in User.objects.values('email') and not Group.objects.filter(name='teeest'):
@@ -80,6 +80,17 @@ def needs(request):
 
 def users(request):
 	users = get_list_or_404(User)
+	if request.user.is_authenticated():
+		if request.method == "POST":
+			form = SearchUserForm(request.POST)
+			if form.is_valid():
+				email = request.POST.get('email')
+				if {'email': email} in User.objects.values('email'):
+					#users = User.objects.get(email=email)
+					usr = User.objects.filter(email=email)
+					return render(request, 'administration/users.html', {'usr':usr})
+				else:
+					messages.add_message(request, messages.INFO, 'wrong_email')
 	return render(request, 'administration/users.html', {'users': users})
 
 def user_delete(request, pk):

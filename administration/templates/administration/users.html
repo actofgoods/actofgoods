@@ -1,6 +1,41 @@
 {% extends 'administration/base_admin.html' %}
 {% block content %}
 
+    <div id="standard-modal">
+        <div class="modal-content">
+            <form class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav">
+                    {%csrf_token%}
+            <div class="modal-header">
+                <h2 class="text-center" id="standard-modal-headline">Search User</h2>
+            </div>
+            {% for user in usr%}
+                <div class="list-group-item" id="standard-list-group-item-div">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            {{ user.email }}
+                        </div>
+                        <div class="col-sm-3">
+                            <a id="standard-green-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                            <a id="standard-green-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="modal-body">
+                <div class="list-group">
+                    <div class="form-group">
+                        <input type="email" class="form-control input-lg" placeholder="Email from User" name="email" required/>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-block btn-lg btn-primary" value="Create & Send"/>
+                    </div>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
+
     <!-- all users -->
     <div id="standard-modal">
         <div class="modal-content">
