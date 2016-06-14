@@ -209,6 +209,31 @@ def information_timeline(request):
     return redirect('basics:actofgoods_startpage')
 
 """
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise the needs_view_edit page will be rendered and returned.
+"""
+def information_view(request, pk):
+    if request.user.is_authenticated:
+        information = get_object_or_404(Information, pk=pk)
+        comments = Comment.objects.filter(inf=information).order_by('-date')
+        return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
+
+    return redirect('basics:actofgoods_startpage')
+
+def information_view_comment(request, pk):
+    if request.user.is_authenticated:
+        information = get_object_or_404(Information, pk=pk)
+        if request.method == "POST":
+            comment = Comment.objects.create(inf=information, author=request.user, text=request.POST['comment_text'])
+        return redirect('basics:information_view', pk=pk)
+
+    return redirect('basics:actofgoods_startpage')
+
+"""
     Input: request(Email, Password)
 
     If request method is POST 'immediate_aid' will check the need and user form.
@@ -264,7 +289,7 @@ def login(request):
         user = authenticate(username=email,password=password)
         if user is not None:
             if user.is_active:
-                
+
                 auth_login(request,user)
         else :
             messages.add_message(request, messages.INFO, 'lw')
