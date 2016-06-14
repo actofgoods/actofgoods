@@ -364,15 +364,13 @@
 
     getInitialState: function getInitialState() {
       return {
-        chats: 2
+        chats: 1
       };
     },
 
     render: function render() {
       var chats = [];
-      for (var i = 0; i < this.state.chats; i++) {
-        chats.push(React.createElement(ChatContainer, { key: i }));
-      }
+        chats.push(React.createElement(ChatContainer, { key: 0 }));
       return React.createElement('div',{ className: 'mdl-grid' },chats)
     }
   });
