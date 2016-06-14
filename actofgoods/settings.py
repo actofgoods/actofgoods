@@ -32,7 +32,6 @@ NORECAPTCHA_SECRET_KEY = '6LdLNSETAAAAALihggfxC9idnafiO32CB5GsZ6I9'
 # Application definition
 
 INSTALLED_APPS = [
-    'channels'
     'basics',
     'nocaptcha_recaptcha',
     'django.contrib.admin',
@@ -41,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
 ]
 
 MIDDLEWARE_CLASSES = [
