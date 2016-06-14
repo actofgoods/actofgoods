@@ -2,12 +2,15 @@
 
 #standard-modal {
     min-width:250px;
-    background-color: rgba(76,78,73,.05);
     border-width: 1px;
     border-style: solid;
     border-color: rgba(0, 0, 0, 0.15);
     border-radius: 8px;
-    margin: 20px 15px;
+    margin: 20px 0px;
+}
+
+#standard-modal .modal-content {
+    background-color: #F5F5F5;
 }
 
 #standard-modal-headline {
@@ -62,7 +65,13 @@
     color: #bbd153;
 }
 
-#standard-list-group-item-div:hover {
-    background-color: #F5F5F5;
+/* standard gray background #F5F5F5 */
+#standard-list-group-item-div {
+    background-color: #FAFAFA;
 }
+
+#standard-list-group-item-div:hover {
+    background-color: #EDEDED;
+}
+
 /* ----------- end standard table ----------- */

@@ -15,7 +15,7 @@
                     {% for request in works_on %}
 
                         <!-- list element for every request -->
-                        <a class="list-group-item">
+                        <a class="list-group-item" id="standard-list-group-item-div">
                             <div class="row">
                                 <div class="col-sm-12" data-toggle="modal" data-target=".{{ request.id }}">
                                     <h4 class="list-group-item-heading">{{ request.headline }}</h4>
@@ -70,7 +70,7 @@
                         {% if request.works_on == None %}
 
                             <!-- list element for every request -->
-                            <a class="list-group-item">
+                            <a class="list-group-item" id="standard-list-group-item-div">
                                 <div class="row">
                                     <div class="col-sm-12" data-toggle="modal" data-target=".{{ request.id }}">
                                         <h4 class="list-group-item-heading">{{ request.headline }}</h4>
@@ -118,7 +118,6 @@
 </div> <!-- close container -->
 
 <script>
-
   function add_worker(element){
       var id = element.id;
       console.log(id);
