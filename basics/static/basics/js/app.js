@@ -3,32 +3,6 @@
 (function (React, ReactDOM, window, document, MDL) {
 	'use strict';
 
-	var AddNewChat = function AddNewChat(props) {
-		return React.createElement(
-			'div',
-			null,
-			React.createElement(
-				'button',
-				{
-					id: 'add-chat-button',
-					className: 'mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored',
-					onClick: props.addChat },
-				React.createElement(
-					'i',
-					{ className: 'material-icons' },
-					'add'
-				)
-			),
-			React.createElement(
-				'span',
-				{ className: 'mdl-tooltip mdl-tooltip--left', htmlFor: 'add-chat-button' },
-				'Add new chat'
-			)
-		);
-	};
-
-
-
 	var LoadingBar = function LoadingBar(props) {
 		return React.createElement('div', { className: 'mdl-progress mdl-js-progress mdl-progress__indeterminate' });
 	};

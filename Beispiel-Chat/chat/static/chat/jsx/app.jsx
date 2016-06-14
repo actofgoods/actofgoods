@@ -17,18 +17,6 @@
 		);
 	};
 
-	var Header = function Header(props) {
-		return (
-			<header className='mdl-layout__header  mdl-color--primary'>
-				<div className='mdl-layout-icon'></div>
-				<div className='mdl-layout__header-row'>
-					<h1 className='mdl-layout__title'>Django Channels Chat</h1>
-				</div>
-				<div className='mdl-layout-spacer'></div>
-			</header>
-		);
-	};
-
 	var LoadingBar = function LoadingBar(props) {
 		return (
 			<div className='mdl-progress mdl-js-progress mdl-progress__indeterminate'></div>
@@ -251,7 +239,7 @@
 		},
 
 		componentWillMount : function() {
-			var author = window.prompt('Please enter a nickname') || 'John Doe';
+			var author = window.prompt('Please enter a nickname') || {{request.user}};
 			this.setState({
 				author : author
 			});
