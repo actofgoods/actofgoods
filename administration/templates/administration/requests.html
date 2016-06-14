@@ -2,112 +2,123 @@
 {% block content %}
 {% load filter %}
 
-<head>
-
-    <style>
-        #table-headline {
-            font-weight: bold;
-            color: #bbd153;
-        }
-    </style>
-
-</head>
-
 <div class="container">
 
-    <h2 id="table-headline">Requests in progress</h2>
+    <!-- all in progress requests -->
+    <div id="standard-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-center" id="standard-modal-headline">Requests in progress</h2>
+            </div>
+            <div class="modal-body">
+                <div class="list-group">
+                    {% for request in works_on %}
 
-    <div class="list-group">
-        {% for request in works_on %}
+                        <!-- list element for every request -->
+                        <a class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-12" data-toggle="modal" data-target=".{{ request.id }}">
+                                    <h4 class="list-group-item-heading">{{ request.headline }}</h4>
+                                    <p class="list-group-item-text">{{ request|get_short_text:160 }}</p>
+                                </div>
+                                <div class="col-sm-11" data-toggle="modal" data-target=".{{ request.id }}">
+                                    <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml standard-green-button-light " href="" style="float: right;" onclick="done_request(this)"><span class="glyphicon glyphicon-ok"></span> Done</button>
+                                </div>
+                            </div>
+                        </a>
 
-                <div class="row">
-
-                    <a href="#" class="list-group-item" data-toggle="modal" data-target=".{{ request.id }}">
-                      <div class="col-sm-12">
-                          <h4 class="list-group-item-heading">{{ request.headline }}</h4>
-                          <p class="list-group-item-text">{{ request|get_short_text:130 }}</p>
-                      </div>
-                      <div class="col-sm-10">
-                          <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
-                      </div>
-                    </a>
-                      <div class="col-sm-2">
-                          <button type="button" class="btn btn-default btn-sml" style="float: right;">Done</button>
-                      </div>
-
-                </div>
-
-            <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <h2>{{request.headline}}</h2>
-                            <h6>by {{ request.email }} from {{ request.create_date }}</h6>
+                        <!-- modal for every request -->
+                        <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <h2>{{request.headline}}</h2>
+                                        <h6>by {{ request.email }} from {{ request.create_date }}</h6>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>{{ request.text }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button id="standard-green-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <p>{{ request.text }}</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
+                    {% empty %}
+                        <h4>Watch the table below to work on a request.</h4>
+                    {% endfor %}
                 </div>
             </div>
-        {% empty %}
-            <h4>Watch the table below to work on a request.</h4>
-        {% endfor %}
-    </div>
+        </div>
+    </div><!-- end all in progress requests -->
 
-    <h2 id="table-headline">Requests</h2>
+    <!-- all open requests -->
+    <div id="standard-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-center" id="standard-modal-headline">Requests</h2>
+            </div>
+            <div class="modal-body">
+                <div class="list-group">
+                    {% for request in requests %}
+                        {% if request.works_on == None %}
 
-    <div class="list-group">
-        {% for request in requests %}
+                            <!-- list element for every request -->
+                            <a class="list-group-item">
+                                <div class="row">
+                                    <div class="col-sm-12" data-toggle="modal" data-target=".{{ request.id }}">
+                                        <h4 class="list-group-item-heading">{{ request.headline }}</h4>
+                                        <p class="list-group-item-text">{{ request|get_short_text:160 }}</p>
+                                    </div>
+                                    <div class="col-sm-11" data-toggle="modal" data-target=".{{ request.id }}">
+                                        <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
+                                    </div>
 
-                <div class="row">
-                  <a href="#" class="list-group-item" data-toggle="modal" data-target=".{{ request.id }}">
-                    <div class="col-sm-12">
-                        <h4 class="list-group-item-heading">{{ request.headline }}</h4>
-                        <p class="list-group-item-text">{{ request|get_short_text:112 }}</p>
-                    </div>
-                    <div class="col-sm-10">
-                        <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
-                    </div>
-                  </a>
-                    <div class="col-sm-2">
-                        <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml" href="" style="float: right;" onclick="add_worker(this)">Work On</button>
-                    </div>
+                                    <div class="col-sm-1">
+                                        <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml standard-green-button-light " href="" style="float: right;" onclick="add_worker(this)"><span class="glyphicon glyphicon-pencil"></span> Work On</button>
+                                    </div>
+                                </div>
+                            </a>
 
-                </div>
-
-            <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <h2>{{request.headline}}</h2>
-                            <h6>by {{ request.email }} from {{ request.create_date }}</h6>
-                        </div>
-                        <div class="modal-body">
-                            <p>{{ request.text }}</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
+                            <!-- modal for every request -->
+                            <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h2>{{request.headline}}</h2>
+                                            <h6>by {{ request.email }} from {{ request.create_date }}</h6>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>{{ request.text }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="standard-green-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% empty %}
+                        <h4>No new requests.</h4>
+                    {% endfor %}
                 </div>
             </div>
-        {% empty %}
-            <h4>No new requests.</h4>
-        {% endfor %}
+        </div>
+    </div><!-- end all open requests -->
 
-    </div>
-</div>
+</div> <!-- close container -->
+
 <script>
+
   function add_worker(element){
       var id = element.id;
       console.log(id);
@@ -115,7 +126,16 @@
           //no need for this method but if we want to get a callback this is the correct position
           location.href = "{% url 'administration:requests' %}";
       });
-
   }
+
+  function done_request(element){
+      var id = element.id;
+      console.log(id);
+      $.post("{% url 'administration:request_done' %}", {id:id}, function(data){
+          //no need for this method but if we want to get a callback this is the correct position
+          location.href = "{% url 'administration:requests' %}";
+      });
+  }
+
 </script>
 {% endblock %}

@@ -104,3 +104,10 @@ def work_on_request(request):
 	contact.works_on = request.user
 	contact.save()
 	return redirect('administration:groups')
+
+@csrf_exempt
+def request_done(request):
+    request_id = request.POST['id']
+    request = get_object_or_404(ContactUs, pk=request_id)
+    request.delete()
+    return redirect('administration:requests')

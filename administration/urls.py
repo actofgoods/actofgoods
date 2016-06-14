@@ -32,4 +32,5 @@ urlpatterns = [
     url(r'^administration/users/(?P<pk>\d+)/make_admin/$', views.make_admin, name='make_admin'),
     url(r'^administration/categories/(?P<pk>\d+)/delete/$', views.categories_delete, name='categories_delete'),
     url(r'^administration/work_on_request/$', views.work_on_request, name='work_on_request'),
+    url(r'^administration/request_done/$', views.request_done, name='request_done'),
 ]
