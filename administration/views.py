@@ -86,9 +86,11 @@ def users(request):
 			if form.is_valid():
 				email = request.POST.get('email')
 				if {'email': email} in User.objects.values('email'):
-					#users = User.objects.get(email=email)
-					usr = User.objects.filter(email=email)
-					return render(request, 'administration/users.html', {'usr':usr})
+					usr = User.objects.get(email=email)
+					if not usr.is_superuser:
+						return render(request, 'administration/users.html', {'usr':usr})
+					else:
+						messages.add_message(request, messages.INFO, 'user_isAdmin')
 				else:
 					messages.add_message(request, messages.INFO, 'wrong_email')
 	return render(request, 'administration/users.html', {'users': users})

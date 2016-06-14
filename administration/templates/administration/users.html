@@ -8,11 +8,33 @@
             <div class="modal-header">
                 <h2 class="text-center" id="standard-modal-headline">Search User</h2>
             </div>
-            {% for user in usr%}
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.message == 'user_isAdmin' %}
+                        <div class="form-group">
+                            <div class="error-messages">
+                                <p>That user is an Admin!</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.message == 'wrong_email' %}
+                        <div class="form-group">
+                            <div class="error-messages">
+                                <p>User with this E-Mail doesn't exist!</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if usr %}
                 <div class="list-group-item" id="standard-list-group-item-div">
                     <div class="row">
                         <div class="col-sm-9">
-                            {{ user.email }}
+                            {{ usr.email }}
                         </div>
                         <div class="col-sm-3">
                             <a id="standard-green-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
@@ -20,7 +42,7 @@
                         </div>
                     </div>
                 </div>
-            {% endfor %}
+            {% endif %}
             <div class="modal-body">
                 <div class="list-group">
                     <div class="form-group">
