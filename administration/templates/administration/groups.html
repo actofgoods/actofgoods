@@ -60,22 +60,6 @@
                     <div class="form-group">
                         <input type="email" class="form-control input-lg" placeholder="Email from Group User" name="email" required/>
                     </div>
-                    {% if messages %}
-                        {% for message in messages %}
-                            {% if message.message == 'location_failed' %}
-                                <div class="form-group">
-                                    <div class="error-messages">
-                                        <p>You Need a location for your Group!</p>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    <div class="form-group">
-                            <p id="choose-location-text">If you do not like to use your standard location choose an other one.
-                        {% include "basics/map_testing.html" %}</p>
-                    </div>
-
                     <div class="form-group">
                         <input type="submit" class="btn btn-block btn-lg btn-primary" value="Create & Send"/>
                     </div>
@@ -100,9 +84,6 @@
                                 <th>{{ group.group.name }}</th>
                                 <th>{{ group.email }}</th>
                                 <th>
-                                    <a href="#" class="btn btn-warning btn-sm" title="edit">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </a>
                                     <a href="{% url 'administration:group_delete' pk=group.pk %}" class="btn btn-danger btn-sm" title="delete">
                                         <span class="glyphicon glyphicon-remove"></span>
                                     </a>
