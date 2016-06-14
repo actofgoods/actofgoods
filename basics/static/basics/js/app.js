@@ -27,23 +27,7 @@
 		);
 	};
 
-	var Header = function Header(props) {
-		return React.createElement(
-			'header',
-			{ className: 'mdl-layout__header  mdl-color--primary' },
-			React.createElement('div', { className: 'mdl-layout-icon' }),
-			React.createElement(
-				'div',
-				{ className: 'mdl-layout__header-row' },
-				React.createElement(
-					'h1',
-					{ className: 'mdl-layout__title' },
-					'Actofgoods Chat'
-				)
-			),
-			React.createElement('div', { className: 'mdl-layout-spacer' })
-		);
-	};
+
 
 	var LoadingBar = function LoadingBar(props) {
 		return React.createElement('div', { className: 'mdl-progress mdl-js-progress mdl-progress__indeterminate' });
@@ -243,7 +227,7 @@
 
 		getInitialState: function getInitialState() {
 			return {
-				channel: 'General',
+				channel: 'Actofgoods',
 				connected: false,
 				messages: [],
 				author: ''
@@ -284,7 +268,7 @@
 		},
 
 		componentWillMount: function componentWillMount() {
-			var author = window.prompt('Please enter a nickname') || 'John Doe';
+			var author = window.prompt('Please enter a nickname') || '{{request.user.username|escapejs}}';
 			this.setState({
 				author: author
 			});
@@ -359,20 +343,16 @@
 
 	});
 
+	//Initialisiere 2 Chats
+
 	var App = React.createClass({
 		displayName: 'App',
 
 
 		getInitialState: function getInitialState() {
 			return {
-				chats: 1
+				chats: 2
 			};
-		},
-
-		addChat: function addChat() {
-			this.setState({
-				chats: ++this.state.chats
-			});
 		},
 
 		render: function render() {
@@ -380,23 +360,8 @@
 			for (var i = 0; i < this.state.chats; i++) {
 				chats.push(React.createElement(ChatContainer, { key: i }));
 			}
-			return React.createElement(
-				'div',
-				{ className: 'mdl-layout mdl-js-layout mdl-layout--fixed-header' },
-				React.createElement(Header, null),
-				React.createElement(
-					'main',
-					{ className: 'mdl-layout__content' },
-					React.createElement(
-						'div',
-						{ className: 'mdl-grid' },
-						chats
-					)
-				),
-				chats.length < 5 ? React.createElement(AddNewChat, { addChat: this.addChat }) : null
-			);
+			return React.createElement('div',{ className: 'mdl-grid' },chats)
 		}
-
 	});
 
 	ReactDOM.render(React.createElement(App, null), document.getElementById('app'));
