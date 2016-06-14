@@ -88,8 +88,7 @@ def change_password(request):
 """
 def chat(request):
     if request.user.is_authenticated():
-        json_list=json.dumps(map(unicode, ChatMessage.objects.order_by('date')))
-        return render(request, 'basics/chat.html',{'messages': json_list})
+        return render(request, 'basics/chat.html',{'messages': ChatMessage.objects.order_by('date')})
 
     return redirect('basics:actofgoods_startpage')
 
