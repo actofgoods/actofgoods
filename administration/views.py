@@ -43,30 +43,25 @@ def groups(request):
 		if request.method == "POST":
 			form = GroupFormRegister(request.POST)
 			if form.is_valid() :
-				lat, lng = getAddress(request)
 				email = request.POST.get('email')
 				name = request.POST.get('name')
-				if lat != None and lng != None:
-					if {'email': email} in User.objects.values('email') and not Group.objects.filter(name='teeest'):
-						address = Address.objects.create(latitude=lat, longditude=lng)
-						data = form.cleaned_data
-						group = Group.objects.create(name=name)
-						user = User.objects.get(email=email)
-						user.is_staff = True
-						user.save()
-						group.user_set.add(user)
-						gdata = Groupdata(group=group, address=address)
-						gdata.save()
-						return redirect('administration:groups')
-					elif not {'email': email} in User.objects.values('email') and not Group.objects.filter(name='teeest'):
-						messages.add_message(request, messages.INFO, 'wrong_email')
-					elif {'email': email} in User.objects.values('email') and Group.objects.filter(name='teeest'):
-						messages.add_message(request, messages.INFO, 'wrong_group')
-					else :
-						messages.add_message(request, messages.INFO, 'wrong_emailAndGroup')
-
-				else:
-					messages.add_message(request, messages.INFO, 'location_failed')
+				if {'email': email} in User.objects.values('email') and not Group.objects.filter(name='teeest'):
+					address = Address.objects.create(latitude=0.0, longditude=0.0)
+					data = form.cleaned_data
+					group = Group.objects.create(name=name)
+					user = User.objects.get(email=email)
+					user.is_staff = True
+					user.save()
+					group.user_set.add(user)
+					gdata = Groupdata(group=group, address=address)
+					gdata.save()
+					return redirect('administration:groups')
+				elif not {'email': email} in User.objects.values('email') and not Group.objects.filter(name='teeest'):
+					messages.add_message(request, messages.INFO, 'wrong_email')
+				elif {'email': email} in User.objects.values('email') and Group.objects.filter(name='teeest'):
+					messages.add_message(request, messages.INFO, 'wrong_group')
+				else :
+					messages.add_message(request, messages.INFO, 'wrong_emailAndGroup')
 			else:
 				messages.add_message(request, messages.INFO, 'wrong_form')
 	groups = Groupdata.objects.all()
