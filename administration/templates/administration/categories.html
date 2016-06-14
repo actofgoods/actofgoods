@@ -13,6 +13,17 @@
                     <h2 class="text-center" id="standard-modal-headline">Create new Categories</h2>
 			    </div>
 			    <div class="modal-body">
+                    {% if messages %}
+    					{% for message in messages %}
+							{% if message.message == 'categorie_exists' %}
+								<div class="form-group">
+									<div class="error-messages">
+    									<p>This Categorie already exists!</p>
+									</div>
+								</div>
+							{% endif %}
+    					{% endfor %}
+					{% endif %}
 				    <form class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav">
 					{%csrf_token%}
 					    <div class="form-group">
@@ -38,6 +49,17 @@
                     <h2 class="text-center" id="standard-modal-headline">Categories</h2>
 			    </div>
 			    <div class="modal-body">
+                    {% if messages %}
+    					{% for message in messages %}
+							{% if message.message == 'categorie_sonst' %}
+								<div class="form-group">
+									<div class="error-messages">
+    									<p>Cannot delete sonstige!</p>
+									</div>
+								</div>
+							{% endif %}
+    					{% endfor %}
+					{% endif %}
                     <div class="list-group">
                         {% for categorie in categories %}
                             <div class="list-group-item" id="standard-list-group-item-div">
