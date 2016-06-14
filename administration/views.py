@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
-from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs
+from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs, Need
 from django.contrib.auth.models import User, Group
 from administration.forms import GroupFormRegister
 from basics.forms import CategoriesForm
@@ -15,19 +15,60 @@ def categories(request):
 			form = CategoriesForm(request.POST)
 			if form.is_valid():
 				name = request.POST.get('name')
-				categorie = CategoriesNeeds.objects.create(name=name)
-				categorie.save()
+				if not {'name':name} in CategoriesNeeds.objects.values('name'): 
+					categorie = CategoriesNeeds.objects.create(name=name)
+					categorie.save()
+				else:
+					messages.add_message(request, messages.INFO, 'categorie_exists')
 	categories = CategoriesNeeds.objects.all()
 	return render(request, 'administration/categories.html', {'categories':categories})
 
 def categories_delete(request, pk):
+	cat = ''
+	if not CategoriesNeeds.objects.filter(name='sonstige'):
+		cat = cat = CategoriesNeeds.objects.create(name='sonstige')
+	else:
+		cat = CategoriesNeeds.objects.get(name='sonstige')
 	categorie = get_object_or_404(CategoriesNeeds, pk=pk)
-	categorie.delete()
-	categories = CategoriesNeeds.objects.all()
+	Need.objects.filter(categorie=categorie).update(categorie=cat)
+	if not categorie.name == 'sonstige':
+		categorie.delete()
+	else:
+		messages.add_message(request, messages.INFO, 'categorie_sonst')
 	return redirect('administration:categories')
 	#return render(request, 'administration/categories.html', {'categories':categories})
 
 def groups(request):
+	if request.user.is_authenticated():
+		if request.method == "POST":
+			form = GroupFormRegister(request.POST)
+			if form.is_valid() :
+				lat, lng = getAddress(request)
+				email = request.POST.get('email')
+				name = request.POST.get('name')
+				if lat != None and lng != None:
+					if {'email': email} in User.objects.values('email') and not Group.objects.filter(name='teeest'):
+						address = Address.objects.create(latitude=lat, longditude=lng)
+						data = form.cleaned_data
+						group = Group.objects.create(name=name)
+						user = User.objects.get(email=email)
+						user.is_staff = True
+						user.save()
+						group.user_set.add(user)
+						gdata = Groupdata(group=group, address=address)
+						gdata.save()
+						return redirect('administration:groups')
+					elif not {'email': email} in User.objects.values('email') and not Group.objects.filter(name='teeest'):
+						messages.add_message(request, messages.INFO, 'wrong_email')
+					elif {'email': email} in User.objects.values('email') and Group.objects.filter(name='teeest'):
+						messages.add_message(request, messages.INFO, 'wrong_group')
+					else :
+						messages.add_message(request, messages.INFO, 'wrong_emailAndGroup')
+
+				else:
+					messages.add_message(request, messages.INFO, 'location_failed')
+			else:
+				messages.add_message(request, messages.INFO, 'wrong_form')
 	groups = Groupdata.objects.all()
 	return render(request, 'administration/groups.html', {'groups': groups})
 
@@ -53,34 +94,6 @@ def user_delete(request, pk):
 	users = get_list_or_404(User)
 	#return render(request, 'administration/users.html', {'users':users})
 	return redirect('administration:users')
-
-def new_group(request):
-	if request.user.is_authenticated():
-		if request.method == "POST":
-			form = GroupFormRegister(request.POST)
-			if form.is_valid() :
-				lat, lng = getAddress(request)
-				email = request.POST.get('email')
-				name = request.POST.get('name')
-				if lat != None and lng != None:
-					if {'email': email} in User.objects.values('email'):
-						address = Address.objects.create(latitude=lat, longditude=lng)
-						data = form.cleaned_data
-						group = Group.objects.create(name=name)
-						user = User.objects.get(email=email)
-						user.is_staff = True
-						user.save()
-						group.user_set.add(user)
-						gdata = Groupdata(group=group, address=address)
-						gdata.save()
-						return redirect('administration:groups')
-					else:
-						messages.add_message(request, messages.INFO, 'wrong_email')
-				else:
-					messages.add_message(request, messages.INFO, 'location_failed')
-			else:
-				messages.add_message(request, messages.INFO, 'wrong_form')
-	return render(request, 'administration/new_group.html')
 
 def group_delete(request, pk):
 	groupDa = get_object_or_404(Groupdata, pk=pk)
