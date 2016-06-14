@@ -1,5 +1,5 @@
 import json
-import urlparse
+import urllib.parse 
 import logging
 
 from channels import Group
@@ -8,7 +8,7 @@ from channels.sessions import channel_session
 
 @channel_session
 def ws_add(message, room):
-    query = urlparse.parse_qs(message['query_string'])
+    query = urllib.parse.parse_qs(message['query_string'])
     if 'username' not in query:
         return
     logging.info('Adding websocket with username %s in room %s',
