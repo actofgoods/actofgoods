@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+import chat.views
 
 urlpatterns = [
-	url(r'^$', 'chat.views.chat_view'),
+	url(r'^$', chat.views.chat_view),
     url(r'^admin/', admin.site.urls),
 ]
