@@ -48,6 +48,8 @@ class Need(models.Model):
 	date = models.DateTimeField(auto_now=True)
 	categorie = models.ForeignKey(CategoriesNeeds)
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
+	was_reported = models.BooleanField(default=False)
+	number_reports = models.PositiveIntegerField(default=0)
 
 class Information(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -57,6 +59,8 @@ class Information(models.Model):
 	closed = models.BooleanField(default=False)
 	date = models.DateTimeField(auto_now=True)
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
+	was_reported = models.BooleanField(default=False)
+	number_reports = models.PositiveIntegerField(default=0)
 
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)

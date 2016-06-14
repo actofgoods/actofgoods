@@ -355,7 +355,7 @@ def needs_new(request):
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
                     data = need.cleaned_data
-                    needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address)
+                    needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
                     needdata.save()
                     return redirect('basics:needs_all')
         need = NeedFormNew()
