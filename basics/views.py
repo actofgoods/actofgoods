@@ -2,7 +2,7 @@ import random
 import smtplib
 import string
 import requests
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.template import loader
 from django.contrib import messages
@@ -191,7 +191,6 @@ def information_new(request):
                     return redirect('basics:information_all')
 
         info = InformationFormNew()
-
         return render(request, 'basics/information_new.html', {'info':info})
 
     return redirect('basics:actofgoods_startpage')
@@ -316,9 +315,10 @@ def needs_all(request):
     If user is not authenticated redirect to startpage.
     Otherwise the needs_view_edit page will be rendered and returned.
 """
-def needs_view_edit(request):
+def needs_view(request, pk):
     if request.user.is_authenticated:
-        return render (request, 'basics/needs_view_edit')
+        need = get_object_or_404(Need, pk=pk)
+        return render (request, 'basics/needs_view.html', {'need':need})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -348,6 +348,8 @@ def needs_new(request):
                     needdata.save()
                     return redirect('basics:needs_all')
         need = NeedFormNew()
+        c = CategoriesNeeds(name="Others")
+        c.save
         return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
     return redirect('basics:actofgoods_startpage')
