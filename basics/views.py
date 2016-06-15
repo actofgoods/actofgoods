@@ -89,18 +89,20 @@ def change_password(request):
     Otherwise the chat page will be rendered and returned.
 """
 def chat(request):
-    if not request.user.is_active:
-        return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated():
-        return render(request, 'basics/chat.html',{'messages':[]})
+	if not request.user.is_active:
+		return render(request, 'basics/verification.html', {'active': False})
+	if request.user.is_authenticated():
+		if request.method == "GET":
+			room=Room.objects.filter(Q(need__author =request.user) | Q(user_req = request.user)).latest('last_message')
+			return redirect('basics:chat_room', roomname=room.name)
 
-    return redirect('basics:actofgoods_startpage')
+	return redirect('basics:actofgoods_startpage')
 
 
 def kick_user(request, roomname):
 	if request.user.is_authenticated():
 		room = Room.objects.get(name=roomname)
-		room.user_req = ''
+		room.user_req = None
 	return redirect('basics:actofgoods_startpage')
 
 """

@@ -85,6 +85,7 @@ class Room(models.Model):
 	slug = models.SlugField()
 	act_req = models.BooleanField(default=False)
 	act_off = models.BooleanField(default=False)
+	last_message = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
 		return self.name

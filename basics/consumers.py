@@ -3,6 +3,7 @@ import urllib.parse
 import logging
 from .models import *
 from channels import Group
+import datetime
 from channels.sessions import channel_session
 
 @channel_session
@@ -26,6 +27,7 @@ def ws_echo(message):
                  message.content['text'], message.channel_session['username'],
                  room)
     db_room = Room.objects.get(name=room)
+    db_room.last_message=datetime.datetime.now()
     print(message.channel_session['username'])
     chatMessage = ChatMessage(author=User.objects.get(username=message.channel_session['username']), room=db_room, text=message.content['text'])
     chatMessage.save()
