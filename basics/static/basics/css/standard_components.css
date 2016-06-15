@@ -56,6 +56,38 @@
 }
 /* end green button light/bold */
 
+/* grey button light */
+#standard-grey-button-light,
+.standard-grey-button-light {
+  	background-color: #5D5F5B;
+  	border-color: #222322;
+  	color: #bbd153;
+	font-size: 1em;
+}
+
+/* grey button bold */
+#standard-grey-button-bold,
+.standard-grey-button-bold {
+  	background-color: #5D5F5B;
+  	border-color: #222322;
+  	color: #bbd153;
+	font-size: 1em;
+	font-weight: bold;
+}
+
+#standard-grey-button-light:hover,
+#standard-grey-button-bold:hover,
+.standard-grey-button-light:hover,
+.standard-grey-button-bold:hover,
+#standard-grey-button-light:active:focus,
+#standard-grey-button-bold:active:focus,
+.standard-grey-button-light:active:focus,
+.standard-grey-button-bold:active:focus {
+    background-color: #4C4E49;
+    color: #bbd153;
+}
+/* end grey button light/bold */
+
 /* ----------- end standard buttons ----------- */
 
 /* ----------- standard table ----------- */

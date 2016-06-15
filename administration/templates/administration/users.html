@@ -40,7 +40,7 @@
                                         <input type="email" class="form-control input-lg" placeholder="Email from User" name="email" style="margin-top: 15px; margin-bottom: 15px;" required/>
                                     </div>
                                     <div class="col-sm-4">
-                                        <input id="standard-green-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Search"/>
+                                        <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Search"/>
                                     </div>
                                 </div>
                             </div>
@@ -58,8 +58,8 @@
                                     {{ usr.email }}
                                 </div>
                                 <div class="col-sm-3">
-                                    <a id="standard-green-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
-                                    <a id="standard-green-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
                                 </div>
                             </div>
                         </div>
@@ -72,8 +72,8 @@
                                             {{ user.email }}
                                         </div>
                                         <div class="col-sm-3">
-                                            <a id="standard-green-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
-                                            <a id="standard-green-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
+                                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
                                         </div>
                                     </div>
                                 </div>
