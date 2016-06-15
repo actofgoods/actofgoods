@@ -100,10 +100,11 @@ def chat(request):
 
 
 def kick_user(request, roomname):
-	if request.user.is_authenticated():
-		room = Room.objects.get(name=roomname)
-		room.user_req = None
-	return redirect('basics:actofgoods_startpage')
+    if request.user.is_authenticated():
+        room = Room.objects.get(name=roomname)
+        room.user_req = None
+        room.save
+    return redirect('basics:actofgoods_startpage')
 
 """
     Needs authentication!
