@@ -49,13 +49,13 @@
                             {% if message.message == 'category_not_exists' %}
                                 <div class="form-group">
                                     <div class="error-messages">
-                                        <p>This category not exists!</p>
+                                        <p>This category doesn't exist!</p>
                                     </div>
                                 </div>
                             {% endif %}
                         {% endfor %}
                     {% endif %}
-                    <form class="form" role="form" method="post" accept-charset="UTF-8">
+                    <form class="form" role="form" method="POST" accept-charset="UTF-8">
                     {%csrf_token%}
                         <div class="form-group">
                             <input type="name" class="form-control input-lg" placeholder="Category Name" name="name" required/>
