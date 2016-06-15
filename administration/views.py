@@ -28,7 +28,7 @@ def categories(request):
                         return render(request, 'administration/categories.html', {'categ':categ})
                     else:
                         messages.add_message(request, messages.INFO, 'category_not_exists')
-    categories = CategoriesNeeds.objects.all()
+    categories = CategoriesNeeds.objects.all().order_by('name')
     return render(request, 'administration/categories.html', {'categories':categories})
 
 def categories_delete(request, pk):
@@ -47,33 +47,41 @@ def categories_delete(request, pk):
 	#return render(request, 'administration/categories.html', {'categories':categories})
 
 def groups(request):
-	if request.user.is_authenticated():
-		if request.method == "POST":
-			form = GroupFormRegister(request.POST)
-			if form.is_valid() :
-				email = request.POST.get('email')
-				name = request.POST.get('name')
-				if {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
-					#address = Address.objects.create(latitude=0.0, longditude=0.0)
-					data = form.cleaned_data
-					group = Group.objects.create(name=name)
-					user = User.objects.get(email=email)
-					user.is_staff = True
-					user.save()
-					group.user_set.add(user)
-					gdata = Groupdata(group=group)
-					gdata.save()
-					return redirect('administration:groups')
-				elif not {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
-					messages.add_message(request, messages.INFO, 'wrong_email')
-				elif {'email': email} in User.objects.values('email') and Group.objects.filter(name=name):
-					messages.add_message(request, messages.INFO, 'wrong_group')
-				else :
-					messages.add_message(request, messages.INFO, 'wrong_emailAndGroup')
-			else:
-				messages.add_message(request, messages.INFO, 'wrong_form')
-	groups = Groupdata.objects.all()
-	return render(request, 'administration/groups.html', {'groups': groups})
+    if request.user.is_authenticated():
+        if request.method == "POST":
+            form = GroupFormRegister(request.POST)
+            if form.is_valid() :
+                if 'create_group' in form.data:
+                    email = request.POST.get('email')
+                    name = request.POST.get('name')
+                    if {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
+                        #address = Address.objects.create(latitude=0.0, longditude=0.0)
+                        data = form.cleaned_data
+                        group = Group.objects.create(name=name)
+                        user = User.objects.get(email=email)
+                        user.is_staff = True
+                        user.save()
+                        group.user_set.add(user)
+                        gdata = Groupdata(group=group)
+                        gdata.save()
+                        return redirect('administration:groups')
+                    elif not {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
+                        messages.add_message(request, messages.INFO, 'wrong_email')
+                    elif {'email': email} in User.objects.values('email') and Group.objects.filter(name=name):
+                        messages.add_message(request, messages.INFO, 'wrong_group')
+                    else :
+                        messages.add_message(request, messages.INFO, 'wrong_emailAndGroup')
+                elif 'search_group' in form.data:
+                    name = request.POST.get('name')
+                    if {'name':name} in Group.objects.values('name'):
+                        gro = Group.objects.get(name=name)
+                        return render(request, 'administration/groups.html', {'gro':gro})
+                    else:
+                        messages.add_message(request, messages.INFO, 'group_not_exists')
+            else:
+                messages.add_message(request, messages.INFO, 'wrong_form')
+    groups = Groupdata.objects.all().order_by('group__name')
+    return render(request, 'administration/groups.html', {'groups': groups})
 
 def informations(request):
 	infos = Information.objects.filter(was_reported=True)
@@ -89,21 +97,21 @@ def needs(request):
 	return render(request, 'administration/needs.html', {'needs':needs})
 
 def users(request):
-	users = get_list_or_404(User)
-	if request.user.is_authenticated():
-		if request.method == "POST":
-			form = SearchUserForm(request.POST)
-			if form.is_valid():
-				email = request.POST.get('email')
-				if {'email': email} in User.objects.values('email'):
-					usr = User.objects.get(email=email)
-					if not usr.is_superuser:
-						return render(request, 'administration/users.html', {'usr':usr})
-					else:
-						messages.add_message(request, messages.INFO, 'user_isAdmin')
-				else:
-					messages.add_message(request, messages.INFO, 'wrong_email')
-	return render(request, 'administration/users.html', {'users': users})
+    users = get_list_or_404(User)
+    if request.user.is_authenticated():
+        if request.method == "POST":
+            form = SearchUserForm(request.POST)
+            if form.is_valid():
+                email = request.POST.get('email')
+                if {'email': email} in User.objects.values('email'):
+                    usr = User.objects.get(email=email)
+                    if not usr.is_superuser:
+                        return render(request, 'administration/users.html', {'usr':usr})
+                    else:
+                        messages.add_message(request, messages.INFO, 'user_isAdmin')
+                else:
+                    messages.add_message(request, messages.INFO, 'wrong_email')
+    return render(request, 'administration/users.html', {'users': users})
 
 def user_delete(request, pk):
 	# User somehow doesn't have attribute pk (only Userdata has), so we get the email from userdata and with that we get the user and can delete him
