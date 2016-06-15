@@ -25,7 +25,6 @@ from .models import *
     -output: Main- or Indexpage
 """
 def actofgoods_startpage(request):
-
     registerform = UserFormRegister()
     needs = Need.objects.all()
     if request.user.is_authenticated():

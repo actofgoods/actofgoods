@@ -72,12 +72,12 @@
       React.createElement(
         'div',
         { className: 'message__author' },
-        props.ownMessage ? 'You' : props.author
+        props.ownMessage ? 'You' : 'Other'         //props.author
       ),
       React.createElement('div', { className: 'message__avatar' }),
       React.createElement(
         'div',
-        { className: 'message__text' },
+        { className: classString + 'message__text' },
         props.text
       )
     );
@@ -101,6 +101,7 @@
         { className: 'message-list', ref: this.getNodeRef },
         this.props.children
       );
+      this.messageList.scrollTop = this.messageList.scrollHeight;
     }
   });
 
