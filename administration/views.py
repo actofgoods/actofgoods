@@ -127,6 +127,15 @@ def group_delete(request, pk):
 	group.delete()
 	return redirect('administration:groups')
 
+def information_delete(request, pk):
+    info = get_object_or_404(Information, pk=pk)
+    info.delete()
+    return redirect('administration:informations')
+
+def need_delete(request, pk):
+    need = get_object_or_404(Need, pk=pk)
+    need.delete()
+    return redirect('administration:needs')
 
 def make_admin(request, pk):
 	user = get_object_or_404(User, pk=pk)
