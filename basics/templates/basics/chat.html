@@ -239,7 +239,7 @@
 
     getInitialState: function getInitialState() {
       return {
-        channel: 'Actofgoods',
+        channel: '{{roomname}}'||'Actofgoods',
         connected: false,
         messages: [],
         author: ''
@@ -280,7 +280,7 @@
     },
 
     componentWillMount: function componentWillMount() {
-      var author = window.prompt('Wanna be anonym? Enter a pseudonym!') || '{{request.user.username}}';
+      var author = '{{request.user.username}}';
       this.setState({
         author: author
       });
@@ -382,4 +382,3 @@
   </body>
 
 {% endblock %}
-

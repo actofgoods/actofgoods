@@ -92,6 +92,20 @@ def chat(request):
 
     return redirect('basics:actofgoods_startpage')
 
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise the chat_room page will be rendered and returned.
+"""
+def chat_room(request, roomname):
+    if request.user.is_authenticated():
+        print(roomname)
+        return render(request, 'basics/chat.html',{'messages': ChatMessage.objects.order_by('date'), 'roomname':roomname})
+
+    return redirect('basics:actofgoods_startpage')
 
 """
     Input: request
@@ -159,6 +173,7 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     Otherwise a list of needs will be pult out of the database and added to ...
     The needs_all page will be rendered and returned.
 """
+@csrf_protect
 def information_all(request):
     if request.user.is_authenticated():
         infos = Information.objects.order_by('date')
@@ -266,7 +281,7 @@ def login(request):
         user = authenticate(username=email,password=password)
         if user is not None:
             if user.is_active:
-                
+
                 auth_login(request,user)
         else :
             messages.add_message(request, messages.INFO, 'lw')
@@ -305,6 +320,22 @@ def needs_all(request):
     if request.user.is_authenticated():
         needs = Need.objects.order_by('date')
         return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all})
+
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def needs_help(request, id):
+    #cat = CategoriesNeeds.objects.create(name="cool")
+    if request.user.is_authenticated():
+        if request.method == "GET":
+            need = Need.objects.get(id=id)
+            room = Room.objects.get(need=need)
+            if(room.user_req == "" or room.user_req == request.user):
+                room.user_req = request.user
+                room.save()
+                return redirect('basics:chat_room', roomname=room.name)
+        #TODO: what todo if POST data is wrong or get comes in
+        #return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -347,6 +378,9 @@ def needs_new(request):
                     data = need.cleaned_data
                     needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address)
                     needdata.save()
+                    #TODO: id_generator will return random string; Could be already in use
+                    room = Room.objects.create(name=id_generator(), need=needdata)
+                    room.save()
                     return redirect('basics:needs_all')
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
@@ -354,6 +388,7 @@ def needs_new(request):
         return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
     return redirect('basics:actofgoods_startpage')
+
 
 """
     Needs authentication!
