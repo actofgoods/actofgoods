@@ -33,13 +33,13 @@ def categories(request):
 
 def categories_delete(request, pk):
 	cat = ''
-	if not CategoriesNeeds.objects.filter(name='sonstige'):
-		cat = cat = CategoriesNeeds.objects.create(name='sonstige')
+	if not CategoriesNeeds.objects.filter(name='Other'):
+		cat = cat = CategoriesNeeds.objects.create(name='Other')
 	else:
-		cat = CategoriesNeeds.objects.get(name='sonstige')
+		cat = CategoriesNeeds.objects.get(name='Other')
 	categorie = get_object_or_404(CategoriesNeeds, pk=pk)
 	Need.objects.filter(categorie=categorie).update(categorie=cat)
-	if not categorie.name == 'sonstige':
+	if not categorie.name == 'Other':
 		categorie.delete()
 	else:
 		messages.add_message(request, messages.INFO, 'categorie_sonst')
@@ -93,8 +93,9 @@ def requests(request):
     return render(request, 'administration/requests.html', {'requests': requests, 'works_on':works_on})
 
 def needs(request):
-	needs = Need.objects.filter(was_reported=True)
-	return render(request, 'administration/needs.html', {'needs':needs})
+    needs = Need.objects.filter(was_reported=True)
+    categories = CategoriesNeeds.objects.all().order_by('name')
+    return render(request, 'administration/needs.html', {'needs':needs,'categories':categories})
 
 def users(request):
     users = sorted(get_list_or_404(User), key=lambda User: User.email)
