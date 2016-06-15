@@ -18,7 +18,7 @@
 							{% if message.message == 'categorie_exists' %}
 								<div class="form-group">
 									<div class="error-messages">
-    									<p>This Category already exists!</p>
+    									<p>This category already exists!</p>
 									</div>
 								</div>
 							{% endif %}
@@ -30,7 +30,7 @@
 		  				    <input type="name" class="form-control input-lg" placeholder="Category Name" name="name" required/>
 		  			    </div>
 					    <div class="form-group">
-						    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Create"/>
+						    <input name="create_category" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Create"/>
 					    </div>
 				    </form>
 			    </div>
@@ -49,7 +49,7 @@
                             {% if message.message == 'category_not_exists' %}
                                 <div class="form-group">
                                     <div class="error-messages">
-                                        <p>This Category not exists!</p>
+                                        <p>This category not exists!</p>
                                     </div>
                                 </div>
                             {% endif %}
@@ -61,7 +61,7 @@
                             <input type="name" class="form-control input-lg" placeholder="Category Name" name="name" required/>
                         </div>
                         <div class="form-group">
-                            <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Search"/>
+                            <input name="search_category" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Search"/>
                         </div>
                     </form>
                 </div>
@@ -77,7 +77,18 @@
         <div id="standard-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="text-center" id="standard-modal-headline">Categories</h2>
+                    {% if categ %}
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <h2 class="text-center" id="standard-modal-headline">Categories</h2>
+                            </div>
+                            <div class="col-sm-2">
+                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:categories' %}" style="float: right; margin: 15px;"> Show All</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <h2 class="text-center" id="standard-modal-headline">Categories</h2>
+                    {% endif %}
 			    </div>
 			    <div class="modal-body">
                     {% if messages %}
@@ -100,7 +111,7 @@
                                         {{ categ.name }}
                                     </div>
                                     <div class="col-sm-2">
-                                        <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:categories_delete' pk=categorie.pk %}" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                        <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:categories_delete' pk=categ.pk %}" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
                                     </div>
                                 </div>
                             </div>
