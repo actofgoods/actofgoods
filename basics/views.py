@@ -120,7 +120,7 @@ def chat_room(request, roomname):
             #Get all rooms where request.user is in contact with
             rooms = Room.objects.filter(Q(need__author =request.user) | Q(user_req = request.user)).exclude(name=roomname)
             print(rooms)
-            return render(request, 'basics/chat.html',{'roomname':roomname, 'messages':message_json})
+            return render(request, 'basics/chat.html',{'roomname':roomname, 'messages':message_json, 'rooms':rooms})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -328,7 +328,7 @@ def login(request):
         password = request.POST.get('password',None)
         user = authenticate(username=email,password=password)
         if user is not None:
-        	
+
             if user.is_active:
 
                 auth_login(request,user)
@@ -367,8 +367,23 @@ def fill_needs(request):
 """
 def needs_all(request):
     if request.user.is_authenticated():
+        range = "Range"
+        category = "Categories"
+        cards_per_page = "Cards per page"
         needs = Need.objects.order_by('date')
-        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all})
+
+        if request.method == "POST":
+            if "" != request.POST['range']:
+                range = request.POST['range']
+            if "" != request.POST['category']:
+                category = request.POST['category']
+                needs = Need.objects.filter(categorie=CategoriesNeeds.objects.get(name=category))
+            if "" != request.POST['cards_per_page']:
+                cards_per_page = int(request.POST['cards_per_page'])
+                needs = needs[:cards_per_page]
+
+
+        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'cards_per_page':cards_per_page, 'range':range})
 
     return redirect('basics:actofgoods_startpage')
 
