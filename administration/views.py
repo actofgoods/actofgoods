@@ -98,7 +98,7 @@ def needs(request):
     return render(request, 'administration/needs.html', {'needs':needs,'categories':categories})
 
 def users(request):
-    users = get_list_or_404(User)
+    users = sorted(get_list_or_404(User), key=lambda User: User.email)
     if request.user.is_authenticated():
         if request.method == "POST":
             form = SearchUserForm(request.POST)
