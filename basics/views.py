@@ -307,6 +307,8 @@ def immediate_aid(request):
             user = User.objects.create_user(username=data['email'], password=password, email=data['email'])
             userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
             userdata.save()
+            user.is_active = False
+            user.save()
 
             data = need.cleaned_data
             needdata = Need(author=user, headline=data['headline'], text=data['text'])
@@ -497,7 +499,7 @@ def privacy(request):
 def profil(request):
     if request.user.is_authenticated():
         userdata=request.user.userdata
-        return render(request, 'basics/profil.html',{'Userdata':userdata})
+        return render(request, 'basics/profil.html',{'Userdata':userdata, 'selected': userdata.inform_about.all()})
     return redirect('basics:actofgoods_startpage')
 
 """
@@ -514,31 +516,50 @@ def profil_edit(request):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated():
-    	user=request.user
-    	userdata=request.user.userdata
-    	if request.method == "POST":
-    		form = ProfileForm(request.POST)
-    		if form.is_valid() :
-    			email= request.POST.get('email')
-    			pseudo=request.POST.get('pseudo',None)
-    			phone = request.POST.get('phone',None)
-    			if email!="":
-    				user.email=email
-    				user.save()
-    			if pseudo!= "":
-    				userdata.pseudonym=pseudo
-    			if phone!= "":
-    				userdata.phone=phone
-    			userdata.save()
-    			return render(request, 'basics/profil.html', {'Userdata':userdata})
-    	form = ProfileForm()
-    	return render(request, 'basics/profil_edit.html', {'userdata':userdata})
+        user=request.user
+        userdata=request.user.userdata
+        if request.method == "POST":
+            email= request.POST.get('email',None)
+            pseudo=request.POST.get('pseudo',None)
+            phone = request.POST.get('phone',None)
+            aux= request.POST.get('aux',None)
+            lat, lng = getAddress(request)
+            if lat != None and lng != None:
+                userdata.address.latitude=lat
+                userdata.address.longditude=lng
+                userdata.address.save()
+            if aux != "":
+                try:
+                    userdata.aux= float(aux)
+                except ValueError:
+                    print ("Not a float")
+            if email!="":
+                user.email=email
+                user.save()
+            if pseudo!= "":
+                userdata.pseudonym=pseudo
+            if phone!= "":
+                userdata.phone=phone
+            if request.POST.get('information') == "on":
+                userdata.information = True
+            else:
+                userdata.information=False
+            categories= request.POST.getlist('categories[]')
+            for c in CategoriesNeeds.objects.all():
+                if c.name in categories:
+                    userdata.inform_about.add(c)
+                else:
+                    userdata.inform_about.remove(c)
+            userdata.save()
+            return render(request, 'basics/profil.html', {'Userdata':userdata, 'selected': userdata.inform_about.all()})
+        form = ProfileForm()
+        return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all, 'selected': userdata.inform_about.all(),'form':form})
     return redirect('basics:actofgoods_startpage')
 
 def profil_delete(request):
-	user=request.user
-	user.delete()
-	return actofgoods_startpage(request)
+    user=request.user
+    user.delete()
+    return actofgoods_startpage(request)
 
 """
     Register:
@@ -565,8 +586,8 @@ def register(request):
                     if lat != None and lng != None:
                         data = form.cleaned_data
                         address = Address.objects.create(latitude=lat, longditude=lng)
-                        user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
-                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address)
+                        user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
+                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, information= False)
                         userdata.save()
                         content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                         subject = "Confirm Your Account"
