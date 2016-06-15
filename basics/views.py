@@ -330,10 +330,9 @@ def needs_help(request, id):
         if request.method == "GET":
             need = Need.objects.get(id=id)
             room = Room.objects.get(need=need)
-            if(room.user_req == "" or room.user_req == request.user):
-                room.user_req = request.user
-                room.save()
-                return redirect('basics:chat_room', roomname=room.name)
+            room.user_req = request.user
+            room.save()
+            return redirect('basics:chat_room', roomname=room.name)
         #TODO: what todo if POST data is wrong or get comes in
         #return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
