@@ -10,6 +10,13 @@ class Address(models.Model):
 	latitude = models.FloatField()
 	longditude = models.FloatField()
 
+class CategoriesInf(models.Model):
+	name = models.CharField(max_length=50)
+
+
+class CategoriesNeeds(models.Model):
+	name = models.CharField(max_length=50)
+
 # Not acces now errors incomings
 class Userdata(models.Model):
 	user = models.OneToOneField(User,on_delete=models.CASCADE)
@@ -19,12 +26,12 @@ class Userdata(models.Model):
 	GENDER = (('m', 'Male'),('f', 'Female'),)
 	gender = models.CharField(max_length=1, choices=GENDER)
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
+	information = models.BooleanField(default=False)
+	inform_about = models.ManyToManyField(CategoriesNeeds)
+	aux = models.FloatField(default=50)
 
-class CategoriesNeeds(models.Model):
-	name = models.CharField(max_length=50)
 
-class CategoriesInf(models.Model):
-	name = models.CharField(max_length=50)
+
 
 class CategoriesRep(models.Model):
 	name = models.CharField(max_length=50)
