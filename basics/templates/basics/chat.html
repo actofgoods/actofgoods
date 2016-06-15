@@ -42,9 +42,9 @@
           <div class="row">
             <div class="col-sm-12">
                 <div class="card card-block">
-                  <h3 class="card-title">Special title</h3>
-                  <p class="card-text">With supportin</p>
-                  <a href="#" class="btn btn-primary">Go somewhere</a>
+                  <h3 class="card-title">{{room.need.headline}}</h3>
+                  <p class="card-text">{{room.user_req}}</p>
+                  <a href="{% url 'basics:chat_room' roomname=room.name %}" class="btn btn-primary">Go here</a>
                 </div>
             </div>
           </div>
