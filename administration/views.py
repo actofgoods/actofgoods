@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 def categories(request):
 	if request.user.is_authenticated():
+		categories = CategoriesNeeds.objects.all()
 		if request.method == 'POST':
 			form = CategoriesForm(request.POST)
 			if form.is_valid():
@@ -20,7 +21,13 @@ def categories(request):
 					categorie.save()
 				else:
 					messages.add_message(request, messages.INFO, 'categorie_exists')
-	categories = CategoriesNeeds.objects.all()
+		elif request.method == 'GET':
+			name = request.GET.get('name')
+			print(name)
+			if {'name': name} in CategoriesNeeds.objects.values('name'):
+				categories = CategoriesNeeds.objects.filter(name=name)
+			elif not {'name': name} in CategoriesNeeds.objects.values('name') and name != None:
+				messages.add_message(request, messages.INFO, 'categorie_not_exists')
 	return render(request, 'administration/categories.html', {'categories':categories})
 
 def categories_delete(request, pk):
