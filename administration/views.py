@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
-from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs, Need
+from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs, Need, Information
 from django.contrib.auth.models import User, Group
 from administration.forms import GroupFormRegister, SearchUserForm
 from basics.forms import CategoriesForm
@@ -23,7 +23,6 @@ def categories(request):
 					messages.add_message(request, messages.INFO, 'categorie_exists')
 		elif request.method == 'GET':
 			name = request.GET.get('name')
-			print(name)
 			if {'name': name} in CategoriesNeeds.objects.values('name'):
 				categories = CategoriesNeeds.objects.filter(name=name)
 			elif not {'name': name} in CategoriesNeeds.objects.values('name') and name != None:
@@ -75,7 +74,8 @@ def groups(request):
 	return render(request, 'administration/groups.html', {'groups': groups})
 
 def informations(request):
-	return render(request, 'administration/informations.html')
+	infos = Information.objects.filter(was_reported=True)
+	return render(request, 'administration/informations.html', {'infos':infos})
 
 def requests(request):
     requests = ContactUs.objects.all().exclude(works_on=request.user).order_by('create_date')
@@ -83,7 +83,8 @@ def requests(request):
     return render(request, 'administration/requests.html', {'requests': requests, 'works_on':works_on})
 
 def needs(request):
-	return render(request, 'administration/needs.html')
+	needs = Need.objects.filter(was_reported=True)
+	return render(request, 'administration/needs.html', {'needs':needs})
 
 def users(request):
 	users = get_list_or_404(User)

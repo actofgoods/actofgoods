@@ -561,3 +561,19 @@ def sendmail(email, content, subject):
 
 def groups(request):
     return render(request, 'basics/groups.html')
+
+def report_need(request, pk):
+    need = Need.objects.get(pk=pk)
+    need.was_reported = True
+    need.number_reports += 1
+    need.reported_by.add(request.user.userdata)
+    need.save()
+    return needs_all(request)
+
+def report_information(request, pk):
+    info = Information.objects.get(pk=pk)
+    info.was_reported = True
+    info.number_reports += 1
+    info.reported_by.add(request.user.userdata)
+    info.save()
+    return information_all(request)

@@ -50,6 +50,7 @@ class Need(models.Model):
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
 	was_reported = models.BooleanField(default=False)
 	number_reports = models.PositiveIntegerField(default=0)
+	reported_by = models.ManyToManyField(Userdata)
 
 class Information(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -61,6 +62,7 @@ class Information(models.Model):
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
 	was_reported = models.BooleanField(default=False)
 	number_reports = models.PositiveIntegerField(default=0)
+	reported_by = models.ManyToManyField(Userdata)
 
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)
