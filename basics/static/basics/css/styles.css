@@ -40,12 +40,24 @@
 	left: 0;
 	right: 0;
 	top: 0;
-	overflow: auto;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
 .message {
 	clear: both;
 	margin: 1rem 0;
+}
+
+button, .btn-primary, .btn-primary:focus {
+	background-color: #bbd153;
+		border-color: #70962c;
+		color: #4C4E49;
+}
+
+.btn-primary:hover, .btn-primary:active:focus {
+	background-color: #96B440;
+	color: #4C4E49;
 }
 
 .own.message {
@@ -57,7 +69,7 @@
 }
 
 .message__avatar {
-	background: #F44336;
+	background: #70952C;
 	border-radius: 50px;
 	height: 50px;
 	width: 50px;
@@ -71,7 +83,7 @@
 
 .own.message .message__avatar {
 	float: right;
-	background: #3949AB;
+	background: #CEDE85;
 }
 
 .mdl-progress {
@@ -117,21 +129,18 @@
 	}
 	.mdl-grid {
 		position: absolute;
-		height: calc(60% - 16px);
+		height: calc(100% - 260px);
 		width: calc(90% - 16px);
 		padding: 8px;
-		overflow-y: auto;
+		padding-bottom: 5%
 	}
 
 	.chat-box {
 		margin: 8px;
 	}
 
-	#add-chat-button {
-		visibility: visible;
-	}
-
 	.mdl-cell--4-col, .mdl-cell--4-col-phone.mdl-cell--4-col-phone {
 		width: calc(73.33333333% - 16px);
 	}
 }
+
