@@ -91,7 +91,7 @@ def chat(request):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated():
-        return render(request, 'basics/chat.html',{'messages': ChatMessage.objects.order_by('date')})
+        return render(request, 'basics/chat.html',{'messages':[]})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -115,7 +115,7 @@ def chat_room(request, roomname):
             }) + ","
         message_json += "]"
         print(message_json)
-        return render(request, 'basics/chat.html',{'messages': ChatMessage.objects.order_by('date'), 'roomname':roomname, 'messages':message_json})
+        return render(request, 'basics/chat.html',{'roomname':roomname, 'messages':message_json})
 
     return redirect('basics:actofgoods_startpage')
 
