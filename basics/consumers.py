@@ -1,10 +1,9 @@
 import json
-import urllib.parse 
+import urllib.parse
 import logging
-
+from .models import *
 from channels import Group
 from channels.sessions import channel_session
-
 
 @channel_session
 def ws_add(message, room):
@@ -26,6 +25,10 @@ def ws_echo(message):
     logging.info('Echoing message %s from username %s in room %s',
                  message.content['text'], message.channel_session['username'],
                  room)
+    db_room = Room.objects.get(name=room)
+    print(message.channel_session['username'])
+    chatMessage = ChatMessage(author=User.objects.get(username=message.channel_session['username']), room=db_room, text=message.content['text'])
+    chatMessage.save()
     Group('chat-%s' % room).send({
         'text': json.dumps({
             'message': message.content['text'],

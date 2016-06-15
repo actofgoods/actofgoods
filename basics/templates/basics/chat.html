@@ -238,10 +238,11 @@
 
 
     getInitialState: function getInitialState() {
+      console.log({{messages|safe}})
       return {
         channel: '{{roomname}}'||'Actofgoods',
         connected: false,
-        messages: [],
+        messages: {{messages|safe}},
         author: ''
       };
     },

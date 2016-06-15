@@ -90,8 +90,7 @@ class Room(models.Model):
 		return self.name
 
 class ChatMessage(models.Model):
-	author = models.ForeignKey(Userdata)
-	messageid = models.AutoField(primary_key=True)
+	author = models.ForeignKey(User)
 	date = models.DateTimeField(auto_now = True)
 	room = models.ForeignKey(Room)
 	text=models.TextField(default='', max_length=500)

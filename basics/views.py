@@ -102,8 +102,17 @@ def chat(request):
 """
 def chat_room(request, roomname):
     if request.user.is_authenticated():
-        print(roomname)
-        return render(request, 'basics/chat.html',{'messages': ChatMessage.objects.order_by('date'), 'roomname':roomname})
+        room = Room.objects.get(name=roomname)
+        messages = ChatMessage.objects.filter(room=roomname)
+        message_json = "["
+        for message in messages:
+            message_json += json.dumps({
+                'message': message.text,
+                'username': message.author.username
+            }) + ","
+        message_json += "]"
+        print(message_json)
+        return render(request, 'basics/chat.html',{'messages': ChatMessage.objects.order_by('date'), 'roomname':roomname, 'messages':message_json})
 
     return redirect('basics:actofgoods_startpage')
 
