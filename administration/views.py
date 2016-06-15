@@ -45,7 +45,7 @@ def groups(request):
 			if form.is_valid() :
 				email = request.POST.get('email')
 				name = request.POST.get('name')
-				if {'email': email} in User.objects.values('email') and not Group.objects.filter(name='teeest'):
+				if {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
 					#address = Address.objects.create(latitude=0.0, longditude=0.0)
 					data = form.cleaned_data
 					group = Group.objects.create(name=name)
@@ -56,9 +56,9 @@ def groups(request):
 					gdata = Groupdata(group=group)
 					gdata.save()
 					return redirect('administration:groups')
-				elif not {'email': email} in User.objects.values('email') and not Group.objects.filter(name='teeest'):
+				elif not {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
 					messages.add_message(request, messages.INFO, 'wrong_email')
-				elif {'email': email} in User.objects.values('email') and Group.objects.filter(name='teeest'):
+				elif {'email': email} in User.objects.values('email') and Group.objects.filter(name=name):
 					messages.add_message(request, messages.INFO, 'wrong_group')
 				else :
 					messages.add_message(request, messages.INFO, 'wrong_emailAndGroup')
