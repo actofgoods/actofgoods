@@ -50,6 +50,7 @@
           </div>
           {% endfor %}
       </div>
+      <a href="{% url 'basics:kick_user' roomname=room.name %}" class="btn btn-primary">Kick User</a>
     </div>
     <div id="app"></div>
     <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>

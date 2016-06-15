@@ -96,6 +96,13 @@ def chat(request):
 
     return redirect('basics:actofgoods_startpage')
 
+
+def kick_user(request, roomname):
+	if request.user.is_authenticated():
+		room = Room.objects.get(name=roomname)
+		room.user_req = ''
+	return redirect('basics:actofgoods_startpage')
+
 """
     Needs authentication!
 
@@ -104,6 +111,8 @@ def chat(request):
     If user is not authenticated redirect to startpage.
     Otherwise the chat_room page will be rendered and returned.
 """
+
+
 def chat_room(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
