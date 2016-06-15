@@ -3,6 +3,7 @@ import smtplib
 import string
 import requests
 import json
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.template import loader
@@ -103,16 +104,20 @@ def chat(request):
 def chat_room(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
-        messages = ChatMessage.objects.filter(room=roomname)
-        message_json = "["
-        for message in messages:
-            message_json += json.dumps({
-                'message': message.text,
-                'username': message.author.username
-            }) + ","
-        message_json += "]"
-        print(message_json)
-        return render(request, 'basics/chat.html',{'roomname':roomname, 'messages':message_json})
+        if room.need.author == request.user or room.user_req == request.user:
+            messages = ChatMessage.objects.filter(room=roomname)
+            message_json = "["
+            for message in messages:
+                message_json += json.dumps({
+                    'message': message.text,
+                    'username': message.author.username
+                }) + ","
+            message_json += "]"
+            print(message_json)
+            #Get all rooms where request.user is in contact with
+            rooms = Room.objects.filter(Q(need__author =request.user) | Q(user_req = request.user)).exclude(name=roomname)
+            print(rooms)
+            return render(request, 'basics/chat.html',{'roomname':roomname, 'messages':message_json})
 
     return redirect('basics:actofgoods_startpage')
 
