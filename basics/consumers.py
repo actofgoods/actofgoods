@@ -1,14 +1,14 @@
 import json
-import urlparse
+import urllib.parse
 import logging
-
+from .models import *
 from channels import Group
+import datetime
 from channels.sessions import channel_session
-
 
 @channel_session
 def ws_add(message, room):
-    query = urlparse.parse_qs(message['query_string'])
+    query = urllib.parse.parse_qs(message['query_string'])
     if 'username' not in query:
         return
     logging.info('Adding websocket with username %s in room %s',
@@ -26,6 +26,11 @@ def ws_echo(message):
     logging.info('Echoing message %s from username %s in room %s',
                  message.content['text'], message.channel_session['username'],
                  room)
+    db_room = Room.objects.get(name=room)
+    db_room.last_message=datetime.datetime.now()
+    print(message.channel_session['username'])
+    chatMessage = ChatMessage(author=User.objects.get(username=message.channel_session['username']), room=db_room, text=message.content['text'])
+    chatMessage.save()
     Group('chat-%s' % room).send({
         'text': json.dumps({
             'message': message.content['text'],

@@ -3,6 +3,7 @@ import smtplib
 import string
 import requests
 import json
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.template import loader
@@ -13,7 +14,6 @@ from django.views.decorators.csrf import csrf_protect
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
-# Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm
 from .models import *
 
@@ -89,13 +89,51 @@ def change_password(request):
     Otherwise the chat page will be rendered and returned.
 """
 def chat(request):
-    if not request.user.is_active:
-        return render(request, 'basics/verification.html', {'active': False})
+	if not request.user.is_active:
+		return render(request, 'basics/verification.html', {'active': False})
+	if request.user.is_authenticated():
+		if request.method == "GET":
+			room=Room.objects.filter(Q(need__author =request.user) | Q(user_req = request.user)).latest('last_message')
+			return redirect('basics:chat_room', roomname=room.name)
+
+	return redirect('basics:actofgoods_startpage')
+
+
+def kick_user(request, roomname):
+	if request.user.is_authenticated():
+		room = Room.objects.get(name=roomname)
+		room.user_req = None
+	return redirect('basics:actofgoods_startpage')
+
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise the chat_room page will be rendered and returned.
+"""
+
+
+def chat_room(request, roomname):
     if request.user.is_authenticated():
-        return render(request, 'basics/chat.html',{'messages': ChatMessage.objects.order_by('date')})
+        room = Room.objects.get(name=roomname)
+        if room.need.author == request.user or room.user_req == request.user:
+            messages = ChatMessage.objects.filter(room=roomname)
+            message_json = "["
+            for message in messages:
+                message_json += json.dumps({
+                    'message': message.text,
+                    'username': message.author.username
+                }) + ","
+            message_json += "]"
+            print(message_json)
+            #Get all rooms where request.user is in contact with
+            rooms = Room.objects.filter(Q(need__author =request.user) | Q(user_req = request.user)).exclude(name=roomname)
+            print(rooms)
+            return render(request, 'basics/chat.html',{'roomname':roomname, 'messages':message_json, 'rooms':rooms})
 
     return redirect('basics:actofgoods_startpage')
-
 
 """
     Input: request
@@ -163,6 +201,7 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     Otherwise a list of needs will be pult out of the database and added to ...
     The needs_all page will be rendered and returned.
 """
+@csrf_protect
 def information_all(request):
     if request.user.is_authenticated():
         infos = Information.objects.order_by('date')
@@ -299,8 +338,11 @@ def login(request):
         email = request.POST.get('email',None)
         password = request.POST.get('password',None)
         user = authenticate(username=email,password=password)
+        print(user)
         if user is not None:
-            auth_login(request,user)
+            if user.is_active:
+                print("user is active")
+                auth_login(request,user)
         else :
             messages.add_message(request, messages.INFO, 'lw')
     return redirect('basics:actofgoods_startpage')
@@ -336,8 +378,38 @@ def fill_needs(request):
 """
 def needs_all(request):
     if request.user.is_authenticated():
+        range = "Range"
+        category = "Categories"
+        cards_per_page = "Cards per page"
         needs = Need.objects.order_by('date')
-        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all})
+
+        if request.method == "POST":
+            if "" != request.POST['range']:
+                range = request.POST['range']
+            if "" != request.POST['category']:
+                category = request.POST['category']
+                needs = Need.objects.filter(categorie=CategoriesNeeds.objects.get(name=category))
+            if "" != request.POST['cards_per_page']:
+                cards_per_page = int(request.POST['cards_per_page'])
+                needs = needs[:cards_per_page]
+
+
+        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'cards_per_page':cards_per_page, 'range':range})
+
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def needs_help(request, id):
+    #cat = CategoriesNeeds.objects.create(name="cool")
+    if request.user.is_authenticated():
+        if request.method == "GET":
+            need = Need.objects.get(id=id)
+            room = Room.objects.get(need=need)
+            room.user_req = request.user
+            room.save()
+            return redirect('basics:chat_room', roomname=room.name)
+        #TODO: what todo if POST data is wrong or get comes in
+        #return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -382,6 +454,9 @@ def needs_new(request):
                     data = need.cleaned_data
                     needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address)
                     needdata.save()
+                    #TODO: id_generator will return random string; Could be already in use
+                    room = Room.objects.create(name=id_generator(), need=needdata)
+                    room.save()
                     return redirect('basics:needs_all')
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
@@ -389,6 +464,7 @@ def needs_new(request):
         return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
     return redirect('basics:actofgoods_startpage')
+
 
 """
     Needs authentication!
@@ -489,11 +565,9 @@ def register(request):
                     if lat != None and lng != None:
                         data = form.cleaned_data
                         address = Address.objects.create(latitude=lat, longditude=lng)
-                        user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
+                        user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
                         userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address)
                         userdata.save()
-                        user.is_active = False
-                        user.save()
                         content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                         subject = "Confirm Your Account"
                         sendmail(user.email, content, subject)

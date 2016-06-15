@@ -80,18 +80,18 @@ class Report(models.Model):
 
 class Room(models.Model):
 	name = models.CharField(primary_key=True , max_length=20)
-	user_req = models.ForeignKey(User)
+	user_req = models.ForeignKey(User, blank=True, null=True)
 	need = models.ForeignKey(Need)
 	slug = models.SlugField()
 	act_req = models.BooleanField(default=False)
 	act_off = models.BooleanField(default=False)
+	last_message = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
 		return self.name
 
 class ChatMessage(models.Model):
-	author = models.ForeignKey(Userdata)
-	messageid = models.AutoField(primary_key=True)
+	author = models.ForeignKey(User)
 	date = models.DateTimeField(auto_now = True)
 	room = models.ForeignKey(Room)
 	text=models.TextField(default='', max_length=500)

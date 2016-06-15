@@ -1,5 +1,5 @@
 import json
-import urlparse
+from urllib.parse import *
 import logging
 
 from channels import Group
