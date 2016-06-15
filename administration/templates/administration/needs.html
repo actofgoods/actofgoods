@@ -1,5 +1,91 @@
 {% extends 'administration/base_admin.html' %}
 {% block content %}
+{% load filter %}
+
+<!-- needs -->
+<div id="standard-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="row">
+                <div  class="col-sm-6">
+                    <h2 class="text-center" id="standard-modal-headline">Needs</h2>
+                </div>
+                <div  class="col-sm-6">
+                    <div class="row">
+                        <div  class="col-sm-4">
+                            <select>
+                                <option value="all">all</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.name }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div  class="col-sm-4">
+                            <select>
+                                <option value="all Needs">all Needs</option>
+                                <option value="all Needs">reported Needs</option>
+                            </select>
+                        </div>
+                        <div  class="col-sm-4">
+                            <input name="search_group" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="list-group">
+                {% for need in needs %}
+
+                    <!-- list all needs -->
+                    <a class="list-group-item" id="standard-list-group-item-div">
+                        <div class="row">
+                            <div class="col-sm-12" data-toggle="modal" data-target=".{{ need.id }}">
+                                <h4 class="list-group-item-heading">{{ need.headline }}</h4>
+                                <p class="list-group-item-text">{{ need|get_short_text:160 }}</p>
+                            </div>
+                            <div class="col-sm-10" data-toggle="modal" data-target=".{{ request.id }}">
+                                <h6><br>from {{ need.date }}</h6>
+                            </div>
+                            <div class="col-sm-1">
+
+                            </div>
+                            <div class="col-sm-1">
+                                <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right;" onclick=""><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- modal for every need -->
+                    <div class="modal fade {{ need.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h2>{{need.headline}}</h2>
+                                    <h6>from {{ need.date }}</h6>
+                                </div>
+                                <div class="modal-body">
+                                    <p>{{ need.text }}</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <h4>There are no needs.</h4>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div><!-- end needs -->
+
+
 <!-- Introduction Row -->
 <div class="row">
 
@@ -47,12 +133,12 @@
 
      <ul class="event-list">
        {% for need in needs%}
-       
+
          <li>
             <time>
                <div>{{ need.date }}</div>
              </time>
-            
+
            <div class="info">
              <h2 class="title"><a  href="{% url 'basics:needs_view' pk=need.pk %}">{{ need.headline }}</a></h2>
              <p class="desc">{{ need.text }}</p>
@@ -63,7 +149,7 @@
              </ul>
            </div>
          </li>
-       
+
        {% endfor %}
      </ul>
    </div>
