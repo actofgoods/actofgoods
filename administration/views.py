@@ -133,8 +133,12 @@ def information_delete(request, pk):
     info.delete()
     return redirect('administration:informations')
 
-def need_delete(request, pk):
-    need = get_object_or_404(Need, pk=pk)
+@csrf_exempt
+def need_delete(request):
+    print(request.POST)
+    request_id = request.POST['id']
+    
+    need = get_object_or_404(Need, pk=request_id)
     need.delete()
     return redirect('administration:needs')
 
