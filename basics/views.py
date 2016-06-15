@@ -103,7 +103,7 @@ def kick_user(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
         room.user_req = None
-        room.save
+        room.save()
     return redirect('basics:actofgoods_startpage')
 
 """
