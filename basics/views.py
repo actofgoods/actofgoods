@@ -327,10 +327,10 @@ def login(request):
         email = request.POST.get('email',None)
         password = request.POST.get('password',None)
         user = authenticate(username=email,password=password)
+        print(user)
         if user is not None:
-
             if user.is_active:
-
+                print("user is active")
                 auth_login(request,user)
         else :
             messages.add_message(request, messages.INFO, 'lw')
@@ -554,11 +554,9 @@ def register(request):
                     if lat != None and lng != None:
                         data = form.cleaned_data
                         address = Address.objects.create(latitude=lat, longditude=lng)
-                        user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
+                        user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'])
                         userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address)
                         userdata.save()
-                        user.is_active = False
-                        user.save()
                         content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                         subject = "Confirm Your Account"
                         sendmail(user.email, content, subject)
