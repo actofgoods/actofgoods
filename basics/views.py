@@ -14,7 +14,6 @@ from django.views.decorators.csrf import csrf_protect
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
-# Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm
 from .models import *
 
@@ -59,6 +58,8 @@ def admin_page(request):
 """
 def change_password(request):
     if request.user.is_authenticated():
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         user=request.user
         if request.method=="POST":
         	form=PasswordForm(request.POST)
@@ -88,6 +89,8 @@ def change_password(request):
     Otherwise the chat page will be rendered and returned.
 """
 def chat(request):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated():
         return render(request, 'basics/chat.html',{'messages':[]})
 
@@ -207,6 +210,8 @@ def information_all(request):
 """
 @csrf_protect
 def information_new(request):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated():
         if request.method == "POST":
             info = InformationFormNew(request.POST)
@@ -236,6 +241,35 @@ def information_new(request):
 def information_timeline(request):
     if request.user.is_authenticated():
         return render(request, 'basics/information_timeline.html')
+
+    return redirect('basics:actofgoods_startpage')
+
+"""
+    Needs authentication!
+
+    Input: request (user)
+
+    If user is not authenticated redirect to startpage.
+    Otherwise the needs_view_edit page will be rendered and returned.
+"""
+def information_view(request, pk):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated:
+        information = get_object_or_404(Information, pk=pk)
+        comments = Comment.objects.filter(inf=information).order_by('-date')
+        return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
+
+    return redirect('basics:actofgoods_startpage')
+
+def information_view_comment(request, pk):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated:
+        information = get_object_or_404(Information, pk=pk)
+        if request.method == "POST":
+            comment = Comment.objects.create(inf=information, author=request.user, text=request.POST['comment_text'])
+        return redirect('basics:information_view', pk=pk)
 
     return redirect('basics:actofgoods_startpage')
 
@@ -294,6 +328,7 @@ def login(request):
         password = request.POST.get('password',None)
         user = authenticate(username=email,password=password)
         if user is not None:
+        	
             if user.is_active:
 
                 auth_login(request,user)
@@ -379,7 +414,9 @@ def needs_view(request, pk):
 """
 @csrf_protect
 def needs_new(request):
-    #cat = CategoriesNeeds.objects.create(name="cool")
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+        #cat = CategoriesNeeds.objects.create(name="cool")
     if request.user.is_authenticated():
         if request.method == "POST":
             need = NeedFormNew(request.POST)
@@ -448,6 +485,8 @@ def profil(request):
     otherwise the profil will be changed.
 """
 def profil_edit(request):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated():
     	user=request.user
     	userdata=request.user.userdata
@@ -501,10 +540,12 @@ def register(request):
                         data = form.cleaned_data
                         address = Address.objects.create(latitude=lat, longditude=lng)
                         user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
-                        userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())), address=address)
+                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address)
                         userdata.save()
-                        content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000"
-                        subject = "Welcome!"
+                        user.is_active = False
+                        user.save()
+                        content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
+                        subject = "Confirm Your Account"
                         sendmail(user.email, content, subject)
                         return login(request)
                     else:
@@ -517,6 +558,28 @@ def register(request):
 
 
     return redirect('basics:actofgoods_startpage')
+
+def verification(request,pk):
+    if request.user.is_authenticated():
+        if request.user.userdata.pseudonym == pk:
+            user=request.user
+            user.is_active = True
+            user.save()
+            return render(request, 'basics/verification.html', {'verified':True, 'active':True})
+    if request.method == "POST":
+        form = UserFormRegister(request.POST)
+        email = request.POST.get('email', None)
+        password = request.POST.get('password', None)
+        user = authenticate(username=email, password=password)
+        print(email,password)
+        if user is not None and user.userdata.pseudonym == pk :
+            auth_login(request, user)
+            user.is_active = True
+
+            user.save()
+            return render(request, 'basics/verification.html', {'verified': True, 'active':True})
+    form=UserFormRegister()
+    return render (request, 'basics/verification.html', {'verified':False, 'form':form, 'pk': pk, 'active': True})
 
 
 def getAddress(request):

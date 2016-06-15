@@ -31,6 +31,8 @@ urlpatterns = [
     url(r'^information_all/$', views.information_all, name='information_all'),
     url(r'^information_new/$', views.information_new, name='information_new'),
     url(r'^information_timeline/$', views.information_timeline, name='information_timeline'),
+    url(r'^information_view/(?P<pk>\d+)/$', views.information_view, name='information_view'),
+    url(r'^information_view/(?P<pk>\d+)/comment$', views.information_view_comment, name='information_view_comment'),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^maptesting/$', views.map_testing, name='map_testing'),
@@ -48,4 +50,5 @@ urlpatterns = [
     url(r'^reset_password/$', views.reset_password_page, name='reset_password_page'),
     url(r'^reset_password_confirmation/$', views.reset_password_confirmation, name='reset_password_confirmation'),
 	url(r'^contact_us/$', views.contact_us, name='contact_us'),
+    url(r'^verification/(?P<pk>\w+)$', views.verification, name='verification')
 ]
