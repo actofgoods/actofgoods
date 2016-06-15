@@ -10,24 +10,26 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 def categories(request):
-	if request.user.is_authenticated():
-		categories = CategoriesNeeds.objects.all()
-		if request.method == 'POST':
-			form = CategoriesForm(request.POST)
-			if form.is_valid():
-				name = request.POST.get('name')
-				if not {'name':name} in CategoriesNeeds.objects.values('name'):
-					categorie = CategoriesNeeds.objects.create(name=name)
-					categorie.save()
-				else:
-					messages.add_message(request, messages.INFO, 'categorie_exists')
-		elif request.method == 'GET':
-			name = request.GET.get('name')
-			if {'name': name} in CategoriesNeeds.objects.values('name'):
-				categories = CategoriesNeeds.objects.filter(name=name)
-			elif not {'name': name} in CategoriesNeeds.objects.values('name') and name != None:
-				messages.add_message(request, messages.INFO, 'categorie_not_exists')
-	return render(request, 'administration/categories.html', {'categories':categories})
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            form = CategoriesForm(request.POST)
+            if form.is_valid():
+                if 'create_category' in form.data:
+                    name = request.POST.get('name')
+                    if not {'name':name} in CategoriesNeeds.objects.values('name'):
+                        categorie = CategoriesNeeds.objects.create(name=name)
+                        categorie.save()
+                    else:
+                        messages.add_message(request, messages.INFO, 'categorie_exists')
+                elif 'search_category' in form.data:
+                    name = request.POST.get('name')
+                    if {'name':name} in CategoriesNeeds.objects.values('name'):
+                        categ = CategoriesNeeds.objects.get(name=name)
+                        return render(request, 'administration/categories.html', {'categ':categ})
+                    else:
+                        messages.add_message(request, messages.INFO, 'category_not_exists')
+    categories = CategoriesNeeds.objects.all()
+    return render(request, 'administration/categories.html', {'categories':categories})
 
 def categories_delete(request, pk):
 	cat = ''
