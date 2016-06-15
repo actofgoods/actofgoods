@@ -139,7 +139,7 @@
     );
   };
 
-  var ChannelSelector = React.createClass({
+  /*var ChannelSelector = React.createClass({
     displayName: 'ChannelSelector',
 
 
@@ -200,6 +200,7 @@
       });
     }
   });
+  */
 
   var MessageEditor = React.createClass({
     displayName: 'MessageEditor',
@@ -366,9 +367,9 @@
         React.createElement(
           'div',
           { className: 'actions-container mdl-shadow--3dp ' + visibilityClass },
-          React.createElement(ChannelSelector, {
+          /*React.createElement(ChannelSelector, {
             currentChannel: this.state.channel,
-            handleChatChange: this.handleChatChange }),
+            handleChatChange: this.handleChatChange }),*/
           React.createElement(MessageEditor, { sendMessage: this.sendMessage })
         )
       );
