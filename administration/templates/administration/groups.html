@@ -13,7 +13,7 @@
                 <h2 class="text-center" id="standard-modal-headline">Create new Group</h2>
             </div>
             <div class="modal-body">
-                <form class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav">
+                <form class="form" role="form" method="post" accept-charset="UTF-8">
                     {%csrf_token%}
                     {% if messages %}
                         {% for message in messages %}
@@ -63,10 +63,10 @@
                         {% endfor %}
                     {% endif %}
                     <div class="form-group">
-                        <input type="email" class="form-control input-lg" placeholder="Email from Group User" name="email" required/>
+                        <input type="email" class="form-control input-lg" placeholder="Email from Group-User" name="email" required/>
                     </div>
                     <div class="form-group">
-                        <input type="submit" class="btn btn-block btn-lg btn-primary" value="Create"/>
+                        <input id="standard-green-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Create"/>
                     </div>
                 </form>
             </div>
