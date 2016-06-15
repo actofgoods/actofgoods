@@ -97,6 +97,7 @@
           onKeyDown: props.handleKeyDown,
           className: 'mdl-textfield__input',
           type: 'text',
+          id: 'chat-input',
           value: props.inputValue,
           onChange: props.handleChange,
           onBlur: props.handleBlur }),
@@ -380,6 +381,14 @@
 
   ReactDOM.render(React.createElement(App, null), document.getElementById('app'));
 })(React, ReactDOM, window, document, componentHandler);
+
+  window.onbeforeunload = function(){
+    var val = $("#chat-input").val();
+    console.log(val);
+    if($("#chat-input").val() != ""){
+      return 'Are you sure you want to leave?';
+    }
+  };
 </script>
 
   </body>
