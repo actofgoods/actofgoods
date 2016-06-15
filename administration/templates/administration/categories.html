@@ -6,11 +6,11 @@
     <!-- first column -->
     <div class="col-sm-5 col-sm-push-7">
 
-        <!-- create new categorie -->
+        <!-- create new category -->
         <div id="standard-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="text-center" id="standard-modal-headline">Create new Categories</h2>
+                    <h2 class="text-center" id="standard-modal-headline">Create new Category</h2>
 			    </div>
 			    <div class="modal-body">
                     {% if messages %}
@@ -18,7 +18,7 @@
 							{% if message.message == 'categorie_exists' %}
 								<div class="form-group">
 									<div class="error-messages">
-    									<p>This Categorie already exists!</p>
+    									<p>This Category already exists!</p>
 									</div>
 								</div>
 							{% endif %}
@@ -27,7 +27,7 @@
 				    <form class="form" role="form" method="post" accept-charset="UTF-8">
 					{%csrf_token%}
 					    <div class="form-group">
-		  				    <input type="name" class="form-control input-lg" placeholder="Categorie Name" name="name" required/>
+		  				    <input type="name" class="form-control input-lg" placeholder="Category Name" name="name" required/>
 		  			    </div>
 					    <div class="form-group">
 						    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Create"/>
@@ -35,7 +35,38 @@
 				    </form>
 			    </div>
 		    </div>
-        </div><!-- end create new categorie -->
+        </div><!-- end create new category -->
+
+        <!-- search category -->
+        <div id="standard-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="text-center" id="standard-modal-headline">Search Category</h2>
+                </div>
+                <div class="modal-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.message == 'category_not_exists' %}
+                                <div class="form-group">
+                                    <div class="error-messages">
+                                        <p>This Category not exists!</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <form class="form" role="form" method="post" accept-charset="UTF-8">
+                    {%csrf_token%}
+                        <div class="form-group">
+                            <input type="name" class="form-control input-lg" placeholder="Category Name" name="name" required/>
+                        </div>
+                        <div class="form-group">
+                            <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Search"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div><!-- end search category -->
 
     </div><!-- end first column -->
 
@@ -61,20 +92,35 @@
     					{% endfor %}
 					{% endif %}
                     <div class="list-group">
-                        {% for categorie in categories %}
+                        <!-- list the searched category -->
+                        {% if categ %}
                             <div class="list-group-item" id="standard-list-group-item-div">
                                 <div class="row">
                                     <div class="col-sm-10">
-                                        {{ categorie.name }}
+                                        {{ categ.name }}
                                     </div>
                                     <div class="col-sm-2">
                                         <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:categories_delete' pk=categorie.pk %}" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
                                     </div>
                                 </div>
                             </div>
-                        {% empty %}
-                            <h4>No categories available. Create some.</h4>
-                        {% endfor %}
+                        <!-- end list the searched category -->
+                        {% else %}
+                            {% for categorie in categories %}
+                                <div class="list-group-item" id="standard-list-group-item-div">
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            {{ categorie.name }}
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:categories_delete' pk=categorie.pk %}" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <h4>No categories available. Create some.</h4>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
