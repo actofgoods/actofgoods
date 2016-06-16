@@ -108,9 +108,26 @@ def requests(request):
     works_on = ContactUs.objects.filter(works_on=request.user).order_by('create_date')
     return render(request, 'administration/requests.html', {'requests': requests, 'works_on':works_on})
 
+@csrf_exempt
 def needs(request):
-    needs = Need.objects.filter(was_reported=True)
     categories = CategoriesNeeds.objects.all().order_by('name')
+    needs = Need.objects.all().order_by('date').reverse()
+    if request.GET.__contains__('needs'):
+        selected_need = request.GET['needs']
+        selected_categorie = request.GET['categories']
+        if selected_need == 'all':
+            if selected_categorie == 'all':
+                needs = Need.objects.all().order_by('date').reverse()
+            else:
+                categorie = CategoriesNeeds.objects.get(name=selected_categorie)
+                needs = Need.objects.filter(categorie=categorie).order_by('date').reverse()
+        elif selected_need == 'reported':
+            if selected_categorie == 'all':
+                needs = Need.objects.filter(was_reported=True).order_by('date').reverse()
+            else:
+                categorie = CategoriesNeeds.objects.get(name=selected_categorie)
+                needs = Need.objects.filter(was_reported=True, categorie=categorie).order_by('date').reverse()
+    
     return render(request, 'administration/needs.html', {'needs':needs,'categories':categories})
 
 def users(request):
