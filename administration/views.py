@@ -32,18 +32,23 @@ def categories(request):
     return render(request, 'administration/categories.html', {'categories':categories})
 
 def categories_delete(request, pk):
-	cat = ''
-	if not CategoriesNeeds.objects.filter(name='Other'):
-		cat = cat = CategoriesNeeds.objects.create(name='Other')
-	else:
-		cat = CategoriesNeeds.objects.get(name='Other')
-	categorie = get_object_or_404(CategoriesNeeds, pk=pk)
-	Need.objects.filter(categorie=categorie).update(categorie=cat)
-	if not categorie.name == 'Other':
-		categorie.delete()
-	else:
-		messages.add_message(request, messages.INFO, 'categorie_sonst')
-	return redirect('administration:categories')
+    cat = ''
+    if not CategoriesNeeds.objects.filter(name='Other'):
+        cat = CategoriesNeeds.objects.create(name='Other')
+    else:
+        cat = CategoriesNeeds.objects.get(name='Other')
+    categorie = get_object_or_404(CategoriesNeeds, pk=pk)
+    Need.objects.filter(categorie=categorie).update(categorie=cat)
+
+    cat_users = Userdata.objects.filter(inform_about=cat)
+    for u in cat_users:
+        u.inform_about.remove(categorie)
+
+    if not categorie.name == 'Other':
+        categorie.delete()
+    else:
+        messages.add_message(request, messages.INFO, 'categorie_sonst')
+    return redirect('administration:categories')
 	#return render(request, 'administration/categories.html', {'categories':categories})
 
 def groups(request):
