@@ -42,7 +42,7 @@
                                         <h6>by {{ request.email }} from {{ request.create_date }}</h6>
                                     </div>
                                     <div class="modal-body">
-                                        <p>{{ request.text }}</p>
+                                        <p>{{ request.text|linebreaksbr }}</p>
                                     </div>
                                     <div class="modal-footer">
                                         <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -98,7 +98,9 @@
                                             <h6>by {{ request.email }} from {{ request.create_date }}</h6>
                                         </div>
                                         <div class="modal-body">
-                                            <p>{{ request.text }}</p>
+                                            {% autoescape on %}
+                                                <p>{{ request.text|linebreaksbr }}</p>
+                                            {% endautoescape %}
                                         </div>
                                         <div class="modal-footer">
                                             <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
