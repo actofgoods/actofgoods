@@ -28,7 +28,7 @@ class Userdata(models.Model):
 	GENDER = (('m', 'Male'),('f', 'Female'),)
 	gender = models.CharField(max_length=1, choices=GENDER)
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
-	information = models.BooleanField(default=False)
+	get_notifications = models.BooleanField(default=False)
 	inform_about = models.ManyToManyField(CategoriesNeeds)
 	aux = models.FloatField(default=50)
 	def __unicode__(self):

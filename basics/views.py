@@ -552,9 +552,9 @@ def profil_edit(request):
             if phone!= "":
                 userdata.phone=phone
             if request.POST.get('information') == "on":
-                userdata.information = True
+                userdata.get_notifications = True
             else:
-                userdata.information=False
+                userdata.get_notifications=False
             categories= request.POST.getlist('categories[]')
             for c in CategoriesNeeds.objects.all():
                 if c.name in categories:
@@ -598,7 +598,7 @@ def register(request):
                         data = form.cleaned_data
                         address = Address.objects.create(latitude=lat, longditude=lng)
                         user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
-                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, information= False)
+                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, get_notifications= False)
                         userdata.save()
                         content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                         subject = "Confirm Your Account"
