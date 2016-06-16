@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
-from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs, Need, Information
+from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs, Need, Information, Comment
 from django.contrib.auth.models import User, Group
 from administration.forms import GroupFormRegister, SearchUserForm
 from basics.forms import CategoriesForm
@@ -83,9 +83,20 @@ def groups(request):
     groups = Groupdata.objects.all().order_by('group__name')
     return render(request, 'administration/groups.html', {'groups': groups})
 
+@csrf_exempt
 def informations(request):
-	infos = Information.objects.filter(was_reported=True)
-	return render(request, 'administration/informations.html', {'infos':infos})
+    infos = Information.objects.all()
+    if request.GET.__contains__('sel'):
+        selected = request.GET['sel']
+        if selected == 'all':
+            infos = Information.objects.all().order_by('date')
+        elif selected == 'reported informations':
+            infos = Information.objects.filter(was_reported=True)
+        elif selected == 'reported comments':
+            comments = Comment.objects.filter(was_reported=True)
+            return render(request, 'administration/informations.html', {'comments':comments})
+    
+    return render(request, 'administration/informations.html', {'infos':infos})
 
 def information_admin(request, pk):
     information = get_object_or_404(Information, pk=pk)
