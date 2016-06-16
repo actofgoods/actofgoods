@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_protect
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
-from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm
+from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm, ImmediateAid
 from .models import *
 
 
@@ -295,39 +295,68 @@ def information_view_comment(request, pk):
     creating a new need and finaly send an email to the new created user, providing
     greatings and his password.
 """
+@csrf_protect
 def immediate_aid(request):
+    form = ImmediateAidFormNew(initial={'email': ''})
+    need_form = NeedFormNew()
+
     if request.method == "POST":
         #This method is super deprecated we need to make it more secure
         #it could lead to data sniffing and shitlot of problems;
         #But to demonstrate our features and only to demonstrate
         #it will send the given email his password
-        need = NeedFormNew(request.POST)
-        user = ImmediateAidFormNew(request.POST)
-        if need.is_valid() and user.is_valid():
-            print("user and need are vaid")
-            data = user.cleaned_data
-            password = id_generator(9)
-            user = User.objects.create_user(username=data['email'], password=password, email=data['email'])
-            userdata = Userdata(user=user,pseudonym=("user#" + str(User.objects.count())))
-            userdata.save()
-            user.is_active = False
-            user.save()
-
-            data = need.cleaned_data
-            needdata = Need(author=user, headline=data['headline'], text=data['text'])
-            needdata.save()
-
-            #Content could also be possibly HTML! this way beautifull emails are possible
-            content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password)
-            subject = "Welcome!"
-            sendmail(user.email, content, subject)
-
-            print(password)
 
 
-            sendmail(user.email, content, subject )
-        #TODO: redirect user to the correct page
-    return render(request, 'basics/immediate_aid.html')
+        form = ImmediateAidFormNew(request.POST)
+        need_form = NeedFormNew(request.POST)
+
+        # form.data.username = "user#" + str(User.objects.count())
+        print(request.POST)
+        #print(form.data)
+        if form.is_valid() and need_form.is_valid():
+            # print(form.cleaned_data)
+            password_d = id_generator(9)
+            check_password = password_d
+            if password_d != "" and check_password != "" and request.POST.get('email', "") != "":
+                if password_d == check_password:
+                    lat, lng = getAddress(request)
+                    if lat != None and lng != None:
+                        user_data = form.cleaned_data
+                        need_data = need_form.cleaned_data
+                        address = Address.objects.create(latitude=lat, longditude=lng)
+                        user = User.objects.create_user(username=user_data['email'], password=password_d, email=user_data['email'])
+                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address)
+                        userdata.save()
+                        content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
+                        subject = "Confirm Your Account"
+                        needdata = Need(author=user, headline=need_data['headline'], text=need_data['text'], categorie=need_data['categorie'], address = address)
+                        needdata.save()
+                        room = Room.objects.create(name=id_generator(), need=needdata)
+                        room.save()
+
+                        #need = NeedFormNew(request.POST)
+
+                        #Content could also be possibly HTML! this way beautifull emails are possible
+                        content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
+                        subject = "Welcome!"
+
+                        
+                        sendmail(user.email, content, subject )
+                        return redirect('basics:home')
+                    else:
+                        messages.add_message(request, messages.INFO, 'location_failed')
+                else:
+                    messages.add_message(request, messages.INFO, 'wp')
+
+        else:
+            messages.add_message(request, messages.INFO, 'eae')
+
+
+
+
+
+    return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all, 'form' : form, 'need_form' : need_form })
+
 
 """
     Input: request(Email, Password)
