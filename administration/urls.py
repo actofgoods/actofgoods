@@ -34,5 +34,5 @@ urlpatterns = [
     url(r'^administration/categories/(?P<pk>\d+)/delete/$', views.categories_delete, name='categories_delete'),
     url(r'^administration/work_on_request/$', views.work_on_request, name='work_on_request'),
     url(r'^administration/request_done/$', views.request_done, name='request_done'),
-    
+    url(r'^administration/informations/(?P<pk>\d+)/$', views.information_admin, name='information_admin'),
 ]

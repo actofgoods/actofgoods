@@ -87,6 +87,11 @@ def informations(request):
 	infos = Information.objects.filter(was_reported=True)
 	return render(request, 'administration/informations.html', {'infos':infos})
 
+def information_admin(request, pk):
+    information = get_object_or_404(Information, pk=pk)
+    comments = Comment.objects.filter(inf=information).order_by('-date')
+    return render(request, 'administration/information_admin.html', {'information':information, 'comments':comments})
+
 def requests(request):
     requests = ContactUs.objects.all().exclude(works_on=request.user).order_by('create_date')
     works_on = ContactUs.objects.filter(works_on=request.user).order_by('create_date')
@@ -137,7 +142,7 @@ def information_delete(request, pk):
 def need_delete(request):
     print(request.POST)
     request_id = request.POST['id']
-    
+
     need = get_object_or_404(Need, pk=request_id)
     need.delete()
     return redirect('administration:needs')

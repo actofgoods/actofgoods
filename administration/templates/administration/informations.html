@@ -27,43 +27,25 @@
                 {% for info in infos %}
 
                     <!-- list all informations -->
-                    <a class="list-group-item" id="standard-list-group-item-div">
+                    <div class="list-group-item" id="standard-list-group-item-div">
                         <div class="row">
-                            <div class="col-sm-12" data-toggle="modal" data-target=".{{ info.id }}">
-                                <h4 class="list-group-item-heading">{{ info.headline }}</h4>
-                                <p class="list-group-item-text">{{ info|get_short_text:160 }}</p>
-                            </div>
-                            <div class="col-sm-11" data-toggle="modal" data-target=".{{ info.id }}">
-                                <h6><br>from: {{ info.date }} / number of reports: {{ info.number_reports }}</h6>
-                            </div>
+                            <a href="{% url 'administration:information_admin' pk=info.id %}">
+                                <div class="col-sm-12">
+                                    <h4 class="list-group-item-heading">{{ info.headline }}</h4>
+                                    <p class="list-group-item-text">{{ info|get_short_text:160 }}</p>
+                                </div>
+                            </a>
+                            <a href="{% url 'administration:information_admin' pk=info.id %}">
+                                <div class="col-sm-11">
+                                    <h6><br>from: {{ info.date }} / number of reports: {{ info.number_reports }}</h6>
+                                </div>
+                            </a>
                             <div class="col-sm-1">
                                 <button type="button" id="{{ info.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick=""><span class="glyphicon glyphicon-remove"></span> Delete</button>
                             </div>
                         </div>
-                    </a>
-
-                    <!-- modal for every information -->
-                    <div class="modal fade {{ info.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                    <h2>{{info.headline}}</h2>
-                                    <h6>from: {{ info.date }} / number of reports: {{ info.number_reports }}</h6>
-                                </div>
-                                <div class="modal-body">
-                                    <p>{{ info.text }}</p>
-                                    <p>Location:</p>
-                                    <div id="map-container"></div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
+
                 {% empty %}
                     <h4>There are no informations.</h4>
                 {% endfor %}
@@ -79,91 +61,65 @@
 <script src="http://maps.googleapis.com/maps/api/js"></script>
 <script>
 
+  var map;
+  var marker;
+  var myCenter=new google.maps.LatLng(51.508742,-0.120850);
+  var geocoder;
+  var infowindow;
+  var directionsService = new google.maps.DirectionsService;
+  var directionsDisplay = new google.maps.DirectionsRenderer;
+  function initialize() {
+      geocoder = new google.maps.Geocoder()
+      var mapProp = {
+              center:myCenter,
+              zoom:2,
+              mapTypeId:google.maps.MapTypeId.ROADMAP,
+              mapTypeControl: false,
+              panControl:false,
+              rotateControl:false,
+              mapTypeControl:true,
+              streetViewControl: false
+          };
+          marker=null;
 
-	var map;
-	var marker;
-	var myCenter=new google.maps.LatLng(51.508742,-0.120850);
-	var geocoder;
-	var infowindow;
+          map = new google.maps.Map(document.getElementById("map-container"),mapProp);
+        //   map = new google.maps.Map(document.getElementById("map-container-{{info.id}}"),mapProp);
 
-	function initialize() {
-    	geocoder = new google.maps.Geocoder()
-			var mapProp = {
-  			center:myCenter,
-  			zoom:2,
-  			mapTypeId:google.maps.MapTypeId.ROADMAP,
-				mapTypeControl: false,
-        panControl:false,
-        rotateControl:false,
-				mapTypeControl:true,
-        streetViewControl: false
-  		};
-  		marker=null;
+    //   placeMarker(new google.maps.LatLng(parseFloat("{{ info.address.latitude }}".replace(",", ".")), parseFloat("{{ info.address.longditude }}".replace(",", "."))));
 
-  		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
-  		google.maps.event.addListener(map, 'click', function(event) {
-    		placeMarker(event.latLng);
-  		});
-	}
-
-
-
-	function getLocation() {
-    	if (navigator.geolocation) {
-    	    navigator.geolocation.getCurrentPosition(showPosition);
-    	} else {
-    	    x.innerHTML = "Geolocation is not supported";
-    	    y.innerHTML = "by this browser.";
-    	}
-	}
-
-	function showPosition(position) {
-    	var latlng={lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)};
-    	placeMarker(latlng);
-	}
-
-
-	function placeMarker(location) {
-	    if(marker){
-	        infowindow.close();
-	        marker.setPosition(location);
-	        geocoder.geocode({'location': location}, function(results, status){
-	            infowindow.setContent(results[0].formatted_address);
-	            infowindow.open(map,marker);
-	        })
-	    }
-	    else{
-	        marker = new google.maps.Marker({
-	        position: location,
-	        map: map,
-	        });
-	        geocoder.geocode({'location': location}, function(results, status){
-	            infowindow = new google.maps.InfoWindow({content: results[0].formatted_address});
-	            infowindow.open(map,marker);
-	        })
-	       	map.setZoom(6);
-	    }
-		map.setCenter(marker.getPosition());
-	}
-	google.maps.event.addDomListener(window, 'load', initialize);
-
-  function addressInput(){
-    if(marker != null){
-      $('#lng').val(marker.getPosition().lng());
-      $('#lat').val(marker.getPosition().lat());
-    }
-    else if($('#State').val() != "" && $('#City').val() != ""){
-			var state = $('#State').val();
-			var city = $('#City').val();
-      $('#addressinput').val(state+ " " + city);
-    }
   }
+
+  // function placeMarker(location) {
+  //     if(marker){
+  //         infowindow.close();
+  //         marker.setPosition(location);
+  //         geocoder.geocode({'location': location}, function(results, status){
+  //             infowindow.setContent(results[0].formatted_address);
+  //             infowindow.open(map,marker);
+  //         })
+  //     }
+  //     else{
+  //         marker = new google.maps.Marker({
+  //         position: location,
+  //         map: map,
+  //         });
+  //         geocoder.geocode({'location': location}, function(results, status){
+  //             infowindow = new google.maps.InfoWindow({content: results[0].formatted_address});
+  //             infowindow.open(map,marker);
+  //         })
+  //         map.setZoom(6);
+  //     }
+  //     map.setCenter(marker.getPosition());
+  // }
+
+  google.maps.event.addDomListener(window, 'load', initialize);
+
 </script>
 <script type='text/javascript'>
- 	$('.{{ info.id }}').on('shown.bs.modal', function(e) {
+  $('#modal-location').on('shown.bs.modal', function(e) {
+// $('#modal-location-{{info.id}}').on('shown.bs.modal', function(e) {
         initialize();
     });
 
 </script>
-
 {% endblock %}
