@@ -128,16 +128,16 @@ def group_delete(request, pk):
 	group.delete()
 	return redirect('administration:groups')
 
-def information_delete(request, pk):
-    info = get_object_or_404(Information, pk=pk)
+@csrf_exempt
+def information_delete(request):
+    request_id = request.POST['id']
+    info = get_object_or_404(Information, pk=request_id)
     info.delete()
     return redirect('administration:informations')
 
 @csrf_exempt
 def need_delete(request):
-    print(request.POST)
     request_id = request.POST['id']
-    
     need = get_object_or_404(Need, pk=request_id)
     need.delete()
     return redirect('administration:needs')

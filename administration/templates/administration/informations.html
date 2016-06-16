@@ -37,7 +37,7 @@
                                 <h6><br>from: {{ info.date }} / number of reports: {{ info.number_reports }}</h6>
                             </div>
                             <div class="col-sm-1">
-                                <button type="button" id="{{ info.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick=""><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                                <button type="button" id="{{ info.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="done_request(this)"><span class="glyphicon glyphicon-remove"></span> Delete</button>
                             </div>
                         </div>
                     </a>
@@ -157,6 +157,16 @@
 			var city = $('#City').val();
       $('#addressinput').val(state+ " " + city);
     }
+  }
+
+
+    function done_request(element){
+      var id = element.id;
+      console.log(id);
+      $.post("{% url 'administration:information_delete' %}", {id:id}, function(data){
+          //no need for this method but if we want to get a callback this is the correct position
+          location.href = "{% url 'administration:informations' %}";
+      });
   }
 </script>
 <script type='text/javascript'>
