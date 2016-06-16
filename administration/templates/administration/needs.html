@@ -7,31 +7,28 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="row">
-                <div  class="col-sm-6">
+                <div class="col-sm-12" style="padding: 15px">
                     <h2 class="text-center" id="standard-modal-headline">Needs</h2>
                 </div>
-                <div  class="col-sm-6">
-                    <div class="row">
-                        <div  class="col-sm-4">
-                            <select>
-                                <option value="all">all</option>
-                                {% for category in categories %}
-                                    <option value="{{ category.name }}">{{ category.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div  class="col-sm-4">
-                            <select>
-                                <option value="all Needs">all Needs</option>
-                                <option value="all Needs">reported Needs</option>
-                            </select>
-                        </div>
-                        <div  class="col-sm-4">
-                            <input name="search_group" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
-                        </div>
-                    </div>
-
+                <div class="col-sm-1"></div>
+                <div class="col-sm-4" style="margin-top: 15px; margin-bottom: 15px;">
+                    <select style="width: 100%">
+                        <option value="all">all Categories</option>
+                        {% for category in categories %}
+                            <option value="{{ category.name }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
+                <div  class="col-sm-4" style="margin-top: 15px; margin-bottom: 15px;">
+                    <select style="width: 100%">
+                        <option value="all">all Needs</option>
+                        <option value="reported"> only reported Needs</option>
+                    </select>
+                </div>
+                <div  class="col-sm-2" style="margin-top: 10px; margin-bottom: 10px;">
+                    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                </div>
+                <div class="col-sm-1"></div>
             </div>
         </div>
         <div class="modal-body">
@@ -45,14 +42,11 @@
                                 <h4 class="list-group-item-heading">{{ need.headline }}</h4>
                                 <p class="list-group-item-text">{{ need|get_short_text:160 }}</p>
                             </div>
-                            <div class="col-sm-10" data-toggle="modal" data-target=".{{ request.id }}">
-                                <h6><br>from {{ need.date }}</h6>
+                            <div class="col-sm-11" data-toggle="modal" data-target=".{{ request.id }}">
+                                <h6><br>from: {{ need.date }} / category: {{ need.categorie.name }} / number of reports: {{ need.number_reports }}</h6>
                             </div>
                             <div class="col-sm-1">
-
-                            </div>
-                            <div class="col-sm-1">
-                                <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right;" onclick=""><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                                <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick=""><span class="glyphicon glyphicon-remove"></span> Delete</button>
                             </div>
                         </div>
                     </a>
@@ -66,7 +60,7 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                     <h2>{{need.headline}}</h2>
-                                    <h6>from {{ need.date }}</h6>
+                                    <h6>from: {{ need.date }} / category: {{ need.categorie.name }} / number of reports: {{ need.number_reports }}</h6>
                                 </div>
                                 <div class="modal-body">
                                     <p>{{ need.text }}</p>
@@ -85,92 +79,4 @@
     </div>
 </div><!-- end needs -->
 
-
-<!-- Introduction Row -->
-<div class="row">
-
-  <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
-    <div class="btn-group">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Range <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li><a href="#">5 km</a></li>
-        <li><a href="#">10 km</a></li>
-        <li><a href="#">20 km</a></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="#">100 km</a></li>
-      </ul>
-    </div>
-    <div class="btn-group">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Category <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li><a href="{% url 'basics:needs_all' %}">All</a></li>
-        {%for c in categorie%}
-          <li><a href="#">{{c.name}}</a></li>
-        {%endfor%}
-      </ul>
-    </div>
-    <div class="btn-group pull-right">
-      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Cards per Page <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li><a href="#">10</a></li>
-        <li><a href="#">25</a></li>
-        <li><a href="#">50</a></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="#">All</a></li>
-      </ul>
-    </div>
-  </div>
-</div>
-<br>
-<div class="row">
-   <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
-
-     <ul class="event-list">
-       {% for need in needs%}
-
-         <li>
-            <time>
-               <div>{{ need.date }}</div>
-             </time>
-
-           <div class="info">
-             <h2 class="title"><a  href="{% url 'basics:needs_view' pk=need.pk %}">{{ need.headline }}</a></h2>
-             <p class="desc">{{ need.text }}</p>
-            <ul>
-               <li style="width:33%;">comments (3)</li>
-               <li style="width:33%;"><a href="#website"><span class="glyphicon glyphicon-map-marker"></span>Location</a></li>
-               <li style="width:34%;">number reports: {{ need.number_reports }}</li>
-             </ul>
-           </div>
-         </li>
-
-       {% endfor %}
-     </ul>
-   </div>
- </div>
- <div class="row">
-   <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ] text-center">
-     <nav>
-       <ul class="pagination">
-         <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-         <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
-         <li><a href="#">2</a></li>
-         <li><a href="#">3</a></li>
-         <li><a href="#">4</a></li>
-         <li><a href="#">5</a></li>
-         <li>
-           <a href="#" aria-label="Next">
-             <span aria-hidden="true">&raquo;</span>
-           </a>
-         </li>
-       </ul>
-     </nav>
-   </div>
- </div>
 {% endblock %}
