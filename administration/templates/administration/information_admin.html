@@ -44,10 +44,10 @@
                       function done_request(element){
                         var id = element.id;
                         console.log(id);
-                        if(reported_comment){
+                        if( {{ comment.id }} != {{ reported_comment.id }}){
                             $.post("{% url 'administration:comment_delete' %}", {id:id}, function(data){
                                 //no need for this method but if we want to get a callback this is the correct position
-                                location.href = "{% url 'administration:information_reported_comment_admin' pki=comment.inf.pk pkc=comment.id %}";
+                                location.href = "{% url 'administration:information_reported_comment_admin' pki=comment.inf.pk pkc=reported_comment.id %}";
                             });
                         }else{
                             $.post("{% url 'administration:comment_delete' %}", {id:id}, function(data){
