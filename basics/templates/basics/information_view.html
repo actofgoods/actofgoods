@@ -1,0 +1,50 @@
+{% extends 'basics/base.html' %}
+
+{% block content %}
+  <div class="row">
+
+    <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="text-center">{{information.headline}}</h1>
+      </div>
+      <div class="modal-body">
+        {{information.text}}
+
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  	</div>
+  </div>
+  <div class="row">
+
+    <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="text-center">Comment</h1>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'basics:information_view_comment' pk=information.pk %}" method="post">
+          {%csrf_token%}
+          <textarea hint="Your comment" class="form-control" name="comment_text" rows="3"></textarea>
+          <br>
+          <button type="submit " class="btn btn-primary">Submit</button>
+        </form>
+        <br>
+        {% for comment in comments%}
+        <div class="modal-content">
+          <div class="modal-body">
+            {{comment.text}}
+          </div>
+          <div class="modal-footer">
+            {{comment.author}}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  	</div>
+  </div>
+{% endblock %}

@@ -1,4 +1,7 @@
 channels == 0.14.0
 Django == 1.9.7
+django_ipware == 1.1.5
 django_nocaptcha_recaptcha == 0.0.19
+pytz == 2016.4
 requests == 2.10.0
+timezonefinder == 1.5.5

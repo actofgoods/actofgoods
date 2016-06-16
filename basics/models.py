@@ -12,6 +12,13 @@ class Address(models.Model):
 	latitude = models.FloatField()
 	longditude = models.FloatField()
 
+class CategoriesInf(models.Model):
+	name = models.CharField(max_length=50)
+
+
+class CategoriesNeeds(models.Model):
+	name = models.CharField(max_length=50)
+
 # Not acces now errors incomings
 class Userdata(models.Model):
 	user = models.OneToOneField(User,on_delete=models.CASCADE)
@@ -21,12 +28,11 @@ class Userdata(models.Model):
 	GENDER = (('m', 'Male'),('f', 'Female'),)
 	gender = models.CharField(max_length=1, choices=GENDER)
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
-
-class CategoriesNeeds(models.Model):
-	name = models.CharField(max_length=50)
-
-class CategoriesInf(models.Model):
-	name = models.CharField(max_length=50)
+	information = models.BooleanField(default=False)
+	inform_about = models.ManyToManyField(CategoriesNeeds)
+	aux = models.FloatField(default=50)
+	def __unicode__(self):
+		return self.pseudonym
 
 class CategoriesRep(models.Model):
 	name = models.CharField(max_length=50)
@@ -94,3 +100,21 @@ class ContactUs(models.Model):
         # if not self.id:
         self.create_date = now()
         super(ContactUs, self).save(*args, **kwargs)
+
+class Room(models.Model):
+	name = models.CharField(primary_key=True , max_length=20)
+	user_req = models.ForeignKey(User, blank=True, null=True)
+	need = models.ForeignKey(Need)
+	slug = models.SlugField()
+	act_req = models.BooleanField(default=False)
+	act_off = models.BooleanField(default=False)
+	last_message = models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return self.name
+
+class ChatMessage(models.Model):
+	author = models.ForeignKey(User)
+	date = models.DateTimeField(auto_now = True)
+	room = models.ForeignKey(Room)
+	text=models.TextField(default='', max_length=500)

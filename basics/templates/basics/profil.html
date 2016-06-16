@@ -67,8 +67,13 @@
 			Email: {{user.email}}  						<br>
 			Phonenumber: {{Userdata.phone}} 			<br>
 			Registered since: {{user.date_joined}}		<br>
-			Default auxiliary radius: 					<br>
-			Notification:								<br><br>
+			Default auxiliary radius:	{{Userdata.aux}}
+			{% if Userdata.information %}
+			<br><br>
+			You	chose to be notified via email.
+
+
+			{% endif %}						<br><br>
       latitude: {{ Userdata.address.latitude }}					<br>
       longditude: {{ Userdata.address.longditude }} 					<br>
 			</b>

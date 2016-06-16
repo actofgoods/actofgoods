@@ -29,9 +29,10 @@ class CaptchaForm(forms.Form):
     captcha = NoReCaptchaField()
 
 class ProfileForm(forms.Form):
-	class Meta:
-		model = Userdata
-		fields= ['pseudonym','phone']
+    information= forms.BooleanField(required=True)
+    class Meta:
+        model = Userdata
+        fields= ['pseudonym','phone']
 
 class ProfileUserForm(forms.Form):
     class Meta:

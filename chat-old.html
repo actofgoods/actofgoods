@@ -1,0 +1,191 @@
+{% extends 'basics/base.html' %}
+
+{% block content %}
+
+<style>
+
+.chat {
+  background: #F2F5F8;
+  color: #434651;
+}
+.chat .chat-header {
+  padding: 20px;
+}
+
+.chat .chat-header .chat-with {
+  font-weight: bold;
+  font-size: 16px;
+}
+.chat .chat-header .chat-num-messages {
+  color: #92959E;
+}
+
+.chat .chat-history {
+  padding: 30px 30px 20px;
+  overflow-y: scroll;
+  height: 50%;
+}
+.chat .chat-history .message-data {
+  margin-bottom: 15px;
+}
+.chat .chat-history .message-data-time {
+  color: #a8aab1;
+  padding-left: 6px;
+}
+.chat .chat-history .message {
+  color: white;
+  padding: 18px 20px;
+  line-height: 26px;
+  font-size: 16px;
+  border-radius: 7px;
+  margin-bottom: 30px;
+  width: 90%;
+  position: relative;
+}
+
+.chat .chat-history .my-message {
+  background: #6F952B;
+}
+.chat .chat-history .other-message {
+  background: #B8CE52;
+}
+
+.chat .chat-message {
+  padding: 10px;
+}
+.chat .chat-message textarea {
+  width: 100%;
+  border: none;
+  padding: 10px 20px;
+  font: 14px/22px "Lato", Arial, sans-serif;
+  margin-bottom: 10px;
+  resize: none;
+}
+.chat .chat-message .fa-file-o,
+.chat .chat-message .fa-file-image-o {
+  font-size: 16px;
+  color: gray;
+  cursor: pointer;
+}
+.chat .chat-message button {
+  float: right;
+  color: #71972C;
+  font-size: 16px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background: #F2F5F8;
+}
+.chat .chat-message button:hover {
+  color: #75b1e8;
+}
+
+.me {
+  margin-right: 3px;
+  font-size: 10px;
+}
+
+
+.me {
+  color: #94C2ED;
+}
+
+.align-left {
+  text-align: left;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.float-right {
+  float: right;
+}
+
+.alight-center {
+  text-align: center;
+}
+
+.test{
+  background-color: #5E5F5B;
+}
+
+    </style>
+
+<!-- Introduction Row -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="test">
+      <div class="row">
+        <div class="col-md-3 alight-center">
+          <h1>Rooms</h1>
+        </div>
+        <div class="col-md-9">
+              <div class="chat">
+      <div class="chat-header clearfix">
+        
+        <div class="chat-about">
+          <div class="chat-with">Chat with User#2</div>
+          <div class="chat-num-messages">already 1902 messages</div>
+        </div>
+        <i class="fa fa-star"></i>
+      </div> <!-- end chat-header -->
+      
+      <div class="chat-history">
+        <ul class ="list-unstyled">
+
+           {% for message in messages%}
+
+            {% if request.user != message.author %}
+              <li>
+                <div class="message-data">
+                  <span class="message-data-name"><i class="fa fa-circle online"></i> {{message.author}}</span>
+                  <span class="message-data-time">{{message.date}}</span>
+                </div>
+                <div class="message my-message">
+                  {{message.text}}
+                </div>
+              </li>
+
+              {% else %}
+                <li class="clearfix">
+                  <div class="message-data align-right">
+                    <span class="message-data-time" >{{message.author}}</span> &nbsp; &nbsp;
+                    <span class="message-data-name" >{{message.date}}</span> <i class="fa fa-circle me"></i>
+                    
+                  </div>
+                  <div class="message other-message float-right">
+                    {{message.text}}
+                  </div>
+              </li>
+              {% endif %}
+            {% endfor %}
+
+        
+          
+        </ul>
+        
+      </div> <!-- end chat-history -->
+      
+      <div class="chat-message clearfix">
+        <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" rows="3"></textarea>
+                
+        <i class="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
+        <i class="fa fa-file-image-o"></i>
+        
+        <button>Send</button>
+
+      </div> <!-- end chat-message -->
+      
+    </div> <!-- end chat -->
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+
+
+{% endblock %}
+
