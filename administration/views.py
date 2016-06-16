@@ -95,7 +95,7 @@ def informations(request):
         elif selected == 'reported comments':
             comments = Comment.objects.filter(was_reported=True)
             return render(request, 'administration/informations.html', {'comments':comments})
-    
+
     return render(request, 'administration/informations.html', {'infos':infos})
 
 def information_admin(request, pk):
@@ -127,7 +127,7 @@ def needs(request):
             else:
                 categorie = CategoriesNeeds.objects.get(name=selected_categorie)
                 needs = Need.objects.filter(was_reported=True, categorie=categorie).order_by('date').reverse()
-    
+
     return render(request, 'administration/needs.html', {'needs':needs,'categories':categories})
 
 def users(request):

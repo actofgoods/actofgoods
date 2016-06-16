@@ -33,7 +33,7 @@
                                 <p class="list-group-item-text">{{ comment|get_short_text:160 }}</p>
                             </div>
                             <div class="col-sm-11">
-                                <h6><br>from: {{ comment.date }} / number of reports: </h6>
+                                <h6><br>from: {{ comment.date }} / number of reports: {{ comment.number_reports }} </h6>
                             </div>
                             <div class="col-sm-1">
                                 <button type="button" id="{{ comment.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="done_request(this)"><span class="glyphicon glyphicon-remove"></span> Delete</button>
