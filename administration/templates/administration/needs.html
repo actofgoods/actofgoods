@@ -63,7 +63,7 @@
                                     <h6>from: {{ need.date }} / category: {{ need.categorie.name }} / number of reports: {{ need.number_reports }}</h6>
                                 </div>
                                 <div class="modal-body">
-                                    <p>{{ need.text }}</p>
+                                    <p>{{ need.text | linebreaksbr }}</p>
                                 </div>
                                 <div class="modal-footer">
                                     <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
