@@ -16,17 +16,21 @@
                 <div class="col-sm-4" style="margin-top: 15px; margin-bottom: 15px;">
                     <select style="width: 100%" name="categories">
                         <option value="all">all Categories</option>
-                        {% for category in categories %}
-                            <option value="{{ category.name }}">{{ category.name }}</option>
+                        {% for categorie in categories %}
+                            <option value="{{ categorie.name }}" {% if categorie == current_cat %}selected{% endif %}>
+                            {{ categorie.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div  class="col-sm-4" style="margin-top: 15px; margin-bottom: 15px;">
                     <select style="width: 100%" name="needs">
-                        <option value="all">all Needs</option>
-                        <option value="reported"> only reported Needs</option>
+                        <option value="all" {% if 'all' == current_need %}selected{% endif %}>all Needs</option>
+                        <option value="reported" {% if 'reported' == current_need %}selected{% endif %}> only reported Needs</option>
                     </select>
                 </div>
+                <script>
+                
+                </script>
                 <div  class="col-sm-2" style="margin-top: 10px; margin-bottom: 10px;">
                     <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
                 </div>
