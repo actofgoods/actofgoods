@@ -31,11 +31,11 @@
                         <div class="row">
                             <a href="{% url 'administration:information_admin' pk=info.id %}">
                                 <div class="col-sm-12">
-                                    <h4 class="list-group-item-heading">{{ info.headline }}</h4>
-                                    <p class="list-group-item-text">{{ info|get_short_text:160 }}</p>
+                                    <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ info.headline }}</h4>
+                                    <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ info|get_short_text:160 }}</p>
                                 </div>
                             </a>
-                            <a href="{% url 'administration:information_admin' pk=info.id %}">
+                            <a href="{% url 'administration:information_admin' pk=info.id %}" style="color: #555; hover.color: #555;">
                                 <div class="col-sm-11">
                                     <h6><br>from: {{ info.date }} / number of reports: {{ info.number_reports }}</h6>
                                 </div>

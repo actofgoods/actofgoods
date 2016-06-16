@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
-from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs, Need, Information
+from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs, Need, Information, Comment
 from django.contrib.auth.models import User, Group
 from administration.forms import GroupFormRegister, SearchUserForm
 from basics.forms import CategoriesForm
