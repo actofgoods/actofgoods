@@ -29,10 +29,10 @@
                     <!-- list all informations -->
                     <a class="list-group-item" {% if comment.id == reported_comment.id %} id="red-list-group-item-div" {% else %} id="standard-list-group-item-div" {% endif %}>
                         <div class="row">
-                            <div class="col-sm-12">
+                            <div class="col-sm-12" data-toggle="modal" data-target=".{{ comment.id }}">
                                 <p class="list-group-item-text">{{ comment|get_short_text:160 }}</p>
                             </div>
-                            <div class="col-sm-11">
+                            <div class="col-sm-11" data-toggle="modal" data-target=".{{ comment.id }}">
                                 <h6><br>from: {{ comment.date }} / number of reports: {{ comment.number_reports }} </h6>
                             </div>
                             <div class="col-sm-1">
@@ -40,24 +40,54 @@
                             </div>
                         </div>
                     </a>
+
                     <script>
                       function done_request(element){
                         var id = element.id;
                         console.log(id);
-                        if( {{ comment.id }} != {{ reported_comment.id }}){
-                            $.post("{% url 'administration:comment_delete' %}", {id:id}, function(data){
-                                //no need for this method but if we want to get a callback this is the correct position
-                                location.href = "{% url 'administration:information_reported_comment_admin' pki=comment.inf.pk pkc=reported_comment.id %}";
-                            });
-                        }else{
+                        {% if reported_comment %}
+                            {% if comment.id != reported_comment.id %}
+                                $.post("{% url 'administration:comment_delete' %}", {id:id}, function(data){
+                                    //no need for this method but if we want to get a callback this is the correct position
+                                    location.href = "{% url 'administration:information_reported_comment_admin' pki=comment.inf.pk pkc=reported_comment.id %}";
+                                });
+                            {% else %}
+                                $.post("{% url 'administration:comment_delete' %}", {id:id}, function(data){
+                                    //no need for this method but if we want to get a callback this is the correct position
+                                    location.href = "{% url 'administration:information_admin' pk=comment.inf.pk %}";
+                                });
+                            {% endif %}
+                        {% else %}
                             $.post("{% url 'administration:comment_delete' %}", {id:id}, function(data){
                                 //no need for this method but if we want to get a callback this is the correct position
                                 location.href = "{% url 'administration:information_admin' pk=comment.inf.pk %}";
                             });
-                        }
-
+                        {% endif %}
                     }
                     </script>
+
+                    <!-- modal for every comment -->
+                    <div class="modal fade {{ comment.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h2>Comment to: {{information.headline}}</h2>
+                                    <h6>from {{ comment.date }} / number of reports: {{ comment.number_reports }}</h6>
+                                </div>
+                                <div class="modal-body">
+                                    {% autoescape on %}
+                                        <p>{{ comment.text|linebreaksbr }}</p>
+                                    {% endautoescape %}
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 {% empty %}
                     <h4>There are no comments for this information.</h4>
                 {% endfor %}
