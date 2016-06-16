@@ -168,6 +168,12 @@ def information_delete(request):
     info.delete()
     return redirect('administration:informations')
 
+def info_delete(request, pk):
+    info = get_object_or_404(Information, pk=pk)
+    info.delete()
+    return redirect('administration:informations')
+
+
 @csrf_exempt
 def need_delete(request):
     request_id = request.POST['id']
@@ -197,3 +203,9 @@ def request_done(request):
     request = get_object_or_404(ContactUs, pk=request_id)
     request.delete()
     return redirect('administration:requests')
+
+@csrf_exempt
+def comment_delete(request):
+    comment = get_object_or_404(Comment, pk = request.POST['id'])
+    comment.delete()
+    return redirect('administration:needs')

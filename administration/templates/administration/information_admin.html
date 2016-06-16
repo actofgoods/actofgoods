@@ -13,7 +13,7 @@
                 </div>
                 <div class="col-sm-3">
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
-                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'administration:informations' %}" style="margin-top: 15px; margin-bottom: 15px;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url  'administration:info_delete' pk=information.pk %}" style="margin-top: 15px; margin-bottom: 15px;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
                             <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'administration:informations' %}" style="margin-top: 15px; margin-bottom: 15px;"><span class="glyphicon glyphicon-chevron-left"></span> Back</a>
                     </div>
                 </div>
@@ -36,10 +36,21 @@
                                 <h6><br>from: {{ comment.date }} / number of reports: </h6>
                             </div>
                             <div class="col-sm-1">
-                                <button type="button" id="{{ comment.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick=""><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                                <button type="button" id="{{ comment.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="done_request(this)"><span class="glyphicon glyphicon-remove"></span> Delete</button>
                             </div>
                         </div>
                     </a>
+                    <script>
+                      function done_request(element){
+                        var id = element.id;
+                        console.log(id);
+                        
+                        $.post("{% url 'administration:comment_delete' %}", {id:id}, function(data){
+                            //no need for this method but if we want to get a callback this is the correct position
+                            location.href = "{% url 'administration:information_admin' pk=comment.inf.pk %}";
+                        });
+                    }
+                    </script>
                 {% empty %}
                     <h4>There are no comments for this information.</h4>
                 {% endfor %}
@@ -105,6 +116,7 @@
       map.setCenter(marker.getPosition());
   }
   google.maps.event.addDomListener(window, 'load', initialize);
+
 
 </script>
 

@@ -36,4 +36,6 @@ urlpatterns = [
     url(r'^administration/work_on_request/$', views.work_on_request, name='work_on_request'),
     url(r'^administration/request_done/$', views.request_done, name='request_done'),
     url(r'^administration/informations/(?P<pk>\d+)/$', views.information_admin, name='information_admin'),
+    url(r'^administration/informations/comment/delete/$', views.comment_delete, name='comment_delete'),
+    url(r'^administration/information/(?P<pk>\d+)/delete/$', views.info_delete, name='info_delete'),
 ]
