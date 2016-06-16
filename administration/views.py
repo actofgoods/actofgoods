@@ -105,8 +105,14 @@ def informations(request):
 
 def information_admin(request, pk):
     information = get_object_or_404(Information, pk=pk)
-    comments = Comment.objects.filter(inf=information).order_by('-date')
+    comments = Comment.objects.filter(inf=information).order_by('date')
     return render(request, 'administration/information_admin.html', {'information':information, 'comments':comments})
+
+def information_reported_comment_admin(request, pki, pkc):
+    information = get_object_or_404(Information, pk=pki)
+    comments = Comment.objects.filter(inf=information).order_by('date')
+    reported_comment = comments.get(pk=pkc)
+    return render(request, 'administration/information_admin.html', {'information':information, 'comments':comments, 'reported_comment':reported_comment})
 
 def requests(request):
     requests = ContactUs.objects.all().exclude(works_on=request.user).order_by('create_date')

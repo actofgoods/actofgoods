@@ -60,13 +60,13 @@
                         <!-- list all informations -->
                         <div class="list-group-item" id="standard-list-group-item-div">
                             <div class="row">
-                                <a href="{% url 'administration:information_admin' pk=comment.inf.id %}">
+                                <a href="{% url 'administration:information_reported_comment_admin' pki=comment.inf.id pkc=comment.id %}">
                                     <div class="col-sm-12">
                                         <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">Information Headline: {{ comment.inf.headline }}</h4>
                                         <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ comment.text }}</p>
                                     </div>
                                 </a>
-                                <a href="{% url 'administration:information_admin' pk=comment.inf.id %}" style="color: #555; hover.color: #555;">
+                                <a href="{% url 'administration:information_reported_comment_admin' pki=comment.inf.id pkc=comment.id %}" style="color: #555; hover.color: #555;">
                                     <div class="col-sm-11">
                                         <h6><br>from: {{ comment.date }} / number of reports: {{ comment.number_reports }}</h6>
                                     </div>

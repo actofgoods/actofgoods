@@ -38,4 +38,5 @@ urlpatterns = [
     url(r'^administration/informations/(?P<pk>\d+)/$', views.information_admin, name='information_admin'),
     url(r'^administration/informations/comment/delete/$', views.comment_delete, name='comment_delete'),
     url(r'^administration/information/(?P<pk>\d+)/delete/$', views.info_delete, name='info_delete'),
+    url(r'^administration/informations/(?P<pki>\d+)/(?P<pkc>\d+)/$', views.information_reported_comment_admin, name='information_reported_comment_admin'),
 ]

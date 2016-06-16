@@ -27,7 +27,7 @@
                 {% for comment in comments %}
 
                     <!-- list all informations -->
-                    <a class="list-group-item" id="standard-list-group-item-div">
+                    <a class="list-group-item" {% if comment.id == reported_comment.id %} id="red-list-group-item-div" {% else %} id="standard-list-group-item-div" {% endif %}>
                         <div class="row">
                             <div class="col-sm-12">
                                 <p class="list-group-item-text">{{ comment|get_short_text:160 }}</p>
@@ -44,11 +44,18 @@
                       function done_request(element){
                         var id = element.id;
                         console.log(id);
-                        
-                        $.post("{% url 'administration:comment_delete' %}", {id:id}, function(data){
-                            //no need for this method but if we want to get a callback this is the correct position
-                            location.href = "{% url 'administration:information_admin' pk=comment.inf.pk %}";
-                        });
+                        if(reported_comment){
+                            $.post("{% url 'administration:comment_delete' %}", {id:id}, function(data){
+                                //no need for this method but if we want to get a callback this is the correct position
+                                location.href = "{% url 'administration:information_reported_comment_admin' pki=comment.inf.pk pkc=comment.id %}";
+                            });
+                        }else{
+                            $.post("{% url 'administration:comment_delete' %}", {id:id}, function(data){
+                                //no need for this method but if we want to get a callback this is the correct position
+                                location.href = "{% url 'administration:information_admin' pk=comment.inf.pk %}";
+                            });
+                        }
+
                     }
                     </script>
                 {% empty %}
