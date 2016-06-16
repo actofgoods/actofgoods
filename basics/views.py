@@ -151,6 +151,7 @@ def contact_us(request):
             headline = request.POST.get('headline')
             text = request.POST.get('text')
             contactUsData = ContactUs(email=email, headline=headline, text=text)
+            print(contactUsData.text)
             contactUsData.save()
             return render(request, 'basics/actofgoods_startpage.html')
     return render(request, 'basics/contact_us.html')

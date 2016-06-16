@@ -94,12 +94,8 @@ class ContactUs(models.Model):
     headline = models.CharField(max_length=30, default='')
     text = models.TextField(default='')
     works_on = models.ForeignKey(User,null=True,default=None)
-    create_date = models.DateTimeField(default = timezone.now)#timezone.now()#models.DateTimeField(default = timezone.now
+    create_date = models.DateTimeField(auto_now_add=True)#timezone.now()#models.DateTimeField(default = timezone.now
 
-    def save(self, *args, **kwargs):
-        # if not self.id:
-        self.create_date = now()
-        super(ContactUs, self).save(*args, **kwargs)
 
 class Room(models.Model):
 	name = models.CharField(primary_key=True , max_length=20)
