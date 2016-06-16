@@ -1,0 +1,144 @@
+{% extends 'administration/base_admin.html' %}
+{% block content %}
+
+<div class="row">
+
+    <!-- first column -->
+    <div class="col-sm-5 col-sm-push-7">
+
+        <!-- create new category -->
+        <div id="standard-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="text-center" id="standard-modal-headline">Create new Category</h2>
+			    </div>
+			    <div class="modal-body">
+                    {% if messages %}
+    					{% for message in messages %}
+							{% if message.message == 'categorie_exists' %}
+								<div class="form-group">
+									<div class="error-messages">
+    									<p>This category already exists!</p>
+									</div>
+								</div>
+							{% endif %}
+    					{% endfor %}
+					{% endif %}
+				    <form class="form" role="form" method="post" accept-charset="UTF-8">
+					{%csrf_token%}
+					    <div class="form-group">
+		  				    <input type="name" class="form-control input-lg" placeholder="Category Name" name="name" required/>
+		  			    </div>
+					    <div class="form-group">
+						    <input name="create_category" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Create"/>
+					    </div>
+				    </form>
+			    </div>
+		    </div>
+        </div><!-- end create new category -->
+
+        <!-- search category -->
+        <div id="standard-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="text-center" id="standard-modal-headline">Search Category</h2>
+                </div>
+                <div class="modal-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.message == 'category_not_exists' %}
+                                <div class="form-group">
+                                    <div class="error-messages">
+                                        <p>This category doesn't exist!</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <form class="form" role="form" method="POST" accept-charset="UTF-8">
+                    {%csrf_token%}
+                        <div class="form-group">
+                            <input type="name" class="form-control input-lg" placeholder="Category Name" name="name" required/>
+                        </div>
+                        <div class="form-group">
+                            <input name="search_category" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Search"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div><!-- end search category -->
+
+    </div><!-- end first column -->
+
+    <!-- second column -->
+    <div class="col-sm-7 col-sm-pull-5">
+
+        <!-- all categories -->
+        <div id="standard-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {% if categ %}
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <h2 class="text-center" id="standard-modal-headline">Categories</h2>
+                            </div>
+                            <div class="col-sm-2">
+                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:categories' %}" style="float: right; margin: 15px;"> Show All</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <h2 class="text-center" id="standard-modal-headline">Categories</h2>
+                    {% endif %}
+			    </div>
+			    <div class="modal-body">
+                    {% if messages %}
+    					{% for message in messages %}
+							{% if message.message == 'categorie_sonst' %}
+								<div class="form-group">
+									<div class="error-messages">
+    									<p>Cannot delete Other!</p>
+									</div>
+								</div>
+							{% endif %}
+    					{% endfor %}
+					{% endif %}
+                    <div class="list-group">
+                        <!-- list the searched category -->
+                        {% if categ %}
+                            <div class="list-group-item" id="standard-list-group-item-div">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        {{ categ.name }}
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:categories_delete' pk=categ.pk %}" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- end list the searched category -->
+                        {% else %}
+                            {% for categorie in categories %}
+                                <div class="list-group-item" id="standard-list-group-item-div">
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            {{ categorie.name }}
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:categories_delete' pk=categorie.pk %}" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <h4>No categories available. Create some.</h4>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div><!-- end all categories -->
+
+    </div><!-- end second column -->
+
+</div><!-- end row -->
+
+{% endblock %}

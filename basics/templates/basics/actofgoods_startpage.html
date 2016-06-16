@@ -15,7 +15,7 @@
 				<div id="counter-container">
 					<div id="counter-inner">
 						<div id="counter">
-							{{counter}}	<!-- TODO hier noch die richtige anzahl einfuegen -->
+							{{counter}}
 						</div>
 					</div>
 				</div>
@@ -42,7 +42,7 @@
 					<h2 class="text-center">Sign Up</h2>
 				</div>
 				<div class="modal-body">
-					<form class="form" role="form" id="register_form" method="post" action="{% url 'basics:register' %}" accept-charset="UTF-8" id="login-nav">
+					<form class="form" role="form" id="register_form" method="post" action="{% url 'basics:register' %}" accept-charset="UTF-8">
 					{% csrf_token %}
 
 						{% if messages %}
@@ -94,7 +94,9 @@
              				<p id="choose-location-text">We need your roughly location to provide only necessary information for you.
       					</p>
 						</div>
-						{% include "basics/map_testing.html" %}
+                        <div class="form-group">
+						    {% include "basics/map_testing.html" %}
+                        </div>
 						<div class="form-group">
 							<p id="terms-of-use-privacy-polices">By clicking on "Register" you accept the <a href="#" data-toggle="modal" data-target=".modal-terms-of-use">Terms of Use</a> and the <a href="#" data-toggle="modal" data-target=".modal-privacy-polices">Privacy Polices</a>!</p>
 						</div>
@@ -139,7 +141,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<input type="submit" onclick="register()" class="btn btn-block btn-lg btn-primary" value="Register"/>
+							<input id="standard-grey-button-bold" type="submit" onclick="register()" class="btn btn-block btn-lg btn-primary" value="Register"/>
 						</div>
 
 						<div class="checkbox" >

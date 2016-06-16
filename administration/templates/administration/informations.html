@@ -1,0 +1,68 @@
+{% extends 'administration/base_admin.html' %}
+{% block content %}
+{% load filter %}
+
+<!-- informations -->
+<div id="standard-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="row">
+                <div class="col-sm-6" >
+                    <h2 class="text-center" id="standard-modal-headline">Informations</h2>
+                </div>
+                <div  class="col-sm-4" style="margin-top: 20px;">
+                    <select style="width: 100%">
+                        <option value="all">all Informations</option>
+                        <option value="reported informations"> only reported Informations</option>
+                        <option value="reported comments"> only reported Comments</option>
+                    </select>
+                </div>
+                <div  class="col-sm-2" style="margin-top: 15px; margin-bottom: 10px;">
+                    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                </div>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="list-group">
+                {% for info in infos %}
+
+                    <!-- list all informations -->
+                    <div class="list-group-item" id="standard-list-group-item-div">
+                        <div class="row">
+                            <a href="{% url 'administration:information_admin' pk=info.id %}">
+                                <div class="col-sm-12">
+                                    <h4 class="list-group-item-heading">{{ info.headline }}</h4>
+                                    <p class="list-group-item-text">{{ info|get_short_text:160 }}</p>
+                                </div>
+                            </a>
+                            <a href="{% url 'administration:information_admin' pk=info.id %}">
+                                <div class="col-sm-11">
+                                    <h6><br>from: {{ info.date }} / number of reports: {{ info.number_reports }}</h6>
+                                </div>
+                            </a>
+                            <div class="col-sm-1">
+                                <button type="button" id="{{ info.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="done_request(this)"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                            </div>
+                        </div>
+                    </div>
+
+                {% empty %}
+                    <h4>There are no informations.</h4>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div><!-- end informations -->
+
+<script>
+    function done_request(element){
+      var id = element.id;
+      console.log(id);
+      $.post("{% url 'administration:information_delete' %}", {id:id}, function(data){
+          //no need for this method but if we want to get a callback this is the correct position
+          location.href = "{% url 'administration:informations' %}";
+      });
+  }
+</script>
+
+{% endblock %}

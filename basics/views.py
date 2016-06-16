@@ -14,7 +14,9 @@ from django.views.decorators.csrf import csrf_protect
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
-from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm, ImmediateAid
+from django.utils import timezone
+# Create your views here.
+from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm, ContactUsForm
 from .models import *
 
 
@@ -143,7 +145,17 @@ def chat_room(request, roomname):
 
     contact_us page will be rendered and returned.
 """
+@csrf_protect
 def contact_us(request):
+    if request.method == "POST":
+        form = ContactUsForm(request.POST)
+        if form.is_valid() :
+            email = request.POST.get('email')
+            headline = request.POST.get('headline')
+            text = request.POST.get('text')
+            contactUsData = ContactUs(email=email, headline=headline, text=text)
+            contactUsData.save()
+            return render(request, 'basics/actofgoods_startpage.html')
     return render(request, 'basics/contact_us.html')
 
 """
@@ -340,7 +352,7 @@ def immediate_aid(request):
                         content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
                         subject = "Welcome!"
 
-                        
+
                         sendmail(user.email, content, subject )
                         return redirect('basics:home')
                     else:
@@ -375,7 +387,6 @@ def login(request):
         print(user)
         if user is not None:
             if user.is_active:
-                print("user is active")
                 auth_login(request,user)
         else :
             messages.add_message(request, messages.INFO, 'lw')
@@ -486,7 +497,7 @@ def needs_new(request):
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
                     data = need.cleaned_data
-                    needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address)
+                    needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
                     needdata.save()
                     #TODO: id_generator will return random string; Could be already in use
                     room = Room.objects.create(name=id_generator(), need=needdata)
@@ -573,9 +584,9 @@ def profil_edit(request):
             if phone!= "":
                 userdata.phone=phone
             if request.POST.get('information') == "on":
-                userdata.information = True
+                userdata.get_notifications = True
             else:
-                userdata.information=False
+                userdata.get_notifications=False
             categories= request.POST.getlist('categories[]')
             for c in CategoriesNeeds.objects.all():
                 if c.name in categories:
@@ -619,7 +630,7 @@ def register(request):
                         data = form.cleaned_data
                         address = Address.objects.create(latitude=lat, longditude=lng)
                         user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
-                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, information= False)
+                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, get_notifications= False)
                         userdata.save()
                         content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                         subject = "Confirm Your Account"
@@ -738,3 +749,22 @@ def sendmail(email, content, subject):
     mail.login('actofgoods@gmail.com', 'actofgoods123')
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
     mail.close()
+
+def groups(request):
+    return render(request, 'basics/groups.html')
+
+def report_need(request, pk):
+    need = Need.objects.get(pk=pk)
+    need.was_reported = True
+    need.number_reports += 1
+    need.reported_by.add(request.user.userdata)
+    need.save()
+    return needs_all(request)
+
+def report_information(request, pk):
+    info = Information.objects.get(pk=pk)
+    info.was_reported = True
+    info.number_reports += 1
+    info.reported_by.add(request.user.userdata)
+    info.save()
+    return information_all(request)

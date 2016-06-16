@@ -1,0 +1,88 @@
+{% extends 'administration/base_admin.html' %}
+{% block content %}
+
+    <!-- all users -->
+    <div id="standard-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2 class="text-center" id="standard-modal-headline">Normal Users</h2>
+                    </div>
+                    <!-- search bar -->
+                    <div class="col-sm-6">
+                        <form class="form" role="form" method="post" accept-charset="UTF-8">
+                        {%csrf_token%}
+                            <div class="form-group">
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        {% if message.message == 'user_isAdmin' %}
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="error-messages" style="margin-top: 10px;">
+                                                        <p>That user is an Admin!</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% elif message.message == 'wrong_email' %}
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="error-messages" style="margin-top: 10px;">
+                                                        <p>User with this E-Mail doesn't exist!</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <input type="email" class="form-control input-lg" placeholder="Email from User" name="email" style="margin-top: 15px; margin-bottom: 15px;" required/>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Search"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div><!-- end search bar -->
+                </div>
+            </div>
+            <!-- list all or only one user -->
+            <div class="modal-body">
+                <div class="list-group">
+                    {% if usr %}
+                        <div class="list-group-item" id="standard-list-group-item-div">
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    {{ usr.email }}
+                                </div>
+                                <div class="col-sm-3">
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        {% for user in users %}
+                            {% if not user.is_superuser %}
+                                <div class="list-group-item" id="standard-list-group-item-div">
+                                    <div class="row">
+                                        <div class="col-sm-9">
+                                            {{ user.email }}
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div><!-- end list all or only one user -->
+        </div>
+    </div><!-- end all users -->
+
+{% endblock %}

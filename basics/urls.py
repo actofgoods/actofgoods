@@ -51,5 +51,8 @@ urlpatterns = [
     url(r'^reset_password/$', views.reset_password_page, name='reset_password_page'),
     url(r'^reset_password_confirmation/$', views.reset_password_confirmation, name='reset_password_confirmation'),
 	url(r'^contact_us/$', views.contact_us, name='contact_us'),
-    url(r'^verification/(?P<pk>\w+)$', views.verification, name='verification')
+    url(r'^groups/$', views.groups, name='groups'),
+    url(r'^need/report/(?P<pk>\d+)/$', views.report_need, name='report_need'),
+    url(r'^information/report/(?P<pk>\d+)/$', views.report_information, name='report_information'),
+    url(r'^verification/(?P<pk>\w+)$', views.verification, name='verification'),
 ]

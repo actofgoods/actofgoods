@@ -68,7 +68,7 @@
 			Phonenumber: {{Userdata.phone}} 			<br>
 			Registered since: {{user.date_joined}}		<br>
 			Default auxiliary radius:	{{Userdata.aux}}
-			{% if Userdata.information %}
+			{% if Userdata.get_notifications %}
 			<br><br>
 			You	chose to be notified via email.
 

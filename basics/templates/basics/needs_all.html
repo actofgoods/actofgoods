@@ -83,6 +83,9 @@
                <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-map-marker"></span>Location</a></li>
                <li style="width:20%;"> <span class="glyphicon glyphicon-thumbs-up"></span> Like</li>
                <li style="width:20%;"><a id="help-link" href="{% url 'basics:needs_help' id=need.id %}">Help</a><span class="fa fa-question"></span></li>
+               {% if not user.userdata in need.reported_by.all %}
+                <li style="width:20%;"><a id="report-need" href="{% url 'basics:report_need' pk=need.pk %}">report</a></li>
+                {% endif %}
              </ul>
            </div>
 

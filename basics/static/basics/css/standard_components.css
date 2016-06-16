@@ -1,0 +1,109 @@
+/* ----------- standard modal ----------- */
+
+#standard-modal {
+    min-width:250px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    margin: 20px 0px;
+}
+
+#standard-modal .modal-content {
+    background-color: #F5F5F5;
+}
+
+#standard-modal-headline {
+    color: #bbd153;
+    font-weight: bold;
+}
+
+.error-messages {
+    color: #D36E5A;
+}
+
+@media(max-width:768px) {
+
+    #standard-modal {
+        margin: 20px 10px;
+    }
+
+}
+
+/* ----------- end standard modal ----------- */
+
+/* ----------- standard buttons ----------- */
+
+/* green button light */
+#standard-green-button-light, .standard-green-button-light {
+  	background-color: #bbd153;
+  	border-color: #70962c;
+  	color: #4C4E49;
+	font-size: 1em;
+}
+
+/* green button bold */
+#standard-green-button-bold, .standard-green-button-bold {
+  	background-color: #bbd153;
+  	border-color: #70962c;
+  	color: #4C4E49;
+	font-size: 1em;
+	font-weight: bold;
+}
+
+#standard-green-button-light:hover, #standard-green-button-bold:hover, .standard-green-button-light:hover, .standard-green-button-bold:hover {
+    background-color: #96B440;
+}
+/* end green button light/bold */
+
+/* grey button light */
+#standard-grey-button-light,
+.standard-grey-button-light {
+  	background-color: #5D5F5B;
+  	border-color: #222322;
+  	color: #bbd153;
+	font-size: 1em;
+}
+
+/* grey button bold */
+#standard-grey-button-bold,
+.standard-grey-button-bold {
+  	background-color: #5D5F5B;
+  	border-color: #222322;
+  	color: #bbd153;
+	font-size: 1em;
+	font-weight: bold;
+}
+
+#standard-grey-button-light:hover,
+#standard-grey-button-bold:hover,
+.standard-grey-button-light:hover,
+.standard-grey-button-bold:hover,
+#standard-grey-button-light:active:focus,
+#standard-grey-button-bold:active:focus,
+.standard-grey-button-light:active:focus,
+.standard-grey-button-bold:active:focus {
+    background-color: #4C4E49;
+    color: #bbd153;
+}
+/* end grey button light/bold */
+
+/* ----------- end standard buttons ----------- */
+
+/* ----------- standard table ----------- */
+
+#standard-table-headline {
+    font-weight: bold;
+    color: #bbd153;
+}
+
+/* standard gray background #F5F5F5 */
+#standard-list-group-item-div {
+    background-color: #FAFAFA;
+}
+
+#standard-list-group-item-div:hover {
+    background-color: #EDEDED;
+}
+
+/* ----------- end standard table ----------- */

@@ -1,5 +1,7 @@
 from django.db import models
 from datetime import datetime
+from django.utils import timezone
+from django.utils.timezone import now
 from django.contrib.auth.models import User, Group
 
 # Create your models here.
@@ -26,7 +28,7 @@ class Userdata(models.Model):
 	GENDER = (('m', 'Male'),('f', 'Female'),)
 	gender = models.CharField(max_length=1, choices=GENDER)
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
-	information = models.BooleanField(default=False)
+	get_notifications = models.BooleanField(default=False)
 	inform_about = models.ManyToManyField(CategoriesNeeds)
 	aux = models.FloatField(default=50)
 	def __unicode__(self):
@@ -41,7 +43,7 @@ class Groupdata(models.Model):
 	phone = models.CharField(max_length=15)
 	is_NGO = models.BooleanField(default=True)
 	# mabye changed
-	adresse = models.CharField(max_length=254)
+	address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
 
 class Need(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -52,6 +54,9 @@ class Need(models.Model):
 	date = models.DateTimeField(auto_now=True)
 	categorie = models.ForeignKey(CategoriesNeeds)
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
+	was_reported = models.BooleanField(default=False)
+	number_reports = models.PositiveIntegerField(default=0)
+	reported_by = models.ManyToManyField(Userdata)
 
 class Information(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -61,6 +66,9 @@ class Information(models.Model):
 	closed = models.BooleanField(default=False)
 	date = models.DateTimeField(auto_now=True)
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
+	was_reported = models.BooleanField(default=False)
+	number_reports = models.PositiveIntegerField(default=0)
+	reported_by = models.ManyToManyField(Userdata)
 
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)
@@ -80,6 +88,18 @@ class Report(models.Model):
 	info = models.ForeignKey(Information)
 	Comment = models.ForeignKey(Comment)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class ContactUs(models.Model):
+    email = models.EmailField(max_length=254)
+    headline = models.CharField(max_length=30, default='')
+    text = models.TextField(default='')
+    works_on = models.ForeignKey(User,null=True,default=None)
+    create_date = models.DateTimeField(default = timezone.now)#timezone.now()#models.DateTimeField(default = timezone.now
+
+    def save(self, *args, **kwargs):
+        # if not self.id:
+        self.create_date = now()
+        super(ContactUs, self).save(*args, **kwargs)
 
 class Room(models.Model):
 	name = models.CharField(primary_key=True , max_length=20)

@@ -17,7 +17,7 @@
 					<div class="form-group">
 					<input type="description" class="form-control input-lg" placeholder= {{ user.email }} name="email"  >
 						</div>
-		
+
 					<div class="form-group">
 					{% if userdata.phone == "" %}
 					<input type="description" class="form-control input-lg" placeholder= phonenumber name="phone"  >
@@ -35,10 +35,10 @@
 						</div>
 						{% include "basics/map_testing.html" %}
 
-					<p><input type = "checkbox" name="information" {% if userdata.information %} checked {% endif %} onclick=$("#categories").fadeToggle();>
+					<p><input type = "checkbox" name="information" {% if userdata.get_notifications %} checked {% endif %} onclick=$("#categories").fadeToggle();>
 						<label class="w3-validate"> Inform me via email </label></p>
 
-					<div id="categories" {% if not userdata.information %} style="display: none" {% endif %}>
+					<div id="categories" {% if not userdata.get_notifications %} style="display: none" {% endif %}>
 
 					<p> Categories I want to be informed about </p>
 						<div style="height: 6em; width: 12em; overflow: auto; padding-left:20px;">
