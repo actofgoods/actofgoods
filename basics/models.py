@@ -75,6 +75,9 @@ class Comment(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
 	text = models.TextField(default='')
 	date = models.DateTimeField(auto_now=True)
+	was_reported = models.BooleanField(default=False)
+	number_reports = models.PositiveIntegerField(default=0)
+	reported_by = models.ManyToManyField(Userdata)
 
 class Vote(models.Model):
 	date = models.DateTimeField(auto_now=True)
