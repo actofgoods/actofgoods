@@ -3,8 +3,8 @@ import urllib.parse
 import logging
 from .models import *
 from channels import Group
-import datetime
 from channels.sessions import channel_session
+from .views import sendmail
 
 @channel_session
 def ws_add(message, room):
@@ -27,10 +27,17 @@ def ws_echo(message):
                  message.content['text'], message.channel_session['username'],
                  room)
     db_room = Room.objects.get(name=room)
-    db_room.last_message=datetime.datetime.now()
     print(message.channel_session['username'])
-    chatMessage = ChatMessage(author=User.objects.get(username=message.channel_session['username']), room=db_room, text=message.content['text'])
+    author = User.objects.get(username=message.channel_session['username'])
+    chatMessage = ChatMessage(author=author, room=db_room, text=message.content['text'])
     chatMessage.save()
+
+    user = db_room.user_req
+    print(author.username, user.username, db_room.need.author)
+    if user == author:
+        user = db_room.need.author
+    sendmail(user.email, "Message from " + author.username, message.content['text'])
+
     Group('chat-%s' % room).send({
         'text': json.dumps({
             'message': message.content['text'],

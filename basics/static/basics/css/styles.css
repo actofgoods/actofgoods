@@ -63,6 +63,7 @@ button, .btn-primary, .btn-primary:focus {
 
 .own.message {
 	text-align: right;
+
 }
 
 .message__author {
@@ -70,21 +71,35 @@ button, .btn-primary, .btn-primary:focus {
 }
 
 .message__avatar {
-	background: #70952C;
-	border-radius: 50px;
-	height: 50px;
-	width: 50px;
+
 	float: left;
 }
 
 .message__text {
+	/*overflow: hidden;
+	padding: 0 1rem;*/
+	color: white;
+	padding: 18px 20px;
+	line-height: 26px;
+	font-size: 16px;
+	border-radius: 7px;
+	margin-bottom: 30px;
+	max-width: 35%;
+	position: relative;
+	background: #6F952B;
 	overflow: hidden;
-	padding: 0 1rem;
+	float: left;
+	word-break: normal;
+	text-align: left;
 }
 
 .own.message .message__avatar {
 	float: right;
 	background: #CEDE85;
+}
+.own.message .message__text {
+	float: right;
+	background: #5C5E5A;
 }
 
 .mdl-progress {
