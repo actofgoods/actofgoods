@@ -8,68 +8,56 @@
     <div id="standard-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="text-center" id="standard-modal-headline">Requests in progress</h2>
-            </div>
-            <div class="modal-body">
-                <div class="list-group">
-                    {% for request in works_on %}
+                <div class="row">
 
-                        <!-- list element for every request -->
-                        <a class="list-group-item" id="standard-list-group-item-div">
-                            <div class="row">
-                                <div class="col-sm-12" data-toggle="modal" data-target=".{{ request.id }}">
-                                    <h4 class="list-group-item-heading">{{ request.headline }}</h4>
-                                    <p class="list-group-item-text">{{ request|get_short_text:160 }}</p>
-                                </div>
-                                <div class="col-sm-11" data-toggle="modal" data-target=".{{ request.id }}">
-                                    <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
-                                </div>
-                                <div class="col-sm-1">
-                                    <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="done_request(this)"><span class="glyphicon glyphicon-ok"></span> Done</button>
-                                </div>
-                            </div>
-                        </a>
-
-                        <!-- modal for every request -->
-                        <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                        <h2>{{request.headline}}</h2>
-                                        <h6>by {{ request.email }} from {{ request.create_date }}</h6>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>{{ request.text|linebreaksbr }}</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
+                        <!-- <div class="col-sm-2">
+                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:users' %}" style="margin: 15px;">Show All</a>
                         </div>
-                    {% empty %}
-                        <h4>Watch the table below to work on a request.</h4>
-                    {% endfor %}
+                        <div class="col-sm-4">
+                            <h2 class="text-center" id="standard-modal-headline">Normal Users</h2>
+                        </div> -->
+
+                        <div class="col-sm-6">
+                            <h2 class="text-center" id="standard-modal-headline">Requests in progress</h2>
+                        </div>
+
+                    <!-- search bar -->
+                    <div class="col-sm-6">
+                        <form class="form" role="form" method="post" accept-charset="UTF-8">
+                        {%csrf_token%}
+                            <div class="form-group">
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        {% if message.message == 'wrong_email_filter_in_progress' %}
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="error-messages" style="margin-top: 10px;">
+                                                        <p>There are no Requests from this E-Mail address.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" style="margin-top: 15px; margin-bottom: 15px;" required/>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input name="filter_in_progress_requests" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Filter"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div><!-- end search bar -->
                 </div>
             </div>
-        </div>
-    </div><!-- end all in progress requests -->
-
-    <!-- all open requests -->
-    <div id="standard-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="text-center" id="standard-modal-headline">Requests</h2>
-            </div>
             <div class="modal-body">
                 <div class="list-group">
-                    {% for request in requests %}
-                        {% if request.works_on == None %}
+                    {% if filter_in_progress %}
+                        {% for request in filter_in_progress %}
 
-                            <!-- list element for every request -->
+                            <!-- list requests from filter by email -->
                             <a class="list-group-item" id="standard-list-group-item-div">
                                 <div class="row">
                                     <div class="col-sm-12" data-toggle="modal" data-target=".{{ request.id }}">
@@ -79,9 +67,8 @@
                                     <div class="col-sm-11" data-toggle="modal" data-target=".{{ request.id }}">
                                         <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
                                     </div>
-
                                     <div class="col-sm-1">
-                                        <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="add_worker(this)"><span class="glyphicon glyphicon-pencil"></span> Work On</button>
+                                        <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="done_request(this)"><span class="glyphicon glyphicon-ok"></span> Done</button>
                                     </div>
                                 </div>
                             </a>
@@ -98,9 +85,7 @@
                                             <h6>by {{ request.email }} from {{ request.create_date }}</h6>
                                         </div>
                                         <div class="modal-body">
-                                            {% autoescape on %}
-                                                <p>{{ request.text|linebreaksbr }}</p>
-                                            {% endautoescape %}
+                                            <p>{{ request.text|linebreaksbr }}</p>
                                         </div>
                                         <div class="modal-footer">
                                             <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -108,10 +93,202 @@
                                     </div>
                                 </div>
                             </div>
-                        {% endif %}
-                    {% empty %}
-                        <h4>No new requests.</h4>
-                    {% endfor %}
+
+                        {% endfor %}
+                    {% else %}
+                        {% for request in works_on %}
+
+                            <!-- list element for every request -->
+                            <a class="list-group-item" id="standard-list-group-item-div">
+                                <div class="row">
+                                    <div class="col-sm-12" data-toggle="modal" data-target=".{{ request.id }}">
+                                        <h4 class="list-group-item-heading">{{ request.headline }}</h4>
+                                        <p class="list-group-item-text">{{ request|get_short_text:160 }}</p>
+                                    </div>
+                                    <div class="col-sm-11" data-toggle="modal" data-target=".{{ request.id }}">
+                                        <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="done_request(this)"><span class="glyphicon glyphicon-ok"></span> Done</button>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <!-- modal for every request -->
+                            <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h2>{{request.headline}}</h2>
+                                            <h6>by {{ request.email }} from {{ request.create_date }}</h6>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>{{ request.text|linebreaksbr }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <h4>Watch the table below to work on a request.</h4>
+                        {% endfor %}
+
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div><!-- end all in progress requests -->
+
+    <!-- all open requests -->
+    <div id="standard-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="row">
+
+                        <!-- <div class="col-sm-2">
+                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:users' %}" style="margin: 15px;">Show All</a>
+                        </div>
+                        <div class="col-sm-4">
+                            <h2 class="text-center" id="standard-modal-headline">Normal Users</h2>
+                        </div> -->
+
+                        <div class="col-sm-6">
+                            <h2 class="text-center" id="standard-modal-headline">Requests</h2>
+                        </div>
+
+                    <!-- search bar -->
+                    <div class="col-sm-6">
+                        <form class="form" role="form" method="post" accept-charset="UTF-8">
+                        {%csrf_token%}
+                            <div class="form-group">
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        {% if message.message == 'wrong_email_filter_new' %}
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="error-messages" style="margin-top: 10px;">
+                                                        <p>There are no Requests from this E-Mail address.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" style="margin-top: 15px; margin-bottom: 15px;" required/>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input name="filter_new_requests" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Filter"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div><!-- end search bar -->
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="list-group">
+                    {% if filter_new %}
+                        {% for request in filter_new %}
+                            {% if request.works_on == None %}
+
+                                <!-- list requests from filter by email -->
+                                <a class="list-group-item" id="standard-list-group-item-div">
+                                    <div class="row">
+                                        <div class="col-sm-12" data-toggle="modal" data-target=".{{ request.id }}">
+                                            <h4 class="list-group-item-heading">{{ request.headline }}</h4>
+                                            <p class="list-group-item-text">{{ request|get_short_text:160 }}</p>
+                                        </div>
+                                        <div class="col-sm-11" data-toggle="modal" data-target=".{{ request.id }}">
+                                            <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
+                                        </div>
+
+                                        <div class="col-sm-1">
+                                            <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="add_worker(this)"><span class="glyphicon glyphicon-pencil"></span> Work On</button>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <!-- modal for every request -->
+                                <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <h2>{{request.headline}}</h2>
+                                                <h6>by {{ request.email }} from {{ request.create_date }}</h6>
+                                            </div>
+                                            <div class="modal-body">
+                                                {% autoescape on %}
+                                                    <p>{{ request.text|linebreaksbr }}</p>
+                                                {% endautoescape %}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {% for request in requests %}
+                            {% if request.works_on == None %}
+
+                                <!-- list element for every request -->
+                                <a class="list-group-item" id="standard-list-group-item-div">
+                                    <div class="row">
+                                        <div class="col-sm-12" data-toggle="modal" data-target=".{{ request.id }}">
+                                            <h4 class="list-group-item-heading">{{ request.headline }}</h4>
+                                            <p class="list-group-item-text">{{ request|get_short_text:160 }}</p>
+                                        </div>
+                                        <div class="col-sm-11" data-toggle="modal" data-target=".{{ request.id }}">
+                                            <h6><br>by {{ request.email }} from {{ request.create_date }}</h6>
+                                        </div>
+
+                                        <div class="col-sm-1">
+                                            <button type="button" id="{{ request.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="add_worker(this)"><span class="glyphicon glyphicon-pencil"></span> Work On</button>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <!-- modal for every request -->
+                                <div class="modal fade {{ request.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <h2>{{request.headline}}</h2>
+                                                <h6>by {{ request.email }} from {{ request.create_date }}</h6>
+                                            </div>
+                                            <div class="modal-body">
+                                                {% autoescape on %}
+                                                    <p>{{ request.text|linebreaksbr }}</p>
+                                                {% endautoescape %}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endif %}
+                        {% empty %}
+                            <h4>No new requests.</h4>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>

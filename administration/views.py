@@ -116,8 +116,25 @@ def information_reported_comment_admin(request, pki, pkc):
     return render(request, 'administration/information_admin.html', {'information':information, 'comments':comments, 'reported_comment':reported_comment})
 
 def requests(request):
-    requests = ContactUs.objects.all().exclude(works_on=request.user).order_by('create_date')
+    requests = ContactUs.objects.all().filter(works_on=None).order_by('create_date')
     works_on = ContactUs.objects.filter(works_on=request.user).order_by('create_date')
+    if request.method == 'POST':
+        form = SearchUserForm(request.POST)
+        if form.is_valid():
+            email = request.POST.get('email')
+            if 'filter_in_progress_requests' in form.data:
+                if {'email':email} in works_on.values('email'):
+                    filter_in_progress = works_on.filter(email=email)
+                    return render(request, 'administration/requests.html', {'requests': requests, 'filter_in_progress':filter_in_progress})
+                else:
+                    messages.add_message(request, messages.INFO, 'wrong_email_filter_in_progress')
+            elif 'filter_new_requests' in form.data:
+                if {'email':email} in requests.values('email'):
+                    filter_new = requests.filter(email=email)
+                    print(filter_new.values('text'))
+                    return render(request, 'administration/requests.html', {'works_on': works_on, 'filter_new':filter_new})
+                else:
+                    messages.add_message(request, messages.INFO, 'wrong_email_filter_new')
     return render(request, 'administration/requests.html', {'requests': requests, 'works_on':works_on})
 
 @csrf_exempt
