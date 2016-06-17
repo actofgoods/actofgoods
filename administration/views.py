@@ -221,14 +221,16 @@ def make_admin(request, pk):
 	users = get_list_or_404(User)
 	return render(request, 'administration/users.html', {'users':users})
 
-#TODO: If we want to call this function from js we need a solution for csrf for test purposes i added csrf_exempt witch will ignore it
-@csrf_exempt
-def work_on_request(request):
-	request_id = request.POST['id']
-	contact = ContactUs.objects.get(id=request_id)
-	contact.works_on = request.user
-	contact.save()
-	return redirect('administration:groups')
+def admin_work_on_request(request, pk):
+    contact = ContactUs.objects.get(pk=pk)
+    if contact.works_on == None:
+        contact.works_on = request.user
+        contact.save()
+    else:
+        messages.add_message(request, messages.INFO, 'other_admin_is_working_on_this_request')
+    requests = ContactUs.objects.all().filter(works_on=None).order_by('create_date')
+    works_on = ContactUs.objects.filter(works_on=request.user).order_by('create_date')
+    return redirect('administration:requests')
 
 @csrf_exempt
 def request_done(request):

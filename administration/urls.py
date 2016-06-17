@@ -33,10 +33,10 @@ urlpatterns = [
     url(r'^administration/informations/(?P<pk>\d+)/delete/$', views.information_delete, name='information_delete'),
     url(r'^administration/users/(?P<pk>\d+)/make_admin/$', views.make_admin, name='make_admin'),
     url(r'^administration/categories/(?P<pk>\d+)/delete/$', views.categories_delete, name='categories_delete'),
-    url(r'^administration/work_on_request/$', views.work_on_request, name='work_on_request'),
     url(r'^administration/request_done/$', views.request_done, name='request_done'),
     url(r'^administration/informations/(?P<pk>\d+)/$', views.information_admin, name='information_admin'),
     url(r'^administration/informations/comment/delete/$', views.comment_delete, name='comment_delete'),
     url(r'^administration/information/(?P<pk>\d+)/delete/$', views.info_delete, name='info_delete'),
     url(r'^administration/informations/(?P<pki>\d+)/(?P<pkc>\d+)/$', views.information_reported_comment_admin, name='information_reported_comment_admin'),
+    url(r'^administration/requests/admin_work_on_request/(?P<pk>\d+)/$', views.admin_work_on_request, name='admin_work_on_request'),
 ]
