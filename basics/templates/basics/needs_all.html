@@ -1,7 +1,127 @@
 {% extends 'basics/base.html' %}
-
+{% load filter%}
 {% block content %}
+
+
+<!-- needs -->
+<div id="standard-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="row">
+                <div class="col-sm-12" style="padding: 15px">
+                    <h2 class="text-center" id="standard-modal-headline">Needs</h2>
+                </div>
+                <form class="form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
+                  {%csrf_token%}
+                  <div class="col-sm-2" style="margin-top: 15px; margin-bottom: 15px;">
+                      <label> Range
+                        <select style="width: 100%" name="range">
+                          <option>5km</option>
+                          <option>20km</option>
+                          <option>40km</option>
+                        </select>
+                      </label>
+                  </div>
+                  <div class="col-sm-4" style="margin-top: 15px; margin-bottom: 15px;">
+                      <label> Cards per page
+                        <select style="width: 100%" name="category">
+                            {% for category in categorie %}
+                                <option value="{{ category.name }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                      </label>
+                  </div>
+                  <div  class="col-sm-4" style="margin-top: 15px; margin-bottom: 15px;">
+                      <label> Cards per page
+                        <select style="width: 100%" title="{{cards_per_page}}" name="cards_per_page">
+                            <option>1</option>
+                            <option>5</option>
+                            <option>10</option>
+                        </select>
+                      </label>
+                  </div>
+                  <div  class="col-sm-2" style="margin-top: 10px; margin-bottom: 10px;">
+                      <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                  </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="list-group">
+                {% if needs %}
+                    {% for need in needs %}
+
+                        <!-- list all needs -->
+                        <a class="list-group-item" id="standard-list-group-item-div">
+                            <div class="row">
+                                <div class="col-sm-12" data-toggle="modal" data-target=".{{ need.id }}">
+                                    <h4 class="list-group-item-heading">{{ need.headline }}</h4>
+                                    <p class="list-group-item-text">{{ need|get_short_text:160 }}</p>
+                                </div>
+                                <div class="col-sm-9" data-toggle="modal" data-target=".{{ need.id }}">
+                                    <h6><br>from: {{ need.date }} / category: {{ need.categorie.name }} </h6>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" id="{{ need.id }}" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:needs_help' id=need.id %}';" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-comment"></span> Help</button>
+
+                                </div>
+                                <div class="col-sm-1"></div>
+                                {% if not user.userdata in need.reported_by.all %}
+                                <div class="col-sm-1">
+                                  <button type="button" id="{{ need.id }}" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:report_need' pk=need.pk %}';" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-alert"></span> Report</button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </a>
+
+                        <!-- modal for every need -->
+                        <div class="modal fade {{ need.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <h2>{{need.headline}}</h2>
+                                        <h6>from: {{ need.date }} / category: {{ need.categorie.name }} </h6>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>{{ need.text|linebreaksbr }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+
+                                        <button type="button" id="standard-grey-button-bold" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:needs_help' id=need.id %}';" ><span class="glyphicon glyphicon-comment"></span>Help</button>
+                                        {% if not user.userdata in need.reported_by.all %}
+                                          <button type="button" id="standard-grey-button-bold" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:report_need' pk=need.pk %}';"><span class="glyphicon glyphicon-alert"></span> Report</button>
+                                        {% endif %}
+                                        <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <h4>There are no needs.</h4>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div><!-- end needs -->
+
+ <script>
+  function done_request(element){
+      var id = element.id;
+      console.log(id);
+      $.post("{% url 'administration:need_delete' %}", {id:id}, function(data){
+          //no need for this method but if we want to get a callback this is the correct position
+          location.href = "{% url 'administration:needs' %}";
+      });
+  }
+
+</script>
+
 <!-- Introduction Row -->
+<!--
 <div class="row">
 
   <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
@@ -19,7 +139,7 @@
 
   </div>
   -->
-    <form action="{% url 'basics:needs_all'%}" method="post">
+  <!--  <form action="{% url 'basics:needs_all'%}" method="post">
       {%csrf_token%}
       <div class="btn-group">
         <select name="range" class="selectpicker" title="{{range}}">
@@ -50,7 +170,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
 
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+  <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
     <script>
       $('.selectpicker').selectpicker({
         style: 'btn-info',
@@ -113,5 +233,5 @@
        </ul>
      </nav>
    </div>
- </div>
+ </div>-->
 {% endblock %}
