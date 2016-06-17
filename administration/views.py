@@ -32,18 +32,23 @@ def categories(request):
     return render(request, 'administration/categories.html', {'categories':categories})
 
 def categories_delete(request, pk):
-	cat = ''
-	if not CategoriesNeeds.objects.filter(name='Other'):
-		cat = cat = CategoriesNeeds.objects.create(name='Other')
-	else:
-		cat = CategoriesNeeds.objects.get(name='Other')
-	categorie = get_object_or_404(CategoriesNeeds, pk=pk)
-	Need.objects.filter(categorie=categorie).update(categorie=cat)
-	if not categorie.name == 'Other':
-		categorie.delete()
-	else:
-		messages.add_message(request, messages.INFO, 'categorie_sonst')
-	return redirect('administration:categories')
+    cat = ''
+    if not CategoriesNeeds.objects.filter(name='Other'):
+        cat = CategoriesNeeds.objects.create(name='Other')
+    else:
+        cat = CategoriesNeeds.objects.get(name='Other')
+    categorie = get_object_or_404(CategoriesNeeds, pk=pk)
+    Need.objects.filter(categorie=categorie).update(categorie=cat)
+
+    cat_users = Userdata.objects.filter(inform_about=cat)
+    for u in cat_users:
+        u.inform_about.remove(categorie)
+
+    if not categorie.name == 'Other':
+        categorie.delete()
+    else:
+        messages.add_message(request, messages.INFO, 'categorie_sonst')
+    return redirect('administration:categories')
 	#return render(request, 'administration/categories.html', {'categories':categories})
 
 def groups(request):
@@ -86,6 +91,7 @@ def groups(request):
 @csrf_exempt
 def informations(request):
     infos = Information.objects.all()
+    selected = 'all'
     if request.GET.__contains__('sel'):
         selected = request.GET['sel']
         if selected == 'all':
@@ -94,14 +100,20 @@ def informations(request):
             infos = Information.objects.filter(was_reported=True)
         elif selected == 'reported comments':
             comments = Comment.objects.filter(was_reported=True)
-            return render(request, 'administration/informations.html', {'comments':comments})
-    
-    return render(request, 'administration/informations.html', {'infos':infos})
+            return render(request, 'administration/informations.html', {'comments':comments, 'current_info':selected})
+
+    return render(request, 'administration/informations.html', {'infos':infos,'current_info':selected})
 
 def information_admin(request, pk):
     information = get_object_or_404(Information, pk=pk)
-    comments = Comment.objects.filter(inf=information).order_by('-date')
+    comments = Comment.objects.filter(inf=information).order_by('date')
     return render(request, 'administration/information_admin.html', {'information':information, 'comments':comments})
+
+def information_reported_comment_admin(request, pki, pkc):
+    information = get_object_or_404(Information, pk=pki)
+    comments = Comment.objects.filter(inf=information).order_by('date')
+    reported_comment = comments.get(pk=pkc)
+    return render(request, 'administration/information_admin.html', {'information':information, 'comments':comments, 'reported_comment':reported_comment})
 
 def requests(request):
     requests = ContactUs.objects.all().exclude(works_on=request.user).order_by('create_date')
@@ -112,23 +124,28 @@ def requests(request):
 def needs(request):
     categories = CategoriesNeeds.objects.all().order_by('name')
     needs = Need.objects.all().order_by('date').reverse()
+    selected_categorie = 'all Categories'
+    selected_need = 'all'
     if request.GET.__contains__('needs'):
         selected_need = request.GET['needs']
         selected_categorie = request.GET['categories']
         if selected_need == 'all':
             if selected_categorie == 'all':
                 needs = Need.objects.all().order_by('date').reverse()
+                selected_categorie = 'all Categories'
             else:
                 categorie = CategoriesNeeds.objects.get(name=selected_categorie)
                 needs = Need.objects.filter(categorie=categorie).order_by('date').reverse()
+                selected_categorie = categorie
         elif selected_need == 'reported':
             if selected_categorie == 'all':
                 needs = Need.objects.filter(was_reported=True).order_by('date').reverse()
+                selected_categorie = 'all Categories'
             else:
                 categorie = CategoriesNeeds.objects.get(name=selected_categorie)
                 needs = Need.objects.filter(was_reported=True, categorie=categorie).order_by('date').reverse()
-    
-    return render(request, 'administration/needs.html', {'needs':needs,'categories':categories})
+                selected_categorie = categorie
+    return render(request, 'administration/needs.html', {'needs':needs,'categories':categories,'current_cat':selected_categorie, 'current_need':selected_need})
 
 def users(request):
     users = sorted(get_list_or_404(User), key=lambda User: User.email)
@@ -168,6 +185,12 @@ def information_delete(request):
     info.delete()
     return redirect('administration:informations')
 
+def info_delete(request, pk):
+    info = get_object_or_404(Information, pk=pk)
+    info.delete()
+    return redirect('administration:informations')
+
+
 @csrf_exempt
 def need_delete(request):
     request_id = request.POST['id']
@@ -197,3 +220,9 @@ def request_done(request):
     request = get_object_or_404(ContactUs, pk=request_id)
     request.delete()
     return redirect('administration:requests')
+
+@csrf_exempt
+def comment_delete(request):
+    comment = get_object_or_404(Comment, pk = request.POST['id'])
+    comment.delete()
+    return redirect('administration:needs')

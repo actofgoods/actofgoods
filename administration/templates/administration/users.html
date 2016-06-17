@@ -6,9 +6,18 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="row">
-                    <div class="col-sm-6">
-                        <h2 class="text-center" id="standard-modal-headline">Normal Users</h2>
-                    </div>
+                    {% if usr %}
+                        <div class="col-sm-2">
+                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:users' %}" style="margin: 15px;">Show All</a>
+                        </div>
+                        <div class="col-sm-4">
+                            <h2 class="text-center" id="standard-modal-headline">Normal Users</h2>
+                        </div>
+                    {% else%}
+                        <div class="col-sm-6">
+                            <h2 class="text-center" id="standard-modal-headline">Normal Users</h2>
+                        </div>
+                    {% endif %}
                     <!-- search bar -->
                     <div class="col-sm-6">
                         <form class="form" role="form" method="post" accept-charset="UTF-8">

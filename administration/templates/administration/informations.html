@@ -14,9 +14,9 @@
                 {%csrf_token%}
                     <div  class="col-sm-4" style="margin-top: 20px;">
                         <select style="width: 100%" name="sel">
-                            <option value="all" selected>all Informations</option>
-                            <option value="reported informations"> only reported Informations</option>
-                            <option value="reported comments"> only reported Comments</option>
+                            <option value="all" {% if 'all' == current_info %}selected{% endif %}>all Informations</option>
+                            <option value="reported informations" {% if 'reported informations' == current_info %}selected{% endif %}> only reported Informations</option>
+                            <option value="reported comments" {% if 'reported comments' == current_info %}selected{% endif %}> only reported Comments</option>
                         </select>
                     </div>
 
@@ -60,13 +60,13 @@
                         <!-- list all informations -->
                         <div class="list-group-item" id="standard-list-group-item-div">
                             <div class="row">
-                                <a href="#">
+                                <a href="{% url 'administration:information_reported_comment_admin' pki=comment.inf.id pkc=comment.id %}">
                                     <div class="col-sm-12">
-                                        <h4 class="list-group-item-heading">Information Headline: {{ comment.inf.headline }}</h4>
-                                        <p class="list-group-item-text">{{ comment.text }}</p>
+                                        <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">Information Headline: {{ comment.inf.headline }}</h4>
+                                        <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ comment.text }}</p>
                                     </div>
                                 </a>
-                                <a href="#">
+                                <a href="{% url 'administration:information_reported_comment_admin' pki=comment.inf.id pkc=comment.id %}" style="color: #555; hover.color: #555;">
                                     <div class="col-sm-11">
                                         <h6><br>from: {{ comment.date }} / number of reports: {{ comment.number_reports }}</h6>
                                     </div>

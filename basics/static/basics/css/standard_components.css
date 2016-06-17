@@ -106,4 +106,12 @@
     background-color: #EDEDED;
 }
 
+#red-list-group-item-div {
+    background-color: #F5D5D8;
+}
+
+#red-list-group-item-div:hover {
+    background-color: #EFC0C5;
+}
+
 /* ----------- end standard table ----------- */
