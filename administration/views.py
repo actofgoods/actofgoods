@@ -131,7 +131,6 @@ def requests(request):
             elif 'filter_new_requests' in form.data:
                 if {'email':email} in requests.values('email'):
                     filter_new = requests.filter(email=email)
-                    print(filter_new.values('text'))
                     return render(request, 'administration/requests.html', {'works_on': works_on, 'filter_new':filter_new})
                 else:
                     messages.add_message(request, messages.INFO, 'wrong_email_filter_new')

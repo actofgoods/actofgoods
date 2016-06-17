@@ -9,47 +9,58 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="row">
-
-                        <!-- <div class="col-sm-2">
-                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:users' %}" style="margin: 15px;">Show All</a>
-                        </div>
-                        <div class="col-sm-4">
-                            <h2 class="text-center" id="standard-modal-headline">Normal Users</h2>
-                        </div> -->
-
-                        <div class="col-sm-6">
+                    {% if filter_in_progress %}
+                        <div class="col-sm-12">
                             <h2 class="text-center" id="standard-modal-headline">Requests in progress</h2>
                         </div>
-
-                    <!-- search bar -->
-                    <div class="col-sm-6">
+                        <div class="col-md-2 col-sm-3">
+                            <input id="standard-grey-button-bold" type="button" class="btn btn-block btn-lg btn-primary" onclick="location.href='{% url 'administration:requests' %}'" style="margin-top: 15px; margin-bottom: 15px;" value="Show all"/>
+                        </div>
                         <form class="form" role="form" method="post" accept-charset="UTF-8">
                         {%csrf_token%}
                             <div class="form-group">
-                                {% if messages %}
-                                    {% for message in messages %}
-                                        {% if message.message == 'wrong_email_filter_in_progress' %}
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <div class="error-messages" style="margin-top: 10px;">
-                                                        <p>There are no Requests from this E-Mail address.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" style="margin-top: 15px; margin-bottom: 15px;" required/>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <input name="filter_in_progress_requests" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Filter"/>
-                                    </div>
+                                <div class="col-md-8 col-sm-6">
+                                    <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" style="margin-top: 15px; margin-bottom: 15px;" required/>
+                                </div>
+                                <div class="col-md-2 col-sm-3">
+                                    <input name="filter_in_progress_requests" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Filter"/>
                                 </div>
                             </div>
                         </form>
-                    </div><!-- end search bar -->
+                    {% else %}
+                        <div class="col-sm-6">
+                            <h2 class="text-center" id="standard-modal-headline">Requests in progress</h2>
+                        </div>
+                        <!-- search bar -->
+                        <div class="col-sm-6">
+                            <form class="form" role="form" method="post" accept-charset="UTF-8">
+                            {%csrf_token%}
+                                <div class="form-group">
+                                    {% if messages %}
+                                        {% for message in messages %}
+                                            {% if message.message == 'wrong_email_filter_in_progress' %}
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="error-messages" style="margin-top: 10px;">
+                                                            <p>There are no Requests from this E-Mail address.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" style="margin-top: 15px; margin-bottom: 15px;" required/>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input name="filter_in_progress_requests" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Filter"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div><!-- end search bar -->
+                    {% endif %}
                 </div>
             </div>
             <div class="modal-body">
@@ -150,46 +161,59 @@
             <div class="modal-header">
                 <div class="row">
 
-                        <!-- <div class="col-sm-2">
-                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:users' %}" style="margin: 15px;">Show All</a>
+                    {% if filter_new %}
+                        <div class="col-sm-12">
+                            <h2 class="text-center" id="standard-modal-headline">Requests</h2>
                         </div>
-                        <div class="col-sm-4">
-                            <h2 class="text-center" id="standard-modal-headline">Normal Users</h2>
-                        </div> -->
-
+                        <div class="col-md-2 col-sm-3">
+                            <input id="standard-grey-button-bold" type="button" class="btn btn-block btn-lg btn-primary" onclick="location.href='{% url 'administration:requests' %}'" style="margin-top: 15px; margin-bottom: 15px;" value="Show all"/>
+                        </div>
+                        <form class="form" role="form" method="post" accept-charset="UTF-8">
+                        {%csrf_token%}
+                            <div class="form-group">
+                                <div class="col-md-8 col-sm-6">
+                                    <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" style="margin-top: 15px; margin-bottom: 15px;" required/>
+                                </div>
+                                <div class="col-md-2 col-sm-3">
+                                    <input name="filter_new_requests" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Filter"/>
+                                </div>
+                            </div>
+                        </form>
+                    {% else %}
                         <div class="col-sm-6">
                             <h2 class="text-center" id="standard-modal-headline">Requests</h2>
                         </div>
 
-                    <!-- search bar -->
-                    <div class="col-sm-6">
-                        <form class="form" role="form" method="post" accept-charset="UTF-8">
-                        {%csrf_token%}
-                            <div class="form-group">
-                                {% if messages %}
-                                    {% for message in messages %}
-                                        {% if message.message == 'wrong_email_filter_new' %}
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <div class="error-messages" style="margin-top: 10px;">
-                                                        <p>There are no Requests from this E-Mail address.</p>
+                        <!-- search bar -->
+                        <div class="col-sm-6">
+                            <form class="form" role="form" method="post" accept-charset="UTF-8">
+                            {%csrf_token%}
+                                <div class="form-group">
+                                    {% if messages %}
+                                        {% for message in messages %}
+                                            {% if message.message == 'wrong_email_filter_new' %}
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="error-messages" style="margin-top: 10px;">
+                                                            <p>There are no Requests from this E-Mail address.</p>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" style="margin-top: 15px; margin-bottom: 15px;" required/>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <input name="filter_new_requests" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Filter"/>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" style="margin-top: 15px; margin-bottom: 15px;" required/>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input name="filter_new_requests" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Filter"/>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
-                    </div><!-- end search bar -->
+                            </form>
+                        </div><!-- end search bar -->
+                    {% endif %}
                 </div>
             </div>
             <div class="modal-body">
