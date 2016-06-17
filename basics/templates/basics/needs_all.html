@@ -8,39 +8,39 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="row">
-                <div class="col-sm-12" style="padding: 15px">
+                <div class="col-sm-4" style="padding: 15px">
                     <h2 class="text-center" id="standard-modal-headline">Needs</h2>
                 </div>
                 <form class="form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
                   {%csrf_token%}
-                  <div class="col-sm-2" style="margin-top: 15px; margin-bottom: 15px;">
-                      <label> Range
+                  <div class="col-sm-2" style="margin-top: 20px;">
+                    <label> Range
                         <select style="width: 100%" name="range">
                           <option>5km</option>
                           <option>20km</option>
                           <option>40km</option>
                         </select>
-                      </label>
+                    </label>
                   </div>
-                  <div class="col-sm-4" style="margin-top: 15px; margin-bottom: 15px;">
-                      <label> Cards per page
+                  <div class="col-sm-2" style="margin-top: 20px;">
+                    <label> Category
                         <select style="width: 100%" name="category">
                             {% for category in categorie %}
                                 <option value="{{ category.name }}">{{ category.name }}</option>
                             {% endfor %}
                         </select>
-                      </label>
+                    </label>
                   </div>
-                  <div  class="col-sm-4" style="margin-top: 15px; margin-bottom: 15px;">
-                      <label> Cards per page
+                  <div  class="col-sm-2" style="margin-top: 20px;">
+                    <label> Cards per Page
                         <select style="width: 100%" title="{{cards_per_page}}" name="cards_per_page">
                             <option>1</option>
                             <option>5</option>
                             <option>10</option>
                         </select>
-                      </label>
+                    </label>
                   </div>
-                  <div  class="col-sm-2" style="margin-top: 10px; margin-bottom: 10px;">
+                  <div  class="col-sm-2" style="margin-top: 30px; margin-bottom: 0px;">
                       <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
                   </div>
                 </form>

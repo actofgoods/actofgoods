@@ -8,7 +8,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="row">
-                <div class="col-sm-12" style="padding: 15px">
+                <div class="col-sm-4" style="padding: 15px">
                     <h2 class="text-center" id="standard-modal-headline">Information</h2>
                 </div>
                 <form class="form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
@@ -22,14 +22,14 @@
                         </select>
                       </label>
                   </div>
-                  <div class="col-sm-4" style="margin-top: 15px; margin-bottom: 15px;">
+                  <div class="col-sm-2" style="margin-top: 15px; margin-bottom: 15px;">
                       <label> Cards per page
                         <select style="width: 100%" name="category">
                             <option value="{{ category.name }}">All</option>
                         </select>
                       </label>
                   </div>
-                  <div  class="col-sm-4" style="margin-top: 15px; margin-bottom: 15px;">
+                  <div  class="col-sm-2" style="margin-top: 15px; margin-bottom: 15px;">
                       <label> Cards per page
                         <select style="width: 100%" title="{{cards_per_page}}" name="cards_per_page">
                             <option>1</option>
@@ -38,7 +38,7 @@
                         </select>
                       </label>
                   </div>
-                  <div  class="col-sm-2" style="margin-top: 10px; margin-bottom: 10px;">
+                  <div  class="col-sm-2" style="margin-top: 30px; margin-bottom: 10px;">
                       <!-- TODO: MAKE BUTTON submit to send the form-->
                       <input id="standard-grey-button-bold" type="button" class="btn btn-block btn-lg btn-primary" value="Filter"/>
                   </div>
