@@ -240,7 +240,7 @@ def request_done(request):
     return redirect('administration:requests')
 
 @csrf_exempt
-def comment_delete(request):
-    comment = get_object_or_404(Comment, pk = request.POST['id'])
+def comment_delete(request, pk):
+    comment = get_object_or_404(Comment, pk = pk)
     comment.delete()
-    return redirect('administration:needs')
+    return redirect('administration:informations')

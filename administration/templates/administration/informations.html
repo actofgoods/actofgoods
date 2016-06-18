@@ -72,7 +72,7 @@
                                     </div>
                                 </a>
                                 <div class="col-sm-1">
-                                    <button type="button" id="{{ comment.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="#"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                                    <button type="button" id="{{ comment.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="location.href='{% url 'administration:comment_delete' pk=comment.pk %}'"><span class="glyphicon glyphicon-remove"></span> Delete</button>
                                 </div>
                             </div>
                         </div>

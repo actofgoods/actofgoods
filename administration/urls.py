@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^administration/request_done/$', views.request_done, name='request_done'),
     url(r'^administration/informations/(?P<pk>\d+)/$', views.information_admin, name='information_admin'),
     url(r'^administration/informations/comment/delete/$', views.comment_delete, name='comment_delete'),
+    url(r'^administration/information/comment/(?P<pk>\d+)/delete/$', views.comment_delete, name='comment_delete'),
     url(r'^administration/information/(?P<pk>\d+)/delete/$', views.info_delete, name='info_delete'),
     url(r'^administration/informations/(?P<pki>\d+)/(?P<pkc>\d+)/$', views.information_reported_comment_admin, name='information_reported_comment_admin'),
     url(r'^administration/requests/admin_work_on_request/(?P<pk>\d+)/$', views.admin_work_on_request, name='admin_work_on_request'),
