@@ -769,3 +769,11 @@ def report_information(request, pk):
     info.reported_by.add(request.user.userdata)
     info.save()
     return information_all(request)
+
+def report_comment(request, pk):
+    comment = Comment.objects.get(pk=pk)
+    comment.was_reported = True
+    comment.number_reports += 1
+    comment.reported_by.add(request.user.userdata)
+    comment.save()
+    return information_view(request, comment.inf.pk)

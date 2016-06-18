@@ -54,5 +54,6 @@ urlpatterns = [
     url(r'^groups/$', views.groups, name='groups'),
     url(r'^need/report/(?P<pk>\d+)/$', views.report_need, name='report_need'),
     url(r'^information/report/(?P<pk>\d+)/$', views.report_information, name='report_information'),
+    url(r'^comment/report/(?P<pk>\d+)/$', views.report_comment, name='report_comment'),
     url(r'^verification/(?P<pk>\w+)$', views.verification, name='verification'),
 ]
