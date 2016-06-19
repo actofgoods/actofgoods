@@ -14,7 +14,7 @@ def categories(request):
         return redirect('basics:actofgoods_startpage')
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active':False})
-    if not request.user.is_superuser not request.user.is_staff:
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
    
     if request.method == 'POST':
