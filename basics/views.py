@@ -310,8 +310,9 @@ def information_view_comment(request, pk):
 """
 @csrf_protect
 def immediate_aid(request):
+
     form = ImmediateAidFormNew(initial={'email': ''})
-    need_form = NeedFormNew()
+    need = NeedFormNew()
 
     if request.method == "POST":
         #This method is super deprecated we need to make it more secure
@@ -321,54 +322,55 @@ def immediate_aid(request):
 
 
         form = ImmediateAidFormNew(request.POST)
-        need_form = NeedFormNew(request.POST)
+        need = NeedFormNew(request.POST)
 
         # form.data.username = "user#" + str(User.objects.count())
-        print(request.POST)
+        #print(request.POST)
         #print(form.data)
-        if form.is_valid() and need_form.is_valid():
-            # print(form.cleaned_data)
+        if form.is_valid() and need.is_valid():
+            #print(need.data)
             password_d = id_generator(9)
             check_password = password_d
-            if password_d != "" and check_password != "" and request.POST.get('email', "") != "":
-                if password_d == check_password:
-                    lat, lng = getAddress(request)
-                    if lat != None and lng != None:
-                        user_data = form.cleaned_data
-                        need_data = need_form.cleaned_data
-                        address = Address.objects.create(latitude=lat, longditude=lng)
-                        user = User.objects.create_user(username=user_data['email'], password=password_d, email=user_data['email'])
-                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address)
-                        userdata.save()
-                        content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
-                        subject = "Confirm Your Account"
-                        needdata = Need(author=user, headline=need_data['headline'], text=need_data['text'], categorie=need_data['categorie'], address = address)
-                        needdata.save()
-                        room = Room.objects.create(name=id_generator(), need=needdata)
-                        room.save()
+            if request.POST.get('email', "") != "":
+                lat, lng = getAddress(request)
+                if lat != None and lng != None:
+                    user_data = form.cleaned_data
+                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    user = User.objects.create_user(username=user_data['email'], password=password_d, email=user_data['email'])
+                    userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address)
+                    userdata.save()
+                    content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
+                    subject = "Confirm Your Account"
+                    #print("\n",need.cleaned_data['categorie'],"\n")
+                    data = need.cleaned_data
+                    needdata = Need(author=user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
+                    needdata.save()
+                    #TODO: id_generator will return random string; Could be already in use
+                    room = Room.objects.create(name=id_generator(), need=needdata)
+                    room.save()
+                
 
-                        #need = NeedFormNew(request.POST)
+                    #Content could also be possibly HTML! this way beautifull emails are possible
+                    content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
+                    subject = "Welcome!"
 
-                        #Content could also be possibly HTML! this way beautifull emails are possible
-                        content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
-                        subject = "Welcome!"
-
-
-                        sendmail(user.email, content, subject )
-                        return redirect('basics:home')
-                    else:
-                        messages.add_message(request, messages.INFO, 'location_failed')
+                    
+                    sendmail(user.email, content, subject )
+                    return redirect('basics:home')
                 else:
-                    messages.add_message(request, messages.INFO, 'wp')
+                    messages.add_message(request, messages.INFO, 'location_failed')
+            else:
+                messages.add_message(request, messages.INFO, 'wp')
 
         else:
             messages.add_message(request, messages.INFO, 'eae')
+            print(need.data)
+    else:
+        c = CategoriesNeeds.objects.get(pk=3)
+        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", "\"",c.name,"\"")
+        c.save
+    return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all, 'form' : form, 'need' : need })
 
-
-
-
-
-    return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all, 'form' : form, 'need_form' : need_form })
 
 
 """
@@ -494,10 +496,13 @@ def needs_new(request):
             need = NeedFormNew(request.POST)
 
             if need.is_valid():
+
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
                     data = need.cleaned_data
+                    #print(need, "\n", data)
+                    #print("\n", data['categorie'].name, "\n")
                     needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
                     needdata.save()
                     #TODO: id_generator will return random string; Could be already in use
