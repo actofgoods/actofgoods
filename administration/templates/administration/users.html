@@ -25,15 +25,7 @@
                             <div class="form-group">
                                 {% if messages %}
                                     {% for message in messages %}
-                                        {% if message.message == 'user_isAdmin' %}
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <div class="error-messages" style="margin-top: 10px;">
-                                                        <p>That user is an Admin!</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% elif message.message == 'wrong_email' %}
+                                        {% if message.message == 'wrong_email' %}
                                             <div class="row">
                                                 <div class="col-sm-12">
                                                     <div class="error-messages" style="margin-top: 10px;">
@@ -80,7 +72,7 @@
                                         <div class="col-sm-9">
                                             {{ user.email }}
                                         </div>
-                                    {% if not user.is_superuser %}
+                                    {% if not user.is_staff %}
                                         <div class="col-sm-3">
                                             <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
                                             <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>

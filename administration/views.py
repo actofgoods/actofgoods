@@ -12,9 +12,11 @@ from django.views.decorators.csrf import csrf_exempt
 def categories(request):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
-    
+   
     if request.method == 'POST':
         form = CategoriesForm(request.POST)
         if form.is_valid():
@@ -38,7 +40,9 @@ def categories(request):
 def categories_delete(request, pk):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     cat = ''
     if not CategoriesNeeds.objects.filter(name='Other'):
@@ -62,7 +66,9 @@ def categories_delete(request, pk):
 def groups(request):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     if request.method == "POST":
         form = GroupFormRegister(request.POST)
@@ -103,7 +109,9 @@ def groups(request):
 def informations(request):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     infos = Information.objects.all()
     selected = 'all'
@@ -122,7 +130,9 @@ def informations(request):
 def information_admin(request, pk):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     information = get_object_or_404(Information, pk=pk)
     comments = Comment.objects.filter(inf=information).order_by('date')
@@ -131,7 +141,9 @@ def information_admin(request, pk):
 def information_reported_comment_admin(request, pki, pkc):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     information = get_object_or_404(Information, pk=pki)
     comments = Comment.objects.filter(inf=information).order_by('date')
@@ -141,7 +153,9 @@ def information_reported_comment_admin(request, pki, pkc):
 def requests(request):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     requests = ContactUs.objects.all().filter(works_on=None).order_by('create_date')
     works_on = ContactUs.objects.filter(works_on=request.user).order_by('create_date')
@@ -167,7 +181,9 @@ def requests(request):
 def needs(request):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     categories = CategoriesNeeds.objects.all().order_by('name')
     needs = Need.objects.all().order_by('date').reverse()
@@ -197,7 +213,9 @@ def needs(request):
 def users(request):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     users = sorted(get_list_or_404(User), key=lambda User: User.email)
     if request.user.is_authenticated():
@@ -207,10 +225,6 @@ def users(request):
                 email = request.POST.get('email')
                 if {'email': email} in User.objects.values('email'):
                     usr = User.objects.get(email=email)
-                    if not usr.is_superuser:
-                        return render(request, 'administration/users.html', {'usr':usr})
-                    else:
-                        messages.add_message(request, messages.INFO, 'user_isAdmin')
                 else:
                     messages.add_message(request, messages.INFO, 'wrong_email')
     return render(request, 'administration/users.html', {'users': users})
@@ -218,7 +232,9 @@ def users(request):
 def user_delete(request, pk):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
 	# User somehow doesn't have attribute pk (only Userdata has), so we get the email from userdata and with that we get the user and can delete him
     user = get_object_or_404(User, pk=pk)
@@ -230,7 +246,9 @@ def user_delete(request, pk):
 def group_delete(request, pk):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     groupDa = get_object_or_404(Groupdata, pk=pk)
     group = groupDa.group
@@ -241,7 +259,9 @@ def group_delete(request, pk):
 def information_delete(request):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     request_id = request.POST['id']
     info = get_object_or_404(Information, pk=request_id)
@@ -251,7 +271,9 @@ def information_delete(request):
 def info_delete(request, pk):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     info = get_object_or_404(Information, pk=pk)
     info.delete()
@@ -262,7 +284,9 @@ def info_delete(request, pk):
 def need_delete(request):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     request_id = request.POST['id']
     need = get_object_or_404(Need, pk=request_id)
@@ -272,10 +296,13 @@ def need_delete(request):
 def make_admin(request, pk):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     user = get_object_or_404(User, pk=pk)
-    user.is_superuser = True
+    user.is_staff = True
+    #user.is_superuser = True
     user.save()
     users = get_list_or_404(User)
     return render(request, 'administration/users.html', {'users':users})
@@ -283,7 +310,9 @@ def make_admin(request, pk):
 def admin_work_on_request(request, pk):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     contact = ContactUs.objects.get(pk=pk)
     if contact.works_on == None:
@@ -299,7 +328,9 @@ def admin_work_on_request(request, pk):
 def request_done(request):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     request_id = request.POST['id']
     request = get_object_or_404(ContactUs, pk=request_id)
@@ -310,7 +341,9 @@ def request_done(request):
 def comment_delete(request, pk):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
-    if not request.user.is_superuser:
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     comment = get_object_or_404(Comment, pk = pk)
     comment.delete()
