@@ -16,7 +16,7 @@ def categories(request):
         return render(request, 'basics/verification.html', {'active':False})
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
-   
+
     if request.method == 'POST':
         form = CategoriesForm(request.POST)
         if form.is_valid():
@@ -347,3 +347,12 @@ def comment_delete(request, pk):
     comment = get_object_or_404(Comment, pk = pk)
     comment.delete()
     return redirect('administration:informations')
+
+def administration(request):
+    if not request.user.is_authenticated():
+        return redirect('basics:actofgoods_startpage')
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('basics:home')
+    return redirect('administration:requests')
