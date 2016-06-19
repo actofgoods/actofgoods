@@ -99,9 +99,16 @@
     									<p>Cannot delete Other!</p>
 									</div>
 								</div>
-							{% endif %}
+							{% elif message.message == 'categorie_gone' %}
+                                <div class="form-group">
+                                    <div class="error-messages">
+                                        <p>Another admin has already deleted this categorie</p>
+                                    </div>
+                                </div>
+                            {% endif%}
     					{% endfor %}
 					{% endif %}
+
                     <div class="list-group">
                         <!-- list the searched category -->
                         {% if categ %}
