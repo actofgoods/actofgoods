@@ -47,7 +47,7 @@
 	<body>
 
 	<div id="wrapper">
-		{% if user.is_authenticated and user.is_superuser %} <!-- signed in user and admin -->
+		{% if user.is_authenticated and user.is_staff %} <!-- signed in user and admin -->
 		<div id="header">
 			<nav class="navbar navbar-inverse" role="navigation">
 				<div class="container-fluid" id="navbar-inner">

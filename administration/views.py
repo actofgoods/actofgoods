@@ -14,7 +14,7 @@ def categories(request):
         return redirect('basics:actofgoods_startpage')
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active':False})
-    if not request.user.is_superuser and not request.user.is_staff:
+    if not request.user.is_superuser not request.user.is_staff:
         return redirect('basics:home')
    
     if request.method == 'POST':
@@ -81,7 +81,6 @@ def groups(request):
                     data = form.cleaned_data
                     group = Group.objects.create(name=name)
                     user = User.objects.get(email=email)
-                    user.is_staff = True
                     user.save()
                     group.user_set.add(user)
                     gdata = Groupdata(group=group)
