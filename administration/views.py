@@ -217,15 +217,15 @@ def users(request):
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     users = sorted(get_list_or_404(User), key=lambda User: User.email)
-    if request.user.is_authenticated():
-        if request.method == "POST":
-            form = SearchUserForm(request.POST)
-            if form.is_valid():
-                email = request.POST.get('email')
-                if {'email': email} in User.objects.values('email'):
-                    usr = User.objects.get(email=email)
-                else:
-                    messages.add_message(request, messages.INFO, 'wrong_email')
+    if request.method == "POST":
+        form = SearchUserForm(request.POST)
+        if form.is_valid():
+            email = request.POST.get('email')
+            if {'email': email} in User.objects.values('email'):
+                usr = User.objects.get(email=email)
+                return render(request, 'administration/users.html', {'usr':usr})
+            else:
+                messages.add_message(request, messages.INFO, 'wrong_email')
     return render(request, 'administration/users.html', {'users': users})
 
 def user_delete(request, pk):
