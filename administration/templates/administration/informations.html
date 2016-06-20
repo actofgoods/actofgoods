@@ -28,6 +28,19 @@
         </div>
         <div class="modal-body">
             <div class="list-group">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.message == 'info_gone' %}
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="error-messages" style="margin-top: 10px;">
+                                        <p>Another admin or user already deleted this information</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
                 {% if infos %}
                     {% for info in infos %}
 

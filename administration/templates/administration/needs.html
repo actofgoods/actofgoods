@@ -39,6 +39,19 @@
             </div>
         </div>
         <div class="modal-body">
+            {% if messages %}
+                    {% for message in messages %}
+                        {% if message.message == 'need_gone' %}
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="error-messages" style="margin-top: 10px;">
+                                        <p>Another admin or user already deleted this need</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             <div class="list-group">
                 {% if needs %}
                     {% for need in needs %}

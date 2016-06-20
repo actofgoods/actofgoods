@@ -128,6 +128,19 @@
             </div>
             <div class="modal-body">
                 <div class="list-group">
+                    {% if messages %}
+                    {% for message in messages %}
+                        {% if message.message == 'group_gone' %}
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="error-messages" style="margin-top: 10px;">
+                                        <p>Another admin has already deleted this group</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
                     <!-- list the searched category -->
                     {% if gro %}
                         <div class="list-group-item" id="standard-list-group-item-div">

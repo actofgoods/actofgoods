@@ -49,17 +49,20 @@ def categories_delete(request, pk):
         cat = CategoriesNeeds.objects.create(name='Other')
     else:
         cat = CategoriesNeeds.objects.get(name='Other')
-    categorie = get_object_or_404(CategoriesNeeds, pk=pk)
-    Need.objects.filter(categorie=categorie).update(categorie=cat)
+    if CategoriesNeeds.objects.filter(pk=pk):
+        categorie = get_object_or_404(CategoriesNeeds, pk=pk)
+        Need.objects.filter(categorie=categorie).update(categorie=cat)
 
-    cat_users = Userdata.objects.filter(inform_about=cat)
-    for u in cat_users:
-        u.inform_about.remove(categorie)
+        cat_users = Userdata.objects.filter(inform_about=cat)
+        for u in cat_users:
+            u.inform_about.remove(categorie)
 
-    if not categorie.name == 'Other':
-        categorie.delete()
+        if not categorie.name == 'Other':
+            categorie.delete()
+        else:
+            messages.add_message(request, messages.INFO, 'categorie_sonst')
     else:
-        messages.add_message(request, messages.INFO, 'categorie_sonst')
+        messages.add_message(request, messages.INFO, 'categorie_gone')
     return redirect('administration:categories')
 	#return render(request, 'administration/categories.html', {'categories':categories})
 
@@ -248,15 +251,15 @@ def users(request):
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     users = sorted(get_list_or_404(User), key=lambda User: User.email)
-    if request.user.is_authenticated():
-        if request.method == "POST":
-            form = SearchUserForm(request.POST)
-            if form.is_valid():
-                email = request.POST.get('email')
-                if {'email': email} in User.objects.values('email'):
-                    usr = User.objects.get(email=email)
-                else:
-                    messages.add_message(request, messages.INFO, 'wrong_email')
+    if request.method == "POST":
+        form = SearchUserForm(request.POST)
+        if form.is_valid():
+            email = request.POST.get('email')
+            if {'email': email} in User.objects.values('email'):
+                usr = User.objects.get(email=email)
+                return render(request, 'administration/users.html', {'usr':usr})
+            else:
+                messages.add_message(request, messages.INFO, 'wrong_email')
     return render(request, 'administration/users.html', {'users': users})
 
 def user_delete(request, pk):
@@ -267,9 +270,11 @@ def user_delete(request, pk):
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
 	# User somehow doesn't have attribute pk (only Userdata has), so we get the email from userdata and with that we get the user and can delete him
-    user = get_object_or_404(User, pk=pk)
-    user.delete()
-    users = get_list_or_404(User)
+    if User.objects.filter(pk=pk):
+        user = get_object_or_404(User, pk=pk)
+        user.delete()
+    else:
+        messages.add_message(request, messages.INFO,'user_gone')
 	#return render(request, 'administration/users.html', {'users':users})
     return redirect('administration:users')
 
@@ -280,9 +285,12 @@ def group_delete(request, pk):
         return render(request, 'basics/verification.html', {'active':False})
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
-    groupDa = get_object_or_404(Groupdata, pk=pk)
-    group = groupDa.group
-    group.delete()
+    if Groupdata.objects.filter(pk=pk):
+        groupDa = get_object_or_404(Groupdata, pk=pk)
+        group = groupDa.group
+        group.delete()
+    else:
+        messages.add_message(request, messages.INFO,'group_gone')
     return redirect('administration:groups')
 
 @csrf_exempt
@@ -294,8 +302,11 @@ def information_delete(request):
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     request_id = request.POST['id']
-    info = get_object_or_404(Information, pk=request_id)
-    info.delete()
+    if Information.objects.filter(pk=request_id):
+        info = get_object_or_404(Information, pk=request_id)
+        info.delete()
+    else:
+        messages.add_message(request, messages.INFO,'info_gone')
     return redirect('administration:informations')
 
 def info_delete(request, pk):
@@ -305,8 +316,11 @@ def info_delete(request, pk):
         return render(request, 'basics/verification.html', {'active':False})
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
-    info = get_object_or_404(Information, pk=pk)
-    info.delete()
+    if Information.objects.filter(pk=pk):
+        info = get_object_or_404(Information, pk=pk)
+        info.delete()
+    else:
+        messages.add_message(request, messages.INFO,'info_gone')
     return redirect('administration:informations')
 
 
@@ -319,8 +333,11 @@ def need_delete(request):
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     request_id = request.POST['id']
-    need = get_object_or_404(Need, pk=request_id)
-    need.delete()
+    if Need.objects.filter(pk=request_id):
+        need = get_object_or_404(Need, pk=request_id)
+        need.delete()
+    else:
+        messages.add_message(request, messages.INFO,'need_gone')
     return redirect('administration:needs')
 
 def make_admin(request, pk):
