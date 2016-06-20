@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
 from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs, Need, Information, Comment
 from django.contrib.auth.models import User, Group
-from administration.forms import GroupFormRegister, SearchUserForm
+from administration.forms import GroupFormRegister, SearchUserForm, RequestForm
 from basics.forms import CategoriesForm
 from basics.views import getAddress
 from basics.models import Address
@@ -174,6 +174,37 @@ def requests(request):
                     return render(request, 'administration/requests.html', {'works_on': works_on, 'filter_new':filter_new})
                 else:
                     messages.add_message(request, messages.INFO, 'wrong_email_filter_new')
+        form = RequestForm(request.POST)
+        if form.is_valid():
+            key = request.POST.get('key')
+            print(key)
+            if key:
+                req = ContactUs.objects.get(pk=key)
+                email = req.email
+                if 'done_requests_with_filter' in form.data:
+                    req.delete()
+                    filter_in_progress = ContactUs.objects.filter(works_on=request.user).order_by('create_date').filter(email=email)
+                    return render(request, 'administration/requests.html', {'requests': requests, 'filter_in_progress':filter_in_progress})
+                elif 'done_requests_without_filter' in form.data:
+                    req.delete()
+                    works_on = ContactUs.objects.filter(works_on=request.user).order_by('create_date')
+                elif 'works_on_requests_with_filter' in form.data:
+                    if req.works_on == None:
+                        req.works_on = request.user
+                        req.save()
+                    else:
+                        messages.add_message(request, messages.INFO, 'other_admin_is_working_on_this_request')
+                    filter_new = ContactUs.objects.all().filter(works_on=None).order_by('create_date').filter(email=email)
+                    works_on = ContactUs.objects.filter(works_on=request.user).order_by('create_date')
+                    return render(request, 'administration/requests.html', {'filter_new': filter_new, 'works_on':works_on})
+                elif 'works_on_requests_without_filter' in form.data:
+                    if req.works_on == None:
+                        req.works_on = request.user
+                        req.save()
+                    else:
+                        messages.add_message(request, messages.INFO, 'other_admin_is_working_on_this_request')
+                    requests = ContactUs.objects.all().filter(works_on=None).order_by('create_date')
+                    works_on = ContactUs.objects.filter(works_on=request.user).order_by('create_date')
     return render(request, 'administration/requests.html', {'requests': requests, 'works_on':works_on})
 
 @csrf_exempt
@@ -305,36 +336,6 @@ def make_admin(request, pk):
     user.save()
     users = get_list_or_404(User)
     return render(request, 'administration/users.html', {'users':users})
-
-def admin_work_on_request(request, pk):
-    if not request.user.is_authenticated():
-        return redirect('basics:actofgoods_startpage')
-    if not request.user.is_active:
-        return render(request, 'basics/verification.html', {'active':False})
-    if not request.user.is_superuser and not request.user.is_staff:
-        return redirect('basics:home')
-    contact = ContactUs.objects.get(pk=pk)
-    if contact.works_on == None:
-        contact.works_on = request.user
-        contact.save()
-    else:
-        messages.add_message(request, messages.INFO, 'other_admin_is_working_on_this_request')
-    requests = ContactUs.objects.all().filter(works_on=None).order_by('create_date')
-    works_on = ContactUs.objects.filter(works_on=request.user).order_by('create_date')
-    return redirect('administration:requests')
-
-@csrf_exempt
-def request_done(request):
-    if not request.user.is_authenticated():
-        return redirect('basics:actofgoods_startpage')
-    if not request.user.is_active:
-        return render(request, 'basics/verification.html', {'active':False})
-    if not request.user.is_superuser and not request.user.is_staff:
-        return redirect('basics:home')
-    request_id = request.POST['id']
-    request = get_object_or_404(ContactUs, pk=request_id)
-    request.delete()
-    return redirect('administration:requests')
 
 @csrf_exempt
 def comment_delete(request, pk):
