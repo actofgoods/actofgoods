@@ -36,7 +36,7 @@
     </div>-->
     <div class="col-md-4" style="background-color: #d1d1d1; height:100%">
       <div class="card card-block" >
-        <h4 class="card-title">Card title</h4>
+        <h4 class="card-title">Your Chats</h4>
           <div id="rooms-container">
           </div>
       </div>
@@ -269,6 +269,7 @@
       window.chatSocket = this.socket;
 
       this.socket.addEventListener('message', function (e) {
+        this.sendMessage("ack")
         this.setState({
           messages: this.state.messages.concat(JSON.parse(e.data))
         });

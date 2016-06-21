@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/1.9/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
-
+import psycopg2
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -81,8 +81,11 @@ WSGI_APPLICATION = 'actofgoods.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
+#TODO: import postgresql_psycopg2
 DATABASES = {
+    'OPTIONS': {
+        'isolation_level': psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE,
+    },
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'actofgoods',

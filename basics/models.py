@@ -121,6 +121,7 @@ class Room(models.Model):
 
 	def set_saw(self, user):
 		print(user.username + " saw the chat "+ self.name)
+		print(user.username + "got chat with user_req:"+str(self.req_saw) +"; need_user:"+str(self.off_saw))
 		if self.user_req ==user:
 			self.req_saw = True
 		else:
@@ -128,6 +129,7 @@ class Room(models.Model):
 		self.save()
 
 	def incomming_message(self, user):
+		print("incoming message of "+ user.username)
 		if self.user_req ==user:
 			self.off_saw = False
 		else:
