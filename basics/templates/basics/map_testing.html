@@ -2,7 +2,7 @@
 <style>
 
 	#map-container {
-		height: 450px;
+		height: 40%;
 	}
 
 	/*button, .btn-primary, .btn-primary:focus {
@@ -59,7 +59,7 @@
 <div class="form-group" style="display: none;">
 	<input type="float" class="form-control input-lg"  id="lat" name="lat"/>
 </div>
-<button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-toggle="modal" data-target="#location-map-modal">Choose location</button>
+<button id="standard-grey-button-bold" type="button" class="btn btn-primary grey" data-toggle="modal" data-target="#location-map-modal">Choose location</button>
 <!-- Modal -->
 <div class="modal fade" id="location-map-modal">
    	<div class="modal-dialog modal-lg">
@@ -75,7 +75,7 @@
 					<p id="option"><b>1. Option: </b>The easiest way to get your location is to use the autolocation function.<button id="standard-grey-button-bold" type="button" class="btn btn-primary" style="margin-left: 15px; margin-right: 15px" onclick="getLocation()">Get my Location</button></p>
 				</div> -->
 				<div class="form-group" id="location-form">
-					<p id="option"><b>1. Option: </b>The easiest way to get your location is to use the autolocation function.<button id="standard-grey-button-bold" type="button" class="btn btn-primary" style="margin-left: 15px; margin-right: 15px" onclick="getLocation()">Get my Location</button></p>
+					<p id="option"><b>1. Option: </b>The easiest way to get your location is to use the autolocation function.<button id="standard-grey-button-bold" type="button" class="btn btn-primary grey" style="margin-left: 15px; margin-right: 15px" onclick="getLocation()">Get my Location</button></p>
 				</div>
 				<div class="form-group" id="location-form">
 					<p id="option"><b>2. Option: </b>Insert your Address.</p>
@@ -361,8 +361,8 @@
 			</div><!-- modal-body -->
 
 	        <div class="modal-footer">
-				<button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-	        	<button id="standard-grey-button-bold" type="button" onclick="addressInput()" class="btn btn-primary" data-dismiss="modal">Save</button>
+				<button id="standard-grey-button-bold" type="button" class="btn btn-primary grey" data-dismiss="modal">Cancel</button>
+	        	<button id="standard-grey-button-bold" type="button" onclick="addressInput()" class="btn btn-primary grey" data-dismiss="modal">Save</button>
 	        </div>
 
       	</div><!-- /.modal-content -->

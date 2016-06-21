@@ -84,17 +84,6 @@
     </div>
 </div><!-- end needs -->
 
- <script>
-  function done_request(element){
-      var id = element.id;
-      console.log(id);
-      $.post("{% url 'administration:need_delete' %}", {id:id}, function(data){
-          //no need for this method but if we want to get a callback this is the correct position
-          location.href = "{% url 'administration:needs' %}";
-      });
-  }
-
-</script>
 <!--
 <div class="row">
 

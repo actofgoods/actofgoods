@@ -29,7 +29,7 @@
                     </select>
                 </div>
                 <script>
-                
+
                 </script>
                 <div  class="col-sm-2" style="margin-top: 10px; margin-bottom: 10px;">
                     <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
@@ -39,6 +39,19 @@
             </div>
         </div>
         <div class="modal-body">
+            {% if messages %}
+                    {% for message in messages %}
+                        {% if message.message == 'need_gone' %}
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="error-messages" style="margin-top: 10px;">
+                                        <p>Another admin or user already deleted this need!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             <div class="list-group">
                 {% if needs %}
                     {% for need in needs %}
@@ -54,7 +67,7 @@
                                     <h6><br>from: {{ need.date }} / category: {{ need.categorie.name }} / number of reports: {{ need.number_reports }}</h6>
                                 </div>
                                 <div class="col-sm-1">
-                                    <button type="button" id="{{ need.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="done_request(this)"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                                    <button type="button" class="btn btn-default btn-sml standard-grey-button-light " style="float: right; margin-top: 10px;" onclick="location.href='{% url 'administration:need_delete' pk=need.pk %}'"><span class="glyphicon glyphicon-remove"></span> Delete</button>
                                 </div>
                             </div>
                         </a>
@@ -88,16 +101,6 @@
     </div>
 </div><!-- end needs -->
 
- <script>
-  function done_request(element){
-      var id = element.id;
-      console.log(id);
-      $.post("{% url 'administration:need_delete' %}", {id:id}, function(data){
-          //no need for this method but if we want to get a callback this is the correct position
-          location.href = "{% url 'administration:needs' %}";
-      });
-  }
 
-</script>
 
 {% endblock %}

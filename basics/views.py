@@ -19,6 +19,7 @@ from django.utils import timezone
 # Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm, ContactUsForm
 from .models import *
+from itertools import chain
 
 
 
@@ -31,7 +32,17 @@ def actofgoods_startpage(request):
     registerform = UserFormRegister()
     needs = Need.objects.all()
     if request.user.is_authenticated():
-        return redirect('basics:home')
+        needs = list(Need.objects.all().filter(author = request.user))
+        infos = list(Information.objects.all().filter(author=request.user))
+        comm = list(Comment.objects.all().filter(author=request.user))
+        rel_comms=[]
+        for c in comm:
+            if not c.inf in rel_comms:
+                rel_comms.append(c)
+        result_list = sorted(
+            chain(needs, infos, rel_comms),
+            key=lambda instance: instance.date, reverse=True)
+        return render(request, 'basics/home.html',{'needs':needs,'infos':infos, 'result_list':result_list})
     return render(request, 'basics/actofgoods_startpage.html', {'counter':len(needs),'registerform':registerform})
 
 """
@@ -160,6 +171,12 @@ def chat_room(request, roomname):
     contact_us page will be rendered and returned.
 """
 @csrf_protect
+def claim(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/map_claim.html')
+
+
+@csrf_protect
 def contact_us(request):
     if request.method == "POST":
         form = ContactUsForm(request.POST)
@@ -211,8 +228,17 @@ def help(request):
 """
 def home(request):
     if request.user.is_authenticated():
-        needs = Need.objects.order_by('date')
-        return render(request, 'basics/home.html', {'needs': needs})
+        needs = list(Need.objects.all().filter(author=request.user))
+        infos = list(Information.objects.all().filter(author=request.user))
+        comm = list(Comment.objects.all().filter(author=request.user))
+        rel_comms = []
+        for c in comm:
+            if not c.inf in rel_comms:
+                rel_comms.append(c)
+        result_list = sorted(
+            chain(needs, infos, rel_comms),
+            key=lambda instance: instance.date, reverse=True)
+        return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'result_list': result_list})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -379,10 +405,7 @@ def immediate_aid(request):
         else:
             messages.add_message(request, messages.INFO, 'eae')
             print(need.data)
-    else:
-        c = CategoriesNeeds.objects.get(pk=3)
-        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", "\"",c.name,"\"")
-        c.save
+    
     return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all, 'form' : form, 'need' : need })
 
 
@@ -788,3 +811,75 @@ def report_information(request, pk):
     info.reported_by.add(request.user.userdata)
     info.save()
     return information_all(request)
+
+def need_delete(request, pk):
+    need = Need.objects.all().get(pk=pk)
+    need.delete()
+    return actofgoods_startpage(request)
+
+def info_delete(request, pk):
+    info = Information.objects.all().get(pk=pk)
+    info.delete()
+    return actofgoods_startpage(request)
+
+def comm_delete(request, pk):
+    comm = Comment.objects.all().get(pk=pk)
+    comm.delete()
+    return actofgoods_startpage(request)
+
+def need_edit(request, pk):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated():
+        need= Need.objects.all().get(pk=pk)
+        if request.method == "POST":
+            text = request.POST.get('text', None)
+            desc = request.POST.get('desc', None)
+            lat, lng = getAddress(request)
+            if lat != None and lng != None:
+                request.user.userdata.address.latitude = lat
+                request.user.userdata.address.longditude = lng
+                request.user.userdata.address.save()
+                request.user.userdata.save()
+            if text != "":
+                need.text=text
+            if desc != "":
+                need.headline=desc
+            need.save()
+            return actofgoods_startpage(request)
+        form = NeedFormNew()
+        return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all()})
+    return actofgoods_startpage(request)
+
+def info_edit(request, pk):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated():
+        info = Information.objects.all().get(pk=pk)
+        if request.method == "POST":
+            text = request.POST.get('text', None)
+            desc = request.POST.get('desc', None)
+            lat, lng = getAddress(request)
+            if lat != None and lng != None:
+                request.user.userdata.address.latitude = lat
+                request.user.userdata.address.longditude = lng
+                request.user.userdata.address.save()
+                request.user.userdata.save()
+            if text != "":
+                info.text = text
+            if desc != "":
+                info.headline = desc
+            info.save()
+            return actofgoods_startpage(request)
+        form = InformationFormNew()
+        return render(request, 'basics/info_edit.html', {'info': info})
+    return actofgoods_startpage(request)
+
+def report_comment(request, pk):
+    comment = Comment.objects.get(pk=pk)
+    comment.was_reported = True
+    comment.number_reports += 1
+    comment.reported_by.add(request.user.userdata)
+    comment.save()
+    return information_view(request, comment.inf.pk)
+

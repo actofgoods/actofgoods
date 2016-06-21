@@ -18,163 +18,88 @@
 
   	</div>
   	-->
-    	<div class="btn-group">
-      	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        	Range <span class="caret"></span>
-      	</button>
-      	<ul class="dropdown-menu">
-        	<li><a href="#">5 km</a></li>
-        	<li><a href="#">10 km</a></li>
-        	<li><a href="#">20 km</a></li>
-        	<li role="separator" class="divider"></li>
-        	<li><a href="#">100 km</a></li>
-      	</ul>
-    	</div>
-    	<div class="btn-group">
-      	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        	Category <span class="caret"></span>
-      	</button>
-      	<ul class="dropdown-menu">
-        	<li><a href="#">Eat & Drink</a></li>
-        	<li><a href="#">hygiene supplies</a></li>
-        	<li><a href="#">Medic</a></li>
-		<li><a href="#">Help</a></li>
-        	<li role="separator" class="divider"></li>
-        	<li><a href="#">Separated link</a></li>
-      	</ul>
-    	</div>
-    	<div class="btn-group pull-right">
-      	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        	Cards per Page <span class="caret"></span>
-      	</button>
-      	<ul class="dropdown-menu">
-        	<li><a href="#">10</a></li>
-        	<li><a href="#">25</a></li>
-        	<li><a href="#">50</a></li>
-        	<li role="separator" class="divider"></li>
-        	<li><a href="#">All</a></li>
-      	</ul>
-    	</div>
-  	</div>
-  </div>
+
   <br>
+
+		 <div class="col-lg-12">
+        <h1 class="page-header">Your Timeline <small></small></h1>
+		</div>
   <div class="row">
- 		 <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
+ 		 <div class="[ col-xs-12 col-sm-12 ]">
  			 <ul class="event-list">
- 				 <li>
- 				 	<time datetime="2014-07-20 2000">
- 						 <span class="day">31</span>
- 						 <span class="month">Jan</span>
- 						 <span class="year">2014</span>
- 						 <span class="time">04:20 PM</span>
- 					 </time>
- 					 <div class="info">
- 						 <h2 class="title">Emergency generator</h2>
- 						 <p class="desc">we need electricity!</p>
-        	<ul>
- 							 <li style="width:33%;">got: 0</li>
- 							 <li style="width:34%;">need: 1<span class="fa fa-question"></span></li>
- 							 <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-map-marker"></span>Location</a></li>
- 						 </ul>
- 					 </div>
+				 {% for elem in result_list %}
 
- 				 </li>
- 				 <li>
- 				 	<time datetime="2014-07-20 2000">
- 						 <span class="day">19</span>
- 						 <span class="month">Jan</span>
- 						 <span class="year">2014</span>
- 						 <span class="time">04:20 PM</span>
- 					 </time>
- 					 <div class="info">
- 						 <h2 class="title">Toothbrush</h2>
- 						 <p class="desc">Irgend eine Beschreibung</p>
- 						 <ul>
- 							  <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-pencil"></span> keep writing</a></li>
-               	<li style="width:20%;"> <span class="glyphicon glyphicon-ok"></span> Completed?</li>
-							 <li style="width:20%;"> <span class="glyphicon glyphicon-flag"></span> Report</li>
- 						 </ul>
- 					 </div>
- 					 <div class="social">
- 						 <ul>
- 							 <li class="facebook" style="width:33%;"><a href="#facebook"><span class="fa fa-facebook"></span></a></li>
- 							 <li class="twitter" style="width:34%;"><a href="#twitter"><span class="fa fa-twitter"></span></a></li>
- 							 <li class="google-plus" style="width:33%;"><a href="#google-plus"><span class="fa fa-google-plus"></span></a></li>
- 						 </ul>
- 					 </div>
- 				 </li>
+						{% if elem in infos %}
 
- 				 <li>
- 					 <time datetime="2014-07-20 2000">
- 						 <span class="day">14</span>
- 						 <span class="month">Jan</span>
- 						 <span class="year">2014</span>
- 						 <span class="time">8:00 PM</span>
- 					 </time>
+						<p>You posted this Information:</p>
 
- 					 <div class="info">
- 						 <h2 class="title">Toothpaste</h2>
- 						 <p class="desc">Need Toothpaste</p>
- 						 <ul>
- 							 <li style="width:33%;">got: 1<span class="glyphicon glyphicon-ok"></span></li>
- 							 <li style="width:34%;">need: 3<span class="fa fa-question"></span></li>
- 							 <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-map-marker"></span>Location</a></li>
+				 			<li>
+								<time datetime="2014-07-20 2000" style="font-size: 30px; background-colour:#70952C">
+ 						 			<p>{{elem.date.day}}.{{elem.date.month}}. {{elem.date.year}}</p>
+									<p style="font-size:20px"> {{elem.date.time}}</p>
+								</time>
+ 					 			<div class="info">
+ 						 			<h2 class="title">{{elem.headline}}</h2>
+ 						 			<p class="desc">{{ elem.text }}</p>
+        							<ul>
+ 							 <li style="width:33%;"><a href="{% url 'basics:information_view' pk=elem.pk %}"><span class="glyphicon glyphicon-search"></span> Details </a></li>
+ 							 <li style="width:33%;"><a href="{% url 'basics:info_edit' pk=elem.pk %}"><span class="glyphicon glyphicon-pencil"></span> Edit  </a></li>
+ 							 <li style="width:33%;"><a href="{% url 'basics:info_delete' pk=elem.pk %}"><span class="glyphicon glyphicon-remove"></span> Delete </a></li>
  						 </ul>
- 					 </div>
- 					 <div class="social">
- 						 <ul>
- 							 <li class="facebook" style="width:33%;"><a href="#facebook"><span class="fa fa-facebook"></span></a></li>
- 							 <li class="twitter" style="width:34%;"><a href="#twitter"><span class="fa fa-twitter"></span></a></li>
- 							 <li class="google-plus" style="width:33%;"><a href="#google-plus"><span class="fa fa-google-plus"></span></a></li>
- 						 </ul>
- 					 </div>
- 				 </li>
+ 					 			</div>
+							</li>
 
- 				 <li>
- 					 <time datetime="2014-07-31 1600">
- 						 <span class="day">01</span>
- 						 <span class="month">Jan</span>
- 						 <span class="year">2014</span>
- 						 <span class="time">4:00 PM</span>
- 					 </time>
+				 		{% elif elem in needs %}
 
- 					 <div class="info">
- 						 <h2 class="title">Bed sheets</h2>
- 						 <p class="desc"> need a few bed sheets</p>
- 						 <ul>
- 							<li style="width:33%;">got: 1<span class="glyphicon glyphicon-ok"></span></li>
-               <li style="width:34%;">need: 3<span class="fa fa-question"></span></li>
-               <li style="width:20%;"><a href="#website"><span class="glyphicon glyphicon-map-marker"></span>Location</a></li>
+						<p>You posted this Need:</p>
+
+				 		<li>
+								<time datetime="2014-07-20 2000" style="font-size: 30px">
+ 						 			<p>{{elem.date.day}}.{{elem.date.month}}. {{elem.date.year}}</p>
+									<p style="font-size:20px"> {{elem.date.time}}</p>
+								</time>
+ 					 			<div class="info">
+ 						 			<h2 class="title">{{elem.headline}}</h2>
+ 						 			<p class="desc">{{ elem.text }}</p>
+        							<ul>
+ 							 <li style="width:33%;"></li>
+ 							 <li style="width:33%;"><a href="{% url 'basics:need_edit' pk=elem.pk %}"><span class="glyphicon glyphicon-pencil"></span> Edit  </a></li>
+ 							 <li style="width:33%;"><a href="{% url 'basics:need_delete' pk=elem.pk %}"><span class="glyphicon glyphicon-remove"></span> Delete </a></li>
  						 </ul>
- 					 </div>
- 					 <div class="social">
- 						 <ul>
- 							 <li class="facebook" style="width:33%;"><a href="#facebook"><span class="fa fa-facebook"></span></a></li>
- 							 <li class="twitter" style="width:34%;"><a href="#twitter"><span class="fa fa-twitter"></span></a></li>
- 							 <li class="google-plus" style="width:33%;"><a href="#google-plus"><span class="fa fa-google-plus"></span></a></li>
+ 					 			</div>
+							</li>
+
+						{% else %}
+
+						<p>You commented this Information:</p>
+
+				 		<li>
+								<time datetime="2014-07-20 2000" style="font-size: 30px">
+ 						 			<p>{{elem.date.day}}. {{elem.date.month}}. {{elem.date.year}}</p>
+									<p style="font-size:20px"> {{elem.date.time}}</p>
+ 							 	</time>
+ 					 			<div class="info">
+ 						 			<h2 class="title">{{elem.inf.headline}}</h2>
+ 						 			<p class="desc">{{ elem.inf.text }}</p>
+        							<ul>
+ 							 <li style="width:33%;"></li>
+ 							 <li style="width:33%;"><a href="{% url 'basics:information_view' pk=elem.inf.pk %}"><span class="glyphicon glyphicon-search"></span> Details </a></li>
+ 							 <li style="width:33%;"><a href="{% url 'basics:comm_delete' pk=elem.pk %}"><span class="glyphicon glyphicon-remove"></span> Delete </a></li>
  						 </ul>
- 					 </div>
- 				 </li>
+ 					 			</div>
+							</li>
+
+						{% endif %}
+
+
+
+				{% endfor %}
+
  			 </ul>
  		 </div>
  	 </div>
-  <div class="row">
-  	<div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ] text-center">
-    	<nav>
-      	<ul class="pagination">
-        	<li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-        	<li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
-        	<li><a href="#">2</a></li>
-        	<li><a href="#">3</a></li>
-        	<li><a href="#">4</a></li>
-        	<li><a href="#">5</a></li>
-        	<li>
-          	<a href="#" aria-label="Next">
-            	<span aria-hidden="true">&raquo;</span>
-          	</a>
-        	</li>
-      	</ul>
-    	</nav>
-  	</div>
-  </div>
+		</div>
+	  </div>
+
+
 {% endblock %}
