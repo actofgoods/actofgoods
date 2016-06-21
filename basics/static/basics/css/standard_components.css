@@ -56,6 +56,11 @@
 }
 /* end green button light/bold */
 
+#grey,.grey{
+  background-color: #4C4E49!important;
+  color: #bbd153!important;
+}
+
 /* grey button light */
 #standard-grey-button-light,
 .standard-grey-button-light {
