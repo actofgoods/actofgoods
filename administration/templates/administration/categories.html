@@ -102,7 +102,7 @@
 							{% elif message.message == 'categorie_gone' %}
                                 <div class="form-group">
                                     <div class="error-messages">
-                                        <p>Another admin has already deleted this category!</p>
+                                        <p>Another admin has already deleted this categorie</p>
                                     </div>
                                 </div>
                             {% endif%}
@@ -132,7 +132,7 @@
                                             {{ categorie.name }}
                                         </div>
                                         <div class="col-sm-10">
-                                            
+                                            {{ categorie|filter_cats|length }}
                                                 
                                         </div>
                                         <div class="col-sm-2">

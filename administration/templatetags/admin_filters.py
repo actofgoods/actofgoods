@@ -1,4 +1,5 @@
 from django import template
+from basics.models import *
 
 register = template.Library()
 @register.filter(name="filter_cats")
