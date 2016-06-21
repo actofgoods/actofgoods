@@ -254,7 +254,8 @@
         channel: '{{roomname}}'||'Actofgoods',
         connected: false,
         messages: {{messages|safe}},
-        author: ''
+        author: '',
+        name:'{{name}}'
       };
     },
 
@@ -354,7 +355,7 @@
         React.createElement(
           'h4',
           {},
-          this.state.channel
+          this.state.name
         ),
         React.createElement(
           MessageList,

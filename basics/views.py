@@ -161,7 +161,7 @@ def chat_room(request, roomname):
             rooms_json += "]"
             print(rooms_json)
 
-            return render(request, 'basics/chat.html',{'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
+            return render(request, 'basics/chat.html',{'name':room.need.headline,'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -405,7 +405,7 @@ def immediate_aid(request):
         else:
             messages.add_message(request, messages.INFO, 'eae')
             print(need.data)
-    
+
     return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all, 'form' : form, 'need' : need })
 
 
@@ -882,4 +882,3 @@ def report_comment(request, pk):
     comment.reported_by.add(request.user.userdata)
     comment.save()
     return information_view(request, comment.inf.pk)
-
