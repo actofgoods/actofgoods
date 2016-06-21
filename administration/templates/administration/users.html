@@ -85,7 +85,7 @@
                                 </div>
                                 {% if not usr.is_staff%}
                                 <div class="col-sm-3">
-                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=usr.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
                                     <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
                                 </div>
                                {% else %}
