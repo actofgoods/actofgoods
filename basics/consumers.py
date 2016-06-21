@@ -33,10 +33,8 @@ def ws_echo(message):
     chatMessage.save()
 
     user = db_room.user_req
-    print(author.username, user.username, db_room.need.author)
     if user == author:
         user = db_room.need.author
-    sendmail(user.email, "Message from " + author.username, message.content['text'])
 
     Group('chat-%s' % room).send({
         'text': json.dumps({
@@ -44,3 +42,5 @@ def ws_echo(message):
             'username': message.channel_session['username']
         }),
     })
+
+    #sendmail(user.email, "Message from " + author.username, message.content['text'])

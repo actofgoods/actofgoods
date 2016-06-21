@@ -146,6 +146,12 @@ def chat_room(request, roomname):
     contact_us page will be rendered and returned.
 """
 @csrf_protect
+def claim(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/map_claim.html')
+
+
+@csrf_protect
 def contact_us(request):
     if request.method == "POST":
         form = ContactUsForm(request.POST)
