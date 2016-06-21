@@ -50,7 +50,7 @@
                 </div>
             </div>
             <!-- list all or only one user -->
-            
+
             <div class="modal-body">
                 <div class="list-group">
                     {% if messages %}
@@ -77,27 +77,35 @@
                                     <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
                                     <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
                                 </div>
+                               {% else %}
+                               <div class="col-sm-3">
+                                   <p style="float: right">This user is an admin.</p>
+                               </div>
                                {% endif %}
                             </div>
                         </div>
                     {% endif %}
                     {% if users %}
                         {% for user in users %}
-                            
+
                                 <div class="list-group-item" id="standard-list-group-item-div">
                                     <div class="row">
                                         <div class="col-sm-9">
                                             {{ user.email }}
                                         </div>
-                                    {% if not user.is_staff %}
+                                        {% if not user.is_staff %}
                                         <div class="col-sm-3">
                                             <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:user_delete' pk=user.pk %}" title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
                                             <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
                                         </div>
-                                    {% endif %}
+                                        {% else %}
+                                        <div class="col-sm-3">
+                                            <p style="float: right">This user is an admin.</p>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                 </div>
-                            
+
                         {% endfor %}
                     {% endif %}
                 </div>
