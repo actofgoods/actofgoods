@@ -6,7 +6,7 @@ from basics.forms import CategoriesForm
 from basics.views import getAddress
 from basics.models import Address
 from django.contrib import messages
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 # Create your views here.
 
 def categories(request):
@@ -152,6 +152,7 @@ def information_reported_comment_admin(request, pki, pkc):
     reported_comment = comments.get(pk=pkc)
     return render(request, 'administration/information_admin.html', {'information':information, 'comments':comments, 'reported_comment':reported_comment})
 
+@csrf_protect
 def requests(request):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
