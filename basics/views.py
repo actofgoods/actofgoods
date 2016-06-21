@@ -1,3 +1,4 @@
+import datetime
 import random
 import smtplib
 import string
@@ -134,9 +135,18 @@ def chat_room(request, roomname):
             message_json += "]"
             print(message_json)
             #Get all rooms where request.user is in contact with
-            rooms = Room.objects.filter(Q(need__author =request.user) | Q(user_req = request.user)).exclude(name=roomname)
-            print(rooms)
-            return render(request, 'basics/chat.html',{'roomname':roomname, 'messages':message_json, 'rooms':rooms})
+            rooms = Room.objects.filter(Q(need__author =request.user) | Q(user_req = request.user)).exclude(name=roomname).order_by('-last_message')
+            rooms_json = "["
+            for room in rooms:
+                rooms_json   += json.dumps({
+                    'name': room.need.headline,
+                    'hash': room.name,
+                    'date': room.last_message.__str__()
+                }) + ","
+            rooms_json = rooms_json[:-1]
+            rooms_json += "]"
+            print(rooms_json)
+            return render(request, 'basics/chat.html',{'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
 

@@ -117,3 +117,4 @@ class ChatMessage(models.Model):
 	date = models.DateTimeField(auto_now = True)
 	room = models.ForeignKey(Room)
 	text=models.TextField(default='', max_length=500)
+	date = models.DateTimeField(auto_now=True)
