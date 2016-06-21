@@ -37,7 +37,7 @@ def actofgoods_startpage(request):
         comm = list(Comment.objects.all().filter(author=request.user))
         rel_comms=[]
         for c in comm:
-            if not c.inf in infos and not c.inf in rel_comms:
+            if not c.inf in rel_comms:
                 rel_comms.append(c)
         result_list = sorted(
             chain(needs, infos, rel_comms),
@@ -233,7 +233,7 @@ def home(request):
         comm = list(Comment.objects.all().filter(author=request.user))
         rel_comms = []
         for c in comm:
-            if not c.inf in infos and not c.inf in rel_comms:
+            if not c.inf in rel_comms:
                 rel_comms.append(c)
         result_list = sorted(
             chain(needs, infos, rel_comms),
