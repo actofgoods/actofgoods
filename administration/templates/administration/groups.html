@@ -145,8 +145,11 @@
                     {% if gro %}
                         <div class="list-group-item" id="standard-list-group-item-div">
                             <div class="row">
+                                <div class="col-sm-12">
+                                    <p>{{ gro.name }}</p>
+                                </div>
                                 <div class="col-sm-10">
-                                    {{ gro.name }}
+                                    <h6>Number of members: {{ gro.user_set.all|length }}</h6>
                                 </div>
                                 <div class="col-sm-2">
                                     <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:group_delete' pk=gro.pk %}" title="Delete Group" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
@@ -158,11 +161,11 @@
                         {% for group in groups %}
                             <div class="list-group-item" id="standard-list-group-item-div">
                                 <div class="row">
-                                    <div class="col-sm-10">
-                                        {{ group.name }}
+                                    <div class="col-sm-12">
+                                        <p>{{ group.name }}</p>
                                     </div>
                                     <div class="col-sm-10">
-                                        {{ group.user_set.all|length }}
+                                        <h6>Number of members: {{ group.user_set.all|length }}</h6>
                                     </div>
                                     <div class="col-sm-2">
                                         <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:group_delete' pk=group.pk %}" title="Delete Group" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
