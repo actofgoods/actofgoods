@@ -874,3 +874,12 @@ def info_edit(request, pk):
         form = InformationFormNew()
         return render(request, 'basics/info_edit.html', {'info': info})
     return actofgoods_startpage(request)
+
+def report_comment(request, pk):
+    comment = Comment.objects.get(pk=pk)
+    comment.was_reported = True
+    comment.number_reports += 1
+    comment.reported_by.add(request.user.userdata)
+    comment.save()
+    return information_view(request, comment.inf.pk)
+
