@@ -7,6 +7,7 @@ from basics.views import getAddress
 from basics.models import Address
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
+
 # Create your views here.
 
 def categories(request):
@@ -35,7 +36,9 @@ def categories(request):
                 else:
                     messages.add_message(request, messages.INFO, 'category_not_exists')
     categories = CategoriesNeeds.objects.all().order_by('name')
-    return render(request, 'administration/categories.html', {'categories':categories})
+    needs = Need.objects.all()
+    return render(request, 'administration/categories.html', {'categories':categories, 'needs':needs})
+
 
 def categories_delete(request, pk):
     if not request.user.is_authenticated():
@@ -104,7 +107,8 @@ def groups(request):
                     messages.add_message(request, messages.INFO, 'group_not_exists')
         else:
             messages.add_message(request, messages.INFO, 'wrong_form')
-    groups = Groupdata.objects.all().order_by('group__name')
+    groups = Group.objects.all().order_by('name')
+
     return render(request, 'administration/groups.html', {'groups': groups})
 
 @csrf_exempt
@@ -286,9 +290,8 @@ def group_delete(request, pk):
         return render(request, 'basics/verification.html', {'active':False})
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
-    if Groupdata.objects.filter(pk=pk):
-        groupDa = get_object_or_404(Groupdata, pk=pk)
-        group = groupDa.group
+    if Group.objects.filter(pk=pk):
+        group = get_object_or_404(Group, pk=pk)
         group.delete()
     else:
         messages.add_message(request, messages.INFO,'group_gone')
@@ -350,7 +353,7 @@ def comment_delete(request, pk):
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     if Comment.objects.filter(pk=pk):
-        comment = get_object_or_404(Comment, pk = pk)
+        comment = get_object_or_404(Comment, pk=pk)
         comment.delete()
     else:
         messages.add_message(request, messages.INFO,'comment_gone')
