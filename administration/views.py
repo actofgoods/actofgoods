@@ -294,16 +294,16 @@ def group_delete(request, pk):
     return redirect('administration:groups')
 
 @csrf_exempt
-def information_delete(request):
+def information_delete(request, pk):
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active':False})
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
-    request_id = request.POST['id']
-    if Information.objects.filter(pk=request_id):
-        info = get_object_or_404(Information, pk=request_id)
+    #request_id = request.POST['id']
+    if Information.objects.filter(pk=pk):
+        info = get_object_or_404(Information, pk=pk)
         info.delete()
     else:
         messages.add_message(request, messages.INFO,'info_gone')
@@ -325,16 +325,17 @@ def info_delete(request, pk):
 
 
 @csrf_exempt
-def need_delete(request):
+def need_delete(request, pk):
+    print('test')
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active':False})
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
-    request_id = request.POST['id']
-    if Need.objects.filter(pk=request_id):
-        need = get_object_or_404(Need, pk=request_id)
+    #request_id = request.POST['id']
+    if Need.objects.filter(pk=pk):
+        need = get_object_or_404(Need, pk=pk)
         need.delete()
     else:
         messages.add_message(request, messages.INFO,'need_gone')
@@ -362,8 +363,11 @@ def comment_delete(request, pk):
         return render(request, 'basics/verification.html', {'active':False})
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
-    comment = get_object_or_404(Comment, pk = pk)
-    comment.delete()
+    if Comment.objects.filter(pk=pk):
+        comment = get_object_or_404(Comment, pk = pk)
+        comment.delete()
+    else:
+        messages.add_message(request, messages.INFO,'comment_gone')
     return redirect('administration:informations')
 
 def administration(request):

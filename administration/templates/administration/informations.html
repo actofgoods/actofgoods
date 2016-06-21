@@ -41,6 +41,19 @@
                         {% endif %}
                     {% endfor %}
                 {% endif %}
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.message == 'comment_gone' %}
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="error-messages" style="margin-top: 10px;">
+                                        <p>Another admin or user already deleted this comment</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
                 {% if infos %}
                     {% for info in infos %}
 
@@ -59,7 +72,7 @@
                                 </div>
                             </a>
                             <div class="col-sm-1">
-                                <button type="button" id="{{ info.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="done_request(this)"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                                <button type="button" class="btn btn-default btn-sml standard-grey-button-light " style="float: right; margin-top: 10px;" onclick="location.href='{% url 'administration:information_delete' pk=info.pk %}'"><span class="glyphicon glyphicon-remove"></span> Delete</button>
                             </div>
                         </div>
                     </div>
@@ -68,6 +81,7 @@
                         <h4>There are no informations.</h4>
                     {% endfor %}
                 {% endif %}
+                
                 {% if comments %}
                     {% for comment in comments %}
                         <!-- list all informations -->
@@ -95,18 +109,5 @@
         </div>
     </div>
 </div><!-- end informations -->
-
-<script>
-    function done_request(element){
-      var id = element.id;
-      console.log(id);
-      $.post("{% url 'administration:information_delete' %}", {id:id}, function(data){
-          //no need for this method but if we want to get a callback this is the correct position
-          location.href = "{% url 'administration:informations' %}";
-      });
-  }
-
-
-</script>
 
 {% endblock %}

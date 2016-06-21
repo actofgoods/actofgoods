@@ -24,6 +24,19 @@
             <h5>Location:</h5>
             <div id="map-container" style="height: 450px; margin-top: 15px; margin-bottom: 20px;"></div>
             <div class="list-group">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.message == 'comment_gone' %}
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="error-messages" style="margin-top: 10px;">
+                                        <p>Another admin or user already deleted this comment</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
                 {% for comment in comments %}
 
                     <!-- list all informations -->
@@ -36,35 +49,11 @@
                                 <h6><br>from: {{ comment.date }} / number of reports: {{ comment.number_reports }} </h6>
                             </div>
                             <div class="col-sm-1">
-                                <button type="button" id="{{ comment.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="done_request(this)"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                                <button type="button" id="{{ comment.id }}" class="btn btn-default btn-sml standard-grey-button-light " href="" style="float: right; margin-top: 10px;" onclick="location.href = '{% url 'administration:comment_delete' pk=comment.pk %}'"><span class="glyphicon glyphicon-remove"></span> Delete</button>
                             </div>
                         </div>
                     </a>
 
-                    <script>
-                      function done_request(element){
-                        var id = element.id;
-                        console.log(id);
-                        {% if reported_comment %}
-                            {% if comment.id != reported_comment.id %}
-                                $.post("{% url 'administration:comment_delete' pk=comment.pk %}", {id:id}, function(data){
-                                    //no need for this method but if we want to get a callback this is the correct position
-                                    location.href = "{% url 'administration:information_reported_comment_admin' pki=comment.inf.pk pkc=reported_comment.id %}";
-                                });
-                            {% else %}
-                                $.post("{% url 'administration:comment_delete' pk=comment.pk  %}", {id:id}, function(data){
-                                    //no need for this method but if we want to get a callback this is the correct position
-                                    location.href = "{% url 'administration:information_admin' pk=comment.inf.pk %}";
-                                });
-                            {% endif %}
-                        {% else %}
-                            $.post("{% url 'administration:comment_delete' pk=comment.pk %}", {id:id}, function(data){
-                                //no need for this method but if we want to get a callback this is the correct position
-                                location.href = "{% url 'administration:information_admin' pk=comment.inf.pk %}";
-                            });
-                        {% endif %}
-                    }
-                    </script>
 
                     <!-- modal for every comment -->
                     <div class="modal fade {{ comment.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
