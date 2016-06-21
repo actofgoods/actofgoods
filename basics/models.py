@@ -108,9 +108,33 @@ class Room(models.Model):
 	act_req = models.BooleanField(default=False)
 	act_off = models.BooleanField(default=False)
 	last_message = models.DateTimeField(auto_now=True)
+	req_saw = models.BooleanField(default=True)
+	off_saw =  models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return self.name
+
+	def new_message(self, user):
+		if self.user_req ==user:
+			return not self.req_saw
+		return not self.off_saw
+
+	def set_saw(self, user):
+		print(user.username + " saw the chat "+ self.name)
+		if self.user_req ==user:
+			self.req_saw = True
+		else:
+			self.off_saw = True
+		self.save()
+
+	def incomming_message(self, user):
+		if self.user_req ==user:
+			self.off_saw = False
+		else:
+			self.req_saw = False
+		self.save()
+
+
 
 class ChatMessage(models.Model):
 	author = models.ForeignKey(User)

@@ -230,11 +230,16 @@
 
 	    getInitialState: function getInitialState() {
 	      var rooms = eval({{channels|safe}})
-	      console.log(rooms)
+				var roomname = '{{roomname}}'
+	      //console.log(rooms)
 	      var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 	      for(var i=0;i<rooms.length;i++){
 	        name = rooms[i]['hash'];
-	        console.log(name);
+					if (name === roomname){
+						console.log(name + "fuck")
+						continue;
+					}
+	        //console.log(name);
 	        var url = ws_scheme + '://' + window.location.host + "/chat/" + name + '?username={{request.user.username}}';
 	        var socket = new WebSocket(url);
 
@@ -245,7 +250,7 @@
 	        }.bind(this);
 	      }
 	      return {
-	        new_count:0
+	        new_count:{{new_messages|safe}}
 	      };
 	    },
 

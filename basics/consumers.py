@@ -28,13 +28,12 @@ def ws_echo(message):
                  message.content['text'], message.channel_session['username'],
                  room)
     db_room = Room.objects.get(name=room)
-    db_room.last_message = datetime.now()
-    db_room.save()
+
     print(message.channel_session['username'])
     author = User.objects.get(username=message.channel_session['username'])
     chatMessage = ChatMessage(author=author, room=db_room, text=message.content['text'])
     chatMessage.save()
-
+    db_room.incomming_message(author)
     user = db_room.user_req
     print(author.username, user.username, db_room.need.author)
     if user == author:
