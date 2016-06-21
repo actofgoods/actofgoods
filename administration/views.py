@@ -315,7 +315,6 @@ def information_delete(request, pk):
 
 @csrf_exempt
 def need_delete(request, pk):
-    print('test')
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
     if not request.user.is_active:
@@ -329,6 +328,7 @@ def need_delete(request, pk):
     else:
         messages.add_message(request, messages.INFO,'need_gone')
     return redirect('administration:needs')
+    #return HttpResponseRedirect(reverse('administration:needs', kwargs={'needs': request.POST['needs']}))
 
 def make_admin(request, pk):
     if not request.user.is_authenticated():
