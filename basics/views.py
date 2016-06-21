@@ -19,6 +19,7 @@ from django.utils import timezone
 # Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm, ContactUsForm
 from .models import *
+from itertools import chain
 
 
 
@@ -31,7 +32,17 @@ def actofgoods_startpage(request):
     registerform = UserFormRegister()
     needs = Need.objects.all()
     if request.user.is_authenticated():
-        return redirect('basics:home')
+        needs = list(Need.objects.all().filter(author = request.user))
+        infos = list(Information.objects.all().filter(author=request.user))
+        comm = list(Comment.objects.all().filter(author=request.user))
+        rel_comms=[]
+        for c in comm:
+            if not c.inf in infos and not c.inf in rel_comms:
+                rel_comms.append(c)
+        result_list = sorted(
+            chain(needs, infos, rel_comms),
+            key=lambda instance: instance.date, reverse=True)
+        return render(request, 'basics/home.html',{'needs':needs,'infos':infos, 'result_list':result_list})
     return render(request, 'basics/actofgoods_startpage.html', {'counter':len(needs),'registerform':registerform})
 
 """
@@ -217,8 +228,17 @@ def help(request):
 """
 def home(request):
     if request.user.is_authenticated():
-        needs = Need.objects.order_by('date')
-        return render(request, 'basics/home.html', {'needs': needs})
+        needs = list(Need.objects.all().filter(author=request.user))
+        infos = list(Information.objects.all().filter(author=request.user))
+        comm = list(Comment.objects.all().filter(author=request.user))
+        rel_comms = []
+        for c in comm:
+            if not c.inf in infos and not c.inf in rel_comms:
+                rel_comms.append(c)
+        result_list = sorted(
+            chain(needs, infos, rel_comms),
+            key=lambda instance: instance.date, reverse=True)
+        return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'result_list': result_list})
 
     return redirect('basics:actofgoods_startpage')
 
