@@ -129,9 +129,9 @@ def informations(request):
             infos = Information.objects.filter(was_reported=True)
         elif selected == 'reported comments':
             comments = Comment.objects.filter(was_reported=True)
-            return render(request, 'administration/informations.html', {'comments':comments, 'current_info':selected})
+            return render(request, 'administration/information.html', {'comments':comments, 'current_info':selected})
 
-    return render(request, 'administration/informations.html', {'infos':infos,'current_info':selected})
+    return render(request, 'administration/information.html', {'infos':infos,'current_info':selected})
 
 def information_admin(request, pk):
     if not request.user.is_authenticated():
@@ -311,7 +311,7 @@ def information_delete(request, pk):
         info.delete()
     else:
         messages.add_message(request, messages.INFO,'info_gone')
-    return redirect('administration:informations')
+    return redirect('administration:information')
 
 @csrf_exempt
 def need_delete(request, pk):
@@ -357,7 +357,7 @@ def comment_delete(request, pk):
         comment.delete()
     else:
         messages.add_message(request, messages.INFO,'comment_gone')
-    return redirect('administration:informations')
+    return redirect('administration:information')
 
 def administration(request):
     if not request.user.is_authenticated():
