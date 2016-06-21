@@ -35,10 +35,8 @@ def ws_echo(message):
     chatMessage.save()
     db_room.incomming_message(author)
     user = db_room.user_req
-    print(author.username, user.username, db_room.need.author)
     if user == author:
         user = db_room.need.author
-    sendmail(user.email, "Message from " + author.username, message.content['text'])
 
     Group('chat-%s' % room).send({
         'text': json.dumps({
@@ -48,3 +46,5 @@ def ws_echo(message):
             'date': datetime.now().__str__()
         }),
     })
+
+    #sendmail(user.email, "Message from " + author.username, message.content['text'])

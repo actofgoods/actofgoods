@@ -1,0 +1,230 @@
+{% extends 'basics/base.html' %}
+
+{% block content %}
+
+
+<style>
+
+	#map-container {
+		height: 40%;
+	}
+
+	/*button, .btn-primary, .btn-primary:focus {
+		background-color: #bbd153;
+  		border-color: #70962c;
+  		color: #4C4E49;
+	}
+
+	.btn-primary:hover, .btn-primary:active:focus {
+		background-color: #96B440;
+		color: #4C4E49;
+	}*/
+
+	.modal-header > h2 {
+		color: #bbd153;
+		font-weight: bold;
+	}
+
+	.nav-tabs > li > a, .nav-tabs > li > a:hover, .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+		color: #70962c;
+	}
+
+
+
+	#address-label, #address-input {
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	#address-label {
+		margin-top: 12px;
+		margin-bottom: 12px;
+	}
+
+	@media(max-width:768px) {
+
+		#address-input {
+			margin-top: 0px;
+		}
+
+		#address-label {
+			margin-bottom: 5px;
+		}
+
+	}
+
+</style>
+
+<button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-toggle="modal" data-target="#location-map-modal">Choose location</button>
+<!-- Modal -->
+<div class="modal fade" id="location-map-modal">
+   	<div class="modal-dialog modal-lg">
+   		<div class="modal-content">
+
+       		<div class="modal-header">
+       			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+       			<h2 class="text-center">Which area should be claimed?</h2>
+      		</div>
+
+       		<div class="modal-body">
+                <!-- <div class="form-group" id="add-location-alert" style="visibility: hidden;">
+					<p id="option"><b>1. Option: </b>The easiest way to get your location is to use the autolocation function.<button id="standard-grey-button-bold" type="button" class="btn btn-primary" style="margin-left: 15px; margin-right: 15px" onclick="getLocation()">Get my Location</button></p>
+				</div> -->
+
+				<div class="form-group" id="location-form">
+					<p id="option"><b>1. Step(optional): </b>The easiest way to get your location is to use the autolocation function.<button id="standard-grey-button-bold" type="button" class="btn btn-primary" style="margin-left: 15px; margin-right: 15px" onclick="getLocation()">Get my Location</button></p>
+				</div>
+				<div class="form-group" id="location-form">
+					<p id="option"><b>2. Step: </b>Draw your polygon.</p>
+					<div id="map-container"></div>
+				</div>
+
+			</div><!-- modal-body -->
+
+	        <div class="modal-footer">
+				<button id="standard-grey-button-bold" type="button" onclick="deletePolygon()" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+	        	<button id="standard-grey-button-bold" type="button" onclick="save()" class="btn btn-primary" data-dismiss="modal">Save</button>
+                <button id="standard-grey-button-bold" type="button" onclick="test()" class="btn btn-primary" >Resize</button>
+	        </div>
+
+      	</div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css"></script>
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+<script>
+
+
+	var map, poly;
+	var myCenter=new google.maps.LatLng(51.508742,-0.120850);
+	var geocoder;
+	var infowindow;
+    var paths=[];
+
+
+
+	function initialize() {
+    	geocoder = new google.maps.Geocoder()
+			var mapProp = {
+  			center:myCenter,
+  			zoom:2,
+  			mapTypeId:google.maps.MapTypeId.ROADMAP,
+				mapTypeControl: false,
+        panControl:false,
+        rotateControl:false,
+				mapTypeControl:true,
+        streetViewControl: false
+  		};
+  		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
+  		google.maps.event.addListener(map, 'click', function(event) {
+            placePolygon(event);
+  		});
+        /*google.maps.event.addListener(polypoints, 'set_at', function(){
+            polygon.paths=polypoints;
+            console.log(polygon.getPath());
+        })*/
+	}
+
+    function test(){
+        poly.setEditable(true);
+        poly.getPaths().forEach(function(path,index){
+            google.maps.event.addListener(path, 'set_at', function(index){
+                print_polygon();
+            //console.log(polypoints[index].lat());
+
+            });
+        });
+    };
+                      
+
+    function deletePolygon(){
+        map = null;
+    }
+
+    function save() {
+        var googleToDjango="";
+        for(var i=0;i<polypoints.length;i++){
+            if(i>0){
+                googleToDjango+=", ";
+            }
+            googleToDjango+=polypoints[i].lat()+" "+polypoints[i].lng();
+        }
+        googleToDjango+=", "+polypoints[0].lat()+" "+polypoints[0].lng();
+        console.log(JSON.stringify(googleToDjango));
+    }
+
+    function print_polygon(){
+        for (var i=0; i<poly.getPaths().length; i++){
+            console.log(poly.getPaths().getAt(i).lat());
+        }
+    }
+
+    function placePolygon(event){
+        if(poly){
+            placeMarker(event);
+            var index=paths.length;
+            paths.push(event.latLng);
+            poly.setPaths(paths);
+            //google.maps.event.addListener(poly.getPath().getAt(index), 'set_at', print_polygon());
+        }
+        else if(!poly){
+                placeMarker(event);
+                paths.push(event.latLng);
+                poly=new google.maps.Polygon({
+                paths: paths,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 3,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+                editable: false
+            });
+        } else {
+            paths=poly.getPaths();
+        }poly.setMap(map);
+    }
+
+	function getLocation() {
+    	if (navigator.geolocation) {
+    	    navigator.geolocation.getCurrentPosition(showPosition);
+    	} else {
+    	    x.innerHTML = "Geolocation is not supported";
+    	    y.innerHTML = "by this browser.";
+    	}
+	}
+
+	function showPosition(position) {
+    	var latlng={lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)};
+    	placeMarker(latlng);
+	}
+
+
+	function placeMarker(event) {
+	    if(marker){
+	        marker.setPosition(event.latLng);
+            marker.setTitle("#" + paths.length)
+	    }
+	    else{
+	        var marker = new google.maps.Marker({
+	        position: event.latLng,
+	        map: map,
+	        });
+	        marker.setTitle("#" + paths.length);
+	    }
+	}
+	google.maps.event.addDomListener(window, 'load', initialize);
+
+
+</script>
+<script type='text/javascript'>
+ 	$('#location-map-modal').on('shown.bs.modal', function(e) {
+        initialize();
+    });
+
+</script>
+
+{% endblock %}
