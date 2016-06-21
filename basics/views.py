@@ -385,10 +385,7 @@ def immediate_aid(request):
         else:
             messages.add_message(request, messages.INFO, 'eae')
             print(need.data)
-    else:
-        c = CategoriesNeeds.objects.get(pk=3)
-        #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", "\"",c.name,"\"")
-        c.save
+    
     return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all, 'form' : form, 'need' : need })
 
 
