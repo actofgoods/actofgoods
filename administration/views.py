@@ -185,7 +185,6 @@ def requests(request):
         form = RequestForm(request.POST)
         if form.is_valid():
             key = request.POST.get('key')
-            print(key)
             if key:
                 req = ContactUs.objects.get(pk=key)
                 email = req.email
@@ -315,7 +314,6 @@ def information_delete(request, pk):
 
 @csrf_exempt
 def need_delete(request, pk):
-    print('test')
     if not request.user.is_authenticated():
         return redirect('basics:actofgoods_startpage')
     if not request.user.is_active:
