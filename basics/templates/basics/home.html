@@ -62,9 +62,8 @@
  						 			<h2 class="title">{{elem.headline}}</h2>
  						 			<p class="desc">{{ elem.text }}</p>
         							<ul>
- 							 <li style="width:33%;"></li>
- 							 <li style="width:33%;"><a href="{% url 'basics:need_edit' pk=elem.pk %}"><span class="glyphicon glyphicon-pencil"></span> Edit  </a></li>
- 							 <li style="width:33%;"><a href="{% url 'basics:need_delete' pk=elem.pk %}"><span class="glyphicon glyphicon-remove"></span> Delete </a></li>
+ 							 <li style="width:50%;"><a href="{% url 'basics:need_edit' pk=elem.pk %}"><span class="glyphicon glyphicon-pencil"></span> Edit  </a></li>
+ 							 <li style="width:50%;"><a href="{% url 'basics:need_delete' pk=elem.pk %}"><span class="glyphicon glyphicon-remove"></span> Delete </a></li>
  						 </ul>
  					 			</div>
 							</li>
@@ -82,8 +81,7 @@
  						 			<h2 class="title">{{elem.inf.headline}}</h2>
  						 			<p class="desc">{{ elem.inf.text }}</p>
         							<ul>
- 							 <li style="width:50%;"></li>
- 							 <li style="width:50%;"><a href="{% url 'basics:information_view' pk=elem.inf.pk %}"><span class="glyphicon glyphicon-search"></span> Details </a></li>
+ 							 <li><a href="{% url 'basics:information_view' pk=elem.inf.pk %}"><span class="glyphicon glyphicon-search"></span> Details </a></li>
  						 </ul>
  					 			</div>
 							</li>
