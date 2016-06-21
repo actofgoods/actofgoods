@@ -2,20 +2,20 @@
 {% block content %}
 {% load filter %}
 
-<!-- informations -->
+<!-- information -->
 <div id="standard-modal">
     <div class="modal-content">
         <div class="modal-header">
             <div class="row">
                 <div class="col-sm-6" >
-                    <h2 class="text-center" id="standard-modal-headline">Informations</h2>
+                    <h2 class="text-center" id="standard-modal-headline">Information</h2>
                 </div>
                 <form class="form" role="form" method="get" accept-charset="UTF-8">
                 {%csrf_token%}
                     <div  class="col-sm-4" style="margin-top: 20px;">
                         <select style="width: 100%" name="sel">
-                            <option value="all" {% if 'all' == current_info %}selected{% endif %}>all Informations</option>
-                            <option value="reported informations" {% if 'reported informations' == current_info %}selected{% endif %}> only reported Informations</option>
+                            <option value="all" {% if 'all' == current_info %}selected{% endif %}>all Information</option>
+                            <option value="reported informations" {% if 'reported informations' == current_info %}selected{% endif %}> only reported Information</option>
                             <option value="reported comments" {% if 'reported comments' == current_info %}selected{% endif %}> only reported Comments</option>
                         </select>
                     </div>
@@ -57,7 +57,7 @@
                 {% if infos %}
                     {% for info in infos %}
 
-                    <!-- list all informations -->
+                    <!-- list all information -->
                     <div class="list-group-item" id="standard-list-group-item-div">
                         <div class="row">
                             <a href="{% url 'administration:information_admin' pk=info.id %}">
@@ -78,13 +78,13 @@
                     </div>
 
                     {% empty %}
-                        <h4>There are no informations.</h4>
+                        <h4>There are no information.</h4>
                     {% endfor %}
                 {% endif %}
 
                 {% if comments %}
                     {% for comment in comments %}
-                        <!-- list all informations -->
+                        <!-- list all information -->
                         <div class="list-group-item" id="standard-list-group-item-div">
                             <div class="row">
                                 <a href="{% url 'administration:information_reported_comment_admin' pki=comment.inf.id pkc=comment.id %}">
@@ -108,6 +108,6 @@
             </div>
         </div>
     </div>
-</div><!-- end informations -->
+</div><!-- end information -->
 
 {% endblock %}

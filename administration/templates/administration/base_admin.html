@@ -70,7 +70,7 @@
 						    <ul class="nav navbar-nav navbar-left">
 							    <li {% if "/administration/requests/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:requests' %}">Requests</a></li>
 							    <li {% if "/administration/needs/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:needs' %}">Needs</a></li>
-							    <li {% if "/administration/informations/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:informations' %}">Informations</a></li>
+							    <li {% if "/administration/information/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:information' %}">Information</a></li>
 							    <li {% if "/administration/users/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:users' %}">Users</a></li>
 							    <li {% if "/administration/groups/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:groups' %}">Groups</a></li>
 							    <li {% if "/administration/categories/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:categories' %}">Categories</a></li>
