@@ -794,3 +794,66 @@ def report_information(request, pk):
     info.reported_by.add(request.user.userdata)
     info.save()
     return information_all(request)
+
+def need_delete(request, pk):
+    need = Need.objects.all().get(pk=pk)
+    need.delete()
+    return actofgoods_startpage(request)
+
+def info_delete(request, pk):
+    info = Information.objects.all().get(pk=pk)
+    info.delete()
+    return actofgoods_startpage(request)
+
+def comm_delete(request, pk):
+    comm = Comment.objects.all().get(pk=pk)
+    comm.delete()
+    return actofgoods_startpage(request)
+
+def need_edit(request, pk):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated():
+        need= Need.objects.all().get(pk=pk)
+        if request.method == "POST":
+            text = request.POST.get('text', None)
+            desc = request.POST.get('desc', None)
+            lat, lng = getAddress(request)
+            if lat != None and lng != None:
+                request.user.userdata.address.latitude = lat
+                request.user.userdata.address.longditude = lng
+                request.user.userdata.address.save()
+                request.user.userdata.save()
+            if text != "":
+                need.text=text
+            if desc != "":
+                need.headline=desc
+            need.save()
+            return actofgoods_startpage(request)
+        form = NeedFormNew()
+        return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all()})
+    return actofgoods_startpage(request)
+
+def info_edit(request, pk):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated():
+        info = Information.objects.all().get(pk=pk)
+        if request.method == "POST":
+            text = request.POST.get('text', None)
+            desc = request.POST.get('desc', None)
+            lat, lng = getAddress(request)
+            if lat != None and lng != None:
+                request.user.userdata.address.latitude = lat
+                request.user.userdata.address.longditude = lng
+                request.user.userdata.address.save()
+                request.user.userdata.save()
+            if text != "":
+                info.text = text
+            if desc != "":
+                info.headline = desc
+            info.save()
+            return actofgoods_startpage(request)
+        form = InformationFormNew()
+        return render(request, 'basics/info_edit.html', {'info': info})
+    return actofgoods_startpage(request)

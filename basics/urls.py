@@ -56,4 +56,9 @@ urlpatterns = [
     url(r'^need/report/(?P<pk>\d+)/$', views.report_need, name='report_need'),
     url(r'^information/report/(?P<pk>\d+)/$', views.report_information, name='report_information'),
     url(r'^verification/(?P<pk>\w+)$', views.verification, name='verification'),
+	url(r'^need_edit/(?P<pk>\w+)$', views.need_edit, name='need_edit'),
+    url(r'^need_delete/(?P<pk>\w+)$', views.need_delete, name='need_delete'),
+    url(r'^info_edit/(?P<pk>\w+)$', views.info_edit, name='info_edit'),
+    url(r'^info_delete/(?P<pk>\w+)$', views.info_delete, name='info_delete'),
+    url(r'^comm_delete/(?P<pk>\w+)$', views.comm_delete, name='comm_delete'),
 ]
