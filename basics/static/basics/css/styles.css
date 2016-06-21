@@ -37,7 +37,7 @@
 
 .message-list {
 	padding: 1rem;
-	position: absolute;
+	height: 70%;
 	left: 0;
 	right: 0;
 	top: 0;
@@ -159,4 +159,3 @@ button, .btn-primary, .btn-primary:focus {
 		width: calc(73.33333333% - 16px);
 	}
 }
-

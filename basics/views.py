@@ -1,3 +1,4 @@
+import datetime
 import random
 import smtplib
 import string
@@ -124,7 +125,8 @@ def chat_room(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
         if room.need.author == request.user or room.user_req == request.user:
-            messages = ChatMessage.objects.filter(room=roomname)
+            room.set_saw(request.user)
+            messages = ChatMessage.objects.filter(room=roomname).order_by('date')
             message_json = "["
             for message in messages:
                 message_json += json.dumps({
@@ -134,9 +136,21 @@ def chat_room(request, roomname):
             message_json += "]"
             print(message_json)
             #Get all rooms where request.user is in contact with
-            rooms = Room.objects.filter(Q(need__author =request.user) | Q(user_req = request.user)).exclude(name=roomname)
-            print(rooms)
-            return render(request, 'basics/chat.html',{'roomname':roomname, 'messages':message_json, 'rooms':rooms})
+            rooms = Room.objects.filter(Q(need__author =request.user) | Q(user_req = request.user)).exclude(name=roomname).order_by('-last_message')
+
+            rooms_json = "["
+            if len(rooms) > 0:
+                for room in rooms:
+                    rooms_json   += json.dumps({
+                        'name': room.need.headline,
+                        'hash': room.name,
+                        'date': room.last_message.__str__()
+                    }) + ","
+                rooms_json = rooms_json[:-1]
+            rooms_json += "]"
+            print(rooms_json)
+
+            return render(request, 'basics/chat.html',{'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -354,13 +368,13 @@ def immediate_aid(request):
                     #TODO: id_generator will return random string; Could be already in use
                     room = Room.objects.create(name=id_generator(), need=needdata)
                     room.save()
-                
+
 
                     #Content could also be possibly HTML! this way beautifull emails are possible
                     content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
                     subject = "Welcome!"
 
-                    
+
                     sendmail(user.email, content, subject )
                     return redirect('basics:home')
                 else:

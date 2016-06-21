@@ -1,3 +1,4 @@
+import datetime
 import json
 import urllib.parse
 import logging
@@ -27,11 +28,12 @@ def ws_echo(message):
                  message.content['text'], message.channel_session['username'],
                  room)
     db_room = Room.objects.get(name=room)
+
     print(message.channel_session['username'])
     author = User.objects.get(username=message.channel_session['username'])
     chatMessage = ChatMessage(author=author, room=db_room, text=message.content['text'])
     chatMessage.save()
-
+    db_room.incomming_message(author)
     user = db_room.user_req
     if user == author:
         user = db_room.need.author
@@ -39,7 +41,9 @@ def ws_echo(message):
     Group('chat-%s' % room).send({
         'text': json.dumps({
             'message': message.content['text'],
-            'username': message.channel_session['username']
+            'username': message.channel_session['username'],
+            'room': message.channel_session['room'],
+            'date': datetime.now().__str__()
         }),
     })
 
