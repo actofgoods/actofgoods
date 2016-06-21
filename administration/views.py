@@ -185,7 +185,6 @@ def requests(request):
         form = RequestForm(request.POST)
         if form.is_valid():
             key = request.POST.get('key')
-            print(key)
             if key:
                 req = ContactUs.objects.get(pk=key)
                 email = req.email
