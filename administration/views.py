@@ -310,21 +310,6 @@ def information_delete(request, pk):
         messages.add_message(request, messages.INFO,'info_gone')
     return redirect('administration:informations')
 
-def info_delete(request, pk):
-    if not request.user.is_authenticated():
-        return redirect('basics:actofgoods_startpage')
-    if not request.user.is_active:
-        return render(request, 'basics/verification.html', {'active':False})
-    if not request.user.is_superuser and not request.user.is_staff:
-        return redirect('basics:home')
-    if Information.objects.filter(pk=pk):
-        info = get_object_or_404(Information, pk=pk)
-        info.delete()
-    else:
-        messages.add_message(request, messages.INFO,'info_gone')
-    return redirect('administration:informations')
-
-
 @csrf_exempt
 def need_delete(request, pk):
     print('test')
