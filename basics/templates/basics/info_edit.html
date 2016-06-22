@@ -2,35 +2,25 @@
 
 {% block content %}
 <!-- Introduction Row -->
-	<div class="modal-dialog" id="sign-up">
+	<div id="standard-modal">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h1 class="text-center">Edit Your Information</h1>
 			</div>
 			<div class="modal-body">
-				<form class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav">
+				<form class="form" role="form" method="post" accept-charset="UTF-8">
 				    {% csrf_token %}
-
-    					<div class="form-group">
-					<input type="description" class="form-control input-lg" placeholder= "headline" name="desc"  >
-						</div>
-
+    				<div class="form-group">
+					    <input type="description" class="form-control input-lg" placeholder= "headline" name="desc"  >
+					</div>
 					<div class="form-group">
-					<input type="description" class="form-control input-lg" placeholder= "description" name="text"  >
-						</div>
-
-
-
-
-
+					    <input type="description" class="form-control input-lg" placeholder= "description" name="text"  >
+					</div>
 					<div class="form-group">
-						</div>
 						{% include "basics/map_testing.html" %}
-
-
+                    </div>
 					<div class="form-group">
-						 <a class="btn-sm"href="{% url 'basics:change_password' %}">Change password</a>
-						<input type="submit" onclick="profil_edit" class="btn btn-block btn-lg btn-primary" value="Save"/>
+						<input id="standard-grey-button-bold" type="submit" onclick="profil_edit" class="btn btn-block btn-lg btn-primary" value="Save"/>
 					</div>
 				</form>
 			</div>
