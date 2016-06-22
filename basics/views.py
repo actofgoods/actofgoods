@@ -888,10 +888,20 @@ def report_comment(request, pk):
 def groups(request):
     return render(request, 'basics/groups.html')
 
-def group_detail(request, pk):
-    gro = request.user.groups.get(pk=pk)
-    group = Groupdata.objects.get(name=gro.name)
-    return render(request, 'basics/group_detail.html', {'group':group})
+def group_detail(request, name):
+    if request.user.is_authenticated():
+        gro = request.user.groups.get(name=name)
+        if request.method == "POST":
+            form = GroupAddUserForm(request.POST)
+            if form.is_valid():
+                if 'add_group_member' in form.data:
+                    email = request.POST.get('email')
+                    user = User.objects.get(email=email)
+                    gro.user_set.add(user)
+        users = gro.user_set.all()
+        group = Groupdata.objects.get(name=gro.name)
+        return render(request, 'basics/group_detail.html', {'group':group, 'users':users})
+    return redirect('basics:actofgoods_startpage')
 
 
 def group_edit(request, pk):

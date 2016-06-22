@@ -3,6 +3,7 @@ from datetime import datetime
 from django.utils import timezone
 from django.utils.timezone import now
 from django.contrib.auth.models import User, Group
+from django.core.validators import RegexValidator
 
 # Create your models here.
 class Message(models.Model):
@@ -39,7 +40,8 @@ class CategoriesRep(models.Model):
 
 class Groupdata(models.Model):
 	group = models.OneToOneField(Group, on_delete=models.CASCADE)
-	name = models.CharField(max_length=30)
+	alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters are allowed.')
+	name = models.CharField(max_length=30, validators=[alphanumeric])
 	email = models.EmailField(max_length=254)
 	phone = models.CharField(max_length=15)
 	is_NGO = models.BooleanField(default=True)

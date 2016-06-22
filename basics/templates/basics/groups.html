@@ -16,7 +16,7 @@
 	                            <th>{{ group.name }}</th>
 	                            <th>{{ group.email }}</th>
 	                            <th>
-	                                <a href="{% url 'basics:group_detail' pk=group.pk %}" class="btn btn-warning btn-sm" title="group detail">
+	                                <a href="{% url 'basics:group_detail' name=group.name %}" class="btn btn-warning btn-sm" title="group detail">
 	                                    <span>group detail</span>
 	                                </a>
 	                            </th>
