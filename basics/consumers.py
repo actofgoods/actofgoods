@@ -6,6 +6,7 @@ from .models import *
 from channels import Group
 from channels.sessions import channel_session
 from .views import sendmail
+import psycopg2
 from django.db import transaction
 
 @channel_session
@@ -19,32 +20,35 @@ def ws_add(message, room):
     message.channel_session['room'] = room
     message.channel_session['username'] = query['username'][0]
 
-@transaction.atomic
+
 @channel_session
 def ws_echo(message):
     if 'username' not in message.channel_session:
         return
-    room = message.channel_session['room']
-    logging.info('Echoing message %s from username %s in room %s',
-                 message.content['text'], message.channel_session['username'],
-                 room)
-    db_room = Room.objects.get(name=room)
+    with transaction.atomic():
+        room = message.channel_session['room']
+        logging.info('Echoing message %s from username %s in room %s',
+                     message.content['text'], message.channel_session['username'],
+                     room)
+        db_room = Room.objects.get(name=room)
 
-    print(message.channel_session['username'])
-    author = User.objects.get(username=message.channel_session['username'])
-    text = message.content['text']
-    print("THIS IS THE MESSAGE TEXT")
-    print(text)
-    if text == "ack":
-        db_room.set_saw(author)
-        print(db_room.req_saw, db_room.off_saw)
-        return
+        print(message.channel_session['username'])
+        author = User.objects.get(username=message.channel_session['username'])
+        text = message.content['text']
+        print("THIS IS THE MESSAGE TEXT")
+        print(text)
+        if text == "ack":
+            db_room.set_saw(author)
+            print(db_room.req_saw, db_room.off_saw)
+            return
     chatMessage = ChatMessage(author=author, room=db_room, text=message.content['text'])
     chatMessage.save()
     db_room.incomming_message(author)
     user = db_room.user_req
+    print(author.username, user.username, db_room.need.author)
     if user == author:
         user = db_room.need.author
+    sendmail(user.email, "Message from " + author.username, message.content['text'])
 
     Group('chat-%s' % room).send({
         'text': json.dumps({
@@ -54,5 +58,3 @@ def ws_echo(message):
             'date': datetime.now().__str__()
         }),
     })
-
-    #sendmail(user.email, "Message from " + author.username, message.content['text'])

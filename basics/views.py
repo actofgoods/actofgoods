@@ -135,6 +135,7 @@ def kick_user(request, roomname):
 def chat_room(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
+        name = room.need.headline
         if room.need.author == request.user or room.user_req == request.user:
             room.set_saw(request.user)
             messages = ChatMessage.objects.filter(room=roomname).order_by('date')
@@ -161,7 +162,7 @@ def chat_room(request, roomname):
             rooms_json += "]"
             print(rooms_json)
 
-            return render(request, 'basics/chat.html',{'name':room.need.headline,'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
+            return render(request, 'basics/chat.html',{'name':name,'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
 

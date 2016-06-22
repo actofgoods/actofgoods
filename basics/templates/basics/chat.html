@@ -88,7 +88,7 @@
     render: function render() {
       return React.createElement(
         'div',
-        { className: 'message-list', ref: this.getNodeRef },
+        { className: 'message-list', ref: this.getNodeRef},
         this.props.children
       );
     }
@@ -270,7 +270,8 @@
       window.chatSocket = this.socket;
 
       this.socket.addEventListener('message', function (e) {
-        this.sendMessage("ack")
+        this.sendMessage("ack");
+        console.log("ack for message "+ JSON.parse(e.data));
         this.setState({
           messages: this.state.messages.concat(JSON.parse(e.data))
         });
@@ -447,12 +448,8 @@
       }
       return React.createElement(
         'div',
-        { className: '', ref: this.getNodeRef, },
-        React.createElement(
-          'div',
-          {className:'list-group'},
-          rendered_rooms
-        )
+        { className: 'room-container', ref: this.getNodeRef },
+        rendered_rooms
       );
     }
   })
