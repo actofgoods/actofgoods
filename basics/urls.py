@@ -62,4 +62,8 @@ urlpatterns = [
     url(r'^info_edit/(?P<pk>\w+)$', views.info_edit, name='info_edit'),
     url(r'^info_delete/(?P<pk>\w+)$', views.info_delete, name='info_delete'),
     url(r'^comm_delete/(?P<pk>\w+)$', views.comm_delete, name='comm_delete'),
+
+    url(r'^groups/detail/(?P<pk>\d+)/$', views.group_detail, name='group_detail'),
+    url(r'^groups/edit/(?P<pk>\d+)/$', views.group_edit, name='group_edit'),
+    url(r'^groups/leave/(?P<pk>\d+)/$', views.group_leave, name='group_leave'),
 ]

@@ -10,13 +10,13 @@
                     </tr>
                 </thead>
                 <tbody>
-	                {% if user.is_staff %}
+	                {% if user.groups %}
 	                    {% for group in user.groups.all %}
 	                        <tr>
 	                            <th>{{ group.name }}</th>
 	                            <th>{{ group.email }}</th>
 	                            <th>
-	                                <a href="#" class="btn btn-warning btn-sm" title="edit">
+	                                <a href="{% url 'basics:group_detail' pk=group.pk %}" class="btn btn-warning btn-sm" title="edit">
 	                                    <span class="glyphicon glyphicon-pencil"></span>
 	                                </a>
 	                            </th>

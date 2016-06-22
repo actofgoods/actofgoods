@@ -17,7 +17,7 @@ from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
 from django.utils import timezone
 # Create your views here.
-from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm, ContactUsForm
+from .forms import *
 from .models import *
 from itertools import chain
 
@@ -794,9 +794,6 @@ def sendmail(email, content, subject):
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
     mail.close()
 
-def groups(request):
-    return render(request, 'basics/groups.html')
-
 def report_need(request, pk):
     need = Need.objects.get(pk=pk)
     need.was_reported = True
@@ -883,3 +880,53 @@ def report_comment(request, pk):
     comment.reported_by.add(request.user.userdata)
     comment.save()
     return information_view(request, comment.inf.pk)
+
+####################################################################################################################################################
+###                             Group functions
+####################################################################################################################################################
+
+def groups(request):
+    return render(request, 'basics/groups.html')
+
+def group_detail(request, pk):
+    gro = request.user.groups.get(pk=pk)
+    group = Groupdata.objects.get(name=gro.name)
+    return render(request, 'basics/group_detail.html', {'group':group})
+
+
+def group_edit(request, pk):
+    if request.user.is_authenticated():
+        if request.method == "GET":
+            group = Groupdata.objects.get(pk=pk)
+            return render(request, 'basics/group_edit.html', {'group': group})
+        elif request.method == "POST":
+            form = GroupEditForm(request.POST)
+            lat, lng = getAddress(request)
+            if form.is_valid():
+                group = Groupdata.objects.get(pk=pk)
+                email = request.POST.get('email')
+                if request.POST.get('email', "") != "":
+                    group.email = request.POST.get('email')
+                if request.POST.get('phone') != "" :
+                    group.phone = request.POST.get('phone')
+                if lat != None and lng != None:
+                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    group.address =address
+                group.save()
+                return redirect('basics:groups')
+    return redirect('basics:actofgoods_startpage')
+
+def group_leave(request, pk):
+    return render(request, 'basics/home.html')
+
+
+
+
+
+
+
+
+
+
+
+

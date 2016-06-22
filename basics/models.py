@@ -39,6 +39,7 @@ class CategoriesRep(models.Model):
 
 class Groupdata(models.Model):
 	group = models.OneToOneField(Group, on_delete=models.CASCADE)
+	name = models.CharField(max_length=30)
 	email = models.EmailField(max_length=254)
 	phone = models.CharField(max_length=15)
 	is_NGO = models.BooleanField(default=True)

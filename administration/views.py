@@ -89,7 +89,7 @@ def groups(request):
                     user = User.objects.get(email=email)
                     user.save()
                     group.user_set.add(user)
-                    gdata = Groupdata(group=group)
+                    gdata = Groupdata(group=group, name=group.name)
                     gdata.save()
                     return redirect('administration:groups')
                 elif not {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
