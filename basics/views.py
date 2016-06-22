@@ -917,7 +917,16 @@ def group_edit(request, pk):
     return redirect('basics:actofgoods_startpage')
 
 def group_leave(request, pk):
-    return render(request, 'basics/home.html')
+    print(User.objects.get(email=request.user))
+    if request.user.is_authenticated():
+        #if request.method == "POST":
+        groupDa = Groupdata.objects.get(pk=pk)
+        group = groupDa.group
+        group.user_set.remove(request.user)
+        group.save()
+        if len(group.user_set.all()) == 0:
+            group.delete()
+    return render(request, 'basics/groups.html')
 
 
 
