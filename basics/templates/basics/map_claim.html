@@ -9,60 +9,14 @@
 		height: 40%;
 	}
 
-	/*button, .btn-primary, .btn-primary:focus {
-		background-color: #bbd153;
-  		border-color: #70962c;
-  		color: #4C4E49;
-	}
-
-	.btn-primary:hover, .btn-primary:active:focus {
-		background-color: #96B440;
-		color: #4C4E49;
-	}*/
-
-	.modal-header > h2 {
-		color: #bbd153;
-		font-weight: bold;
-	}
-
-	.nav-tabs > li > a, .nav-tabs > li > a:hover, .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-		color: #70962c;
-	}
-
-
-
-	#address-label, #address-input {
-		margin-top: 5px;
-		margin-bottom: 5px;
-	}
-
-	#address-label {
-		margin-top: 12px;
-		margin-bottom: 12px;
-	}
-
-	@media(max-width:768px) {
-
-		#address-input {
-			margin-top: 0px;
-		}
-
-		#address-label {
-			margin-bottom: 5px;
-		}
-
-	}
 
 </style>
 
-<button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-toggle="modal" data-target="#location-map-modal">Choose location</button>
 <!-- Modal -->
-<div class="modal fade" id="location-map-modal">
-   	<div class="modal-dialog modal-lg">
+<div class="standard-modal" id="location-map-modal">
    		<div class="modal-content">
 
        		<div class="modal-header">
-       			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
        			<h2 class="text-center">Which area should be claimed?</h2>
       		</div>
 
@@ -83,12 +37,11 @@
 
 	        <div class="modal-footer">
 				<button id="standard-grey-button-bold" type="button" onclick="deletePolygon()" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-	        	<button id="standard-grey-button-bold" type="button" onclick="save()" class="btn btn-primary" data-dismiss="modal">Save</button>
+	        	<button id="standard-grey-button-bold" type="button" onclick="test()" class="btn btn-primary" data-dismiss="modal">Save</button>
                 <button id="standard-grey-button-bold" type="button" onclick="test()" class="btn btn-primary" >Resize</button>
 	        </div>
 
       	</div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
 
@@ -103,7 +56,7 @@
 	var myCenter=new google.maps.LatLng(51.508742,-0.120850);
 	var geocoder;
 	var infowindow;
-    var paths=[];
+	var marker;
 
 
 
@@ -120,9 +73,16 @@
         streetViewControl: false
   		};
   		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
-  		google.maps.event.addListener(map, 'click', function(event) {
-            placePolygon(event);
-  		});
+  		poly=new google.maps.Polygon({
+                paths: new google.maps.MVCArray([new google.maps.MVCArray]),
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 3,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+                editable: true
+            });
+  		google.maps.event.addListener(map, 'click', addPoint);
         /*google.maps.event.addListener(polypoints, 'set_at', function(){
             polygon.paths=polypoints;
             console.log(polygon.getPath());
@@ -130,22 +90,50 @@
 	}
 
     function test(){
-        poly.setEditable(true);
-        poly.getPaths().forEach(function(path,index){
-            google.maps.event.addListener(path, 'set_at', function(index){
-                print_polygon();
-            //console.log(polypoints[index].lat());
-
-            });
-        });
-    };
-                      
-
-    function deletePolygon(){
-        map = null;
+        print_polygon();
     }
+                  
+	function addPoint(event) {
+	/*if(!marker){
+		marker=new google.maps.Marker({
+			position: event.latLng,
+			map: map,
+			dragable: false
+		})
+	}
+	*/
+	poly.getPath().insertAt(poly.getPath().length, event.latLng);
+	print_polygon();
+	/*google.maps.event.addListener(poly.getPath, 'set_at', function(){
+		print_polygon();
+		poly.setMap(map);
+	})
+	google.maps.event.addListener(poly.getPath, 'dragend', function(){
+		print.polygon();
+		poly.setMap(map);
+	})
+	*/
+	poly.setMap(map);
+	/*var marker = new google.maps.Marker({
+		position : event.latLng,
+		map : map,
+		draggable : true
+	});
+	markers.push(marker);
+	marker.setTitle("#" + path.length);
+	
+	google.maps.event.addListener(marker, 'click', function() {
+		removeMarker(marker);
+	});
+	
+	google.maps.event.addListener(marker, 'dragend', function() {
+		for (var i = 0, I = markers.length; i < I && markers[i] != marker; ++i);
+		path.setAt(i, marker.getPosition())
+		poly.setMap(map);;
+	});*/
+}    
 
-    function save() {
+    /*function save() {
         var googleToDjango="";
         for(var i=0;i<polypoints.length;i++){
             if(i>0){
@@ -155,11 +143,12 @@
         }
         googleToDjango+=", "+polypoints[0].lat()+" "+polypoints[0].lng();
         console.log(JSON.stringify(googleToDjango));
-    }
+    }*/
 
     function print_polygon(){
-        for (var i=0; i<poly.getPaths().length; i++){
-            console.log(poly.getPaths().getAt(i).lat());
+    	console.log("Neues Poly! Länge: " + poly.getPath().length);
+        for (var i=0; i<poly.getPath().length; i++){
+            console.log(poly.getPath().getAt(i).lat());
         }
     }
 
