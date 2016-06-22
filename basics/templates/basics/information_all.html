@@ -64,14 +64,27 @@
                                 </div>
                             </a>
                             <div class="col-sm-1">
-                                <button type="button" id="{{ info.id }}" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:information_view' pk=info.id %}';" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-comment"></span> Comment</button>
+                                <button type="button" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:information_view' pk=info.id %}';" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-comment"></span> Comment</button>
 
                             </div>
-                            <div class="col-sm-1"></div>
                             {% if not user.userdata in info.reported_by.all %}
-                            <div class="col-sm-1">
-                              <button type="button" id="{{ info.id }}" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:report_information' pk=info.id%}';" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-alert"></span> Report</button>
-                            </div>
+                              <div class="col-sm-1">
+                                <button type="button" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:report_information' pk=info.id%}';" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-alert"></span> Report</button>
+                              </div>
+                            {% else %}
+                              <div class="col-sm-1">
+                                <button type="button" class="btn btn-default btn-sml standard-grey-button-light disabled" onclick="#" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-alert"></span> Report</button>
+                              </div>
+                            {% endif %}
+
+                            {% if not user.userdata in info.liked_by.all %}
+                              <div class="col-sm-1">
+                                <button type="button" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:like_information' pk=info.id %}';" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-thumbs-up"></span> Like</button>
+                              </div>
+                            {% else %}
+                              <div class="col-sm-1">
+                                <button type="button" class="btn btn-default btn-sml standard-grey-button-light" onclick="location.href='{% url 'basics:unlike_information' pk=info.id %}';" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-thumbs-up"></span> Unlike</button>
+                              </div>
                             {% endif %}
                         </div>
                       </div>

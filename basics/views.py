@@ -808,22 +808,39 @@ def report_information(request, pk):
     info.number_reports += 1
     info.reported_by.add(request.user.userdata)
     info.save()
-    return information_all(request)
+    return redirect('basics:information_all')
+
+def like_information(request, pk):
+    info = Information.objects.get(pk=pk)
+    info.was_liked = True
+    info.number_likes += 1
+    info.liked_by.add(request.user.userdata)
+    info.save()
+    return redirect('basics:information_all')
+
+def unlike_information(request, pk):
+    info = Information.objects.get(pk=pk)
+    info.number_likes -= 1
+    if info.number_likes == 0:
+        info.was_liked = False
+    info.liked_by.remove(request.user.userdata)
+    info.save()
+    return redirect('basics:information_all')
 
 def need_delete(request, pk):
     need = Need.objects.all().get(pk=pk)
     need.delete()
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def info_delete(request, pk):
     info = Information.objects.all().get(pk=pk)
     info.delete()
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def comm_delete(request, pk):
     comm = Comment.objects.all().get(pk=pk)
     comm.delete()
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def need_edit(request, pk):
     if not request.user.is_active:
@@ -847,7 +864,7 @@ def need_edit(request, pk):
             return actofgoods_startpage(request)
         form = NeedFormNew()
         return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all()})
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def info_edit(request, pk):
     if not request.user.is_active:
@@ -871,7 +888,7 @@ def info_edit(request, pk):
             return actofgoods_startpage(request)
         form = InformationFormNew()
         return render(request, 'basics/info_edit.html', {'info': info})
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def report_comment(request, pk):
     comment = Comment.objects.get(pk=pk)

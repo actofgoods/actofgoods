@@ -35,7 +35,11 @@
                             </div>
                             {% if not user.userdata in comment.reported_by.all %}
                               <div class="col-sm-1">
-                                <button type="button" id="{{ comment.id }}" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:report_comment' pk=comment.id%}'" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-alert"></span> Report</button>
+                                <button type="button" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:report_comment' pk=comment.id%}'" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-alert"></span> Report</button>
+                              </div>
+                            {% else %}
+                              <div class="col-sm-1">
+                                <button type="button" class="btn btn-default btn-sml standard-grey-button-light disabled" onclick="#" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-alert"></span> Report</button>
                               </div>
                             {% endif %}
                         </div>
