@@ -4,6 +4,7 @@ import smtplib
 import string
 import requests
 import json
+from django.http import JsonResponse
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
@@ -176,7 +177,20 @@ def claim(request):
     if request.user.is_authenticated():
         return render(request, 'basics/map_claim.html')
 
+@csrf_protect
+def claim_post(request):
+    if request.method=="POST":
+        poly_path=request.POST['path']
+        response_data = {}
+        wkt = poly_path
+        claim = ClaimedArea.objects.create(claimer=request.user, poly=wkt)
+        claim.save()
+        response_data['result'] = 'Creation successful!'
+        response_data['owner']=request.user.email
+        response_data['poly']=claim.poly
 
+        return JsonResponse(response_data)
+    
 @csrf_protect
 def contact_us(request):
     if request.method == "POST":

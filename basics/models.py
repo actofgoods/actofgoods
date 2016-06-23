@@ -19,6 +19,12 @@ class CategoriesInf(models.Model):
 class CategoriesNeeds(models.Model):
 	name = models.CharField(max_length=50)
 
+class ClaimedArea(models.Model):
+	claimer=models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+	poly = models.CharField(max_length=10000)
+	def __unicode__(self):
+		return self.poly
+
 # Not acces now errors incomings
 class Userdata(models.Model):
 	user = models.OneToOneField(User,on_delete=models.CASCADE)
