@@ -183,12 +183,12 @@ def claim_post(request):
     if request.method=="POST":
         poly_path=request.POST['path']
         response_data = {}
-        wkt = poly_path
+        wkt = "POLYGON(("+poly_path+"))"
         claim = ClaimedArea.objects.create(claimer=request.user, poly=wkt)
         claim.save()
         response_data['result'] = 'Creation successful!'
         response_data['owner']=request.user.email
-        response_data['poly']=claim.poly
+        response_data['poly']=claim.poly.geojson
 
         return JsonResponse(response_data)
     

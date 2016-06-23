@@ -3,6 +3,7 @@ from datetime import datetime
 from django.utils import timezone
 from django.utils.timezone import now
 from django.contrib.auth.models import User, Group
+from django.contrib.gis.db import models
 
 # Create your models here.
 class Message(models.Model):
@@ -21,7 +22,8 @@ class CategoriesNeeds(models.Model):
 
 class ClaimedArea(models.Model):
 	claimer=models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-	poly = models.CharField(max_length=10000)
+	poly=models.PolygonField()
+	objects = models.GeoManager()
 	def __unicode__(self):
 		return self.poly
 
