@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'channels',
 ]
 
@@ -87,7 +88,7 @@ DATABASES = {
         'isolation_level': psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE,
     },
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'actofgoods',
         'USER': 'actofgoods',
         'PASSWORD': 'saft231',
