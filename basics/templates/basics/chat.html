@@ -68,8 +68,14 @@
       React.createElement(
         'div',
         { className: classString + 'message__text' },
-        props.text
+        props.text,
+        React.createElement(
+          'div',
+          { className: "small-text"},
+          props.date
+        )
       )
+
     );
   };
 
@@ -344,6 +350,7 @@
           ownMessage: message.username === this.state.author ? true : false,
           text: message.message,
           author: message.username,
+          date: message.date,
           key: index });
       }.bind(this));
 
@@ -487,48 +494,7 @@
     }
   };
 </script>
-<script>
 
-(function (React, ReactDOM, window, document, MDL) {
-  'use strict';
-
-  /*var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-  var rooms = eval({{rooms_json|safe}})
-  console.log(rooms)
-  for(var i=0;i<rooms.length;i++){
-    name = rooms[i]['name'];
-    console.log(name);
-    var url = ws_scheme + '://' + window.location.host + "/chat/" + name + '?username={{request.user.username}}';
-    var socket = new WebSocket(url);
-
-    socket.onmessage = function(message) {
-        alert(message.data);
-    };
-  }*/
-  var Message = function Message(props) {
-    var classString = props.ownMessage ? 'own ' : '';
-    return React.createElement(
-      'div',
-      { className: classString + 'message clearfix' },
-      React.createElement(
-        'div',
-        { className: 'message__author' },
-        props.ownMessage ? 'You' : 'Other'         //props.author
-      ),
-      React.createElement('div', { className: 'message__avatar' }),
-      React.createElement(
-        'div',
-        { className: classString + 'message__text' },
-        props.text
-      )
-    );
-  }
-
-
-
-
-
-})(React, ReactDOM, window, document, componentHandler);
 
 
 </script>
