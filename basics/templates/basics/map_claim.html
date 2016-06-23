@@ -59,6 +59,7 @@
 	var geocoder;
 	var infowindow;
 	var marker;
+	var info = new google.maps.InfoWindow();
 
 	$.ajaxSetup({
   		data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
@@ -75,6 +76,11 @@
 			success: function(json){
 				alert("Succesfully created!");
 				poly.setEditable(false);
+				poly.addListener('click', function(event){
+	  				info.setContent('<b>Owner: </b>' +json.owner);
+	  				info.setPosition(event.latLng);
+	  				info.open(map);
+  				})
 				console.log(json);
 				console.log("success");
 			},
@@ -121,9 +127,11 @@
     }
                   
 	function addPoint(event) {
-		poly.getPath().insertAt(poly.getPath().length, event.latLng);
-		print_polygon();
-		poly.setMap(map);
+		if(poly.editable==true){
+			poly.getPath().insertAt(poly.getPath().length, event.latLng);
+			print_polygon();
+			poly.setMap(map);
+		}
 	}    
 
     function save() {
