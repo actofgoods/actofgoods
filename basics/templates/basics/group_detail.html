@@ -68,8 +68,9 @@
 		Phonenumber: {{group.phone}} 					<br>
   		latitude: {{ group.address.latitude }}			<br>
   		longditude: {{ group.address.longditude }} 		<br></b>
-		<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:group_edit' pk=group.pk %}">Edit group profile</a>
-		<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:group_leave' pk=group.pk %}">Leave group</a>
+		<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:group_edit' pk=group.pk %}">Edit Group Profile</a>
+		<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:group_leave' pk=group.pk %}">Leave Group</a>
+    <a id="standard-grey-button-bold" class="btn btn-sm"href="#">Claim Area</a>
 		<br>
 		<br>
 	</div>

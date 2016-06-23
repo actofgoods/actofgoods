@@ -2,7 +2,6 @@
 {% load filter%}
 {% block content %}
 
-
 <!-- needs -->
 <div id="standard-modal">
     <div class="modal-content">
@@ -23,11 +22,12 @@
                     </label>
                   </div>
                   <div class="col-sm-2" style="margin-top: 20px;">
-                    <label> Category
+                    <label> Category {{ category }}
                         <select style="width: 100%" name="category">
-                            {% for category in categorie %}
-                                <option value="{{ category.name }}">{{ category.name }}</option>
-                            {% endfor %}
+                          <option value="all" {% if 'all' == category %}selected{% endif %}>All</option>
+                          {% for categorie in categories %}
+                            <option value="{{ categorie.name }}" {% if categorie.name == category %}selected{% endif %}>{{ categorie.name }}</option>
+                          {% endfor %}
                         </select>
                     </label>
                   </div>

@@ -465,10 +465,9 @@ def fill_needs(request):
 def needs_all(request):
     if request.user.is_authenticated():
         range = "Range"
-        category = "Categories"
+        category = "all"
         cards_per_page = "Cards per page"
         needs = Need.objects.order_by('date')
-
         if request.method == "POST":
             if "" != request.POST['range']:
                 range = request.POST['range']
@@ -478,9 +477,8 @@ def needs_all(request):
             if "" != request.POST['cards_per_page']:
                 cards_per_page = int(request.POST['cards_per_page'])
                 needs = needs[:cards_per_page]
-
-
-        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'cards_per_page':cards_per_page, 'range':range})
+        print(request)
+        return render(request, 'basics/needs_all.html',{'needs':needs,'categories':CategoriesNeeds.objects.all(), 'category':category, 'cards_per_page':cards_per_page, 'range':range})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -904,6 +902,10 @@ def report_comment(request, pk):
 
 def groups(request):
     return render(request, 'basics/groups.html')
+
+def groups_all(request):
+    groups = Groupdata.objects.all().order_by('name')
+    return render(request, 'basics/groups_all.html', {'groups':groups})
 
 def group_detail(request, name):
     if request.user.is_authenticated():
