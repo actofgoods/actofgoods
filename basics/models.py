@@ -115,7 +115,7 @@ class Room(models.Model):
 	act_off = models.BooleanField(default=False)
 	last_message = models.DateTimeField(auto_now=True)
 	req_saw = models.BooleanField(default=True)
-	off_saw =  models.BooleanField(default=False)
+	off_saw =  models.BooleanField(default=True)
 
 	def __unicode__(self):
 		return self.name

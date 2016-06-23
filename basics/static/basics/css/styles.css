@@ -34,7 +34,6 @@
 	padding: 20px 0;
 	display: none;
 }
-
 .room-container {
 	height: 70%;
 	left: 0;
@@ -42,6 +41,13 @@
 	top: 0;
 	overflow-y: scroll;
 	overflow-x: hidden;
+}
+
+
+.room {
+	background-color: #bbd153;
+	margin: 1rem;
+	border-radius: 1em;
 }
 .message-list {
 	padding: 1rem;
@@ -146,6 +152,9 @@ button, .btn-primary, .btn-primary:focus {
 	opacity: 0;
 }
 
+.small-text{
+	font-size: 0.7em;
+}
 /* Small devices (tablets, 768px and up) */
 @media (min-width: 1px) {
 		.button-container {

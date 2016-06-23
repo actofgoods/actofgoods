@@ -8,6 +8,8 @@ from channels.sessions import channel_session
 from .views import sendmail
 import psycopg2
 from django.db import transaction
+import threading
+import time
 
 @channel_session
 def ws_add(message, room):
@@ -48,13 +50,32 @@ def ws_echo(message):
     print(author.username, user.username, db_room.need.author)
     if user == author:
         user = db_room.need.author
-    sendmail(user.email, "Message from " + author.username, message.content['text'])
-
+    t1 = threading.Thread(target=email_check,args=(user,author, room, text,))
+    t1.start()
     Group('chat-%s' % room).send({
         'text': json.dumps({
             'message': message.content['text'],
             'username': message.channel_session['username'],
             'room': message.channel_session['room'],
-            'date': datetime.now().__str__()
+            'date': datetime.now().__str__()[:-7]
         }),
     })
+
+class FuncThread(threading.Thread):
+    def __init__(self, target, *args):
+        self._target = target
+        self._args = args
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self._target(*self._args)
+
+#Email check will send the user an email if the message is not viewed within a minute
+def email_check(user, author, roomname, text ):
+    time.sleep(10)
+    print("stop sleep")
+    room = Room.objects.get(name=roomname)
+    if room.new_message(user):
+        print("email was send because: req:"+ room.req_saw.__str__() + " off:"+room.off_saw.__str__())
+
+        sendmail(user.email, "Message from " + author.username, text)

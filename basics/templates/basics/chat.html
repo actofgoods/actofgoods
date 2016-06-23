@@ -14,7 +14,7 @@
     <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 
   <body>
-  <div class = "row" style="box-shadow: 0 0 30px black; height:70%" >
+  <div class = "row " style="box-shadow: 0 0 30px black; height:70%; border-radius: 1em;" >
     <!--<div class="col-md-4">
       <div class="card card-block">
         <h4 class="card-title">Card title</h4>
@@ -34,7 +34,7 @@
       </div>
       <a href="{% url 'basics:kick_user' roomname=roomname %}" class="btn btn-primary">Kick User</a>
     </div>-->
-    <div class="col-md-4" style="background-color: #d1d1d1; height:100%">
+    <div class="col-md-4 col-xs-12" style="background-color: #d1d1d1; height:100%">
       <div class="card card-block" >
         <h4 class="card-title">Your Chats</h4>
           <div id="rooms-container">
@@ -42,7 +42,7 @@
       </div>
       <a id="standard-grey-button-bold" href="{% url 'basics:kick_user' roomname=roomname %}" class="btn btn-primary">Kick User</a>
     </div>
-    <div class="col-md-8" id="app"></div>
+    <div class="col-md-8 col-xs-12" id="app"></div>
     </div>
     <script>
 'use strict';
@@ -68,8 +68,14 @@
       React.createElement(
         'div',
         { className: classString + 'message__text' },
-        props.text
+        props.text,
+        React.createElement(
+          'div',
+          { className: "small-text"},
+          props.date
+        )
       )
+
     );
   };
 
@@ -344,6 +350,7 @@
           ownMessage: message.username === this.state.author ? true : false,
           text: message.message,
           author: message.username,
+          date: message.date,
           key: index });
       }.bind(this));
 
@@ -379,13 +386,13 @@
   var Room = function Room(props){
     return React.createElement(
       'a',
-      {className:'goupe-list-element', id:'standard-list-group-item-div', href:"/chat/"+props['room']['hash'] },
+      {className:'goupe-list-element ', id:'standard-list-group-item-div', href:"/chat/"+props['room']['hash'] },
       React.createElement(
         'div',
-        {className:'row '},
+          {className:'col-sm-11 col-xs-3 grey room',  id:'standart-modal'},
         React.createElement(
           'div',
-          {className:'col-sm-12'},
+          {className:''},
           React.createElement(
             'div',
             {className:'card card-block'},
@@ -448,7 +455,7 @@
       }
       return React.createElement(
         'div',
-        { className: 'room-container', ref: this.getNodeRef },
+        { className: 'room-container room-container-small', ref: this.getNodeRef },
         rendered_rooms
       );
     }
@@ -487,48 +494,7 @@
     }
   };
 </script>
-<script>
 
-(function (React, ReactDOM, window, document, MDL) {
-  'use strict';
-
-  /*var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-  var rooms = eval({{rooms_json|safe}})
-  console.log(rooms)
-  for(var i=0;i<rooms.length;i++){
-    name = rooms[i]['name'];
-    console.log(name);
-    var url = ws_scheme + '://' + window.location.host + "/chat/" + name + '?username={{request.user.username}}';
-    var socket = new WebSocket(url);
-
-    socket.onmessage = function(message) {
-        alert(message.data);
-    };
-  }*/
-  var Message = function Message(props) {
-    var classString = props.ownMessage ? 'own ' : '';
-    return React.createElement(
-      'div',
-      { className: classString + 'message clearfix' },
-      React.createElement(
-        'div',
-        { className: 'message__author' },
-        props.ownMessage ? 'You' : 'Other'         //props.author
-      ),
-      React.createElement('div', { className: 'message__avatar' }),
-      React.createElement(
-        'div',
-        { className: classString + 'message__text' },
-        props.text
-      )
-    );
-  }
-
-
-
-
-
-})(React, ReactDOM, window, document, componentHandler);
 
 
 </script>

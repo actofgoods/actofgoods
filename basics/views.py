@@ -144,7 +144,8 @@ def chat_room(request, roomname):
             for message in messages:
                 message_json += json.dumps({
                     'message': message.text,
-                    'username': message.author.username
+                    'username': message.author.username,
+                    'date': message.date.__str__()[:-13]
                 }) + ","
             message_json += "]"
             print(message_json)

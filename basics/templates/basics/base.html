@@ -231,6 +231,7 @@
 	    getInitialState: function getInitialState() {
 	      var rooms = eval({{channels|safe}})
 				var roomname = '{{roomname}}'
+				var dic = {}
 	      //console.log(rooms)
 	      var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 	      for(var i=0;i<rooms.length;i++){
@@ -242,12 +243,19 @@
 	        //console.log(name);
 	        var url = ws_scheme + '://' + window.location.host + "/chat/" + name + '?username={{request.user.username}}';
 	        var socket = new WebSocket(url);
+					dic[name] = socket;
+
 
 	        socket.onmessage = function(message) {
+						  var room = JSON.parse(message.data)['room'];
 	            this.setState({
 	              new_count:this.state.new_count+1
 	            });
+
+							var socket = dic[room];
+							socket.close();
 	        }.bind(this);
+
 	      }
 	      return {
 	        new_count:{{new_messages|safe}}
