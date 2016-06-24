@@ -96,6 +96,7 @@
 								</ul>
 							</li>					<!-- insert URL for needs and create if for class = active-->
 							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}">Chats  <span class="badge" id="badge-container"></span></a></li>
+							<li id="navbar-with-divider" {% if "/claim/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:claim' %}">Claim  <span class="badge" id="badge-container"></span></a></li>
 							<li {% if "/groups/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:groups' %}">Groups</a></li>
 						</ul>
 
