@@ -8,17 +8,24 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="row">
-                <div class="col-sm-4" style="padding: 15px">
+                <div class="col-sm-2" style="padding: 15px">
                     <h2 class="text-center" id="standard-modal-headline">Needs</h2>
                 </div>
                 <form class="form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
                   {%csrf_token%}
                   <div class="col-sm-2" style="margin-top: 20px;">
+                    <label for="basic-url">Search</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="basic-url" name="word-search" aria-describedby="basic-addon3">
+                    </div>
+
+                  </div>
+                  <div class="col-sm-2" style="margin-top: 20px;">
                     <label> Range
                         <select style="width: 100%" name="range">
-                          <option>5km</option>
-                          <option>20km</option>
-                          <option>40km</option>
+                          <option value="5" {% if '5' == range %}selected{% endif %}>5km</option>
+                          <option value="20" {% if '20' == range %}selected{% endif %}>20km</option>
+                          <option value="40" {% if '40' == range %}selected{% endif %}>40km</option>
                         </select>
                     </label>
                   </div>
@@ -26,7 +33,7 @@
                     <label> Category
                         <select style="width: 100%" name="category">
                             {% for category in categorie %}
-                                <option value="{{ category.name }}">{{ category.name }}</option>
+                                <option value="{{ category.name }}" {% if '{{ category.name }}' == category %}selected{% endif %}>{{ category.name }}</option>
                             {% endfor %}
                         </select>
                     </label>
@@ -34,9 +41,9 @@
                   <div  class="col-sm-2" style="margin-top: 20px;">
                     <label> Cards per Page
                         <select style="width: 100%" title="{{cards_per_page}}" name="cards_per_page">
-                            <option>1</option>
-                            <option>5</option>
-                            <option>10</option>
+                            <option {% if 1 == cards_per_page %}selected{% endif %}>1</option>
+                            <option {% if 5 == cards_per_page %}selected{% endif %}>5</option>
+                            <option {% if 10 == cards_per_page %}selected{% endif %}>10</option>
                         </select>
                     </label>
                   </div>

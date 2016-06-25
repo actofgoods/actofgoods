@@ -483,18 +483,21 @@ def needs_all(request):
         range = "Range"
         category = "Categories"
         cards_per_page = "Cards per page"
-        needs = Need.objects.order_by('date')
+        needs = Need.objects.order_by('-date')
 
         if request.method == "POST":
+            print(request.POST)
             if "" != request.POST['range']:
                 range = request.POST['range']
             if "" != request.POST['category']:
                 category = request.POST['category']
-                needs = Need.objects.filter(categorie=CategoriesNeeds.objects.get(name=category))
+                needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
+            if "" != request.POST['word-search']:
+                print(request.POST['word-search'])
+                needs = needs.filter(Q(headline__contains=request.POST['word-search']) | Q(text__contains=request.POST['word-search']))
             if "" != request.POST['cards_per_page']:
                 cards_per_page = int(request.POST['cards_per_page'])
                 needs = needs[:cards_per_page]
-
 
         return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'cards_per_page':cards_per_page, 'range':range})
 
