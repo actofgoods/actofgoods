@@ -36,7 +36,7 @@
 			</div><!-- modal-body -->
 
 	        <div class="modal-footer">
-				<button id="standard-grey-button-bold" type="button" onclick="deletePolygon()" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+				<button id="standard-grey-button-bold" type="button" onclick="loadClaims()" class="btn btn-primary">Load</button>
                 <button id="standard-grey-button-bold" type="submit" class="btn btn-primary" >Save</button>
 	        </div>
 	        </form>
@@ -59,6 +59,7 @@
 	var geocoder;
 	var infowindow;
 	var marker;
+    var path = [];
 	var info = new google.maps.InfoWindow();
 
 	$.ajaxSetup({
@@ -120,6 +121,49 @@
             console.log(polygon.getPath());
         })*/
 	}
+
+    function loadClaims(){
+        {% for claim in polygons %}
+            path = [];
+            {% for point in claim.poly.0 %}
+                path.push(new google.maps.LatLng{{point}});
+            {% endfor%}
+            createPoly(path, '{{claim.claimer.email}}');
+        {%endfor %}
+    }
+
+    function createPoly(path, email) {
+        if ("{{request.user.email}}" == email) {
+        var claim = new google.maps.Polygon({
+                paths: new google.maps.MVCArray(path),
+                strokeColor: '#FF0000',
+                fillColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 3,
+                fillOpacity: 0.35,
+                editable: false
+            });
+        }
+
+        else {
+            var claim = new google.maps.Polygon({
+                paths: new google.maps.MVCArray(path),
+                fillColor: '#B8CE52',
+                strokeColor: '#71972C',
+                strokeOpacity: 0.8,
+                strokeWeight: 3,
+                fillColor: '#B8CE52',
+                fillOpacity: 0.35,
+                editable: false
+            });
+        }
+            claim.addListener('click', function(event){
+                info.setContent('<b>Owner: </b>' +email);
+                info.setPosition(event.latLng);
+                info.open(map);
+                })
+        claim.setMap(map);
+    }
 
     function test(){
         //print_polygon();

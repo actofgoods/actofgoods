@@ -176,7 +176,7 @@ def chat_room(request, roomname):
 @csrf_protect
 def claim(request):
     if request.user.is_authenticated():
-        return render(request, 'basics/map_claim.html')
+        return render(request, 'basics/map_claim.html', {'polygons': ClaimedArea.objects.all()})
 
 @csrf_protect
 def claim_post(request):
@@ -191,6 +191,7 @@ def claim_post(request):
         response_data['poly']=claim.poly.geojson
 
         return JsonResponse(response_data)
+        
     
 @csrf_protect
 def contact_us(request):
