@@ -61,6 +61,7 @@
 	var marker;
     var path = [];
 	var info = new google.maps.InfoWindow();
+    var loaded = false;
 
 	$.ajaxSetup({
   		data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
@@ -123,6 +124,7 @@
 	}
 
     function loadClaims(){
+        if (loaded==false){
         {% for claim in polygons %}
             path = [];
             {% for point in claim.poly.0 %}
@@ -130,6 +132,8 @@
             {% endfor%}
             createPoly(path, '{{claim.claimer.email}}');
         {%endfor %}
+        loaded=true;
+        }
     }
 
     function createPoly(path, email) {
