@@ -17,6 +17,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
 from django.utils import timezone
+from django.contrib.gis.geos import GEOSGeometry
 # Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm, ContactUsForm
 from .models import *
@@ -303,7 +304,7 @@ def information_new(request):
                 lat, lng = getAddress(request)
                 print(lat,lng)
                 if lat != None and lng != None:
-                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    address = Address.objects.create(latitude=lat, longditude=lng, as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     data = info.cleaned_data
                     infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address)
                     infodata.save()
@@ -392,7 +393,7 @@ def immediate_aid(request):
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
                     user_data = form.cleaned_data
-                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    address = Address.objects.create(latitude=lat, longditude=lng, as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     user = User.objects.create_user(username=user_data['email'], password=password_d, email=user_data['email'])
                     userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address)
                     userdata.save()
@@ -556,7 +557,7 @@ def needs_new(request):
 
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
-                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    address = Address.objects.create(latitude=lat, longditude=lng, as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     data = need.cleaned_data
                     #print(need, "\n", data)
                     #print("\n", data['categorie'].name, "\n")
@@ -691,7 +692,7 @@ def register(request):
                     lat, lng = getAddress(request)
                     if lat != None and lng != None:
                         data = form.cleaned_data
-                        address = Address.objects.create(latitude=lat, longditude=lng)
+                        address = Address.objects.create(latitude=lat, longditude=lng, as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                         user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
                         userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, get_notifications= False)
                         userdata.save()
@@ -859,6 +860,7 @@ def need_edit(request, pk):
             if lat != None and lng != None:
                 request.user.userdata.address.latitude = lat
                 request.user.userdata.address.longditude = lng
+                request.user.userdata.address.as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng))
                 request.user.userdata.address.save()
                 request.user.userdata.save()
             if text != "":
@@ -883,6 +885,7 @@ def info_edit(request, pk):
             if lat != None and lng != None:
                 request.user.userdata.address.latitude = lat
                 request.user.userdata.address.longditude = lng
+                request.user.userdata.address.as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng))
                 request.user.userdata.address.save()
                 request.user.userdata.save()
             if text != "":

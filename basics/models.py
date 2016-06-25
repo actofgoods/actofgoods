@@ -12,6 +12,8 @@ class Message(models.Model):
 class Address(models.Model):
 	latitude = models.FloatField()
 	longditude = models.FloatField()
+	as_point=models.PointField(null=True)
+	objects = models.GeoManager()
 
 class CategoriesInf(models.Model):
 	name = models.CharField(max_length=50)
@@ -25,7 +27,7 @@ class ClaimedArea(models.Model):
 	poly=models.PolygonField()
 	objects = models.GeoManager()
 	def __unicode__(self):
-		return self.poly
+		return self.pk
 
 # Not acces now errors incomings
 class Userdata(models.Model):
