@@ -40,7 +40,7 @@ class CategoriesRep(models.Model):
 
 class Groupdata(models.Model):
 	group = models.OneToOneField(Group, on_delete=models.CASCADE)
-	alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters are allowed.')
+	alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
 	name = models.CharField(max_length=30, validators=[alphanumeric])
 	email = models.EmailField(max_length=254)
 	phone = models.CharField(max_length=15)
