@@ -87,7 +87,7 @@
 								    <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Groups <span class="caret"></span></a>
 								    <ul id="navbar-dropdown-menu" class="dropdown-menu">
                 	                    {% for group in user.groups.all %}
-									            <li {% if "/groups/detail/{{group.pk}}/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:group_detail' pk=group.pk %}">{{group.name}}</a></li>
+									            <li {% if "/groups/detail/{{group.name}}/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:group_detail' name=group.name %}">{{group.name}}</a></li>
                                         {% endfor %}
 								    </ul>
 							    </li>
