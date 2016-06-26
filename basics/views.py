@@ -261,8 +261,20 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 @csrf_protect
 def information_all(request):
     if request.user.is_authenticated():
+        range = "Range"
+        cards_per_page = "Cards per page"
         infos = Information.objects.order_by('date')
-        return render(request, 'basics/information_all.html',{'infos':infos})
+        if request.method == "POST":
+            print(request.POST['range'], request.POST['cards_per_page'])
+            if "" != request.POST['range']:
+                range = request.POST['range']
+            if "" != request.POST['cards_per_page']:
+                cards_per_page = int(request.POST['cards_per_page'])
+                infos = infos[:cards_per_page]
+            print(request)
+        else:
+            print("will nicgt")
+        return render(request, 'basics/information_all.html',{'infos':infos, 'cards_per_page':cards_per_page, 'range':range})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -469,8 +481,6 @@ def needs_all(request):
         cards_per_page = "Cards per page"
         needs = Need.objects.order_by('date')
         if request.method == "POST":
-            print("\n",request.POST['category'],"\n")
-
             if "" != request.POST['range']:
                 range = request.POST['range']
             if "" != request.POST['category']:
