@@ -12,8 +12,6 @@ class Message(models.Model):
 class Address(models.Model):
 	latitude = models.FloatField()
 	longditude = models.FloatField()
-	as_point=models.PointField(null=True)
-	objects = models.GeoManager()
 
 class CategoriesInf(models.Model):
 	name = models.CharField(max_length=50)
@@ -41,6 +39,7 @@ class Userdata(models.Model):
 	get_notifications = models.BooleanField(default=False)
 	inform_about = models.ManyToManyField(CategoriesNeeds)
 	aux = models.FloatField(default=50)
+	adrAsPoint=models.PointField(null=True)
 	def __unicode__(self):
 		return self.pseudonym
 
@@ -67,6 +66,8 @@ class Need(models.Model):
 	was_reported = models.BooleanField(default=False)
 	number_reports = models.PositiveIntegerField(default=0)
 	reported_by = models.ManyToManyField(Userdata)
+	adrAsPoint=models.PointField(null=True)
+	objects = models.GeoManager()
 
 class Information(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -79,6 +80,8 @@ class Information(models.Model):
 	was_reported = models.BooleanField(default=False)
 	number_reports = models.PositiveIntegerField(default=0)
 	reported_by = models.ManyToManyField(Userdata)
+	adrAsPoint=models.PointField(null=True)
+	objects = models.GeoManager()
 
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)

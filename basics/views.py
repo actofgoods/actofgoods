@@ -18,6 +18,7 @@ from email.mime.text import MIMEText
 from email.mime.message import MIMEMessage
 from django.utils import timezone
 from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.measure import Distance
 # Create your views here.
 from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm, ContactUsForm
 from .models import *
@@ -304,9 +305,9 @@ def information_new(request):
                 lat, lng = getAddress(request)
                 print(lat,lng)
                 if lat != None and lng != None:
-                    address = Address.objects.create(latitude=lat, longditude=lng, as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                    address = Address.objects.create(latitude=lat, longditude=lng)
                     data = info.cleaned_data
-                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address)
+                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     infodata.save()
                     return redirect('basics:information_all')
 
@@ -393,15 +394,15 @@ def immediate_aid(request):
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
                     user_data = form.cleaned_data
-                    address = Address.objects.create(latitude=lat, longditude=lng, as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                    address = Address.objects.create(latitude=lat, longditude=lng)
                     user = User.objects.create_user(username=user_data['email'], password=password_d, email=user_data['email'])
-                    userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address)
+                    userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     userdata.save()
                     content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                     subject = "Confirm Your Account"
                     #print("\n",need.cleaned_data['categorie'],"\n")
                     data = need.cleaned_data
-                    needdata = Need(author=user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
+                    needdata = Need(author=user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     needdata.save()
                     #TODO: id_generator will return random string; Could be already in use
                     room = Room.objects.create(name=id_generator(), need=needdata)
@@ -481,7 +482,7 @@ def fill_needs(request):
 """
 def needs_all(request):
     if request.user.is_authenticated():
-        range = "Range"
+        dist = "Range"
         category = "Categories"
         cards_per_page = "Cards per page"
         needs = Need.objects.order_by('-date')
@@ -489,7 +490,8 @@ def needs_all(request):
         if request.method == "POST":
             print(request.POST)
             if "" != request.POST['range']:
-                range = request.POST['range']
+                dist = int(request.POST['range'])
+                needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
             if "" != request.POST['category']:
                 category = request.POST['category']
                 needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
@@ -500,7 +502,7 @@ def needs_all(request):
                 cards_per_page = int(request.POST['cards_per_page'])
                 needs = needs[:cards_per_page]
 
-        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'cards_per_page':cards_per_page, 'range':range})
+        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'cards_per_page':cards_per_page, 'range':dist})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -557,11 +559,11 @@ def needs_new(request):
 
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
-                    address = Address.objects.create(latitude=lat, longditude=lng, as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                    address = Address.objects.create(latitude=lat, longditude=lng)
                     data = need.cleaned_data
                     #print(need, "\n", data)
                     #print("\n", data['categorie'].name, "\n")
-                    needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
+                    needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     needdata.save()
                     #TODO: id_generator will return random string; Could be already in use
                     room = Room.objects.create(name=id_generator(), need=needdata)
@@ -634,6 +636,7 @@ def profil_edit(request):
             if lat != None and lng != None:
                 userdata.address.latitude=lat
                 userdata.address.longditude=lng
+                userdata.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
                 userdata.address.save()
             if aux != "":
                 try:
@@ -692,9 +695,9 @@ def register(request):
                     lat, lng = getAddress(request)
                     if lat != None and lng != None:
                         data = form.cleaned_data
-                        address = Address.objects.create(latitude=lat, longditude=lng, as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                        address = Address.objects.create(latitude=lat, longditude=lng)
                         user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
-                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, get_notifications= False)
+                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                         userdata.save()
                         content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                         subject = "Confirm Your Account"
@@ -858,11 +861,7 @@ def need_edit(request, pk):
             desc = request.POST.get('desc', None)
             lat, lng = getAddress(request)
             if lat != None and lng != None:
-                request.user.userdata.address.latitude = lat
-                request.user.userdata.address.longditude = lng
-                request.user.userdata.address.as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng))
-                request.user.userdata.address.save()
-                request.user.userdata.save()
+                need.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
             if text != "":
                 need.text=text
             if desc != "":
@@ -883,11 +882,7 @@ def info_edit(request, pk):
             desc = request.POST.get('desc', None)
             lat, lng = getAddress(request)
             if lat != None and lng != None:
-                request.user.userdata.address.latitude = lat
-                request.user.userdata.address.longditude = lng
-                request.user.userdata.address.as_point=GEOSGeometry('POINT(%s %s)' % (lat, lng))
-                request.user.userdata.address.save()
-                request.user.userdata.save()
+                info.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
             if text != "":
                 info.text = text
             if desc != "":

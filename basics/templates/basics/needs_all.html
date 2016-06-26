@@ -23,9 +23,15 @@
                   <div class="col-sm-2" style="margin-top: 20px;">
                     <label> Range
                         <select style="width: 100%" name="range">
-                          <option value="5" {% if '5' == range %}selected{% endif %}>5km</option>
-                          <option value="20" {% if '20' == range %}selected{% endif %}>20km</option>
-                          <option value="40" {% if '40' == range %}selected{% endif %}>40km</option>
+                          <option value="5" {% if 5 == range %}selected{% endif %}>5km</option>
+                          <option value="10" {% if 10 == range %}selected{% endif %}>10km</option>
+                          <option value="25" {% if 25 == range %}selected{% endif %}>25km</option>
+                          <option value="50" {% if 50 == range %}selected{% endif %}>50km</option>
+                          <option value="100" {% if 100 == range %}selected{% endif %}>100km</option>
+                          <option value="200" {% if 200 == range %}selected{% endif %}>200km</option>
+                          <option value="500" {% if 500 == range %}selected{% endif %}>500km</option>
+                          <option value="1000" {% if 1000 == range %}selected{% endif %}>1000km</option>
+                          <option value="50000" {% if 50000 == range %}selected{% endif %}>50000km</option>
                         </select>
                     </label>
                   </div>
@@ -41,9 +47,9 @@
                   <div  class="col-sm-2" style="margin-top: 20px;">
                     <label> Cards per Page
                         <select style="width: 100%" title="{{cards_per_page}}" name="cards_per_page">
-                            <option {% if 1 == cards_per_page %}selected{% endif %}>1</option>
-                            <option {% if 5 == cards_per_page %}selected{% endif %}>5</option>
                             <option {% if 10 == cards_per_page %}selected{% endif %}>10</option>
+                            <option {% if 25 == cards_per_page %}selected{% endif %}>25</option>
+                            <option {% if 100 == cards_per_page %}selected{% endif %}>100</option>
                         </select>
                     </label>
                   </div>
