@@ -465,10 +465,9 @@ def fill_needs(request):
 def needs_all(request):
     if request.user.is_authenticated():
         range = "Range"
-        category = "Categories"
+        category = "all"
         cards_per_page = "Cards per page"
         needs = Need.objects.order_by('date')
-
         if request.method == "POST":
             if "" != request.POST['range']:
                 range = request.POST['range']
@@ -478,9 +477,8 @@ def needs_all(request):
             if "" != request.POST['cards_per_page']:
                 cards_per_page = int(request.POST['cards_per_page'])
                 needs = needs[:cards_per_page]
-
-
-        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'cards_per_page':cards_per_page, 'range':range})
+        print(request)
+        return render(request, 'basics/needs_all.html',{'needs':needs,'categories':CategoriesNeeds.objects.all(), 'category':category, 'cards_per_page':cards_per_page, 'range':range})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -808,22 +806,39 @@ def report_information(request, pk):
     info.number_reports += 1
     info.reported_by.add(request.user.userdata)
     info.save()
-    return information_all(request)
+    return redirect('basics:information_all')
+
+def like_information(request, pk):
+    info = Information.objects.get(pk=pk)
+    info.was_liked = True
+    info.number_likes += 1
+    info.liked_by.add(request.user.userdata)
+    info.save()
+    return redirect('basics:information_all')
+
+def unlike_information(request, pk):
+    info = Information.objects.get(pk=pk)
+    info.number_likes -= 1
+    if info.number_likes == 0:
+        info.was_liked = False
+    info.liked_by.remove(request.user.userdata)
+    info.save()
+    return redirect('basics:information_all')
 
 def need_delete(request, pk):
     need = Need.objects.all().get(pk=pk)
     need.delete()
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def info_delete(request, pk):
     info = Information.objects.all().get(pk=pk)
     info.delete()
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def comm_delete(request, pk):
     comm = Comment.objects.all().get(pk=pk)
     comm.delete()
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def need_edit(request, pk):
     if not request.user.is_active:
@@ -847,7 +862,7 @@ def need_edit(request, pk):
             return actofgoods_startpage(request)
         form = NeedFormNew()
         return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all()})
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def info_edit(request, pk):
     if not request.user.is_active:
@@ -871,7 +886,7 @@ def info_edit(request, pk):
             return actofgoods_startpage(request)
         form = InformationFormNew()
         return render(request, 'basics/info_edit.html', {'info': info})
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def report_comment(request, pk):
     comment = Comment.objects.get(pk=pk)
@@ -888,10 +903,24 @@ def report_comment(request, pk):
 def groups(request):
     return render(request, 'basics/groups.html')
 
-def group_detail(request, pk):
-    gro = request.user.groups.get(pk=pk)
-    group = Groupdata.objects.get(name=gro.name)
-    return render(request, 'basics/group_detail.html', {'group':group})
+def groups_all(request):
+    groups = Groupdata.objects.all().order_by('name')
+    return render(request, 'basics/groups_all.html', {'groups':groups})
+
+def group_detail(request, name):
+    if request.user.is_authenticated():
+        gro = request.user.groups.get(name=name)
+        if request.method == "POST":
+            form = GroupAddUserForm(request.POST)
+            if form.is_valid():
+                if 'add_group_member' in form.data:
+                    email = request.POST.get('email')
+                    user = User.objects.get(email=email)
+                    gro.user_set.add(user)
+        users = gro.user_set.all()
+        group = Groupdata.objects.get(name=gro.name)
+        return render(request, 'basics/group_detail.html', {'group':group, 'users':users})
+    return redirect('basics:actofgoods_startpage')
 
 
 def group_edit(request, pk):

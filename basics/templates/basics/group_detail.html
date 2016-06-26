@@ -63,21 +63,60 @@
 	<div class="col-lg-4 col-lg-offset-1">
   		<br>
   		<b>
-			Name: {{group.name}} 							<br>
-			Email: {{group.email}}  						<br>
-			Phonenumber: {{group.phone}} 					<br>
-      		latitude: {{ group.address.latitude }}			<br>
-      		longditude: {{ group.address.longditude }} 		<br>
-			</b>
-
-			<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:group_edit' pk=group.pk %}">Edit group profile</a>
-			<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:group_leave' pk=group.pk %}">Leave group</a>
-			<br>
-			<br>
-			</div>
-
-        <div id="map-container"></div>
+		Name: {{group.name}} 							<br>
+		Email: {{group.email}}  						<br>
+		Phonenumber: {{group.phone}} 					<br>
+  		latitude: {{ group.address.latitude }}			<br>
+  		longditude: {{ group.address.longditude }} 		<br></b>
+		<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:group_edit' pk=group.pk %}">Edit Group Profile</a>
+		<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:group_leave' pk=group.pk %}">Leave Group</a>
+    <a id="standard-grey-button-bold" class="btn btn-sm"href="#">Claim Area</a>
+		<br>
+		<br>
 	</div>
+
+    <div id="map-container"></div>
+    <!-- create new group -->
+    <div id="standard-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-center" id="standard-modal-headline">Add New Group Member</h2>
+            </div>
+            <div class="modal-body">
+                <form class="form" role="form" method="post" accept-charset="UTF-8">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <input type="email" class="form-control input-lg" placeholder="Email from Group-User" name="email" required/>
+                    </div>
+                    <div class="form-group">
+                        <input name="add_group_member" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Add"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div><!-- end create new group -->
+      <!-- list all users-->
+      <div class="container">
+            <table class = "table table-hover">
+                <thead>
+                    <h3>Members Of This Group</h2>
+                    <tr>
+                        <th>E-Mail</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {% if users %}
+                      {% for user in users %}
+                          <tr>
+                              <th>{{ user.email }}</th>
+                          </tr>
+                      {% endfor %}
+                  {% endif %}
+               </tbody>
+            </table>
+        </div><!--end list all users-->
+</div>
 
   <script src="http://maps.googleapis.com/maps/api/js"></script>
   <script>

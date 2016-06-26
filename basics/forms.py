@@ -78,5 +78,14 @@ class GroupEditForm(forms.Form):
             raise forms.ValidationError(u'Email addresses must be unique.')
         return email
 
+class GroupAddUserForm(forms.Form):
+    class Meta:
+        model = Groupdata
+        fields = ['email']
 
+        def clean_email(self):
+            email = self.cleaned_data.get('email')
+            if email and not User.objects.filter(email=email).count():
+                raise forms.ValidationError(u'Email address must be from registered User')
+            return email
 

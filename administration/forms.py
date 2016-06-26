@@ -1,8 +1,12 @@
 from django import forms
 from django.contrib.auth.models import Group, User
 from basics.models import Groupdata, Userdata, ContactUs
+from django.utils.translation import ugettext_lazy as _
 
-class GroupFormRegister(forms.Form):
+
+class GroupFormRegister(forms.ModelForm):
+	#name = forms.CharField(error_messages={'required': 'Please let us know what to call you!'})
+    
 	class Meta:
 		model = Groupdata
 		fields = ['name','email']

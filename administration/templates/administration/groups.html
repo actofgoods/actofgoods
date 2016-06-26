@@ -38,7 +38,7 @@
                         {% endfor %}
                     {% endif %}
                     <div class="form-group">
-                        <input type="name" class="form-control input-lg" placeholder="Group Name" name="name" required/>
+                        <input type="name" class="form-control input-lg" placeholder="Group Name" name="name" pattern="[a-zA-Z0-9 ]+" title="No special Characters allowed, only alphanumeric characters" required/>
                     </div>
                     {% if messages %}
                         {% for message in messages %}
