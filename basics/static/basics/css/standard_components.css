@@ -120,3 +120,37 @@
 }
 
 /* ----------- end standard table ----------- */
+
+/* ----------- start add button ----------- */
+
+.button-float {
+     position: fixed;
+     bottom: 20px;
+     box-shadow: 0 4px 12px rgba(0,0,0,.175);
+     border: 1px solid #D36E5A;
+     width: 70px;
+     height: 70px;
+     padding: 22px 22px;
+     border-radius: 35px;
+     margin-left: 200px;
+ }
+
+ @media(max-width:1600px) {
+     .button-float {
+         margin-left: 100px;
+     }
+ }
+
+ @media(max-width:1388px) {
+     .button-float {
+         margin-left: 50px;
+     }
+ }
+
+ @media(max-width:1282px) {
+     .button-float {
+         margin-left: 0px;
+     }
+ }
+
+/* ----------- end add button ----------- */
