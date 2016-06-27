@@ -491,7 +491,8 @@ def needs_all(request):
             print(request.POST)
             if "" != request.POST['range']:
                 dist = int(request.POST['range'])
-                needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
+                if not request.user.is_superuser:
+                	needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
             if "" != request.POST['category']:
                 category = request.POST['category']
                 needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
