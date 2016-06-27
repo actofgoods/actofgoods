@@ -963,6 +963,10 @@ def group_edit(request, pk):
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
                     group.address =address
+                if request.POST.get('page') != "":
+                    group.webpage=request.POST.get('page')
+                if request.POST.get('description') !="":
+                    group.description=request.POST.get('description')
                 group.save()
                 return redirect('basics:groups')
     return redirect('basics:actofgoods_startpage')
