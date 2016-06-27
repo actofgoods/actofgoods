@@ -59,7 +59,7 @@
                                     <p class="list-group-item-text">{{ need|get_short_text:160 }}</p>
                                 </div>
                                 <div class="col-sm-9" data-toggle="modal" data-target=".{{ need.id }}">
-                                    <h6><br>from: {{ need.date }} / category: {{ need.categorie.name }} </h6>
+                                    <h6><br>from: {{ need.date }} / category: {{ need.categorie.name }} / group: {{ need.group }} </h6>
                                 </div>
                                 <div class="col-sm-1">
                                     <button type="button" id="{{ need.id }}" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:needs_help' id=need.id %}';" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-comment"></span> Help</button>

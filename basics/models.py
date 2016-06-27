@@ -44,7 +44,9 @@ class Groupdata(models.Model):
 	name = models.CharField(max_length=30, validators=[alphanumeric])
 	email = models.EmailField(max_length=254)
 	phone = models.CharField(max_length=15)
-	is_NGO = models.BooleanField(default=True)
+	is_GO = models.BooleanField(default=False)
+	webpage = models.CharField(max_length=40)
+	description = models.TextField(default='')
 	# mabye changed
 	address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
 
@@ -79,6 +81,7 @@ class Information(models.Model):
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
+	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
 	text = models.TextField(default='')
 	date = models.DateTimeField(auto_now_add=True)
 	was_reported = models.BooleanField(default=False)

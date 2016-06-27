@@ -31,7 +31,7 @@
                                 <p class="list-group-item-text">{{ comment|get_short_text:160 }}</p>
                             </div>
                             <div class="col-sm-11" data-toggle="modal" data-target=".{{ comment.id }}">
-                                <h6><br>from: {{ comment.date }} </h6>
+                                <h6><br>from: {{ comment.date }} / group: {{ comment.group }}</h6>
                             </div>
                             {% if not user.userdata in comment.reported_by.all %}
                               <div class="col-sm-1">
@@ -52,6 +52,15 @@
             <form action="{% url 'basics:information_view_comment' pk=information.pk %}" method="post">
               {%csrf_token%}
               <textarea hint="Your comment" class="form-control" name="comment_text" rows="3"></textarea>
+              {% if user.groups.all|length != 0 %}
+                <p style="font-size:160%;"> post as </p>
+                  <select class="form-control" name="group">
+                    <option value="no_group">User</option>
+                      {% for group in user.groups.all %}
+                        <option value="{{group.id}}">{{group.name}}</option>
+                      {% endfor %}
+                  </select>
+              {% endif %}
               <br>
               <button id="standard-grey-button-light" type="submit " class="btn btn-primary">Submit</button>
             </form>

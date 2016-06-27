@@ -9,7 +9,7 @@ class GroupFormRegister(forms.ModelForm):
     
 	class Meta:
 		model = Groupdata
-		fields = ['name','email']
+		fields = ['name','email', 'is_GO']
 
 	def clean_email(self):
 		email = self.cleaned_data.get('email')

@@ -261,8 +261,20 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 @csrf_protect
 def information_all(request):
     if request.user.is_authenticated():
+        range = "Range"
+        cards_per_page = "Cards per page"
         infos = Information.objects.order_by('date')
-        return render(request, 'basics/information_all.html',{'infos':infos})
+        if request.method == "POST":
+            print(request.POST['range'], request.POST['cards_per_page'])
+            if "" != request.POST['range']:
+                range = request.POST['range']
+            if "" != request.POST['cards_per_page']:
+                cards_per_page = int(request.POST['cards_per_page'])
+                infos = infos[:cards_per_page]
+            print(request)
+        else:
+            print("will nicgt")
+        return render(request, 'basics/information_all.html',{'infos':infos, 'cards_per_page':cards_per_page, 'range':range})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -288,10 +300,15 @@ def information_new(request):
                 print(lat,lng)
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
-                    data = info.cleaned_data
-                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address)
-                    infodata.save()
-                    return redirect('basics:information_all')
+                else:
+                    address= request.user.userdata.address
+                data = info.cleaned_data
+                group = None
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                    group = Group.objects.get(pk=request.POST.get('group'))
+                infodata = Information(author=request.user, group=group, headline=data['headline'], text=data['text'], address =address)
+                infodata.save()
+                return redirect('basics:information_all')
 
         info = InformationFormNew()
         return render(request, 'basics/information_new.html', {'info':info})
@@ -325,7 +342,7 @@ def information_view(request, pk):
         return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated:
         information = get_object_or_404(Information, pk=pk)
-        comments = Comment.objects.filter(inf=information).order_by('-date')
+        comments = Comment.objects.filter(inf=information).order_by('date')
         return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
 
     return redirect('basics:actofgoods_startpage')
@@ -336,7 +353,10 @@ def information_view_comment(request, pk):
     if request.user.is_authenticated:
         information = get_object_or_404(Information, pk=pk)
         if request.method == "POST":
-            comment = Comment.objects.create(inf=information, author=request.user, text=request.POST['comment_text'])
+            group = None
+            if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                group = Group.objects.get(pk=request.POST.get('group'))
+            comment = Comment.objects.create(inf=information, author=request.user, group=group, text=request.POST['comment_text'])
         return redirect('basics:information_view', pk=pk)
 
     return redirect('basics:actofgoods_startpage')
@@ -472,8 +492,14 @@ def needs_all(request):
             if "" != request.POST['range']:
                 range = request.POST['range']
             if "" != request.POST['category']:
-                category = request.POST['category']
-                needs = Need.objects.filter(categorie=CategoriesNeeds.objects.get(name=category))
+                if "all" == request.POST['category']:
+                    category = request.POST['category']
+                    needs = Need.objects.all()
+                else:
+                    category = request.POST['category']
+                    needs = Need.objects.filter(categorie=CategoriesNeeds.objects.get(name=category))
+            else:
+                needs = Need.objects.all
             if "" != request.POST['cards_per_page']:
                 cards_per_page = int(request.POST['cards_per_page'])
                 needs = needs[:cards_per_page]
@@ -530,21 +556,26 @@ def needs_new(request):
     if request.user.is_authenticated():
         if request.method == "POST":
             need = NeedFormNew(request.POST)
-
+            print(need)
             if need.is_valid():
 
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
-                    data = need.cleaned_data
-                    #print(need, "\n", data)
-                    #print("\n", data['categorie'].name, "\n")
-                    needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
-                    needdata.save()
-                    #TODO: id_generator will return random string; Could be already in use
-                    room = Room.objects.create(name=id_generator(), need=needdata)
-                    room.save()
-                    return redirect('basics:needs_all')
+                else :
+                    address=request.user.userdata.address
+                data = need.cleaned_data
+                #print(need, "\n", data)
+                #print("\n", data['categorie'].name, "\n")
+                group = None
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                    group = Group.objects.get(pk=request.POST.get('group'))
+                needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
+                needdata.save()
+                #TODO: id_generator will return random string; Could be already in use
+                room = Room.objects.create(name=id_generator(), need=needdata)
+                room.save()
+                return redirect('basics:needs_all')
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
         c.save
@@ -941,6 +972,10 @@ def group_edit(request, pk):
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
                     group.address =address
+                if request.POST.get('page') != "":
+                    group.webpage=request.POST.get('page')
+                if request.POST.get('description') !="":
+                    group.description=request.POST.get('description')
                 group.save()
                 return redirect('basics:groups')
     return redirect('basics:actofgoods_startpage')

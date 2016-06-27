@@ -10,7 +10,7 @@
                 <div class="col-sm-4" style="padding: 15px">
                     <h2 class="text-center" id="standard-modal-headline">Information</h2>
                 </div>
-                <form class="form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
+                <form class="form" role="form" method="post" action="{% url 'basics:information_all'%}" accept-charset="UTF-8">
                   {%csrf_token%}
                   <div class="col-sm-2" style="margin-top: 15px; margin-bottom: 15px;">
                       <label> Range
@@ -18,13 +18,6 @@
                           <option>5km</option>
                           <option>20km</option>
                           <option>40km</option>
-                        </select>
-                      </label>
-                  </div>
-                  <div class="col-sm-2" style="margin-top: 15px; margin-bottom: 15px;">
-                      <label> Cards per page
-                        <select style="width: 100%" name="category">
-                            <option value="{{ category.name }}">All</option>
                         </select>
                       </label>
                   </div>
@@ -38,8 +31,7 @@
                       </label>
                   </div>
                   <div  class="col-sm-2" style="margin-top: 30px; margin-bottom: 10px;">
-                      <!-- TODO: MAKE BUTTON submit to send the form-->
-                      <input id="standard-grey-button-bold" type="button" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                      <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
                   </div>
                 </form>
             </div>
@@ -59,7 +51,7 @@
                                 </div>
 
                                 <div class="col-sm-9">
-                                    <h6 style="color: #555; hover.color: #555;"><br>from: {{ info.date }} / number of reports: {{ info.number_reports }}</h6>
+                                    <h6 style="color: #555; hover.color: #555;"><br>from: {{ info.date }} / number of reports: {{ info.number_reports }} / group: {{ info.group }}</h6>
                                 </div>
                             </a>
                             <div class="col-sm-1">
