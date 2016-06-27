@@ -1,195 +1,262 @@
 {% extends 'basics/base.html' %}
-
 {% block content %}
 <style>
 
-	#map-container {
-		height: 450px;
-	}
+    #description-label {
+        font-weight: bold;
+    }
 
-	button, .btn-primary, .btn-primary:focus {
-		background-color: #bbd153;
-  		border-color: #70962c;
-  		color: #4C4E49;
-	}
+    #description-text {
+        float: left;
+    }
 
-	.btn-primary:hover, .btn-primary:active:focus {
-		background-color: #96B440;
-		color: #4C4E49;
-	}
+    #info-block {
+        margin-top: 40px;
+    }
 
-	.modal-header > h2 {
-		color: #bbd153;
-		font-weight: bold;
-	}
+    @media(max-width:768px) {
 
-	.nav-tabs > li > a, .nav-tabs > li > a:hover, .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-		color: #70962c;
-	}
+        #info-block {
+            margin-top: 0px;
+        }
 
-
-
-	#address-label, #address-input {
-		margin-top: 5px;
-		margin-bottom: 5px;
-	}
-
-	#address-label {
-		margin-top: 12px;
-		margin-bottom: 12px;
-	}
-
-	@media(max-width:768px) {
-
-		#address-input {
-			margin-top: 0px;
-		}
-
-		#address-label {
-			margin-bottom: 5px;
-		}
-
-	}
+    }
 
 </style>
 
-<!-- Introduction Row -->
 <div class="row">
-    <div class="col-lg-12">
-        <h1 class="page-header">Group Profile</h1>
-	</div>
-</div>
-<div class="row">
-	<div class="col-lg-4 col-lg-offset-1">
-  		<br>
-  		<b>
-		Name: {{group.name}} 							<br>
-		Email: {{group.email}}  						<br>
-		Phonenumber: {{group.phone}} 					<br>
-  		latitude: {{ group.address.latitude }}			<br>
-  		longditude: {{ group.address.longditude }} 		<br></b>
-		<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:group_edit' pk=group.pk %}">Edit Group Profile</a>
-		<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:group_leave' pk=group.pk %}">Leave Group</a>
-    <a id="standard-grey-button-bold" class="btn btn-sm"href="#">Claim Area</a>
-		<br>
-		<br>
-	</div>
-
-    <div id="map-container"></div>
-    <!-- create new group -->
-    <div id="standard-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="text-center" id="standard-modal-headline">Add New Group Member</h2>
-            </div>
-            <div class="modal-body">
-                <form class="form" role="form" method="post" accept-charset="UTF-8">
-                    {%csrf_token%}
-                    <div class="form-group">
-                        <input type="email" class="form-control input-lg" placeholder="Email from Group-User" name="email" required/>
+    <div class="col-sm-12">
+        <div id="standard-modal" style="margin-bottom: 0px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="text-center" id="standard-modal-headline">Profile of {{group.name}}</h2>
+                </div>
+                <div class="modal-body">
+                    {% if group.address %}
+                        <div class="row">
+                            <div class="col-sm-6" id="info-block">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <p id="description-label">Groupname:</p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <p id="description-text">{{group.name}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <p id="description-label">Webpage:</p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <p id="description-text">add Webpage <a href="http://www.google.com" target="_blank">www.google.com</a></p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <p id="description-label">Email:</p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        {% if group.email %}
+                                            <p id="description-text">{{group.email}}</p>
+                                        {% else %}
+                                            <p id="description-text">add Email address</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <p id="description-label">Phonenumber:</p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        {% if group.phone %}
+                                            <p id="description-text">{{group.phone}}</p>
+                                        {% else %}
+                                            <p id="description-text">add phonenumber</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <p id="description-label">Description:</p>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <p id="description-text">This group represents a nongovernmental organization.</p>
+                                    </div>
+                                </div>
+                                <p>Ich bin eine Beschreibung! Ich muss aber noch eingefügt werden! Wie folgt: group.text | linebreaksbr mit einer bestimmten anzahl von chars</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <p id="description-label">Head Office address:</p>
+                                <div id="map-container" style="height: 40%; margin-top: 15px; margin-bottom: 20px;"></div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Groupname:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p id="description-text">{{group.name}}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Webpage:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p id="description-text">add Webpage <a href="http://www.google.com" target="_blank">www.google.com</a></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Email:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                {% if group.email %}
+                                    <p id="description-text">{{group.email}}</p>
+                                {% else %}
+                                    <p id="description-text">add Email address</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Phonenumber:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                {% if group.phone %}
+                                    <p id="description-text">{{group.phone}}</p>
+                                {% else %}
+                                    <p id="description-text">add phonenumber</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Head Office Address:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p id="description-text">add Email address</p>
+                            </div>
+                        </div>
+                        <p id="description-label">Description:</p>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <p id="description-text">This group represents a nongovernmental organization.</p>
+                            </div>
+                        </div>
+                        <p>Ich bin eine Beschreibung! Ich muss aber noch eingefügt werden! Wie folgt: group.text | linebreaksbr mit einer bestimmten anzahl von chars</p>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
+                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_edit' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit Profile</a>
+                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="#" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-globe"></span> Claim Area</a>
+                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_leave' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-log-out"></span> Leave Group</a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <input name="add_group_member" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Add"/>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div><!-- end create new group -->
-      <!-- list all users-->
-      <div class="container">
-            <table class = "table table-hover">
-                <thead>
-                    <h3>Members Of This Group</h2>
-                    <tr>
-                        <th>E-Mail</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                  {% if users %}
-                      {% for user in users %}
-                          <tr>
-                              <th>{{ user.email }}</th>
-                          </tr>
-                      {% endfor %}
-                  {% endif %}
-               </tbody>
-            </table>
-        </div><!--end list all users-->
+    </div>
+
+    <div class="col-sm-5 col-sm-push-7">
+        <!-- add user to group -->
+        <div id="standard-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="text-center" id="standard-modal-headline">Add new Groupmember</h2>
+                </div>
+                <div class="modal-body">
+                    <form class="form" role="form" method="post" accept-charset="UTF-8">
+                        {%csrf_token%}
+                        <div class="form-group">
+                            <input type="email" class="form-control input-lg" placeholder="Email from Group-User" name="email" required/>
+                        </div>
+                        <div class="form-group">
+                            <input name="add_group_member" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Add"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div><!-- end add new member -->
+    </div>
+    <div class="col-sm-7 col-sm-pull-5">
+        <!-- list of group member -->
+        <div id="standard-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="text-center" id="standard-modal-headline">Member of this Group</h2>
+                </div>
+                <div class="modal-body">
+                    {% if users %}
+                        {% for user in users %}
+                            <div class="list-group-item" id="standard-list-group-item-div">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <p>{{ user.email }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div><!-- end list of group member -->
+    </div>
 </div>
 
-  <script src="http://maps.googleapis.com/maps/api/js"></script>
-  <script>
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+<script>
 
-
-  	var map;
-  	var marker;
-  	var myCenter=new google.maps.LatLng(51.508742,-0.120850);
-  	var geocoder;
-  	var infowindow;
+    var map;
+    var marker;
+    var myCenter=new google.maps.LatLng(51.508742,-0.120850);
+    var geocoder;
+    var infowindow;
     var directionsService = new google.maps.DirectionsService;
     var directionsDisplay = new google.maps.DirectionsRenderer;
     function initialize() {
-      	geocoder = new google.maps.Geocoder()
-  		var mapProp = {
-    			center:myCenter,
-    			zoom:2,
-    			mapTypeId:google.maps.MapTypeId.ROADMAP,
-  			mapTypeControl: false,
-              panControl:false,
-              rotateControl:false,
-  			mapTypeControl:true,
-              streetViewControl: false
-    		};
-    		marker=null;
+      geocoder = new google.maps.Geocoder()
+      var mapProp = {
+          center:myCenter,
+          zoom:2,
+          mapTypeId:google.maps.MapTypeId.ROADMAP,
+          mapTypeControl: false,
+          panControl:false,
+          rotateControl:false,
+          mapTypeControl:true,
+          streetViewControl: false
+      };
+      marker=null;
 
-    		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
+      map = new google.maps.Map(document.getElementById("map-container"),mapProp);
 
-        placeMarker(new google.maps.LatLng(parseFloat("{{ group.address.latitude }}".replace(",", ".")), parseFloat("{{ group.address.longditude }}".replace(",", "."))));
-        //console.log(lat + " " + {{ Userdata.address.longditude}});
-  	}
-
-  	function placeMarker(location) {
-  	    if(marker){
-  	        infowindow.close();
-  	        marker.setPosition(location);
-  	        geocoder.geocode({'location': location}, function(results, status){
-  	            infowindow.setContent(results[0].formatted_address);
-  	            infowindow.open(map,marker);
-  	        })
-  	    }
-  	    else{
-  	        marker = new google.maps.Marker({
-  	        position: location,
-  	        map: map,
-  	        });
-  	        geocoder.geocode({'location': location}, function(results, status){
-  	            infowindow = new google.maps.InfoWindow({content: results[0].formatted_address});
-  	            infowindow.open(map,marker);
-  	        })
-  	       	map.setZoom(6);
-  	    }
-  		map.setCenter(marker.getPosition());
-  	}
-  	google.maps.event.addDomListener(window, 'load', initialize);
-
-    function addressInput(){
-      if(marker != null){
-        $('#lng').val(marker.getPosition().lng());
-        $('#lat').val(marker.getPosition().lat());
-      }
-      else if($('#State').val() != "" && $('#City').val() != ""){
-  			var state = $('#State').val();
-  			var city = $('#City').val();
-        $('#addressinput').val(state+ " " + city);
-      }
+      placeMarker(new google.maps.LatLng(parseFloat("{{ group.address.latitude }}".replace(",", ".")), parseFloat("{{ group.address.longditude }}".replace(",", "."))));
     }
-  </script>
-  <script type='text/javascript'>
-   	$('#location-map-modal').on('shown.bs.modal', function(e) {
-          initialize();
-      });
 
-  </script>
+    function placeMarker(location) {
+    if(marker){
+        infowindow.close();
+        marker.setPosition(location);
+        geocoder.geocode({'location': location}, function(results, status){
+            infowindow.setContent(results[0].formatted_address);
+            infowindow.open(map,marker);
+        })
+    }else{
+        marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        });
+        geocoder.geocode({'location': location}, function(results, status){
+            infowindow = new google.maps.InfoWindow({content: results[0].formatted_address});
+            infowindow.open(map,marker);
+        })
+        map.setZoom(8);
+    }
+    map.setCenter(marker.getPosition());
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
 
 {% endblock %}
