@@ -1,28 +1,5 @@
 {% extends 'basics/base.html' %}
 {% block content %}
-<style>
-
-    #description-label {
-        font-weight: bold;
-    }
-
-    #description-text {
-        float: left;
-    }
-
-    #info-block {
-        margin-top: 40px;
-    }
-
-    @media(max-width:768px) {
-
-        #info-block {
-            margin-top: 0px;
-        }
-
-    }
-
-</style>
 
 <div class="row">
     <div class="col-sm-12">
@@ -30,27 +7,38 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="text-center" id="standard-modal-headline">Profile of {{group.name}}</h2>
+                    <h4 class="text-center">This organisation represents a {% if group.is_GO %} governmental organisation. {% else %} nongovernmental organisation. {% endif %}</h4>
                 </div>
                 <div class="modal-body">
-                    {% if group.address %}
+                    <div class="list-group-item" id="standard-list-group-item-white-div" style="padding-top: 30px;">
                         <div class="row">
-                            <div class="col-sm-6" id="info-block">
+                            <div class="col-sm-6">
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <p id="description-label">Groupname:</p>
+                                        <p id="description-label">Organisation:</p>
                                     </div>
                                     <div class="col-sm-8">
                                         <p id="description-text">{{group.name}}</p>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-sm-6">
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <p id="description-label">Webpage:</p>
+                                        <p id="description-label">Homepage:</p>
                                     </div>
                                     <div class="col-sm-8">
-                                        <p id="description-text">add Webpage <a href="http://www.google.com" target="_blank">www.google.com</a></p>
+                                        {% if group.webpage %}
+                                            <p id="description-text"><a id="green-link" href="{{group.webpage}}" target="_blank">{{group.webpage}}</a></p>
+                                        {% else %}
+                                            <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add homepage</a></p>
+                                        {% endif %}
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 15px;">
+                            <div class="col-sm-6">
                                 <div class="row">
                                     <div class="col-sm-4">
                                         <p id="description-label">Email:</p>
@@ -59,10 +47,12 @@
                                         {% if group.email %}
                                             <p id="description-text">{{group.email}}</p>
                                         {% else %}
-                                            <p id="description-text">add Email address</p>
+                                            <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add Email address</a></p>
                                         {% endif %}
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-sm-6">
                                 <div class="row">
                                     <div class="col-sm-4">
                                         <p id="description-label">Phonenumber:</p>
@@ -71,86 +61,64 @@
                                         {% if group.phone %}
                                             <p id="description-text">{{group.phone}}</p>
                                         {% else %}
-                                            <p id="description-text">add phonenumber</p>
+                                            <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add phonenumber</a></p>
                                         {% endif %}
                                     </div>
                                 </div>
-                                <p id="description-label">Description:</p>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <p id="description-text">This group represents a nongovernmental organization.</p>
+                            </div>
+                        </div>
+                        {% if not group.description %}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <p id="description-label">Description:</p>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add description</a></p>
+                                        </div>
                                     </div>
                                 </div>
-                                <p>Ich bin eine Beschreibung! Ich muss aber noch eingefügt werden! Wie folgt: group.text | linebreaksbr mit einer bestimmten anzahl von chars</p>
                             </div>
-                            <div class="col-sm-6">
-                                <p id="description-label">Head Office address:</p>
-                                <div id="map-container" style="height: 40%; margin-top: 15px; margin-bottom: 20px;"></div>
+                        {% endif %}
+
+                        {% if group.description %}
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <p id="description-label">Description:</p>
+                                </div>
                             </div>
-                        </div>
-                    {% else %}
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <p id="description-label">Groupname:</p>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <p id="description-text">{{group.description | linebreaks }}</p>
+                                </div>
                             </div>
-                            <div class="col-sm-8">
-                                <p id="description-text">{{group.name}}</p>
+                        {% endif %}
+                        {% if group.address %}
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <p id="description-label">Location of Head Office:</p>
+                                    <div id="map-container" style="height: 40%; margin-top: 15px; margin-bottom: 20px;"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <p id="description-label">Webpage:</p>
+                        {% else %}
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p id="description-label">Location of Head Office:</p>
+                                </div>
+                                <div class="col-sm-8">
+                                    <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add the location of the head office</a></p>
+                                </div>
                             </div>
-                            <div class="col-sm-8">
-                                <p id="description-text">add Webpage <a href="http://www.google.com" target="_blank">www.google.com</a></p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <p id="description-label">Email:</p>
-                            </div>
-                            <div class="col-sm-8">
-                                {% if group.email %}
-                                    <p id="description-text">{{group.email}}</p>
-                                {% else %}
-                                    <p id="description-text">add Email address</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <p id="description-label">Phonenumber:</p>
-                            </div>
-                            <div class="col-sm-8">
-                                {% if group.phone %}
-                                    <p id="description-text">{{group.phone}}</p>
-                                {% else %}
-                                    <p id="description-text">add phonenumber</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <p id="description-label">Head Office Address:</p>
-                            </div>
-                            <div class="col-sm-8">
-                                <p id="description-text">add Email address</p>
-                            </div>
-                        </div>
-                        <p id="description-label">Description:</p>
+                        {% endif %}
+
                         <div class="row">
                             <div class="col-sm-12">
-                                <p id="description-text">This group represents a nongovernmental organization.</p>
-                            </div>
-                        </div>
-                        <p>Ich bin eine Beschreibung! Ich muss aber noch eingefügt werden! Wie folgt: group.text | linebreaksbr mit einer bestimmten anzahl von chars</p>
-                    {% endif %}
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
-                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_edit' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit Profile</a>
-                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="#" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-globe"></span> Claim Area</a>
-                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_leave' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-log-out"></span> Leave Group</a>
+                                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_edit' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit Profile</a>
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="#" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-globe"></span> Claim Area</a>
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_leave' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-log-out"></span> Leave Organisation</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -164,7 +132,7 @@
         <div id="standard-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="text-center" id="standard-modal-headline">Add new Groupmember</h2>
+                    <h2 class="text-center" id="standard-modal-headline">Add new Member</h2>
                 </div>
                 <div class="modal-body">
                     <form class="form" role="form" method="post" accept-charset="UTF-8">
@@ -185,7 +153,7 @@
         <div id="standard-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="text-center" id="standard-modal-headline">Member of this Group</h2>
+                    <h2 class="text-center" id="standard-modal-headline">Member of this Organisation</h2>
                 </div>
                 <div class="modal-body">
                     {% if users %}

@@ -45,7 +45,7 @@ class Groupdata(models.Model):
 	email = models.EmailField(max_length=254)
 	phone = models.CharField(max_length=15)
 	is_GO = models.BooleanField(default=False)
-	webpage = models.CharField(max_length=40)
+	webpage = models.CharField(max_length=256)
 	description = models.TextField(default='')
 	# mabye changed
 	address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)

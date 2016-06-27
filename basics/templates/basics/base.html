@@ -84,7 +84,7 @@
 							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}">Chats  <span class="badge" id="badge-container"></span></a></li>
                             {% if user.groups.all|length != 0 %}
                                 <li {% if "/groups" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
-								    <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Groups <span class="caret"></span></a>
+								    <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Organisations <span class="caret"></span></a>
 								    <ul id="navbar-dropdown-menu" class="dropdown-menu">
                 	                    {% for group in user.groups.all %}
 									            <li {% if "/groups/detail/{{group.name}}/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:group_detail' name=group.name %}">{{group.name}}</a></li>
