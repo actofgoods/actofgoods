@@ -81,6 +81,7 @@ class Information(models.Model):
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
+	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
 	text = models.TextField(default='')
 	date = models.DateTimeField(auto_now_add=True)
 	was_reported = models.BooleanField(default=False)

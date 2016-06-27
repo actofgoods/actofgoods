@@ -303,7 +303,10 @@ def information_new(request):
                 else:
                     address= request.user.userdata.address
                 data = info.cleaned_data
-                infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address)
+                group = None
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                    group = Group.objects.get(pk=request.POST.get('group'))
+                infodata = Information(author=request.user, group=group, headline=data['headline'], text=data['text'], address =address)
                 infodata.save()
                 return redirect('basics:information_all')
 
@@ -339,7 +342,7 @@ def information_view(request, pk):
         return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated:
         information = get_object_or_404(Information, pk=pk)
-        comments = Comment.objects.filter(inf=information).order_by('-date')
+        comments = Comment.objects.filter(inf=information).order_by('date')
         return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
 
     return redirect('basics:actofgoods_startpage')
@@ -350,7 +353,10 @@ def information_view_comment(request, pk):
     if request.user.is_authenticated:
         information = get_object_or_404(Information, pk=pk)
         if request.method == "POST":
-            comment = Comment.objects.create(inf=information, author=request.user, text=request.POST['comment_text'])
+            group = None
+            if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                group = Group.objects.get(pk=request.POST.get('group'))
+            comment = Comment.objects.create(inf=information, author=request.user, group=group, text=request.POST['comment_text'])
         return redirect('basics:information_view', pk=pk)
 
     return redirect('basics:actofgoods_startpage')
@@ -550,7 +556,7 @@ def needs_new(request):
     if request.user.is_authenticated():
         if request.method == "POST":
             need = NeedFormNew(request.POST)
-
+            print(need)
             if need.is_valid():
 
                 lat, lng = getAddress(request)
@@ -561,7 +567,10 @@ def needs_new(request):
                 data = need.cleaned_data
                 #print(need, "\n", data)
                 #print("\n", data['categorie'].name, "\n")
-                needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
+                group = None
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                    group = Group.objects.get(pk=request.POST.get('group'))
+                needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
                 needdata.save()
                 #TODO: id_generator will return random string; Could be already in use
                 room = Room.objects.create(name=id_generator(), need=needdata)
