@@ -300,10 +300,12 @@ def information_new(request):
                 print(lat,lng)
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
-                    data = info.cleaned_data
-                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address)
-                    infodata.save()
-                    return redirect('basics:information_all')
+                else:
+                    address= request.user.userdata.address
+                data = info.cleaned_data
+                infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address)
+                infodata.save()
+                return redirect('basics:information_all')
 
         info = InformationFormNew()
         return render(request, 'basics/information_new.html', {'info':info})
@@ -554,15 +556,17 @@ def needs_new(request):
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
-                    data = need.cleaned_data
-                    #print(need, "\n", data)
-                    #print("\n", data['categorie'].name, "\n")
-                    needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
-                    needdata.save()
-                    #TODO: id_generator will return random string; Could be already in use
-                    room = Room.objects.create(name=id_generator(), need=needdata)
-                    room.save()
-                    return redirect('basics:needs_all')
+                else :
+                    address=request.user.userdata.address
+                data = need.cleaned_data
+                #print(need, "\n", data)
+                #print("\n", data['categorie'].name, "\n")
+                needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False)
+                needdata.save()
+                #TODO: id_generator will return random string; Could be already in use
+                room = Room.objects.create(name=id_generator(), need=needdata)
+                room.save()
+                return redirect('basics:needs_all')
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
         c.save
