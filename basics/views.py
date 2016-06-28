@@ -21,7 +21,7 @@ from django.utils import timezone
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.measure import Distance
 # Create your views here.
-from .forms import UserFormRegister, NeedFormNew, InformationFormNew, CaptchaForm,ProfileForm, ImmediateAidFormNew,PasswordForm, ContactUsForm
+from .forms import *
 from .models import *
 from itertools import chain
 
@@ -289,8 +289,20 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 @csrf_protect
 def information_all(request):
     if request.user.is_authenticated():
+        range = "Range"
+        cards_per_page = "Cards per page"
         infos = Information.objects.order_by('date')
-        return render(request, 'basics/information_all.html',{'infos':infos})
+        if request.method == "POST":
+            print(request.POST['range'], request.POST['cards_per_page'])
+            if "" != request.POST['range']:
+                range = request.POST['range']
+            if "" != request.POST['cards_per_page']:
+                cards_per_page = int(request.POST['cards_per_page'])
+                infos = infos[:cards_per_page]
+            print(request)
+        else:
+            print("will nicgt")
+        return render(request, 'basics/information_all.html',{'infos':infos, 'cards_per_page':cards_per_page, 'range':range})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -320,7 +332,15 @@ def information_new(request):
                     infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     infodata.save()
                     return redirect('basics:information_all')
-
+                else:
+                    address= request.user.userdata.address
+                data = info.cleaned_data
+                group = None
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                    group = Group.objects.get(pk=request.POST.get('group'))
+                infodata = Information(author=request.user, group=group, headline=data['headline'], text=data['text'], address =address)
+                infodata.save()
+                return redirect('basics:information_all')
         info = InformationFormNew()
         return render(request, 'basics/information_new.html', {'info':info})
 
@@ -353,7 +373,7 @@ def information_view(request, pk):
         return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated:
         information = get_object_or_404(Information, pk=pk)
-        comments = Comment.objects.filter(inf=information).order_by('-date')
+        comments = Comment.objects.filter(inf=information).order_by('date')
         return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
 
     return redirect('basics:actofgoods_startpage')
@@ -364,7 +384,10 @@ def information_view_comment(request, pk):
     if request.user.is_authenticated:
         information = get_object_or_404(Information, pk=pk)
         if request.method == "POST":
-            comment = Comment.objects.create(inf=information, author=request.user, text=request.POST['comment_text'])
+            group = None
+            if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                group = Group.objects.get(pk=request.POST.get('group'))
+            comment = Comment.objects.create(inf=information, author=request.user, group=group, text=request.POST['comment_text'])
         return redirect('basics:information_view', pk=pk)
 
     return redirect('basics:actofgoods_startpage')
@@ -503,7 +526,7 @@ def needs_all(request):
         dist = 500
         category = "All"
         cards_per_page = 10
-        needs = Need.objects.order_by('-date')
+        needs = Need.objects.order_by('date')
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "POST":
@@ -523,14 +546,9 @@ def needs_all(request):
             if "" != request.POST['cards_per_page']:
                 cards_per_page = int(request.POST['cards_per_page'])
 
-        print(len(needs))
         max_page = int(len(needs)/cards_per_page)+1
-        print(max_page)
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
         page_range = np.arange(1,max_page+1)
-        print(category)
-        for cat in CategoriesNeeds.objects.all():
-            print(cat.name)
         return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
 
     return redirect('basics:actofgoods_startpage')
@@ -583,21 +601,26 @@ def needs_new(request):
     if request.user.is_authenticated():
         if request.method == "POST":
             need = NeedFormNew(request.POST)
-
+            print(need)
             if need.is_valid():
 
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
-                    data = need.cleaned_data
-                    #print(need, "\n", data)
-                    #print("\n", data['categorie'].name, "\n")
-                    needdata = Need(author=request.user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
-                    needdata.save()
-                    #TODO: id_generator will return random string; Could be already in use
-                    room = Room.objects.create(name=id_generator(), need=needdata)
-                    room.save()
-                    return redirect('basics:needs_all')
+                else :
+                    address=request.user.userdata.address
+                    lat = address.latitude
+                    lng = address.longditude
+                data = need.cleaned_data
+                group = None
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                    group = Group.objects.get(pk=request.POST.get('group'))
+                needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                needdata.save()
+                #TODO: id_generator will return random string; Could be already in use
+                room = Room.objects.create(name=id_generator(), need=needdata)
+                room.save()
+                return redirect('basics:needs_all')
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
         c.save
@@ -846,9 +869,6 @@ def sendmail(email, content, subject):
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
     mail.close()
 
-def groups(request):
-    return render(request, 'basics/groups.html')
-
 def report_need(request, pk):
     need = Need.objects.get(pk=pk)
     need.was_reported = True
@@ -863,22 +883,39 @@ def report_information(request, pk):
     info.number_reports += 1
     info.reported_by.add(request.user.userdata)
     info.save()
-    return information_all(request)
+    return redirect('basics:information_all')
+
+def like_information(request, pk):
+    info = Information.objects.get(pk=pk)
+    info.was_liked = True
+    info.number_likes += 1
+    info.liked_by.add(request.user.userdata)
+    info.save()
+    return redirect('basics:information_all')
+
+def unlike_information(request, pk):
+    info = Information.objects.get(pk=pk)
+    info.number_likes -= 1
+    if info.number_likes == 0:
+        info.was_liked = False
+    info.liked_by.remove(request.user.userdata)
+    info.save()
+    return redirect('basics:information_all')
 
 def need_delete(request, pk):
     need = Need.objects.all().get(pk=pk)
     need.delete()
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def info_delete(request, pk):
     info = Information.objects.all().get(pk=pk)
     info.delete()
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def comm_delete(request, pk):
     comm = Comment.objects.all().get(pk=pk)
     comm.delete()
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def need_edit(request, pk):
     if not request.user.is_active:
@@ -899,7 +936,7 @@ def need_edit(request, pk):
             return actofgoods_startpage(request)
         form = NeedFormNew()
         return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all()})
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def info_edit(request, pk):
     if not request.user.is_active:
@@ -920,7 +957,7 @@ def info_edit(request, pk):
             return actofgoods_startpage(request)
         form = InformationFormNew()
         return render(request, 'basics/info_edit.html', {'info': info})
-    return actofgoods_startpage(request)
+    return redirect('basics:actofgoods_startpage')
 
 def report_comment(request, pk):
     comment = Comment.objects.get(pk=pk)
@@ -929,3 +966,80 @@ def report_comment(request, pk):
     comment.reported_by.add(request.user.userdata)
     comment.save()
     return information_view(request, comment.inf.pk)
+
+####################################################################################################################################################
+###                             Group functions
+####################################################################################################################################################
+
+def groups(request):
+    return render(request, 'basics/groups.html')
+
+def groups_all(request):
+    groups = Groupdata.objects.all().order_by('name')
+    return render(request, 'basics/groups_all.html', {'groups':groups})
+
+def group_detail(request, name):
+    if request.user.is_authenticated():
+        gro = request.user.groups.get(name=name)
+        if request.method == "POST":
+            form = GroupAddUserForm(request.POST)
+            if form.is_valid():
+                if 'add_group_member' in form.data:
+                    email = request.POST.get('email')
+                    user = User.objects.get(email=email)
+                    gro.user_set.add(user)
+        users = gro.user_set.all()
+        group = Groupdata.objects.get(name=gro.name)
+        return render(request, 'basics/group_detail.html', {'group':group, 'users':users})
+    return redirect('basics:actofgoods_startpage')
+
+
+def group_edit(request, pk):
+    if request.user.is_authenticated():
+        if request.method == "GET":
+            group = Groupdata.objects.get(pk=pk)
+            return render(request, 'basics/group_edit.html', {'group': group})
+        elif request.method == "POST":
+            form = GroupEditForm(request.POST)
+            lat, lng = getAddress(request)
+            if form.is_valid():
+                group = Groupdata.objects.get(pk=pk)
+                email = request.POST.get('email')
+                if request.POST.get('email', "") != "":
+                    group.email = request.POST.get('email')
+                if request.POST.get('phone') != "" :
+                    group.phone = request.POST.get('phone')
+                if lat != None and lng != None:
+                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    group.address =address
+                if request.POST.get('page') != "":
+                    group.webpage=request.POST.get('page')
+                if request.POST.get('description') !="":
+                    group.description=request.POST.get('description')
+                group.save()
+                return group_detail(request, group.name)
+    return redirect('basics:actofgoods_startpage')
+
+def group_leave(request, pk):
+    print(User.objects.get(email=request.user))
+    if request.user.is_authenticated():
+        #if request.method == "POST":
+        groupDa = Groupdata.objects.get(pk=pk)
+        group = groupDa.group
+        group.user_set.remove(request.user)
+        group.save()
+        if len(group.user_set.all()) == 0:
+            group.delete()
+    return render(request, 'basics/groups.html')
+
+
+
+
+
+
+
+
+
+
+
+
