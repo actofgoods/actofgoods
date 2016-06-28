@@ -11,12 +11,12 @@
                 <div class="col-sm-2" style="padding: 15px">
                     <h2 class="text-center" id="standard-modal-headline">Needs</h2>
                 </div>
-                <form class="form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
+                <form class="form" id="filter-form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
                   {%csrf_token%}
                   <div class="col-sm-2" style="margin-top: 20px;">
                     <label for="basic-url">Search</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" id="basic-url" name="word-search" aria-describedby="basic-addon3">
+                      <input type="text" class="form-control" id="basic-url" name="word-search" aria-describedby="basic-addon3"/>
                     </div>
 
                   </div>
@@ -38,8 +38,9 @@
                   <div class="col-sm-2" style="margin-top: 20px;">
                     <label> Category
                         <select style="width: 100%" name="category">
-                            {% for category in categorie %}
-                                <option value="{{ category.name }}" {% if '{{ category.name }}' == category %}selected{% endif %}>{{ category.name }}</option>
+                            <option value="All" {% if 'All' == category %}selected{% endif %}>All</option>
+                            {% for cat in categorie %}
+                                <option value="{{ cat.name }}" {% if cat.name == category %}selected{% endif %}>{{ cat.name }}</option>
                             {% endfor %}
                         </select>
                     </label>
@@ -53,6 +54,7 @@
                         </select>
                     </label>
                   </div>
+                  <input type="hidden" class="form-control" id="page" name="page" value="1"/>
                   <div  class="col-sm-2" style="margin-top: 30px; margin-bottom: 0px;">
                       <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
                   </div>
@@ -119,7 +121,37 @@
             </div>
         </div>
     </div>
-</div><!-- end needs -->
+</div>
+<div class="row">
+  <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ] text-center">
+    <nav>
+      <ul class="pagination">
+        <li class="disabled"><a onclick="submit_page(this)" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+        {% for number in page_range %}
+          {% if number == page %}
+            <li class="active"><a onclick="submit_page(this)" value="{{number}}">{{number}} <span class="sr-only">(current)</span></a></li>
+          {% else %}
+            <li><a onclick="submit_page(this)" value="{{number}}">{{number}}</a></li>
+          {% endif %}
+        {% endfor %}
+        <li>
+          <a href="#" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <script>
+    function submit_page(button){
+      $("#page").val($(button).attr("value"));
+      console.log($(button).attr("value"));
+      $("#filter-form").submit();
+    }
+  </script>
+</div>
+
+<!-- end needs -->
 
 <!-- Introduction Row -->
 <!--

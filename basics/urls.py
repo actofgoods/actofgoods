@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^chat/(?P<roomname>[A-Za-z0-9]+)/kick_user$', views.kick_user, name='kick_user'),
     url(r'^claim/$', views.claim, name='claim'),
     url(r'^claim/post/$', views.claim_post, name='claim_post'),
+    url(r'^fill_needs/(?P<count>[0-9]+)$', views.fill_needs, name='fill_needs'),
     url(r'^help/$', views.help, name='help'),
     url(r'^home/$', views.home, name='home'),
     url(r'^immediate_aid/$', views.immediate_aid, name='immediate_aid'),

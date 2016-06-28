@@ -4,6 +4,7 @@ import smtplib
 import string
 import requests
 import json
+import numpy as np
 from django.http import JsonResponse
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
@@ -193,8 +194,8 @@ def claim_post(request):
         response_data['poly']=claim.poly.geojson
 
         return JsonResponse(response_data)
-        
-    
+
+
 @csrf_protect
 def contact_us(request):
     if request.method == "POST":
@@ -468,8 +469,15 @@ def logout(request):
 def map_testing(request):
     return render(request, 'basics/map_testing.html')
 
-def fill_needs(request):
-    return redirect()
+def fill_needs(request, count):
+    categories = CategoriesNeeds.objects.all()
+    for category in categories:
+        for i in range(int(count)):
+            lat = np.random.random()*50
+            lng = np.random.random()*50
+            Need.objects.create(author=request.user, headline=str(i) + " " + category.name, text=str(i), categorie=category, address = Address.objects.create(latitude=lat, longditude=lng), was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+
+    return redirect(request, 'basics:needs_all')
 
 """
     Needs authentication!
@@ -482,18 +490,22 @@ def fill_needs(request):
 """
 def needs_all(request):
     if request.user.is_authenticated():
-        dist = "Range"
-        category = "Categories"
-        cards_per_page = "Cards per page"
+        #TODO: Change this to somehing like user distance
+        dist = 500
+        category = "All"
+        cards_per_page = 10
         needs = Need.objects.order_by('-date')
-
+        page = 1
+        page_range = np.arange(1, 5)
         if request.method == "POST":
             print(request.POST)
+            if "" != request.POST['page']:
+                page = int(request.POST['page'])
             if "" != request.POST['range']:
                 dist = int(request.POST['range'])
                 if not request.user.is_superuser:
                 	needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
-            if "" != request.POST['category']:
+            if "" != request.POST['category'] and "All" != request.POST['category']:
                 category = request.POST['category']
                 needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
             if "" != request.POST['word-search']:
@@ -501,9 +513,16 @@ def needs_all(request):
                 needs = needs.filter(Q(headline__contains=request.POST['word-search']) | Q(text__contains=request.POST['word-search']))
             if "" != request.POST['cards_per_page']:
                 cards_per_page = int(request.POST['cards_per_page'])
-                needs = needs[:cards_per_page]
 
-        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'cards_per_page':cards_per_page, 'range':dist})
+        print(len(needs))
+        max_page = int(len(needs)/cards_per_page)+1
+        print(max_page)
+        needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
+        page_range = np.arange(1,max_page+1)
+        print(category)
+        for cat in CategoriesNeeds.objects.all():
+            print(cat.name)
+        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
 
     return redirect('basics:actofgoods_startpage')
 
