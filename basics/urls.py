@@ -37,6 +37,8 @@ urlpatterns = [
     url(r'^information_timeline/$', views.information_timeline, name='information_timeline'),
     url(r'^information_view/(?P<pk>\d+)/$', views.information_view, name='information_view'),
     url(r'^information_view/(?P<pk>\d+)/comment$', views.information_view_comment, name='information_view_comment'),
+    url(r'^information/like/(?P<pk>\d+)/$', views.like_information, name='like_information'),
+    url(r'^information/unlike/(?P<pk>\d+)/$', views.unlike_information, name='unlike_information'),
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^maptesting/$', views.map_testing, name='map_testing'),
@@ -54,7 +56,6 @@ urlpatterns = [
     url(r'^reset_password/$', views.reset_password_page, name='reset_password_page'),
     url(r'^reset_password_confirmation/$', views.reset_password_confirmation, name='reset_password_confirmation'),
 	url(r'^contact_us/$', views.contact_us, name='contact_us'),
-    url(r'^groups/$', views.groups, name='groups'),
     url(r'^need/report/(?P<pk>\d+)/$', views.report_need, name='report_need'),
     url(r'^information/report/(?P<pk>\d+)/$', views.report_information, name='report_information'),
     url(r'^comment/report/(?P<pk>\d+)/$', views.report_comment, name='report_comment'),
@@ -64,4 +65,10 @@ urlpatterns = [
     url(r'^info_edit/(?P<pk>\w+)$', views.info_edit, name='info_edit'),
     url(r'^info_delete/(?P<pk>\w+)$', views.info_delete, name='info_delete'),
     url(r'^comm_delete/(?P<pk>\w+)$', views.comm_delete, name='comm_delete'),
+
+    url(r'^groups/$', views.groups, name='groups'),
+    url(r'^groups/all/$', views.groups_all, name='groups_all'),
+    url(r'^groups/detail/(?P<name>[A-Za-z0-9 ]+)/$', views.group_detail, name='group_detail'),
+    url(r'^groups/edit/(?P<pk>\d+)/$', views.group_edit, name='group_edit'),
+    url(r'^groups/leave/(?P<pk>\d+)/$', views.group_leave, name='group_leave'),
 ]

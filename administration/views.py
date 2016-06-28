@@ -82,6 +82,9 @@ def groups(request):
             if 'create_group' in form.data:
                 email = request.POST.get('email')
                 name = request.POST.get('name')
+                is_GO = request.POST.get('is_GO')
+                if is_GO == None:
+                    is_GO = False
                 if {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
                     #address = Address.objects.create(latitude=0.0, longditude=0.0)
                     data = form.cleaned_data
@@ -89,7 +92,7 @@ def groups(request):
                     user = User.objects.get(email=email)
                     user.save()
                     group.user_set.add(user)
-                    gdata = Groupdata(group=group)
+                    gdata = Groupdata(group=group, name=group.name, is_GO=is_GO)
                     gdata.save()
                     return redirect('administration:groups')
                 elif not {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
