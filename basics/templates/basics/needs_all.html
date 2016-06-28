@@ -134,14 +134,14 @@
         <li class="disabled"><a onclick="submit_page(this)" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
         {% for number in page_range %}
           {% if number == page %}
-            <li class="active"><a onclick="submit_page(this)" value="{{number}}">{{number}} <span class="sr-only">(current)</span></a></li>
+            <li class="active"><a style="background:#71952F; border: 1px solid #71952F;" onclick="submit_page(this)" value="{{number}}">{{number}} <span class="sr-only">(current)</span></a></li>
           {% else %}
-            <li><a onclick="submit_page(this)" value="{{number}}">{{number}}</a></li>
+            <li><a onclick="submit_page(this)" value="{{number}}" style="color: #71952F;">{{number}}</a></li>
           {% endif %}
         {% endfor %}
         <li>
           <a href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
+            <span aria-hidden="true" style="color: #71952F;">&raquo;</span>
           </a>
         </li>
       </ul>
