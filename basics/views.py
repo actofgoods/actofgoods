@@ -179,7 +179,7 @@ def chat_room(request, roomname):
 @csrf_protect
 def claim(request):
     if request.user.is_authenticated():
-        return render(request, 'basics/map_claim.html', {'polygons': ClaimedArea.objects.all()})
+        return render(request, 'basics/map_claim.html', {'polygons': ClaimedArea.objects.all(), 'polyuser': ClaimedArea.objects.all().filter(claimer=request.user)})
 
 @csrf_protect
 def claim_post(request):
@@ -193,6 +193,15 @@ def claim_post(request):
         response_data['owner']=request.user.email
         response_data['poly']=claim.poly.geojson
 
+        return JsonResponse(response_data)
+
+@csrf_protect
+def claim_delete(request):
+    if request.method=="POST":
+        pk=request.POST['pk']
+        ClaimedArea.objects.all().get(pk=pk).delete()
+        response_data = {}
+        response_data['result'] = 'Deletion successful!'
         return JsonResponse(response_data)
 
 
