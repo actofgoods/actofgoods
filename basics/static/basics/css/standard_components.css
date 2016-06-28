@@ -111,6 +111,10 @@
     background-color: #EDEDED;
 }
 
+#standard-list-group-item-white-div {
+    background-color: #FAFAFA;
+}
+
 #red-list-group-item-div {
     background-color: #F5D5D8;
 }
@@ -120,3 +124,67 @@
 }
 
 /* ----------- end standard table ----------- */
+
+/* ----------- start add button ----------- */
+
+.button-float {
+     position: fixed;
+     bottom: 20px;
+     box-shadow: 0 4px 12px rgba(0,0,0,.175);
+     border: 1px solid #D36E5A;
+     width: 70px;
+     height: 70px;
+     padding: 22px 22px;
+     border-radius: 35px;
+     margin-left: 200px;
+ }
+
+ @media(max-width:1600px) {
+     .button-float {
+         margin-left: 100px;
+     }
+ }
+
+ @media(max-width:1388px) {
+     .button-float {
+         margin-left: 50px;
+     }
+ }
+
+ @media(max-width:1282px) {
+     .button-float {
+         margin-left: 0px;
+     }
+ }
+
+/* ----------- end add button ----------- */
+
+/* ----------- start description and green link ----------- */
+#description-label {
+    font-weight: bold;
+}
+
+#description-text {
+    float: left;
+}
+
+#info-block {
+    margin-top: 15px;
+}
+
+@media(max-width:768px) {
+
+    #info-block {
+        margin-top: 0px;
+    }
+
+}
+
+#green-link {
+    color: #70962c;
+}
+
+#green-link:hover {
+    color: #bbd153;
+}
+/* ----------- end description and green link ----------- */
