@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Need, Information, Userdata, ContactUs, CategoriesNeeds
+from .models import Need, Information, Userdata, ContactUs, CategoriesNeeds, Groupdata
 from nocaptcha_recaptcha.fields import NoReCaptchaField
 
 
@@ -66,3 +66,26 @@ class CategoriesForm(forms.Form):
     class Meta:
         model = CategoriesNeeds
         fields = ['name']
+
+class GroupEditForm(forms.Form):
+    class Meta:
+        model = Groupdata
+        fields = ['email', 'phone']
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and User.objects.filter(email=email).count():
+            raise forms.ValidationError(u'Email addresses must be unique.')
+        return email
+
+class GroupAddUserForm(forms.Form):
+    class Meta:
+        model = Groupdata
+        fields = ['email']
+
+        def clean_email(self):
+            email = self.cleaned_data.get('email')
+            if email and not User.objects.filter(email=email).count():
+                raise forms.ValidationError(u'Email address must be from registered User')
+            return email
+

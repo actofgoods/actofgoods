@@ -82,6 +82,9 @@ def groups(request):
             if 'create_group' in form.data:
                 email = request.POST.get('email')
                 name = request.POST.get('name')
+                is_GO = request.POST.get('is_GO')
+                if is_GO == None:
+                    is_GO = False
                 if {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
                     #address = Address.objects.create(latitude=0.0, longditude=0.0)
                     data = form.cleaned_data
@@ -89,7 +92,7 @@ def groups(request):
                     user = User.objects.get(email=email)
                     user.save()
                     group.user_set.add(user)
-                    gdata = Groupdata(group=group)
+                    gdata = Groupdata(group=group, name=group.name, is_GO=is_GO)
                     gdata.save()
                     return redirect('administration:groups')
                 elif not {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
@@ -121,7 +124,7 @@ def informations(request):
         return redirect('basics:home')
     infos = Information.objects.all()
     selected = 'all'
-    if request.GET.__contains__('sel'):
+    """if request.GET.__contains__('sel'):
         selected = request.GET['sel']
         if selected == 'all':
             infos = Information.objects.all().order_by('date')
@@ -130,7 +133,7 @@ def informations(request):
         elif selected == 'reported comments':
             comments = Comment.objects.filter(was_reported=True)
             return render(request, 'administration/information.html', {'comments':comments, 'current_info':selected})
-
+    """
     return render(request, 'administration/information.html', {'infos':infos,'current_info':selected})
 
 def information_admin(request, pk):
@@ -226,7 +229,7 @@ def needs(request):
     needs = Need.objects.all().order_by('date').reverse()
     selected_categorie = 'all Categories'
     selected_need = 'all'
-    if request.GET.__contains__('needs'):
+    """if request.GET.__contains__('needs'):
         selected_need = request.GET['needs']
         selected_categorie = request.GET['categories']
         if selected_need == 'all':
@@ -244,7 +247,7 @@ def needs(request):
             else:
                 categorie = CategoriesNeeds.objects.get(name=selected_categorie)
                 needs = Need.objects.filter(was_reported=True, categorie=categorie).order_by('date').reverse()
-                selected_categorie = categorie
+                selected_categorie = categorie"""
     return render(request, 'administration/needs.html', {'needs':needs,'categories':categories,'current_cat':selected_categorie, 'current_need':selected_need})
 
 def users(request):

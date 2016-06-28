@@ -1,0 +1,57 @@
+{% extends 'basics/base.html' %}
+
+{% block content %}
+<!-- Introduction Row -->
+	<div id="standard-modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="text-center">Edit Your Group</h1>
+			</div>
+			<div class="modal-body">
+				<form class="form" role="form" method="post" accept-charset="UTF-8">
+				    {% csrf_token %}
+    				
+					<div class="form-group">
+						{% if group.email == "" %}
+							<input type="email" class="form-control input-lg" placeholder=email name="email">
+						{% else %}
+							<input type="email" class="form-control input-lg" placeholder= '{{ group.email }}' name="email">
+						{% endif %}
+					</div>
+
+					<div class="form-group">
+						{% if group.phone == "" %}
+							<input type="description" class="form-control input-lg" placeholder=phonenumber name="phone"  >
+						{% else %}
+							<input type="description" class="form-control input-lg" placeholder= {{ group.phone }} name="phone"  >
+						{% endif %}
+					</div>
+
+					<div class="form-group">
+						{% if group.webpage == "" %}
+							<input type="description" class="form-control input-lg" placeholder=webpage name="page"  >
+						{% else %}
+							<input type="description" class="form-control input-lg" placeholder= {{ group.webpage }} name="page"  >
+						{% endif %}
+					</div>
+
+					<div class="form-group">
+							<textarea type="description" class="form-control input-lg" placeholder="description" name="description"  rows="4"></textarea>
+
+					</div>
+
+
+
+					<div class="form-group">
+						
+						{% include "basics/map_testing.html" %}
+					</div>
+					<div class="form-group">
+						<input id="standard-grey-button-bold" type="submit" onclick="group_edit" class="btn btn-block btn-lg btn-primary" value="Save"/>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

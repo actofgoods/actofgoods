@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.utils.timezone import now
 from django.contrib.auth.models import User, Group
 from django.contrib.gis.db import models
+from django.core.validators import RegexValidator
 
 # Create your models here.
 class Message(models.Model):
@@ -39,7 +40,7 @@ class Userdata(models.Model):
 	get_notifications = models.BooleanField(default=False)
 	inform_about = models.ManyToManyField(CategoriesNeeds)
 	aux = models.FloatField(default=50)
-	adrAsPoint=models.PointField(null=True)
+	adrAsPoint=models.PointField(default='POINT(0.0 0.0)')
 	def __unicode__(self):
 		return self.pseudonym
 
@@ -48,9 +49,13 @@ class CategoriesRep(models.Model):
 
 class Groupdata(models.Model):
 	group = models.OneToOneField(Group, on_delete=models.CASCADE)
+	alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
+	name = models.CharField(max_length=30, validators=[alphanumeric])
 	email = models.EmailField(max_length=254)
 	phone = models.CharField(max_length=15)
-	is_NGO = models.BooleanField(default=True)
+	is_GO = models.BooleanField(default=False)
+	webpage = models.CharField(max_length=40)
+	description = models.TextField(default='')
 	# mabye changed
 	address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
 
@@ -60,7 +65,7 @@ class Need(models.Model):
 	headline = models.CharField(max_length=30, default='')
 	text = models.TextField(default='')
 	closed = models.BooleanField(default=False)
-	date = models.DateTimeField(auto_now=True)
+	date = models.DateTimeField(auto_now_add=True)
 	categorie = models.ForeignKey(CategoriesNeeds)
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
 	was_reported = models.BooleanField(default=False)
@@ -75,19 +80,23 @@ class Information(models.Model):
 	headline = models.CharField(max_length=30, default='')
 	text = models.TextField(default='')
 	closed = models.BooleanField(default=False)
-	date = models.DateTimeField(auto_now=True)
+	date = models.DateTimeField(auto_now_add=True)
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
 	was_reported = models.BooleanField(default=False)
 	number_reports = models.PositiveIntegerField(default=0)
-	reported_by = models.ManyToManyField(Userdata)
+	reported_by = models.ManyToManyField(Userdata, related_name="report")
 	adrAsPoint=models.PointField(null=True)
 	objects = models.GeoManager()
+	was_liked = models.BooleanField(default=False)
+	number_likes = models.PositiveIntegerField(default=0)
+	liked_by = models.ManyToManyField(Userdata, related_name="like")
 
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
+	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
 	text = models.TextField(default='')
-	date = models.DateTimeField(auto_now=True)
+	date = models.DateTimeField(auto_now_add=True)
 	was_reported = models.BooleanField(default=False)
 	number_reports = models.PositiveIntegerField(default=0)
 	reported_by = models.ManyToManyField(Userdata)
