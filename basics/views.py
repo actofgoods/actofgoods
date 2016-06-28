@@ -437,6 +437,8 @@ def immediate_aid(request):
 
 
                     sendmail(user.email, content, subject )
+                    user = authenticate(username=user_data['email'],password=password_d)
+                    auth_login(request,user)
                     return redirect('basics:home')
                 else:
                     messages.add_message(request, messages.INFO, 'location_failed')
