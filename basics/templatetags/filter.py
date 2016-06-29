@@ -8,3 +8,9 @@ def get_short_text( need , max_len=100):
     if len(need.text) > max_len:
         return need.text[:max_len] + "..."
     return need.text
+
+@register.filter
+def is_own(roomname, user):
+    if Room.objects.get(name=roomname).need.author == user:
+        return True;
+    return False;

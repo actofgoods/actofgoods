@@ -80,6 +80,11 @@ button, .btn-primary, .btn-primary:focus {
 
 }
 
+.system.message {
+	text-align: center;
+
+}
+
 .message__author {
 	padding: 0 .5rem;
 }
@@ -106,6 +111,9 @@ button, .btn-primary, .btn-primary:focus {
 	word-break: normal;
 	text-align: left;
 }
+.btn-kick{
+	text-align: right;
+}
 
 .own.message .message__avatar {
 	float: right;
@@ -116,6 +124,14 @@ button, .btn-primary, .btn-primary:focus {
 	background: #5C5E5A;
 }
 
+.system.message .message__avatar {
+	text-align: center;
+}
+.system.message .message__text {
+	clear:both;
+	text-align: center;
+	background: #bbbbbb;
+}
 .mdl-progress {
 	position: absolute;
 	left: 0;
