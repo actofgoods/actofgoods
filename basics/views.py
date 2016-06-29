@@ -188,32 +188,42 @@ def chat_room(request, roomname):
     contact_us page will be rendered and returned.
 """
 @csrf_protect
-def claim(request):
+def claim(request, name):
     if request.user.is_authenticated():
-        return render(request, 'basics/map_claim.html', {'polygons': ClaimedArea.objects.all(), 'polyuser': ClaimedArea.objects.all().filter(claimer=request.user)})
+        if request.user.groups.filter(name=name).exists():
+            return render(request, 'basics/map_claim.html', {'group': name, 'polygons': ClaimedArea.objects.all(), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
+    return redirect('basics:actofgoods_startpage')    
 
 @csrf_protect
-def claim_post(request):
-    if request.method=="POST":
-        poly_path=request.POST['path']
-        response_data = {}
-        wkt = "POLYGON(("+poly_path+"))"
-        claim = ClaimedArea.objects.create(claimer=request.user, poly=wkt)
-        claim.save()
-        response_data['result'] = 'Creation successful!'
-        response_data['owner']=request.user.email
-        response_data['poly']=claim.poly.geojson
+def claim_post(request, name):
+    if request.user.is_authenticated():
+        if request.user.groups.filter(name=name).exists():
+            if request.method=="POST":
+                poly_path=request.POST['path']
+                response_data = {}
+                wkt = "POLYGON(("+poly_path+"))"
+                gro = request.user.groups.get(name=name)
+                claim = ClaimedArea.objects.create(claimer=request.user,group=gro, poly=wkt)
+                claim.save()
+                response_data['result'] = 'Creation successful!'
+                response_data['owner']=request.user.email
+                response_data['poly']=claim.poly.geojson
+                response_data['pk']=claim.pk
 
-        return JsonResponse(response_data)
+                return JsonResponse(response_data)
+    return redirect('basics:actofgoods_startpage') 
 
 @csrf_protect
-def claim_delete(request):
-    if request.method=="POST":
-        pk=request.POST['pk']
-        ClaimedArea.objects.all().get(pk=pk).delete()
-        response_data = {}
-        response_data['result'] = 'Deletion successful!'
-        return JsonResponse(response_data)
+def claim_delete(request,name):
+    if request.user.is_authenticated():
+        if request.user.groups.filter(name=name).exists():
+            if request.method=="POST":
+                pk=request.POST['pk']
+                ClaimedArea.objects.all().get(pk=pk).delete()
+                response_data = {}
+                response_data['result'] = 'Deletion successful!'
+                return JsonResponse(response_data)
+    return redirect('basics:actofgoods_startpage') 
 
 
 @csrf_protect

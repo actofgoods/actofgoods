@@ -37,7 +37,9 @@
 			</div><!-- modal-body -->
 
 	        <div class="modal-footer">
-				<button id="standard-grey-button-bold" type="button" onclick="loadClaims()" class="btn btn-primary">Load</button>
+				<button id="standard-grey-button-bold" type="button" onclick="loadClaims('0')" class="btn btn-primary">Load All</button>
+                <button id="standard-grey-button-bold" type="button" onclick="loadClaims('1')" class="btn btn-primary">Load Own</button>
+                <button id="standard-grey-button-bold" type="button" onclick="newClaim()" class="btn btn-primary" >New</button>
                 <button id="standard-grey-button-bold" type="submit" class="btn btn-primary" >Save</button>
 	        </div>
 	        </form>
@@ -106,6 +108,7 @@ function deleteClaim(pk){
 	});
 }
 </script>
+
 <script>
 	var map, poly;
 	var myCenter=new google.maps.LatLng(51.508742,-0.120850);
@@ -114,7 +117,9 @@ function deleteClaim(pk){
 	var marker;
     var path = [];
 	var info = new google.maps.InfoWindow();
-    var loaded = false;
+    var loadedOwn = false;
+    var loadedAll = false;
+    var onedit=false;
 
 
 	$('#post-form').on('submit', function(e) {
@@ -129,8 +134,9 @@ function deleteClaim(pk){
 			success: function(json){
 				alert("Succesfully created!");
 				poly.setEditable(false);
+                onedit=false;
 				poly.addListener('click', function(event){
-	  				info.setContent('<b>Owner: </b>' +json.owner);
+	  				info.setContent('<b>Group: </b>'+'{{group}}'+'<br><b>Owner: </b>' +json.owner + '<br><b>ID: '+json.pk+'</b>');
 	  				info.setPosition(event.latLng);
 	  				info.open(map);
   				})
@@ -145,6 +151,23 @@ function deleteClaim(pk){
 
 	});
 
+
+    function newClaim(){
+        if (onedit==false){
+        poly=new google.maps.Polygon({
+                paths: new google.maps.MVCArray([new google.maps.MVCArray]),
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 3,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+                editable: true
+            });
+        google.maps.event.addListener(map, 'click', addPoint);
+    }
+    onedit=true;
+    }
+
 	function initialize() {
     	geocoder = new google.maps.Geocoder()
 			var mapProp = {
@@ -158,6 +181,7 @@ function deleteClaim(pk){
         streetViewControl: false
   		};
   		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
+        onedit=true;
   		poly=new google.maps.Polygon({
                 paths: new google.maps.MVCArray([new google.maps.MVCArray]),
                 strokeColor: '#FF0000',
@@ -174,21 +198,31 @@ function deleteClaim(pk){
         })*/
 	}
 
-    function loadClaims(){
-        if (loaded==false){
+    function loadClaims(prop){
+        if (loadedAll==false){
         {% for claim in polygons %}
             path = [];
             {% for point in claim.poly.0 %}
                 path.push(new google.maps.LatLng{{point}});
             {% endfor%}
-            createPoly(path, '{{claim.claimer.email}}',{{claim.pk}});
+            console.log("Test1");
+            createPoly(prop, path, '{{claim.group.name}}','{{claim.claimer.email}}','{{claim.pk}}');
         {%endfor %}
-        loaded=true;
+        if(prop=='0'){
+            loadedAll=true;
+            loadedOwn=true;
+        }
+        if(prop=='1'){
+            loadedOwn=true;
+        }
+
         }
     }
 
-    function createPoly(path, email, pk) {
-        if ("{{request.user.email}}" == email) {
+    function createPoly(prop, path, group, email, pk) {
+        console.log("Test2"+group);
+        if ("{{group}}" == group && loadedOwn==false) {
+            console.log("Test3");
         	var claim = new google.maps.Polygon({
                 paths: new google.maps.MVCArray(path),
                 strokeColor: '#FF0000',
@@ -199,13 +233,15 @@ function deleteClaim(pk){
                 editable: false
             });
             claim.addListener('click', function(event){
-            info.setContent('<b>Owner: </b>' +email + '<br><b>ID: '+pk+'</b>');
+            info.setContent('<b>Group: </b>'+group+'<br><b>Owner: </b>' +email + '<br><b>ID: '+pk+'</b>');
             info.setPosition(event.latLng);
             info.open(map);
             })
+            claim.setMap(map);
         }
 
-        else {
+        else{
+            if ("{{group}}" != group && prop==0){
             var claim = new google.maps.Polygon({
                 paths: new google.maps.MVCArray(path),
                 fillColor: '#B8CE52',
@@ -217,13 +253,14 @@ function deleteClaim(pk){
                 editable: false
             });
             claim.addListener('click', function(event){
-            info.setContent('<b>Owner: </b>' +email);
+            info.setContent('<b>Group: </b>' + group);
             info.setPosition(event.latLng);
             info.open(map);
-            })
+            });
+            claim.setMap(map);
+        }
         }
 
-        claim.setMap(map);
     }
 
     function test(){

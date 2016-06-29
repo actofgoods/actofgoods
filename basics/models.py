@@ -23,6 +23,7 @@ class CategoriesNeeds(models.Model):
 
 class ClaimedArea(models.Model):
 	claimer=models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
 	poly=models.PolygonField()
 	objects = models.GeoManager()
 	def __unicode__(self):
