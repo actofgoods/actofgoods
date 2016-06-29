@@ -1,6 +1,330 @@
 {% extends 'basics/base.html' %}
-
+{% load filter%}
 {% block content %}
+
+<style>
+
+/* timeline */
+.timeline {
+    list-style: none;
+    padding: 20px 0 0;
+    position: relative;
+}
+
+.timeline:before {
+    top: 5;
+    bottom: 0;
+    position: absolute;
+    content: " ";
+    width: 3px;
+    background-color: #DDDDDD;
+    left: 50%;
+    margin-left: -1.5px;
+}
+
+/* left arrow */
+.timeline-panel-left:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 15px 15px 15px 0;
+    border-color: transparent #DDDDDD;
+    display: block;
+    width: 0;
+    z-index: 1;
+    left: -15px;
+    top: 25px;
+}
+
+/* right arrow */
+.timeline-panel-right:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 15px 0 15px 15px;
+    border-color: transparent #DDDDDD;
+    display: block;
+    width: 0;
+    z-index: 1;
+    right: -15px;
+    top: 25px;
+}
+
+/* badge */
+.timeline-badge {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 24px;
+    text-align: center;
+    position: absolute;
+    margin-top: 25px;
+    left: 50%;
+    margin-left: -20px;
+    background-color: #5D5F5B;
+    z-index: 100;
+    border-top-right-radius: 50%;
+    border-top-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+    border-bottom-left-radius: 50%;
+}
+
+.timeline-badge > i {
+    color: #bbd153;;
+    padding: 8px;
+}
+
+/* tip of timeline arrow */
+.timeline-tip {
+    position: relative;
+    width: 30px;
+    height: 0px;
+    padding: 0px;
+    background: #DDDDDD;
+    left: 50%;
+    top: -22px;
+    margin-left: -16px;
+}
+
+.timeline-tip:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 0 16px 25px;
+    border-color: #DDDDDD transparent;
+    display: block;
+    width: 0;
+    z-index: 1;
+}
+
+#left-timeline-block {
+    padding-right: 40px;
+    margin-bottom: 15px;
+}
+
+#right-timeline-block {
+    padding-left: 40px;
+    margin-bottom: 15px;
+}
+
+@media(max-width:768px) {
+
+    .timeline:before {
+        left: 20px;
+    }
+
+    .timeline-panel-right:after {
+        border-width: 15px 15px 15px 0;
+        left: -15px;
+    }
+
+    .timeline-badge {
+        left: 20px;
+    }
+
+    .timeline-tip {
+        left: 20px;
+    }
+
+    #left-timeline-block {
+        padding-right: 15px;
+        padding-left: 70px;
+    }
+
+    #right-timeline-block {
+        padding-left: 70px;
+    }
+
+}
+
+@media(max-width:440px) {
+
+    .timeline:before {
+        left: 50%;
+    }
+
+
+    .timeline-panel-right {
+        margin-top: 18px;
+        padding-top: 33px;
+    }
+
+    .timeline-panel-left {
+        margin-top: 18px;
+        padding-top: 33px;
+    }
+
+    .timeline-panel-right:after {
+        display: none;
+    }
+
+    .timeline-panel-left:after {
+        display: none;
+    }
+
+    .timeline-badge {
+        left: 50%;
+        margin-top: 0px;
+    }
+
+    .timeline-tip {
+        left: 50%;
+    }
+
+    #left-timeline-block {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    #right-timeline-block {
+        padding-left: 15px;
+    }
+
+}
+
+</style>
+
+<div id="standard-modal" style="margin-bottom: 90px;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="text-center" id="standard-modal-headline">Your Timeline</h2>
+        </div>
+        <div class="modal-body">
+            <div class="timeline">
+                <div class="timeline-tip"></div>
+                <div class="list-group" style="margin-bottom: 0px; margin-top: 15px;">
+                    {% for elem in result_list %}
+
+                        {% if elem in infos %}
+                            <div class="row">
+                                <div class="timeline-badge"><i class="glyphicon glyphicon-info-sign"></i></div>
+                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}">
+                                    <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
+                                      <div class="row">
+                                          <a href="{% url 'basics:information_view' pk=elem.id %}">
+                                              <div class="col-sm-12">
+                                                  <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ elem.headline }}</h4>
+                                                  <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:160 }}</p>
+                                              </div>
+
+                                              <div class="col-sm-9">
+                                                  <h6 style="color: #555; hover.color: #555;"><br>from: {{ elem.date }}</h6>
+                                              </div>
+                                          </a>
+                                      </div>
+                                      <div class="row">
+                                          <div class="col-sm-12">
+                                              <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
+                                                  <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_edit' pk=elem.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit Profile</a>
+                                                  <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="#" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-globe"></span> Claim Area</a>
+                                                  <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_leave' pk=elem.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-log-out"></span> Leave Organisation</a>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                        {% elif elem in needs %}
+                            <div class="row">
+                                <div class="timeline-badge"><i class="glyphicon glyphicon-question-sign"></i></div>
+                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}">
+                                    <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
+                                        <div class="row">
+                                            <div class="col-sm-12" data-toggle="modal" data-target=".{{ elem.id }}">
+                                                <h4 class="list-group-item-heading">{{ elem.headline }}</h4>
+                                                <p class="list-group-item-text">{{ elem|get_short_text:160 }}</p>
+                                            </div>
+                                            <div class="col-sm-9" data-toggle="modal" data-target=".{{ elem.id }}">
+                                                <h6><br>from: {{ elem.date }} / category: {{ elem.categorie.name }}</h6>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- modal for every need -->
+                            <div class="modal fade {{ elem.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h2>{{elem.headline}}</h2>
+                                            <h6>from: {{ elem.date }} / category: {{ elem.categorie.name }} </h6>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>{{ elem.text|linebreaksbr }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% else %}
+
+                            <div class="row">
+                                <div class="timeline-badge"><i class="glyphicon glyphicon-comment"></i></div>
+                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}">
+                                    <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
+                                      <div class="row">
+                                          <a href="{% url 'basics:information_view' pk=elem.id %}">
+                                              <div class="col-sm-12">
+                                                  <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ elem.inf.headline }}</h4>
+                                                  <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:160 }}</p>
+                                              </div>
+
+                                              <div class="col-sm-9">
+                                                  <h6 style="color: #555; hover.color: #555;"><br>from: {{ elem.date }}</h6>
+                                              </div>
+                                          </a>
+                                      </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
+                                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_edit' pk=elem.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit Profile</a>
+                                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="#" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-globe"></span> Claim Area</a>
+                                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_leave' pk=elem.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-log-out"></span> Leave Organisation</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                       {% endif %}
+
+                   {% endfor %}
+               </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   <div class="row">
 
     <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
