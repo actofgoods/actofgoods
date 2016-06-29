@@ -60,6 +60,9 @@ class Groupdata(models.Model):
 	# mabye changed
 	address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
 
+class Update(models.Model):
+	update_at = models.DateTimeField()
+
 class Need(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
@@ -74,6 +77,8 @@ class Need(models.Model):
 	reported_by = models.ManyToManyField(Userdata)
 	adrAsPoint=models.PointField(null=True)
 	objects = models.GeoManager()
+	priority = models.FloatField(default=1000)
+	update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
 
 class Information(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -91,6 +96,9 @@ class Information(models.Model):
 	was_liked = models.BooleanField(default=False)
 	number_likes = models.PositiveIntegerField(default=0)
 	liked_by = models.ManyToManyField(Userdata, related_name="like")
+	priority = models.FloatField(default=5000)
+	update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
+
 
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)
