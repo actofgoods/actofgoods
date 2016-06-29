@@ -992,14 +992,9 @@ def group_leave(request, pk):
             group.delete()
     return render(request, 'basics/groups.html')
 
-
-
-
-
-
-
-
-
-
-
-
+def group_detail_for_user(request, name):
+    if request.user.is_authenticated():
+        gro = request.user.groups.get(name=name)
+        group = Groupdata.objects.get(name=gro.name)
+        return render(request, 'basics/group_detail_for_user.html', {'group':group})
+    return redirect('basics:actofgoods_startpage')

@@ -184,10 +184,29 @@
 
 </style>
 
-<div id="standard-modal" style="margin-bottom: 90px;">
+<div id="standard-modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="text-center" id="standard-modal-headline">Your Timeline</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    <h2 class="text-center" id="standard-modal-headline">Your Timeline</h2>
+                </div>
+                <form class="form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
+                  {%csrf_token%}
+                  <div class="col-sm-2" style="margin-top: 20px;">
+                        <select style="width: 100%" name="category">
+                          <option value="all">All</option>
+                          <option value="needs_posted">your posted Needs</option>
+                          <option value="needs_helping">Needs where you helping</option>
+                          <option value="information_posted"> your posted Information</option>
+                          <option value="written_comments">your written comments</option>
+                        </select>
+                  </div>
+                  <div  class="col-sm-2" style="margin-top: 30px; margin-bottom: 0px;">
+                      <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                  </div>
+                </form>
+            </div>
         </div>
         <div class="modal-body">
             <div class="timeline">
@@ -198,28 +217,16 @@
                         {% if elem in infos %}
                             <div class="row">
                                 <div class="timeline-badge"><i class="glyphicon glyphicon-info-sign"></i></div>
-                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}">
+                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                       <div class="row">
                                           <a href="{% url 'basics:information_view' pk=elem.id %}">
                                               <div class="col-sm-12">
-                                                  <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ elem.headline }}</h4>
+                                                  <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ elem.headline }}<div style="font-size: .83em; color: #555; hover.color: #555; float: right;"><span class="glyphicon glyphicon-chevron-up"></span>{{ elem.number_likes }}</div></h4>
+                                                  <h6 style="color: #555; hover.color: #555;">from: {{ elem.date }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}<br></h6>
                                                   <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:160 }}</p>
                                               </div>
-
-                                              <div class="col-sm-9">
-                                                  <h6 style="color: #555; hover.color: #555;"><br>from: {{ elem.date }}</h6>
-                                              </div>
                                           </a>
-                                      </div>
-                                      <div class="row">
-                                          <div class="col-sm-12">
-                                              <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
-                                                  <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_edit' pk=elem.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit Profile</a>
-                                                  <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="#" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-globe"></span> Claim Area</a>
-                                                  <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_leave' pk=elem.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-log-out"></span> Leave Organisation</a>
-                                              </div>
-                                          </div>
                                       </div>
                                   </div>
                               </div>
@@ -227,7 +234,7 @@
                         {% elif elem in needs %}
                             <div class="row">
                                 <div class="timeline-badge"><i class="glyphicon glyphicon-question-sign"></i></div>
-                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}">
+                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
                                             <div class="col-sm-12" data-toggle="modal" data-target=".{{ elem.id }}">
@@ -266,7 +273,7 @@
 
                             <div class="row">
                                 <div class="timeline-badge"><i class="glyphicon glyphicon-comment"></i></div>
-                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}">
+                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                       <div class="row">
                                           <a href="{% url 'basics:information_view' pk=elem.id %}">
