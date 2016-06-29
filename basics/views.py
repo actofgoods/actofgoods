@@ -561,7 +561,7 @@ def needs_all(request):
             if "" != request.POST['range']:
                 dist = int(request.POST['range'])
                 if not request.user.is_superuser:
-                	needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
+                    needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
             if "" != request.POST['category'] and "All" != request.POST['category']:
                 category = request.POST['category']
                 needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
@@ -570,15 +570,15 @@ def needs_all(request):
                 needs = needs.filter(Q(headline__contains=request.POST['word-search']) | Q(text__contains=request.POST['word-search']))
             if "" != request.POST['cards_per_page']:
                 cards_per_page = int(request.POST['cards_per_page'])
-
+        elif request.method == "GET":
+            if not request.user.is_superuser:
+                needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         #TODO: this way is fucking slow and should be changed but i didn't found a better solution
         needs = [s for s in needs if Room.objects.get(need=s).user_req!= request.user and s.author!= request.user  ]
 
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
         page_range = np.arange(1,max_page+1)
-        for cat in CategoriesNeeds.objects.all():
-            print(cat.name)
         return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'wordsearch':wordsearch, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
 
     return redirect('basics:actofgoods_startpage')
