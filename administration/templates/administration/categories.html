@@ -28,7 +28,7 @@
 				    <form class="form" role="form" method="post" accept-charset="UTF-8">
 					{%csrf_token%}
 					    <div class="form-group">
-		  				    <input type="name" class="form-control input-lg" placeholder="Category Name" name="name" required/>
+		  				    <input type="name" class="form-control input-lg" placeholder="Category Name" name="name" maxlength="50" required/>
 		  			    </div>
 					    <div class="form-group">
 						    <input name="create_category" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Create"/>

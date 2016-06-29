@@ -38,7 +38,7 @@
                         {% endfor %}
                     {% endif %}
                     <div class="form-group">
-                        <input type="name" class="form-control input-lg" placeholder="Group Name" name="name" pattern="[a-zA-Z0-9 ]+" title="No special Characters allowed, only alphanumeric characters" required/>
+                        <input type="name" class="form-control input-lg" placeholder="Group Name" name="name" pattern="[a-zA-Z0-9 ]+" title="No special Characters allowed, only alphanumeric characters" maxlength="30" required/>
                     </div>
                     {% if messages %}
                         {% for message in messages %}
@@ -63,7 +63,7 @@
                         {% endfor %}
                     {% endif %}
                     <div class="form-group">
-                        <input type="email" class="form-control input-lg" placeholder="Email from Group-User" name="email" required/>
+                        <input type="email" class="form-control input-lg" placeholder="Email from Group-User" name="email" maxlength="254" required/>
                     </div>
                     <div class="form-group" >
                         <label>
@@ -99,7 +99,7 @@
                 <form class="form" role="form" method="POST" accept-charset="UTF-8">
                 {%csrf_token%}
                     <div class="form-group">
-                        <input type="name" class="form-control input-lg" placeholder="Group Name" name="name" required/>
+                        <input type="name" class="form-control input-lg" placeholder="Group Name" name="name" maxlength="30" required/>
                     </div>
                     <div class="form-group">
                         <input name="search_group" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Search"/>
