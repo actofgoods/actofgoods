@@ -67,7 +67,6 @@ urlpatterns = [
     url(r'^info_delete/(?P<pk>\w+)$', views.info_delete, name='info_delete'),
     url(r'^comm_delete/(?P<pk>\w+)$', views.comm_delete, name='comm_delete'),
 
-    url(r'^groups/$', views.groups, name='groups'),
     url(r'^groups/all/$', views.groups_all, name='groups_all'),
     url(r'^groups/detail/(?P<name>[A-Za-z0-9 ]+)/$', views.group_detail, name='group_detail'),
     url(r'^groups/edit/(?P<pk>\d+)/$', views.group_edit, name='group_edit'),

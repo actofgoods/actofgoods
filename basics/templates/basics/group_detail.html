@@ -137,6 +137,18 @@
                 <div class="modal-body">
                     <form class="form" role="form" method="post" accept-charset="UTF-8">
                         {%csrf_token%}
+                        {% if messages %}
+                            {% for message in messages %}
+
+                                {% if message.message == 'wrong_email' %}
+                                    <div class="form-group">
+                                        <div class="error-messages">
+                                            <p>User with this email does not exist!</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
                         <div class="form-group">
                             <input type="email" class="form-control input-lg" placeholder="Email from Group-User" name="email" required/>
                         </div>

@@ -971,9 +971,6 @@ def report_comment(request, pk):
 ###                             Group functions
 ####################################################################################################################################################
 
-def groups(request):
-    return render(request, 'basics/groups.html')
-
 def groups_all(request):
     groups = Groupdata.objects.all().order_by('name')
     return render(request, 'basics/groups_all.html', {'groups':groups})
@@ -986,8 +983,11 @@ def group_detail(request, name):
             if form.is_valid():
                 if 'add_group_member' in form.data:
                     email = request.POST.get('email')
-                    user = User.objects.get(email=email)
-                    gro.user_set.add(user)
+                    if {'email': email} in User.objects.values('email'):
+                        user = User.objects.get(email=email)
+                        gro.user_set.add(user)
+                    else:
+                        messages.add_message(request, messages.INFO, 'wrong_email')
         users = gro.user_set.all()
         group = Groupdata.objects.get(name=gro.name)
         return render(request, 'basics/group_detail.html', {'group':group, 'users':users})
@@ -1030,7 +1030,7 @@ def group_leave(request, pk):
         group.save()
         if len(group.user_set.all()) == 0:
             group.delete()
-    return render(request, 'basics/groups.html')
+    return render(request, 'basics/home.html')
 
 
 
