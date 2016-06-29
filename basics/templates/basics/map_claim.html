@@ -2,7 +2,6 @@
 
 {% block content %}
 
-
 <style>
 
 	#map-container {
@@ -11,8 +10,10 @@
 
 
 </style>
-
+<div class ="row">
+<div class="col-md-9">
 <!-- Modal -->
+
 <div class="standard-modal" id="location-map-modal">
    		<div class="modal-content">
 
@@ -43,7 +44,45 @@
 
       	</div><!-- /.modal-content -->
 </div><!-- /.modal -->
+</div>
 
+<div class="col-md-3">
+<!-- Modal -->
+<div class="standard-modal" id="claim-modal">
+   		<div class="modal-content">
+
+       		<div class="modal-header">
+       			<h2 class="text-center">Group Claims</h2>
+      		</div>
+       		<div class="modal-body" style="max-height: 540px; overflow-y: scroll;">
+            <div class="list-group">
+                {% if polyuser %}
+                    {% for poly in polyuser %}
+                        <!-- list all needs -->
+                        <a class="list-group-item" id="standard-list-group-item-div">
+                            <div class="row">
+                                    <h4 class="list-group-item-heading">{{ poly.pk }}</h4>
+                                    <p class="list-group-item-text">Owner: {{poly.claimer}}</p>
+                                    <button type="button" class="btn btn-default btn-sml standard-grey-button-light" onclick="deleteClaim({{poly.pk}})" style="float: right; "><span class="glyphicon glyphicon-remove"></span>Delete</button>
+
+                            </div>
+                        </a>
+                    {% empty %}
+                        <h4>There are no needs.</h4>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+			</div><!-- modal-body -->
+
+	        <div class="modal-footer">
+	        </div>
+	        </form>
+
+      	</div><!-- /.modal-content -->
+</div><!-- /.modal -->
+</div>
+</div>
 
 
 
@@ -52,8 +91,22 @@
 <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css"></script>
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAmqqg6nhFweM6hPaowtRZT0kRsHPZSaBA"></script>
 <script>
+function deleteClaim(pk){
+	$.ajax({
+		url: "delete/",
+		type: "POST",
+		data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk},
 
-
+		success: function(json){
+			alert(json.result)
+		},
+		error: function(xhr, errmsg, err){
+			console.log(xhr.status + ": " + xhr.responseText);
+		},
+	});
+}
+</script>
+<script>
 	var map, poly;
 	var myCenter=new google.maps.LatLng(51.508742,-0.120850);
 	var geocoder;
@@ -63,9 +116,7 @@
 	var info = new google.maps.InfoWindow();
     var loaded = false;
 
-	$.ajaxSetup({
-  		data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
-	});
+
 	$('#post-form').on('submit', function(e) {
 		pathi=save();
 		e.preventDefault();
@@ -73,7 +124,7 @@
 		$.ajax({
 			url: "post/",
 			type: "POST",
-			data: {path: pathi},
+			data: {csrfmiddlewaretoken: '{{ csrf_token }}', path: pathi},
 
 			success: function(json){
 				alert("Succesfully created!");
@@ -130,15 +181,15 @@
             {% for point in claim.poly.0 %}
                 path.push(new google.maps.LatLng{{point}});
             {% endfor%}
-            createPoly(path, '{{claim.claimer.email}}');
+            createPoly(path, '{{claim.claimer.email}}',{{claim.pk}});
         {%endfor %}
         loaded=true;
         }
     }
 
-    function createPoly(path, email) {
+    function createPoly(path, email, pk) {
         if ("{{request.user.email}}" == email) {
-        var claim = new google.maps.Polygon({
+        	var claim = new google.maps.Polygon({
                 paths: new google.maps.MVCArray(path),
                 strokeColor: '#FF0000',
                 fillColor: '#FF0000',
@@ -147,6 +198,11 @@
                 fillOpacity: 0.35,
                 editable: false
             });
+            claim.addListener('click', function(event){
+            info.setContent('<b>Owner: </b>' +email + '<br><b>ID: '+pk+'</b>');
+            info.setPosition(event.latLng);
+            info.open(map);
+            })
         }
 
         else {
@@ -160,12 +216,13 @@
                 fillOpacity: 0.35,
                 editable: false
             });
-        }
             claim.addListener('click', function(event){
-                info.setContent('<b>Owner: </b>' +email);
-                info.setPosition(event.latLng);
-                info.open(map);
-                })
+            info.setContent('<b>Owner: </b>' +email);
+            info.setPosition(event.latLng);
+            info.open(map);
+            })
+        }
+
         claim.setMap(map);
     }
 

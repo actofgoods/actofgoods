@@ -79,25 +79,19 @@
 					<div class="collapse navbar-collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
 							<li {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}">Home</a></li>
-							<li {% if "/needs" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
-								<a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Needs <span class="caret"></span></a>
-								<ul id="navbar-dropdown-menu" class="dropdown-menu">
-									<li {% if "/needs_all/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:needs_all' %}">All</a></li>
-									<li {% if "/needs_new/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:needs_new' %}">New</a></li>
-									<li{% if "/needs_timeline/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:needs_timeline' %}">Timeline</a></li>
-								</ul>
-							</li>					<!-- insert URL for needs and create if for class = active-->
-							<li {% if "/information" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
-								<a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Information <span class="caret"></span></a>
-								<ul id="navbar-dropdown-menu" class="dropdown-menu">
-									<li {% if "/information_all/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:information_all' %}">All</a></li>
-									<li {% if "/information_new/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:information_new' %}">New</a></li>
-									<li {% if "/information_timeline/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:information_timeline' %}">Timeline</a></li>
-								</ul>
-							</li>					<!-- insert URL for needs and create if for class = active-->
+                            <li {% if "/needs" in request.path %} class="active" {% endif %}><a href="{% url 'basics:needs_all' %}">Needs</a></li>
+                            <li {% if "/information" in request.path %} class="active" {% endif %}><a href="{% url 'basics:information_all' %}">Information</a></li>
 							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}">Chats  <span class="badge" id="badge-container"></span></a></li>
-							<li id="navbar-with-divider" {% if "/claim/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:claim' %}">Claim  <span class="badge" id="badge-container"></span></a></li>
-							<li {% if "/groups/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:groups' %}">Groups</a></li>
+                            {% if user.groups.all|length != 0 %}
+                                <li {% if "/groups" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
+								    <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Organisations <span class="caret"></span></a>
+								    <ul id="navbar-dropdown-menu" class="dropdown-menu">
+                	                    {% for group in user.groups.all %}
+									            <li {% if "/groups/detail/{{group.name}}/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:group_detail' name=group.name %}">{{group.name}}</a></li>
+                                        {% endfor %}
+								    </ul>
+							    </li>
+                            {% endif %}
 						</ul>
 
 						<ul class="nav navbar-nav navbar-right">
@@ -136,8 +130,9 @@
 					<div class="collapse navbar-collapse" id="navbar-collapse">
                         <div id="navbar-with-divider">
 						    <ul class="nav navbar-nav navbar-left">
-							    <li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path and "/immediate_aid/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
-							    <li {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}"><span class="glyphicons glyphicons-group" aria-hidden="true"></span> About Us</a></li>
+							    <li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path and "/immediate_aid/" not in request.path and "/contact_us/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
+                                <li {% if "/contact_us/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:contact_us'%}"><span class="glyphicons glyphicons-group" aria-hidden="true"></span> Contact Us</a></li>
+                                <li {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}"><span class="glyphicons glyphicons-group" aria-hidden="true"></span> About Us</a></li>
 						    </ul>
                         </div>
 						<ul class="nav navbar-nav navbar-right">
@@ -214,7 +209,7 @@
 					<ul class="nav nav-pills nav-justified">
 						<li><a {% if user.is_authenticated %} href="{% url 'basics:home' %}" {% else %} href="{% url 'basics:login' %}" {% endif %}>Act of Goods</a></li>
 						<li><a href="{% url 'basics:privacy' %}">Privacy</a></li>
-						<li><a href="{% url 'basics:aboutus' %}">About Us</a></li>
+                        <li><a {% if user.is_authenticated %} href="{% url 'basics:contact_us' %}">Contact Us</a></li> {% else %} href="{% url 'basics:aboutus' %}">About Us</a></li> {% endif %}
 					</ul>
 				</div>
 			</div>
