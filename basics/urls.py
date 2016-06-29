@@ -71,4 +71,5 @@ urlpatterns = [
     url(r'^groups/detail/(?P<name>[A-Za-z0-9 ]+)/$', views.group_detail, name='group_detail'),
     url(r'^groups/edit/(?P<pk>\d+)/$', views.group_edit, name='group_edit'),
     url(r'^groups/leave/(?P<pk>\d+)/$', views.group_leave, name='group_leave'),
+    url(r'^group/(?P<name>[A-Za-z0-9 ]+)/$', views.group_detail_for_user, name='group_detail_for_user'),
 ]

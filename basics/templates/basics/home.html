@@ -1,102 +1,470 @@
 {% extends 'basics/base.html' %}
-
+{% load filter%}
 {% block content %}
-  <div class="row">
 
-    <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
-  	<!--<div class="btn-group">
-    	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      	Action <span class="caret"></span>
-    	</button>
-    	<ul class="dropdown-menu">
-      	<li><a href="#">Action</a></li>
-      	<li><a href="#">Another action</a></li>
-      	<li><a href="#">Something else here</a></li>
-      	<li role="separator" class="divider"></li>
-      	<li><a href="#">Separated link</a></li>
-    	</ul>
+<style>
 
-  	</div>
-  	-->
+/* timeline */
+.timeline {
+    list-style: none;
+    padding: 20px 0 0;
+    position: relative;
+}
 
-  <br>
+.timeline:before {
+    top: 5;
+    bottom: 0;
+    position: absolute;
+    content: " ";
+    width: 3px;
+    background-color: #DDDDDD;
+    left: 50%;
+    margin-left: -1.5px;
+}
 
-		 <div class="col-lg-12">
-        <h1 class="page-header">Your Timeline <small></small></h1>
-		</div>
-  <div class="row">
- 		 <div class="[ col-xs-12 col-sm-12 ]">
- 			 <ul class="event-list">
-				 {% for elem in result_list %}
+/* left arrow */
+.timeline-panel-left:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 15px 15px 15px 0;
+    border-color: transparent #DDDDDD;
+    display: block;
+    width: 0;
+    z-index: 1;
+    left: -15px;
+    top: 25px;
+}
 
-						{% if elem in infos %}
+/* right arrow */
+.timeline-panel-right:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 15px 0 15px 15px;
+    border-color: transparent #DDDDDD;
+    display: block;
+    width: 0;
+    z-index: 1;
+    right: -15px;
+    top: 25px;
+}
 
-						<p>You posted this Information:</p>
+/* badge */
+.timeline-badge {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 24px;
+    text-align: center;
+    position: absolute;
+    margin-top: 25px;
+    left: 50%;
+    margin-left: -20px;
+    background-color: #5D5F5B;
+    z-index: 100;
+    border-top-right-radius: 50%;
+    border-top-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+    border-bottom-left-radius: 50%;
+}
 
-				 			<li>
-								<time datetime="2014-07-20 2000" style="font-size: 30px; background-colour:#70952C">
- 						 			<p>{{elem.date.day}}.{{elem.date.month}}. {{elem.date.year}}</p>
-									<p style="font-size:20px"> {{elem.date.time}}</p>
-								</time>
- 					 			<div class="info">
- 						 			<h2 class="title">{{elem.headline}}</h2>
- 						 			<p class="desc">{{ elem.text }}</p>
-        							<ul>
- 							 <li style="width:33%;"><a href="{% url 'basics:information_view' pk=elem.pk %}"><span class="glyphicon glyphicon-search"></span> Details </a></li>
- 							 <li style="width:33%;"><a href="{% url 'basics:info_edit' pk=elem.pk %}"><span class="glyphicon glyphicon-pencil"></span> Edit  </a></li>
- 							 <li style="width:33%;"><a href="{% url 'basics:info_delete' pk=elem.pk %}"><span class="glyphicon glyphicon-remove"></span> Delete </a></li>
- 						 </ul>
- 					 			</div>
-							</li>
+.timeline-badge > i {
+    color: #bbd153;;
+    padding: 8px;
+}
 
-				 		{% elif elem in needs %}
+/* tip of timeline arrow */
+.timeline-tip {
+    position: relative;
+    width: 30px;
+    height: 0px;
+    padding: 0px;
+    background: #DDDDDD;
+    left: 50%;
+    top: -22px;
+    margin-left: -16px;
+}
 
-						<p>You posted this Need:</p>
+.timeline-tip:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 0 16px 25px;
+    border-color: #DDDDDD transparent;
+    display: block;
+    width: 0;
+    z-index: 1;
+}
 
-				 		<li>
-								<time datetime="2014-07-20 2000" style="font-size: 30px">
- 						 			<p>{{elem.date.day}}.{{elem.date.month}}. {{elem.date.year}}</p>
-									<p style="font-size:20px"> {{elem.date.time}}</p>
-								</time>
- 					 			<div class="info">
- 						 			<h2 class="title">{{elem.headline}}</h2>
- 						 			<p class="desc">{{ elem.text }}</p>
-        							<ul>
- 							 <li style="width:50%;"><a href="{% url 'basics:need_edit' pk=elem.pk %}"><span class="glyphicon glyphicon-pencil"></span> Edit  </a></li>
- 							 <li style="width:50%;"><a href="{% url 'basics:need_delete' pk=elem.pk %}"><span class="glyphicon glyphicon-remove"></span> Delete </a></li>
- 						 </ul>
- 					 			</div>
-							</li>
+#left-timeline-block {
+    padding-right: 40px;
+    margin-bottom: 15px;
+}
 
-						{% else %}
+#right-timeline-block {
+    padding-left: 40px;
+    margin-bottom: 15px;
+}
 
-						<p>You commented this Information:</p>
+@media(max-width:768px) {
 
-				 		<li>
-								<time datetime="2014-07-20 2000" style="font-size: 30px">
- 						 			<p>{{elem.date.day}}. {{elem.date.month}}. {{elem.date.year}}</p>
-									<p style="font-size:20px"> {{elem.date.time}}</p>
- 							 	</time>
- 					 			<div class="info">
- 						 			<h2 class="title">{{elem.inf.headline}}</h2>
- 						 			<p class="desc">{{ elem.inf.text }}</p>
-        							<ul>
- 							 <li><a href="{% url 'basics:information_view' pk=elem.inf.pk %}"><span class="glyphicon glyphicon-search"></span> Details </a></li>
- 						 </ul>
- 					 			</div>
-							</li>
+    .timeline:before {
+        left: 20px;
+    }
 
-						{% endif %}
+    .timeline-panel-right:after {
+        border-width: 15px 15px 15px 0;
+        left: -15px;
+    }
+
+    .timeline-badge {
+        left: 20px;
+    }
+
+    .timeline-tip {
+        left: 20px;
+    }
+
+    #left-timeline-block {
+        padding-right: 15px;
+        padding-left: 70px;
+    }
+
+    #right-timeline-block {
+        padding-left: 70px;
+    }
+
+}
+
+@media(max-width:440px) {
+
+    .timeline:before {
+        left: 50%;
+    }
 
 
+    .timeline-panel-right {
+        margin-top: 18px;
+        padding-top: 33px;
+    }
 
-				{% endfor %}
+    .timeline-panel-left {
+        margin-top: 18px;
+        padding-top: 33px;
+    }
 
- 			 </ul>
- 		 </div>
- 	 </div>
-		</div>
-	  </div>
+    .timeline-panel-right:after {
+        display: none;
+    }
 
+    .timeline-panel-left:after {
+        display: none;
+    }
+
+    .timeline-badge {
+        left: 50%;
+        margin-top: 0px;
+    }
+
+    .timeline-tip {
+        left: 50%;
+    }
+
+    #left-timeline-block {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    #right-timeline-block {
+        padding-left: 15px;
+    }
+
+}
+
+.list-group-footer {
+    border: 1px solid #ddd;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    padding: 10px 15px;
+    text-align: center;
+    background-color: #EDEDED;
+}
+
+.list-group-footer-button {
+    color: #70962c;
+}
+
+.list-group-footer-button:hover {
+    color: #bbd153;
+    text-decoration:none;
+}
+
+@media(max-width:768px) {
+
+    #list-group-footer-button-margin {
+        margin-bottom: 10px;
+    }
+}
+
+</style>
+
+<div id="standard-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="row">
+                {% if user.groups.all|length != 0 %}
+                    <div class="col-sm-12" style="padding: 15px">
+                        <h2 class="text-center" id="standard-modal-headline">Timeline</h2>
+                    </div>
+                    <div class="col-sm-1"></div>
+                    <form class="form" role="form" method="get" accept-charset="UTF-8">
+                        {%csrf_token%}
+                        <div class="col-sm-4" style="margin-bottom: 15px;">
+                            <select style="width: 100%" name="activities">
+                                <option value="all_activities">all activities</option>
+                                <option value="posted_needs">posted needs</option>
+                                <option value="needs_helping">needs where you helping</option>
+                                <option value="posted_information">posted information</option>
+                                <option value="written_comments">written comments</option>
+                            </select>
+                        </div>
+                        <div  class="col-sm-4" style="margin-bottom: 15px;">
+                            <select style="width: 100%" name="group">
+                                <option value="your_activities">your activities</option>
+                                {% for group in user.groups.all %}
+                                    <option value="{{group.name}}">activities of {{group.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div  class="col-sm-2" style="margin-top: -5px; margin-bottom: 10px;">
+                            <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                        </div>
+                    </form>
+                    <div class="col-sm-1"></div>
+                {% else %}
+                    <div class="col-sm-6">
+                        <h2 class="text-center" id="standard-modal-headline">Timeline</h2>
+                    </div>
+                    <form class="form" role="form" method="get" accept-charset="UTF-8">
+                        {%csrf_token%}
+                        <div class="col-sm-4" style="margin-top: 20px;">
+                            <select style="width: 100%" name="activities">
+                                <option value="all_activities">all activities</option>
+                                <option value="posted_needs">posted needs</option>
+                                <option value="needs_helping">needs where you helping</option>
+                                <option value="posted_information">posted information</option>
+                                <option value="written_comments">written comments</option>
+                            </select>
+                        </div>
+                        <div  class="col-sm-2" style="margin-top: 15px; margin-bottom: 10px;">
+                            <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="modal-body">
+            {% if result_list %}
+            <div class="timeline">
+                <div class="timeline-tip"></div>
+                <div class="list-group" style="margin-bottom: 0px; margin-top: 15px;">
+                    {% for elem in result_list %}
+
+                        {% if elem in infos %}
+                            <!-- information -->
+                            <div class="row">
+                                <div class="timeline-badge" title="your information"><i class="glyphicon glyphicon-info-sign"></i></div>
+                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
+                                    <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
+                                        <div class="row">
+                                              <a href="{% url 'basics:information_view' pk=elem.id %}">
+                                                  <div class="col-sm-12">
+                                                      <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ elem.headline }}<div style="font-size: .83em; color: #555; hover.color: #555; float: right;"><span class="glyphicon glyphicon-chevron-up"></span>{{ elem.number_likes }}</div></h4>
+                                                      <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:160 }}</p>
+                                                      <h6 style="color: #555; hover.color: #555;"><br>from: {{ elem.date }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                                  </div>
+                                              </a>
+                                        </div>
+                                  </div>
+                                  <div class="list-group-footer">
+                                      <div class="row">
+                                          <a class="list-group-footer-button" type="button" href="">
+                                              <div class="col-sm-12">
+                                                  <span class="glyphicon glyphicon-refresh"></span> Update
+                                              </div>
+                                          </a>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+
+                        {% elif elem in needs %}
+                            <!-- need request -->
+                            <div class="row">
+                                <div class="timeline-badge" title="your requested need"><i class="glyphicon glyphicon-question-sign"></i></div>
+                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
+                                    <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
+                                        <div class="row">
+                                            <div class="col-sm-12" data-toggle="modal" data-target=".n{{elem.id}}">
+                                                <h4 class="list-group-item-heading">{{ elem.headline }}</h4>
+                                                <p class="list-group-item-text">{{ elem|get_short_text:160 }}</p>
+                                                <h6><br>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div class="list-group-footer">
+                                        <div class="row">
+                                            <a class="list-group-footer-button" type="button" href="">
+                                                <div class="col-sm-6" id="list-group-footer-button-margin">
+                                                    <span class="glyphicon glyphicon-pencil"></span> Edit
+                                                </div>
+                                            </a>
+                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:need_delete' pk=elem.pk %}">
+                                                <div class="col-sm-6">
+                                                    <span class="glyphicon glyphicon-remove"></span> Delete
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- modal for every need -->
+                            <div class="modal fade n{{elem.id}}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h2>{{elem.headline}}</h2>
+                                            <h6>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>{{ elem.text|linebreaksbr }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% elif elem in needs_you_help %}
+                            <!-- need your helping -->
+                            <div class="row">
+                                <div class="timeline-badge" title="need your helping"><i class="glyphicon glyphicon-header" style="padding-top: 7px; padding-left: 6px"></i></div>
+                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
+                                    <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
+                                        <div class="row">
+                                            <div class="col-sm-12" data-toggle="modal" data-target=".nh{{elem.id}}">
+                                                <h4 class="list-group-item-heading">{{ elem.headline }}</h4>
+                                                <p class="list-group-item-text">{{ elem|get_short_text:160 }}</p>
+                                                <h6><br>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div class="list-group-footer">
+                                        <div class="row">
+                                            <a class="list-group-footer-button" type="button" href="">
+                                                <div class="col-sm-12" id="list-group-footer-button-margin">
+                                                    <span class="glyphicon glyphicon-comment"></span> Chat
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- modal for every need -->
+                            <div class="modal fade nh{{elem.id}}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h2>You help here: {{elem.headline}}</h2>
+                                            <h6>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>{{ elem.text|linebreaksbr }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% else %}
+                            <!-- comment on information -->
+                            <div class="row">
+                                <div class="timeline-badge" title="your written comment"><i class="glyphicon glyphicon-comment"></i></div>
+                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
+                                    <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
+                                      <div class="row">
+                                          <div class="col-sm-12" data-toggle="modal" data-target=".c{{elem.id}}">
+                                              <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ elem.inf.headline }}</h4>
+                                              <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:160 }}</p>
+                                          </div>
+
+                                          <div class="col-sm-9" data-toggle="modal" data-target=".c{{elem.id}}">
+                                              <h6 style="color: #555; hover.color: #555;"><br>from: {{ elem.date }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                          </div>
+                                      </div>
+                                    </div>
+
+                                    <div class="list-group-footer">
+                                        <div class="row">
+                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=elem.inf.pk %}">
+                                                <div class="col-sm-6" id="list-group-footer-button-margin">
+                                                    <span class="glyphicon glyphicon-search"></span> Details
+                                                </div>
+                                            </a>
+                                            <a class="list-group-footer-button" type="button" href="">
+                                                <div class="col-sm-6">
+                                                    <span class="glyphicon glyphicon-remove"></span> Delete
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- modal for every comment -->
+                            <div class="modal fade c{{elem.id}}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h2>Information: {{ elem.inf.headline }}</h2>
+                                            <h6>from: {{ elem.inf.date }}{% if elem.group %} / by: <span style="color: #70962c;">{{ elem.inf.group.name }}</span>{% endif %}</h6>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h5>Your comment:</h5>
+                                            <p>{{ elem.text|linebreaksbr }}</p>
+                                            <h6>from: {{ elem.date }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                       {% endif %}
+
+                   {% endfor %}
+               </div>
+            </div>
+            {% else %}
+                <h4>You haven't performed any activities. If you need help click Help at the navigation bar.</h4>
+            {% endif %}
+        </div>
+    </div>
+</div>
 
 {% endblock %}

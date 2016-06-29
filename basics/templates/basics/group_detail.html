@@ -112,17 +112,21 @@
                             </div>
                         {% endif %}
 
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
-                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_edit' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit Profile</a>
-                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:claim' name=group.name%}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-globe"></span> Claim Area</a>
-                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_leave' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-log-out"></span> Leave Organisation</a>
-                                </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
+                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_edit' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit Profile</a>
+                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:claim' name=group.name%}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-globe"></span> Claim Area</a>
+                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_leave' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-log-out"></span> Leave Organisation</a>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
