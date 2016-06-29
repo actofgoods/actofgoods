@@ -1,7 +1,7 @@
 {% extends 'basics/base.html' %}
 
 {% block content %}
-
+{% load filter %}
 {% load staticfiles %}
 
 
@@ -40,7 +40,6 @@
           <div id="rooms-container">
           </div>
       </div>
-      <a id="standard-grey-button-bold" href="{% url 'basics:kick_user' roomname=roomname %}" class="btn btn-primary">Kick User</a>
     </div>
     <div class="col-md-8 col-xs-12" id="app"></div>
     </div>
@@ -55,19 +54,22 @@
   };
 
   var Message = function Message(props) {
-    var classString = props.ownMessage ? 'own ' : '';
+    var classString = props.ownMessage ? 'own message__text' : 'message__text';
+    var classString = props.systemMessage ? 'system ':classString;
+    var user = props.ownMessage ? 'Own' : 'Other '
+    var user = props.systemMessage? '': user
     return React.createElement(
       'div',
-      { className: classString + 'message clearfix' },
+      { className: classString + 'text-center message clearfix' },
       React.createElement(
         'div',
         { className: 'message__author' },
-        props.ownMessage ? 'You' : 'Other'         //props.author
+        user     //props.author
       ),
       React.createElement('div', { className: 'message__avatar' }),
       React.createElement(
         'div',
-        { className: classString + 'message__text' },
+        { className: classString + '' },
         props.text,
         React.createElement(
           'div',
@@ -96,6 +98,7 @@
         'div',
         { className: 'message-list', ref: this.getNodeRef},
         this.props.children
+
       );
     }
   });
@@ -348,6 +351,7 @@
       var messages = this.state.messages.map(function (message, index) {
         return React.createElement(Message, {
           ownMessage: message.username === this.state.author ? true : false,
+          systemMessage: message.username === 'null',
           text: message.message,
           author: message.username,
           date: message.date,
@@ -355,15 +359,23 @@
       }.bind(this));
 
       var visibilityClass = !this.state.connected ? 'hidden' : '';
-
       return React.createElement(
         'div',
         { className: ' mdl-cell--stretch', ref: this.getNodeRef },
         !this.state.connected ? React.createElement(LoadingBar, null) : null,
         React.createElement(
-          'h4',
+          'div',
           {},
-          this.state.name
+          React.createElement(
+            'h4',
+            {},
+            this.state.name
+          ),
+          React.createElement(
+            'a',
+            {id:'standard-grey-button-bold', className:'btn btn-primary btn-kick', href:'{% url 'basics:kick_user' roomname=roomname %}'},
+            {% if roomname|is_own:request.user %} 'Kick User' {% else %} 'leave' {% endif %}
+          )
         ),
         React.createElement(
           MessageList,

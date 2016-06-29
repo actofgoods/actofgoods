@@ -122,8 +122,12 @@ def chat(request):
 def kick_user(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
+        text = "Helper was kicked."
+        if request.user == room.user_req:
+            text = "Helper leaved."
         room.user_req = None
         room.save()
+        ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')
 
 """
@@ -145,11 +149,18 @@ def chat_room(request, roomname):
             messages = ChatMessage.objects.filter(room=roomname).order_by('date')
             message_json = "["
             for message in messages:
-                message_json += json.dumps({
-                    'message': message.text,
-                    'username': message.author.username,
-                    'date': message.date.__str__()[:-13]
-                }) + ","
+                try:
+                    message_json += json.dumps({
+                        'message': message.text,
+                        'username': message.author.username,
+                        'date': message.date.__str__()[:-13]
+                    }) + ","
+                except:
+                    message_json += json.dumps({
+                        'message': message.text,
+                        'username': 'null',
+                        'date': message.date.__str__()[:-13]
+                    }) + ","
             message_json += "]"
             print(message_json)
             #Get all rooms where request.user is in contact with
@@ -501,14 +512,17 @@ def logout(request):
 def map_testing(request):
     return render(request, 'basics/map_testing.html')
 
+"""
+Fills the Database with count needs of every category thats in the database
+"""
 def fill_needs(request, count):
     categories = CategoriesNeeds.objects.all()
     for category in categories:
         for i in range(int(count)):
             lat = np.random.random()*50
             lng = np.random.random()*50
-            Need.objects.create(author=request.user, headline=str(i) + " " + category.name, text=str(i), categorie=category, address = Address.objects.create(latitude=lat, longditude=lng), was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
-
+            need = Need.objects.create(author=request.user, headline=str(i) + " " + category.name, text=str(i), categorie=category, address = Address.objects.create(latitude=lat, longditude=lng), was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+            room = Room.objects.create(name=id_generator(), need=need)
     return redirect(request, 'basics:needs_all')
 
 """
@@ -526,6 +540,7 @@ def needs_all(request):
         dist = 500
         category = "All"
         cards_per_page = 10
+        wordsearch = ""
         needs = Need.objects.order_by('date')
         page = 1
         page_range = np.arange(1, 5)
@@ -541,15 +556,20 @@ def needs_all(request):
                 category = request.POST['category']
                 needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
             if "" != request.POST['word-search']:
-                print(request.POST['word-search'])
+                wordsearch = request.POST['word-search']
                 needs = needs.filter(Q(headline__contains=request.POST['word-search']) | Q(text__contains=request.POST['word-search']))
             if "" != request.POST['cards_per_page']:
                 cards_per_page = int(request.POST['cards_per_page'])
 
+        #TODO: this way is fucking slow and should be changed but i didn't found a better solution
+        needs = [s for s in needs if Room.objects.get(need=s).user_req!= request.user and s.author!= request.user  ]
+
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
         page_range = np.arange(1,max_page+1)
-        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
+        for cat in CategoriesNeeds.objects.all():
+            print(cat.name)
+        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'wordsearch':wordsearch, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -560,9 +580,12 @@ def needs_help(request, id):
         if request.method == "GET":
             need = Need.objects.get(id=id)
             room = Room.objects.get(need=need)
-            room.user_req = request.user
-            room.save()
-            return redirect('basics:chat_room', roomname=room.name)
+            if room.need.author != request.user:
+                room.user_req = request.user
+                room.save()
+                return redirect('basics:chat_room', roomname=room.name)
+            else:
+                print("User: " + request.user.email + " tried to help his own need: " + room.need.headline + "\n TODO: print error message for User" )
         #TODO: what todo if POST data is wrong or get comes in
         #return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
@@ -1031,15 +1054,3 @@ def group_leave(request, pk):
         if len(group.user_set.all()) == 0:
             group.delete()
     return render(request, 'basics/home.html')
-
-
-
-
-
-
-
-
-
-
-
-

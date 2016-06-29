@@ -15,7 +15,7 @@
                   <div class="col-sm-2" style="margin-top: 20px;">
                     <label for="basic-url">Search</label>
                     <div class="input-group">
-                      <input type="text" class="form-control" id="basic-url" name="word-search" aria-describedby="basic-addon3"/>
+                      <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" aria-describedby="basic-addon3"></input>
                     </div>
 
                   </div>
@@ -131,7 +131,7 @@
   <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ] text-center">
     <nav>
       <ul class="pagination">
-        <li class="disabled"><a onclick="submit_page(this)" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+          <li {% if 1 == page %}class="disabled"{% endif %}><a value="{{number}}" onclick="submit_page(this)" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
         {% for number in page_range %}
           {% if number == page %}
             <li class="active"><a style="background:#71952F; border: 1px solid #71952F;" onclick="submit_page(this)" value="{{number}}">{{number}} <span class="sr-only">(current)</span></a></li>
@@ -140,7 +140,7 @@
           {% endif %}
         {% endfor %}
         <li>
-          <a href="#" aria-label="Next">
+          <a onclick="submit_page(this)" value="{{number}}" aria-label="Next">
             <span aria-hidden="true" style="color: #71952F;">&raquo;</span>
           </a>
         </li>
@@ -149,7 +149,8 @@
   </div>
   <script>
     function submit_page(button){
-      $("#page").val($(button).attr("value"));
+      var button = $(button).attr("value");
+      $("#page").val(button);
       console.log($(button).attr("value"));
       $("#filter-form").submit();
     }
