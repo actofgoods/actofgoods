@@ -231,15 +231,19 @@ def home(request):
     if request.user.is_authenticated():
         needs = list(Need.objects.all().filter(author=request.user))
         infos = list(Information.objects.all().filter(author=request.user))
+        needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
         comm = list(Comment.objects.all().filter(author=request.user))
         rel_comms = []
         for c in comm:
             if not c.inf in rel_comms:
                 rel_comms.append(c)
         result_list = sorted(
-            chain(needs, infos, rel_comms),
+            chain(needs, infos, needs_you_help, rel_comms),
             key=lambda instance: instance.date, reverse=True)
-        return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'result_list': result_list})
+        print(list(map(lambda x: x.pk, needs_you_help)))
+        print(result_list)
+        print(list(map(lambda x: x.pk, result_list)))
+        return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list})
 
     return redirect('basics:actofgoods_startpage')
 
