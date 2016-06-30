@@ -82,7 +82,7 @@
                   </div>
 
                   <div class="col-sm-2" style="margin-top: 20px;">
-                   <label for="range">Range</label>
+                   <label for="range">Range (in km)</label>
                     <div class="input-group">
                       <input type="text" class="form-control" id="range" name="range" value="{{range}}" aria-describedby="basic-addon3"></input>
                     </div>
@@ -90,7 +90,7 @@
 
                   <div class="col-sm-2" style="margin-top: 20px;">
                     <label> Category {{ category }}
-                        <select style="width: 100%" name="category">
+                        <select style="width: 100%" name="category" id="category">
                           <option value="All" {% if 'All' == category %}selected{% endif %}>All</option>
                           {% for cat in categorie %}
                             <option value="{{ cat.name }}" {% if cat.name == category %}selected{% endif %}>{{ cat.name }}</option>
@@ -101,7 +101,7 @@
 
                   <div  class="col-sm-2" style="margin-top: 20px;">
                     <label> Cards per Page
-                        <select style="width: 100%" title="{{cards_per_page}}" name="cards_per_page">
+                        <select style="width: 100%" title="{{cards_per_page}}" name="cards_per_page" id="cards_per_page">
                             <option {% if 10 == cards_per_page %}selected{% endif %}>10</option>
                             <option {% if 25 == cards_per_page %}selected{% endif %}>25</option>
                             <option {% if 100 == cards_per_page %}selected{% endif %}>100</option>
@@ -118,7 +118,7 @@
             </div>
         </div>
         <div class="modal-body" style="padding-bottom: 0px;">
-            <div class="list-group" style="margin-bottom: 0px;">
+            <div class="list-group" style="margin-bottom: 0px;" id="need-list">
                 {% if needs %}
                     {% for need in needs %}
 
@@ -270,6 +270,32 @@
              $('.button-float').css('bottom', '20px');
          }
      });
+
+</script>
+
+<script>
+  $.ajaxSetup({
+      data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+  });
+  $('#filter-form').on('submit', function(e) {
+    console.log($("#page").val()+ " "+ $("#range").val()+ " "+ $("#cards_per_page").val()+ " "+ $("#category").val()+ " "+ $("#basic-url").val());
+    e.preventDefault();
+    console.log("form submitted!");
+    $.ajax({
+      url: "filter/",
+      type: "POST",
+      data: {page: $("#page").val(), range: $("#range").val(), cards_per_page: $("#cards_per_page").val(), category: $("#category").val(), wordsearch: $("#basic-url").val()},
+
+      success: function(data){
+        $('#need-list').html(data);
+        console.log("success");
+      },
+
+      error: function(xhr, errmsg, err){
+        console.log(xhr.status + ": " + xhr.responseText);
+      }
+    });
+  });
 
 </script>
 
