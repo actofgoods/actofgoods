@@ -11,3 +11,25 @@ INFORMATION:
 
 -NGO:		(x-likes/60)<24:	(72000+100*likes)/(12-likes/60)
 		(x-likes/60)>=24:	(72000+100*likes)/(x-12-likes/60)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+INFORMATION CORRECT USE THIS:
+
+NORMAL USER:	
+
+für x-likes/60 > 24    :      10^((4+likes/10000)-1/100((x-likes/60-24)/(6+likes/100))^2)
+
+für x-likes/60 <= 24    :      10^((4+likes/10000))
