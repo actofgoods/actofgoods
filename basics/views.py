@@ -382,19 +382,22 @@ def information_new(request):
                 priority = 0
                 group = None
                 data = info.cleaned_data
-                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None and request.POST.get('group') != 'admin':
                     group = Group.objects.get(pk=request.POST.get('group'))
                     priority = priority_info_group(0, 0)
                 else:
                     priority = priority_info_user(0, 0)
+                author_is_admin = False
+                if request.POST.get('group') == 'admin':
+                    author_is_admin = True
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
-                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
+                    infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                     infodata.save()
                     return redirect('basics:information_all')
                 else:
                     address= request.user.userdata.address    
-                infodata = Information(author=request.user, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
+                infodata = Information(author=request.user, author_is_admin=author_is_admin, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
                 infodata.save()
                 return redirect('basics:information_all')
         info = InformationFormNew()
@@ -666,6 +669,7 @@ def needs_filter(request):
 
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
+        needs.sort(key=lambda x: x.priority, reverse=True)
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
         return HttpResponse(t.render({'needs':needs, 'page':page, 'page_range':page_range}))
@@ -747,7 +751,7 @@ def needs_new(request):
                 #TODO: id_generator will return random string; Could be already in use
                 room = Room.objects.create(name=id_generator(), need=needdata)
                 room.save()
-                return redirect('basics:needs_all')
+                return redirect('basics:actofgoods_startpage')
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
         c.save
@@ -1201,6 +1205,3 @@ def priority_info_group(x, likes):
     elif (x-(likes/60)) >= 24:
         return (75000+(100*likes))/(x-12-(likes/60))
     return 0
-
-
-

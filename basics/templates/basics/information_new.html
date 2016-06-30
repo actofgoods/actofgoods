@@ -17,10 +17,13 @@
 					<div class="form-group">
 						<textarea type="description" class="form-control input-lg" placeholder="description" name="text"  rows="4"></textarea>
 					</div>
-					{% if user.groups.all|length != 0 %}
+					{% if user.groups.all|length != 0 or user.is_staff %}
 						<p style="font-size:160%;"> post as </p>
 						<select class="form-control" name="group">
 							<option value="no_group">User</option>
+							{% if user.is_staff %}
+								<option value="admin">Admin</option>
+							{% endif %}
 							{% for group in user.groups.all %}
 								<option value="{{group.id}}">{{group.name}}</option>
 							{% endfor %}
