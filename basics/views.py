@@ -378,7 +378,7 @@ def information_new(request):
             if info.is_valid():
                 lat, lng = getAddress(request)
                 print(lat,lng)
-                u=Update.objects.create(update_at=(datetime.now() + timedelta(hours=1)))
+                u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                 priority = 0
                 group = None
                 data = info.cleaned_data
@@ -762,7 +762,7 @@ def needs_new(request):
                     priority = priority_need_group(0)
                 else:
                     priority = priority_need_user(0)
-                u=Update.objects.create(update_at=(datetime.now() + timedelta(hours=1)))
+                u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                 needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                 needdata.save()
                 #TODO: id_generator will return random string; Could be already in use
