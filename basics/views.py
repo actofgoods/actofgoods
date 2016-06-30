@@ -382,22 +382,19 @@ def information_new(request):
                 priority = 0
                 group = None
                 data = info.cleaned_data
-                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None and request.POST.get('group') != 'admin':
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
                     group = Group.objects.get(pk=request.POST.get('group'))
                     priority = priority_info_group(0, 0)
                 else:
                     priority = priority_info_user(0, 0)
-                author_is_admin = False
-                if request.POST.get('group') == 'admin':
-                    author_is_admin = True
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
-                    infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
+                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                     infodata.save()
                     return redirect('basics:information_all')
                 else:
-                    address= request.user.userdata.address    
-                infodata = Information(author=request.user, author_is_admin=author_is_admin, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
+                    address= request.user.userdata.address
+                infodata = Information(author=request.user, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
                 infodata.save()
                 return redirect('basics:information_all')
         info = InformationFormNew()
@@ -455,21 +452,20 @@ def information_update(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated():
-        need= Need.objects.all().get(pk=pk)
+        information= Information.objects.all().get(pk=pk)
         if request.method == "POST":
             text = request.POST.get('text', None)
-            desc = request.POST.get('desc', None)
             lat, lng = getAddress(request)
             if lat != None and lng != None:
-                need.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
+                information.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
             if text != "":
-                need.text=text
-            if desc != "":
-                need.headline=desc
-            need.save()
+                information.text=text
+            else:
+                information.text = information + "\n UPDATE " + timezone.now() +"\n text"
+            information.save()
             return actofgoods_startpage(request)
-        form = NeedFormNew()
-        return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all()})
+        form = InformationFormNew()
+        return render(request, 'basics/information_update.html', {'information':information})
     return redirect('basics:actofgoods_startpage')
 
 """
