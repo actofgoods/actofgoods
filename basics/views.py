@@ -448,6 +448,27 @@ def information_view_comment(request, pk):
 
     return redirect('basics:actofgoods_startpage')
 
+def information_update(request, pk):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated():
+        need= Need.objects.all().get(pk=pk)
+        if request.method == "POST":
+            text = request.POST.get('text', None)
+            desc = request.POST.get('desc', None)
+            lat, lng = getAddress(request)
+            if lat != None and lng != None:
+                need.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
+            if text != "":
+                need.text=text
+            if desc != "":
+                need.headline=desc
+            need.save()
+            return actofgoods_startpage(request)
+        form = NeedFormNew()
+        return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all()})
+    return redirect('basics:actofgoods_startpage')
+
 """
     Input: request(Email, Password)
 
