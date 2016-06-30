@@ -47,7 +47,7 @@ def ws_echo(message):
     chatMessage.save()
     db_room.incomming_message(author)
     user = db_room.user_req
-    print(author.username, user.username, db_room.need.author)
+    print(user)
     if user == author:
         user = db_room.need.author
     t1 = threading.Thread(target=email_check,args=(user,author, room, text,))
@@ -75,7 +75,7 @@ def email_check(user, author, roomname, text ):
     time.sleep(10)
     print("stop sleep")
     room = Room.objects.get(name=roomname)
-    if room.new_message(user):
+    if user != None and room.new_message(user):
         print("email was send because: req:"+ room.req_saw.__str__() + " off:"+room.off_saw.__str__())
 
         sendmail(user.email, "Message from " + author.username, text)
