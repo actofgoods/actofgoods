@@ -343,7 +343,7 @@ def information_all(request):
                     priority = priority_info_user(hours_elapsed, i.number_likes)
                 i.priority = priority
                 i.save()
-        infos = Information.objects.order_by('priority').reverse()
+        infos = Information.objects.order_by('priority', 'pk').reverse()
         if request.method == "POST":
             print(request.POST['range'], request.POST['cards_per_page'])
             if "" != request.POST['range']:
@@ -686,7 +686,7 @@ def needs_filter(request):
 
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
-        needs.sort(key=lambda x: x.priority, reverse=True)
+        needs.sort(key=lambda x: (x.priority, x.pk), reverse=True)
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
         return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))

@@ -14,7 +14,7 @@
                                     <p class="list-group-item-text">{{ need|get_short_text:160 }}</p>
                                 </div>
                                 <div class="col-sm-9" data-toggle="modal" data-target=".{{ need.id }}">
-                                    <h6><br>from: {{ need.date }} / category: {{ need.categorie.name }}{% if need.group %} / by: <span style="color: #70962c;">{{ need.group.name }}</span>{% endif %}</h6>
+                                    <h6><br>priority: {{ need.priority }} / pk: {{ need.pk }} / from: {{ need.date }} / category: {{ need.categorie.name }}{% if need.group %} / by: <span style="color: #70962c;">{{ need.group.name }}</span>{% endif %}</h6>
                                 </div>
                             </div>
                         </a>
