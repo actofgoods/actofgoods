@@ -768,7 +768,9 @@ def needs_new(request):
                 #TODO: id_generator will return random string; Could be already in use
                 room = Room.objects.create(name=id_generator(), need=needdata)
                 room.save()
+                send_notifications(needdata)
                 return redirect('basics:actofgoods_startpage')
+
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
         c.save
@@ -776,6 +778,11 @@ def needs_new(request):
 
     return redirect('basics:actofgoods_startpage')
 
+def send_notifications(needdata):
+    users_to_inform = needdata.categorie.userdata_set.all()
+    users_to_inform = filter(lambda x: x.adrAsPoint.distance(needdata.adrAsPoint)< x.aux, users_to_inform)
+    for user in users_to_inform:
+        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text, "Somebody needs your help: " + needdata.categorie.name)
 
 """
     Needs authentication!
