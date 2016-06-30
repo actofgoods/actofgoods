@@ -1,4 +1,6 @@
 import datetime
+from datetime import timedelta
+from django.utils import timezone
 import random
 import smtplib
 import string
@@ -24,6 +26,7 @@ from django.contrib.gis.measure import Distance
 from .forms import *
 from .models import *
 from itertools import chain
+from math import *
 
 
 
@@ -559,7 +562,13 @@ def needs_all(request):
         category = "All"
         cards_per_page = 10
         wordsearch = ""
-        needs = Need.objects.order_by('date')
+        needs = Need.objects.all()
+        for n in needs:
+            if n.update_at.update_at < timezone.now():
+                hours_elapsed = int((timzone.now() - n.date).seconds/3600)
+                n.update_at.update_at = timezone.now() + datetime.timedelta(hours=1)
+                priority = priority_need(hours_elapsed)
+        needs = Need.objects.order_by('priority')
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "POST":
@@ -656,7 +665,9 @@ def needs_new(request):
                 group = None
                 if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
                     group = Group.objects.get(pk=request.POST.get('group'))
-                needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                priority = priority_need(0)
+                u=Update.objects.create(update_at=(datetime.now() + timedelta(hours=1)))
+                needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                 needdata.save()
                 #TODO: id_generator will return random string; Could be already in use
                 room = Room.objects.create(name=id_generator(), need=needdata)
@@ -1080,3 +1091,28 @@ def group_detail_for_user(request, name):
         group = Groupdata.objects.get(name=gro.name)
         return render(request, 'basics/group_detail_for_user.html', {'group':group})
     return redirect('basics:actofgoods_startpage')
+
+
+####################################################################################################################################################
+###                             Priority Functions
+####################################################################################################################################################
+
+def priority_need(x):
+    """x is number of hours since need was posted"""
+    if x < 12 and x >= 0:
+        return pow(10, 4-(pow(x-12, 2)/144))
+    elif x >= 12:
+        return pow(10, 4-(pow((x-12)/6, 2)/144))
+    return 0
+
+def priority_info(x):
+    """x is number of hours since need was posted"""
+    if x < 24 and x >= 0:
+        return 5000
+    elif x >= 24:
+        return 75000/(x-9)
+    return 0
+
+
+
+
