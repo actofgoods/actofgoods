@@ -40,7 +40,7 @@ class Userdata(models.Model):
 	address = models.ForeignKey(Address, on_delete=models.CASCADE)
 	get_notifications = models.BooleanField(default=False)
 	inform_about = models.ManyToManyField(CategoriesNeeds)
-	aux = models.FloatField(default=50)
+	aux = models.PositiveIntegerField(default=50)
 	adrAsPoint=models.PointField(null=True)
 	def __unicode__(self):
 		return self.pseudonym
