@@ -35,12 +35,12 @@
 	display: none;
 }
 .room-container {
-	height: 70%;
 	left: 0;
 	right: 0;
 	top: 0;
 	overflow-y: scroll;
 	overflow-x: hidden;
+	height: 80%;
 }
 
 
@@ -50,11 +50,11 @@
 	border-radius: 1em;
 }
 .message-list {
-	padding: 1rem;
-	height: 70%;
+	height: 60%;
 	left: 0;
 	right: 0;
 	top: 0;
+	position: relative;
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
@@ -171,6 +171,9 @@ button, .btn-primary, .btn-primary:focus {
 .small-text{
 	font-size: 0.7em;
 }
+
+
+
 /* Small devices (tablets, 768px and up) */
 @media (min-width: 1px) {
 		.button-container {
@@ -185,7 +188,6 @@ button, .btn-primary, .btn-primary:focus {
 	}
 
 	.chat-box {
-		margin: 8px;
 	}
 
 	.mdl-cell--4-col, .mdl-cell--4-col-phone.mdl-cell--4-col-phone {
