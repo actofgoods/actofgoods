@@ -393,7 +393,7 @@ def information_new(request):
                     infodata.save()
                     return redirect('basics:information_all')
                 else:
-                    address= request.user.userdata.address    
+                    address= request.user.userdata.address
                 infodata = Information(author=request.user, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
                 infodata.save()
                 return redirect('basics:information_all')
@@ -747,7 +747,7 @@ def needs_new(request):
                 #TODO: id_generator will return random string; Could be already in use
                 room = Room.objects.create(name=id_generator(), need=needdata)
                 room.save()
-                return redirect('basics:needs_all')
+                return redirect('basics:actofgoods_startpage')
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
         c.save
@@ -1201,6 +1201,3 @@ def priority_info_group(x, likes):
     elif (x-(likes/60)) >= 24:
         return (75000+(100*likes))/(x-12-(likes/60))
     return 0
-
-
-
