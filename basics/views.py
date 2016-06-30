@@ -484,10 +484,11 @@ def immediate_aid(request):
                     #Content could also be possibly HTML! this way beautifull emails are possible
                     content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
                     subject = "Welcome!"
-
+                    user = authenticate(username=user_data['email'],password=password_d)
+                    auth_login(request,user)
 
                     sendmail(user.email, content, subject )
-                    return redirect('basics:home')
+                    return redirect('basics:actofgoods_startpage')
                 else:
                     messages.add_message(request, messages.INFO, 'location_failed')
             else:
