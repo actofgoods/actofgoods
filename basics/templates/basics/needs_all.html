@@ -68,54 +68,80 @@
 <div id="standard-modal" style="margin-bottom: 90px;">
     <div class="modal-content">
         <div class="modal-header">
-            <div class="row">
-                <div class="col-sm-2" style="padding: 15px">
+            <div class="row" style="margin-bottom: 15px;">
+                <div class="col-sm-12">
                     <h2 class="text-center" id="standard-modal-headline">Needs</h2>
                 </div>
-                <form class="form" id="filter-form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
-                  {%csrf_token%}
-                  <div class="col-sm-2" style="margin-top: 20px;">
-                    <label for="basic-url">Search</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" aria-describedby="basic-addon3"></input>
-                    </div>
-                  </div>
-
-                  <div class="col-sm-2" style="margin-top: 20px;">
-                   <label for="range">Range (in km)</label>
-                    <div class="input-group">
-                      <input type="text" class="form-control" id="range" name="range" value="{{range}}" aria-describedby="basic-addon3"></input>
-                    </div>
-                  </div>
-
-                  <div class="col-sm-2" style="margin-top: 20px;">
-                    <label> Category {{ category }}
-                        <select style="width: 100%" name="category" id="category">
-                          <option value="All" {% if 'All' == category %}selected{% endif %}>All</option>
-                          {% for cat in categorie %}
-                            <option value="{{ cat.name }}" {% if cat.name == category %}selected{% endif %}>{{ cat.name }}</option>
-                          {% endfor %}
-                        </select>
-                    </label>
-                  </div>
-
-                  <div  class="col-sm-2" style="margin-top: 20px;">
-                    <label> Cards per Page
-                        <select style="width: 100%" title="{{cards_per_page}}" name="cards_per_page" id="cards_per_page">
-                            <option {% if 10 == cards_per_page %}selected{% endif %}>10</option>
-                            <option {% if 25 == cards_per_page %}selected{% endif %}>25</option>
-                            <option {% if 100 == cards_per_page %}selected{% endif %}>100</option>
-                        </select>
-                    </label>
-                  </div>
-
-                  <input type="hidden" class="form-control" id="page" name="page" value="1"/>
-
-                  <div class="col-sm-2" style="margin-top: 30px; margin-bottom: 0px;">
-                      <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
-                  </div>
-                </form>
             </div>
+            <form class="form" id="filter-form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
+            {%csrf_token%}
+                <div class="row">
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <div class="row">
+                            <div class="col-sm-6" style="margin-bottom: 15px;">
+                                <div class="row">
+                                    <div class="col-sm-4" style="margin-top: 5px;">
+                                        <p id="description-label">Search:</p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" aria-describedby="basic-addon3"></input>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" style="margin-bottom: 15px;">
+                                <div class="row">
+                                    <div class="col-sm-4" style="margin-top: 5px;">
+                                        <p id="description-label">Category:</p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <select style="width: 100%" name="category" id="category">
+                                            <option value="All" {% if 'All' == category %}selected{% endif %}>All categories</option>
+                                            {% for cat in categorie %}
+                                                <option value="{{ cat.name }}" {% if cat.name == category %}selected{% endif %}>{{ cat.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" style="margin-bottom: 15px;">
+                                <div class="row">
+                                    <div class="col-sm-4" style="margin-top: 5px;">
+                                        <p id="description-label">Range:</p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="range" name="range" value="{{range}}" aria-describedby="basic-addon3"></input>
+                                            <span class="input-group-addon">km</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" style="margin-bottom: 15px;">
+                                <div class="row">
+                                    <div class="col-sm-4" style="margin-top: 5px;">
+                                        <p id="description-label">Number:</p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <select style="width: 100%" title="{{cards_per_page}}" name="cards_per_page" id="cards_per_page">
+                                            <option {% if 10 == cards_per_page %}selected{% endif %} value=10>10 needs per page</option>
+                                            <option {% if 25 == cards_per_page %}selected{% endif %} value=25>25 needs per page</option>
+                                            <option {% if 100 == cards_per_page %}selected{% endif %} value=100>100 needs per page</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" class="form-control" id="page" name="page" value="1"/>
+
+                <div class="row">
+                    <div class="col-sm-2 col-sm-offset-9" style="margin-top: 5px;">
+                        <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                    </div>
+                </div>
+            </form>
         </div>
         <div id="insert">
         <div class="modal-body" style="padding-bottom: 0px;">
