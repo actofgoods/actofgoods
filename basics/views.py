@@ -36,6 +36,8 @@ def actofgoods_startpage(request):
     registerform = UserFormRegister()
     needs = Need.objects.all()
     if request.user.is_authenticated():
+        return redirect('basics:home')
+        """"
         needs = list(Need.objects.all().filter(author = request.user))
         infos = list(Information.objects.all().filter(author=request.user))
         comm = list(Comment.objects.all().filter(author=request.user))
@@ -47,6 +49,7 @@ def actofgoods_startpage(request):
             chain(needs, infos, rel_comms),
             key=lambda instance: instance.date, reverse=True)
         return render(request, 'basics/home.html',{'needs':needs,'infos':infos, 'result_list':result_list})
+        """
     return render(request, 'basics/actofgoods_startpage.html', {'counter':len(needs),'registerform':registerform})
 
 """
@@ -192,7 +195,7 @@ def claim(request, name):
     if request.user.is_authenticated():
         if request.user.groups.filter(name=name).exists():
             return render(request, 'basics/map_claim.html', {'group': name, 'polygons': ClaimedArea.objects.all(), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
-    return redirect('basics:actofgoods_startpage')    
+    return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def claim_post(request, name):
@@ -211,7 +214,7 @@ def claim_post(request, name):
                 response_data['pk']=claim.pk
 
                 return JsonResponse(response_data)
-    return redirect('basics:actofgoods_startpage') 
+    return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def claim_delete(request,name):
@@ -223,7 +226,7 @@ def claim_delete(request,name):
                 response_data = {}
                 response_data['result'] = 'Deletion successful!'
                 return JsonResponse(response_data)
-    return redirect('basics:actofgoods_startpage') 
+    return redirect('basics:actofgoods_startpage')
 
 
 @csrf_protect
@@ -279,6 +282,7 @@ def help(request):
 def home(request):
     if request.user.is_authenticated():
         needs = list(Need.objects.all().filter(author=request.user))
+        print("You help here: ", needs)
         infos = list(Information.objects.all().filter(author=request.user))
         needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
         comm = list(Comment.objects.all().filter(author=request.user))
