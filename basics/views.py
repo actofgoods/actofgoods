@@ -382,22 +382,19 @@ def information_new(request):
                 priority = 0
                 group = None
                 data = info.cleaned_data
-                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None and request.POST.get('group') != 'admin':
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
                     group = Group.objects.get(pk=request.POST.get('group'))
                     priority = priority_info_group(0, 0)
                 else:
                     priority = priority_info_user(0, 0)
-                author_is_admin = False
-                if request.POST.get('group') == 'admin':
-                    author_is_admin = True
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
-                    infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
+                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                     infodata.save()
                     return redirect('basics:information_all')
                 else:
-                    address= request.user.userdata.address    
-                infodata = Information(author=request.user, author_is_admin=author_is_admin, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
+                    address= request.user.userdata.address
+                infodata = Information(author=request.user, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
                 infodata.save()
                 return redirect('basics:information_all')
         info = InformationFormNew()
@@ -449,6 +446,26 @@ def information_view_comment(request, pk):
             comment = Comment.objects.create(inf=information, author=request.user, group=group, text=request.POST['comment_text'])
         return redirect('basics:information_view', pk=pk)
 
+    return redirect('basics:actofgoods_startpage')
+
+def information_update(request, pk):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated():
+        information= Information.objects.all().get(pk=pk)
+        if request.method == "POST":
+            text = request.POST.get('text', None)
+            lat, lng = getAddress(request)
+            if lat != None and lng != None:
+                information.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
+            if text != "":
+                information.text=text
+            else:
+                information.text = information + "\n UPDATE " + timezone.now() +"\n text"
+            information.save()
+            return actofgoods_startpage(request)
+        form = InformationFormNew()
+        return render(request, 'basics/information_update.html', {'information':information})
     return redirect('basics:actofgoods_startpage')
 
 """
@@ -669,6 +686,7 @@ def needs_filter(request):
 
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
+        needs.sort(key=lambda x: x.priority, reverse=True)
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
         return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))
@@ -750,7 +768,9 @@ def needs_new(request):
                 #TODO: id_generator will return random string; Could be already in use
                 room = Room.objects.create(name=id_generator(), need=needdata)
                 room.save()
+                send_notifications(needdata)
                 return redirect('basics:actofgoods_startpage')
+
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
         c.save
@@ -758,6 +778,11 @@ def needs_new(request):
 
     return redirect('basics:actofgoods_startpage')
 
+def send_notifications(needdata):
+    users_to_inform = needdata.categorie.userdata_set.all()
+    users_to_inform = filter(lambda x: x.adrAsPoint.distance(needdata.adrAsPoint)< x.aux, users_to_inform)
+    for user in users_to_inform:
+        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text, "Somebody needs your help: " + needdata.categorie.name)
 
 """
     Needs authentication!
@@ -1024,6 +1049,9 @@ def like_information(request, pk):
     info.was_liked = True
     info.number_likes += 1
     info.liked_by.add(request.user.userdata)
+    info.save()
+    hours_elapsed = int((timezone.now() - info.date).seconds/3600)
+    info.priority = priority_info_user(hours_elapsed, info.number_likes)
     info.save()
     return redirect('basics:information_all')
 
