@@ -14,3 +14,7 @@ def is_own(roomname, user):
     if Room.objects.get(name=roomname).need.author == user:
         return True;
     return False;
+
+@register.filter
+def get_roomname(need):
+    return Room.objects.get(need=need).name

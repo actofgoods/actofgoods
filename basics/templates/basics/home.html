@@ -366,7 +366,7 @@
                                     </a>
                                     <div class="list-group-footer">
                                         <div class="row">
-                                            <a class="list-group-footer-button" type="button" href="">
+                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:chat_room' roomname=elem|get_roomname%}">
                                                 <div class="col-sm-12" id="list-group-footer-button-margin">
                                                     <span class="glyphicon glyphicon-comment"></span> Chat
                                                 </div>
