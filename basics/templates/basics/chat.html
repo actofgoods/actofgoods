@@ -345,6 +345,13 @@
       }, this.closeSocket);
     },
 
+    sendNumber: function sendNumber(number) {
+      if(this.socket != null){
+        alert(number);
+        this.sendMessage(number);
+      };
+    },
+
     getNodeRef: function getNodeRef(ref) {
       this.chatBox = ref;
     },
@@ -377,6 +384,11 @@
             'a',
             {id:'standard-grey-button-bold', className:'btn btn-primary btn-kick', href:'{% url 'basics:kick_user' roomname=roomname %}'},
             {% if roomname|is_own:request.user %} 'Kick User' {% else %} 'leave' {% endif %}
+          ),
+          React.createElement(
+            'a',
+            {id:'standard-grey-button-bold', className:'btn btn-primary btn-kick', onClick:this.sendNumber.bind(null, 'number')},
+            'Send Number'
           )
         ),
         React.createElement(

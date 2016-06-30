@@ -43,7 +43,9 @@ def ws_echo(message):
             db_room.set_saw(author)
             print(db_room.req_saw, db_room.off_saw)
             return
-    chatMessage = ChatMessage(author=author, room=db_room, text=message.content['text'])
+        if text == "number":
+            text = "You can contact me via this phone number: "+Userdata.objects.get(user=author).phone
+    chatMessage = ChatMessage(author=author, room=db_room, text=text)
     chatMessage.save()
     db_room.incomming_message(author)
     user = db_room.user_req
@@ -54,7 +56,7 @@ def ws_echo(message):
     t1.start()
     Group('chat-%s' % room).send({
         'text': json.dumps({
-            'message': message.content['text'],
+            'message': text,
             'username': message.channel_session['username'],
             'room': message.channel_session['room'],
             'date': datetime.now().__str__()[:-7]
