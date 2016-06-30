@@ -177,7 +177,7 @@ def chat_room(request, roomname):
                     rooms_json   += json.dumps({
                         'name': room.need.headline,
                         'hash': room.name,
-                        'date': room.last_message.__str__()
+                        'date': room.last_message.__str__()[:-13]
                     }) + ","
                 rooms_json = rooms_json[:-1]
             rooms_json += "]"
