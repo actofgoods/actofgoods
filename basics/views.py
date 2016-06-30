@@ -1219,7 +1219,7 @@ def priority_need_user(x):
 
 def priority_need_group(x):
     if x < 12 and x >= 0:
-        return pow(10, 4-(pow(x-12, 2)/144)) + 100
+        return pow(10, 4-(pow(x-12, 2)/144)) + 1000
     elif x >= 12:
         return pow(11, 1-((x-12)/5184)) * 1000
     return 0
