@@ -17,23 +17,15 @@
                     <div class="input-group">
                       <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" aria-describedby="basic-addon3"></input>
                     </div>
+                  </div>
 
-                  </div>
                   <div class="col-sm-2" style="margin-top: 20px;">
-                    <label> Range
-                        <select style="width: 100%" name="range">
-                          <option value="5" {% if 5 == range %}selected{% endif %}>5km</option>
-                          <option value="10" {% if 10 == range %}selected{% endif %}>10km</option>
-                          <option value="25" {% if 25 == range %}selected{% endif %}>25km</option>
-                          <option value="50" {% if 50 == range %}selected{% endif %}>50km</option>
-                          <option value="100" {% if 100 == range %}selected{% endif %}>100km</option>
-                          <option value="200" {% if 200 == range %}selected{% endif %}>200km</option>
-                          <option value="500" {% if 500 == range %}selected{% endif %}>500km</option>
-                          <option value="1000" {% if 1000 == range %}selected{% endif %}>1000km</option>
-                          <option value="50000" {% if 50000 == range %}selected{% endif %}>50000km</option>
-                        </select>
-                    </label>
+                   <label for="range">Range</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="range" name="range" value="{{range}}" aria-describedby="basic-addon3"></input>
+                    </div>
                   </div>
+
                   <div class="col-sm-2" style="margin-top: 20px;">
                     <label> Category {{ category }}
                         <select style="width: 100%" name="category">
@@ -44,6 +36,7 @@
                         </select>
                     </label>
                   </div>
+
                   <div  class="col-sm-2" style="margin-top: 20px;">
                     <label> Cards per Page
                         <select style="width: 100%" title="{{cards_per_page}}" name="cards_per_page">
@@ -53,8 +46,10 @@
                         </select>
                     </label>
                   </div>
+
                   <input type="hidden" class="form-control" id="page" name="page" value="1"/>
-                  <div  class="col-sm-2" style="margin-top: 30px; margin-bottom: 0px;">
+
+                  <div class="col-sm-2" style="margin-top: 30px; margin-bottom: 0px;">
                       <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
                   </div>
                 </form>
@@ -147,6 +142,7 @@
       </ul>
     </nav>
   </div>
+</div>
   <script>
     function submit_page(button){
       var button = $(button).attr("value");
@@ -155,7 +151,6 @@
       $("#filter-form").submit();
     }
   </script>
-</div>
 
 <!-- end needs -->
 
