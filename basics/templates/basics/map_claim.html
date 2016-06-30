@@ -57,7 +57,7 @@
        			<h2 class="text-center">Group Claims</h2>
       		</div>
        		<div class="modal-body" style="max-height: 540px; overflow-y: scroll;">
-            <div class="list-group">
+            <div class="list-group" id="poly-list">
                 {% if polyuser %}
                     {% for poly in polyuser %}
                         <!-- list all needs -->
@@ -100,12 +100,31 @@ function deleteClaim(pk){
 		data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk},
 
 		success: function(json){
+            refreshClaim();
 			alert(json.result)
 		},
 		error: function(xhr, errmsg, err){
 			console.log(xhr.status + ": " + xhr.responseText);
 		},
 	});
+}
+
+function refreshClaim(){
+   $.ajax({
+    url: "refresh/",
+    type: "POST",
+    data: {csrfmiddlewaretoken: '{{ csrf_token }}',},
+
+    success: function(data){
+        $('#poly-list').html(data);
+        console.log("success");
+    },
+
+    error: function(xhr, errmsg, err){
+        console.log(xhr.status + ": " + xhr.responseText);
+    }
+});
+
 }
 </script>
 
@@ -132,6 +151,7 @@ function deleteClaim(pk){
 			data: {csrfmiddlewaretoken: '{{ csrf_token }}', path: pathi},
 
 			success: function(json){
+                refreshClaim();
 				alert("Succesfully created!");
 				poly.setEditable(false);
                 onedit=false;

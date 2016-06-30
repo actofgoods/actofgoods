@@ -1,0 +1,15 @@
+                {% if polyuser %}
+                    {% for poly in polyuser %}
+                        <!-- list all needs -->
+                        <a class="list-group-item" id="standard-list-group-item-div">
+                            <div class="row">
+                                    <h4 class="list-group-item-heading">{{ poly.pk }}</h4>
+                                    <p class="list-group-item-text">Owner: {{poly.claimer}}</p>
+                                    <button type="button" class="btn btn-default btn-sml standard-grey-button-light" onclick="deleteClaim({{poly.pk}})" style="float: right; "><span class="glyphicon glyphicon-remove"></span>Delete</button>
+
+                            </div>
+                        </a>
+                    {% empty %}
+                        <h4>There are no needs.</h4>
+                    {% endfor %}
+                {% endif %}
