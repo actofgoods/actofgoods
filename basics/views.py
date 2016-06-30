@@ -577,15 +577,17 @@ def needs_all(request):
         cards_per_page = 10
         wordsearch = ""
         needs = Need.objects.all()
+        """
         for n in needs:
             if n.update_at.update_at < timezone.now():
-                hours_elapsed = int((timzone.now() - n.date).seconds/3600)
+                hours_elapsed = int((timezone.now() - n.date).seconds/3600)
                 n.update_at.update_at = timezone.now() + datetime.timedelta(hours=1)
                 if n.group:
                     priority = priority_need_group(hours_elapsed)
                 else:
                     priority = priority_need_user(hours_elapsed)
         needs = Need.objects.order_by('priority')
+        """
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "GET":
@@ -726,6 +728,7 @@ def needs_new(request):
                 #TODO: id_generator will return random string; Could be already in use
                 room = Room.objects.create(name=id_generator(), need=needdata)
                 room.save()
+                send_notifications(needdata)
                 return redirect('basics:needs_all')
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
@@ -734,6 +737,11 @@ def needs_new(request):
 
     return redirect('basics:actofgoods_startpage')
 
+def send_notifications(needdata):
+    users_to_inform = needdata.categorie.userdata_set.all()
+    users_to_inform = filter(lambda x: x.adrAsPoint.distance(needdata.adrAsPoint)< x.aux, users_to_inform)
+    for user in users_to_inform:
+        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text, "Somebody needs your help: " + needdata.categorie.name)
 
 """
     Needs authentication!
@@ -1172,6 +1180,3 @@ def priority_info_user(x):
 
 def priority_info_group(x):
     return 0
-
-
-
