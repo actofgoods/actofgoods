@@ -3,9 +3,9 @@
 {% block content %}
 <style>
 
-	#map-container {
+	/*#map-container {
 		height: 450px;
-	}
+	}*/
 
 	button, .btn-primary, .btn-primary:focus {
 		background-color: #bbd153;
@@ -51,48 +51,119 @@
 
 	}
 
+
+
+
+
+
+	@media(max-width:768px) {
+
+        .button-with-15-margin-at-768px {
+                margin-bottom: 15px;
+        }
+
+    }
+
+
 </style>
 
-<!-- Introduction Row -->
-<div class="row">
-    <div class="col-lg-12">
-        <h1 class="page-header">Your Profile <small>Note that your profile is exclusively visible for yourself!</small></h1>
-	</div>
+<div id="standard-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="text-center" id="standard-modal-headline">Your Profile</h2>
+            <h4 class="text-center">Note that your profile is exclusively visible for yourself!</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p id="description-label">Email:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p id="description-text">{{user.email}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p id="description-label">Registered since:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p id="description-text">{{user.date_joined}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p id="description-label">Auxiliary Radius:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p id="description-text">{{Userdata.aux}} km</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p id="description-label">Phonenumber:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            {% if Userdata.phone %}
+                                <p id="description-text">{{Userdata.phone}}</p>
+                            {% else %}
+                                <p id="description-text"><a id="green-link" href="{% url 'basics:profil_edit' %}">add phonenumber</a></p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    {% if Userdata.get_notifications %}
+                        <p id="description-label">You chose to be notified via email, if in your given auxiliary radius somebody need help in the following categories:</p>
+                        <p id="description-text" style="padding-right: 20px; padding-left: 20px;"><i>
+                            {% for cat in Userdata.inform_about.all %}
+                                {% if forloop.last %}
+                                    {{cat.name}}.
+                                {% else %}
+                                    {{cat.name}},
+                                {% endif %}
+                            {% endfor %}
+                        </i></p>
+                    {% else %}
+                        <p id="description-label">Choose categories where we should notify you via email, if somebody in your given auxiliary radius needs help in your chosen categorie.<br><a id="green-link" href="{% url 'basics:profil_edit' %}" style="font-weight: normal;">add categories</a></p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <p id="description-label">Your standard location:</p>
+                    <div id="map-container" style="height: 40%; margin-top: 15px;"></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
+                        <a id="standard-grey-button-light" class="btn btn-sm" href="{% url 'basics:profil_edit' %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit my profile</a>
+                        <a id="standard-grey-button-light" class="btn btn-sm" href="{% url 'basics:profil_delete' %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-remove"></span> Delete my account</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="row">
-	<div class="col-lg-4 col-lg-offset-1">
-  		<br>
-  		<b>
-			Name: {{Userdata.pseudonym}} 				<br>
-			Email: {{user.email}}  						<br>
-			Phonenumber: {{Userdata.phone}} 			<br>
-			Registered since: {{user.date_joined}}		<br>
-			Default auxiliary radius:	{{Userdata.aux}}
-			{% if Userdata.get_notifications %}
-			<br><br>
-			You	chose to be notified via email.
 
-
-			{% endif %}						<br><br>
-      latitude: {{ Userdata.address.latitude }}					<br>
-      longditude: {{ Userdata.address.longditude }} 					<br>
-			</b>
-
-			<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:profil_edit' %}">Edit my profile</a>
-			<a id="standard-grey-button-bold" class="btn btn-sm"href="{% url 'basics:profil_delete' %}">Delete my profile</a>
-			<br>
-			<br>
-			</div>
-
-    		<div class="col-lg-4">
-    			{% load staticfiles %}
-        	<img src={% static 'basics/images/profil.jpg' %} height="152"/>
-       	</div>
-        <div id="map-container"></div>
-	</div>
-
-  <script src="http://maps.googleapis.com/maps/api/js"></script>
-  <script>
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+<script>
 
 
   	var map;
@@ -106,20 +177,31 @@
       	geocoder = new google.maps.Geocoder()
   		var mapProp = {
     			center:myCenter,
-    			zoom:2,
+    			zoom:4,
     			mapTypeId:google.maps.MapTypeId.ROADMAP,
-  			mapTypeControl: false,
-              panControl:false,
-              rotateControl:false,
-  			mapTypeControl:true,
-              streetViewControl: false
+  			    mapTypeControl: false,
+                panControl:false,
+                rotateControl:false,
+  			    mapTypeControl:true,
+                streetViewControl: false
     		};
-    		marker=null;
+    	marker=null;
 
-    		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
+    	map = new google.maps.Map(document.getElementById("map-container"),mapProp);
 
         placeMarker(new google.maps.LatLng(parseFloat("{{ Userdata.address.latitude }}".replace(",", ".")), parseFloat("{{ Userdata.address.longditude }}".replace(",", "."))));
-        //console.log(lat + " " + {{ Userdata.address.longditude}});
+        var circle = new google.maps.Circle({
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+            map: map,
+            center: marker.getPosition(),
+            radius: parseFloat('{{Userdata.aux}}')*1000,
+    });
+
+
   	}
 
   	function placeMarker(location) {
@@ -146,23 +228,6 @@
   	}
   	google.maps.event.addDomListener(window, 'load', initialize);
 
-    function addressInput(){
-      if(marker != null){
-        $('#lng').val(marker.getPosition().lng());
-        $('#lat').val(marker.getPosition().lat());
-      }
-      else if($('#State').val() != "" && $('#City').val() != ""){
-  			var state = $('#State').val();
-  			var city = $('#City').val();
-        $('#addressinput').val(state+ " " + city);
-      }
-    }
-  </script>
-  <script type='text/javascript'>
-   	$('#location-map-modal').on('shown.bs.modal', function(e) {
-          initialize();
-      });
-
-  </script>
+</script>
 
 {% endblock %}

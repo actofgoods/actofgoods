@@ -228,6 +228,16 @@ def claim_delete(request,name):
                 return JsonResponse(response_data)
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
+def claim_refresh(request,name):
+   if request.user.is_authenticated():
+        if request.user.groups.filter(name=name).exists():
+            t = loader.get_template('snippets/map_claim.html')
+            return HttpResponse(t.render({'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))}))
+
+
+
+
 
 @csrf_protect
 def contact_us(request):
@@ -474,10 +484,11 @@ def immediate_aid(request):
                     #Content could also be possibly HTML! this way beautifull emails are possible
                     content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
                     subject = "Welcome!"
-
+                    user = authenticate(username=user_data['email'],password=password_d)
+                    auth_login(request,user)
 
                     sendmail(user.email, content, subject )
-                    return redirect('basics:home')
+                    return redirect('basics:actofgoods_startpage')
                 else:
                     messages.add_message(request, messages.INFO, 'location_failed')
             else:
@@ -555,30 +566,17 @@ def fill_needs(request, count):
 def needs_all(request):
     if request.user.is_authenticated():
         #TODO: Change this to somehing like user distance
-        dist = 500
+        if request.user.userdata:
+            dist = request.user.userdata.aux
+        else:
+            dist=500
         category = "All"
         cards_per_page = 10
         wordsearch = ""
         needs = Need.objects.order_by('date')
         page = 1
         page_range = np.arange(1, 5)
-        if request.method == "POST":
-            print(request.POST)
-            if "" != request.POST['page']:
-                page = int(request.POST['page'])
-            if "" != request.POST['range']:
-                dist = int(request.POST['range'])
-                if not request.user.is_superuser:
-                    needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
-            if "" != request.POST['category'] and "All" != request.POST['category']:
-                category = request.POST['category']
-                needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
-            if "" != request.POST['word-search']:
-                wordsearch = request.POST['word-search']
-                needs = needs.filter(Q(headline__contains=request.POST['word-search']) | Q(text__contains=request.POST['word-search']))
-            if "" != request.POST['cards_per_page']:
-                cards_per_page = int(request.POST['cards_per_page'])
-        elif request.method == "GET":
+        if request.method == "GET":
             if not request.user.is_superuser:
                 needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         #TODO: this way is fucking slow and should be changed but i didn't found a better solution
@@ -590,6 +588,49 @@ def needs_all(request):
         return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'wordsearch':wordsearch, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
 
     return redirect('basics:actofgoods_startpage')
+def needs_filter(request):
+    if request.user.is_authenticated():
+        #TODO: Change this to somehing like user distance
+        if request.user.userdata:
+            dist = request.user.userdata.aux
+        else:
+            dist=500
+
+        category = "All"
+        cards_per_page = 10
+        wordsearch = ""
+        needs = Need.objects.order_by('date')
+        page = 1
+        page_range = np.arange(1, 5)
+        if request.method == "POST":
+            print(request.POST)
+            if "" != request.POST['page']:
+                page = int(request.POST['page'])
+            if "" != request.POST['range']:
+                dist= int(request.POST['range'].replace(',',''))
+                if not request.user.is_superuser:
+                    needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
+            if "" != request.POST['category'] and "All" != request.POST['category']:
+                category = request.POST['category']
+                needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
+            if "" != request.POST['wordsearch']:
+                wordsearch = request.POST['wordsearch']
+                needs = needs.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))
+            if "" != request.POST['cards_per_page']:
+                cards_per_page = int(request.POST['cards_per_page'])
+        elif request.method == "GET":
+            if not request.user.is_superuser:
+                needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
+        #TODO: this way is fucking slow and should be changed but i didn't found a better solution
+        needs = [s for s in needs if Room.objects.get(need=s).user_req!= request.user and s.author!= request.user  ]
+
+        max_page = int(len(needs)/cards_per_page)+1
+        needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
+        page_range = np.arange(1,max_page+1)
+        t = loader.get_template('snippets/need_filter.html')
+        return HttpResponse(t.render({'needs':needs}))
+    return redirect('basics:actofgoods_startpage')
+
 
 @csrf_protect
 def needs_help(request, id):
