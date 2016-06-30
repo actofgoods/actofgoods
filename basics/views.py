@@ -343,7 +343,7 @@ def information_all(request):
                     priority = priority_info_user(hours_elapsed, i.number_likes)
                 i.priority = priority
                 i.save()
-        infos = Information.objects.order_by('priority').reverse()
+        infos = Information.objects.order_by('priority', 'pk').reverse()
         if request.method == "POST":
             print(request.POST['range'], request.POST['cards_per_page'])
             if "" != request.POST['range']:
@@ -378,7 +378,7 @@ def information_new(request):
             if info.is_valid():
                 lat, lng = getAddress(request)
                 print(lat,lng)
-                u=Update.objects.create(update_at=(datetime.now() + timedelta(hours=1)))
+                u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                 priority = 0
                 group = None
                 data = info.cleaned_data
@@ -621,7 +621,7 @@ def needs_all(request):
                     priority = priority_need_user(hours_elapsed)
                 n.priority = priority
                 n.save()
-        needs = Need.objects.order_by('priority').reverse()
+        needs = Need.objects.order_by('priority', 'pk').reverse()
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "GET":
@@ -659,7 +659,7 @@ def needs_filter(request):
                     priority = priority_need_user(hours_elapsed)
                 n.priority = priority
                 n.save()
-        needs = Need.objects.order_by('priority').reverse()
+        needs = Need.objects.order_by('priority', 'pk').reverse()
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "POST":
@@ -686,10 +686,10 @@ def needs_filter(request):
 
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
-        needs.sort(key=lambda x: x.priority, reverse=True)
+        needs.sort(key=lambda x: (x.priority, x.pk), reverse=True)
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
-        return HttpResponse(t.render({'needs':needs, 'page':page, 'page_range':page_range}))
+        return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))
     return redirect('basics:actofgoods_startpage')
 
 
@@ -762,7 +762,7 @@ def needs_new(request):
                     priority = priority_need_group(0)
                 else:
                     priority = priority_need_user(0)
-                u=Update.objects.create(update_at=(datetime.now() + timedelta(hours=1)))
+                u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                 needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                 needdata.save()
                 #TODO: id_generator will return random string; Could be already in use
@@ -1026,13 +1026,17 @@ def sendmail(email, content, subject):
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
     mail.close()
 
-def report_need(request, pk):
+@csrf_protect
+def report_need(request):
+    pk=int(request.POST['pk'])
+    print(pk)
     need = Need.objects.get(pk=pk)
     need.was_reported = True
     need.number_reports += 1
     need.reported_by.add(request.user.userdata)
     need.save()
-    return needs_all(request)
+    print(Need.objects.get(pk=pk).reported_by.all())
+    return needs_filter(request)
 
 def report_information(request, pk):
     info = Information.objects.get(pk=pk)
@@ -1047,6 +1051,9 @@ def like_information(request, pk):
     info.was_liked = True
     info.number_likes += 1
     info.liked_by.add(request.user.userdata)
+    info.save()
+    hours_elapsed = int((timezone.now() - info.date).seconds/3600)
+    info.priority = priority_info_user(hours_elapsed, info.number_likes)
     info.save()
     return redirect('basics:information_all')
 

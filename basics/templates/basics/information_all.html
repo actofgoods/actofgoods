@@ -114,7 +114,7 @@
                                             <p class="list-group-item-text">{{ info|get_short_text:160 }}</p>
                                         </div>
                                         <div class="col-sm-9" data-toggle="modal" data-target=".{{ info.id }}">
-                                            <h6><br>from: {{ info.date }}{% if info.author_is_admin %} / by: <span style="color: #D36E5A;">Admin</span>{% elif info.group %} / by: <span style="color: #70962c;">{{ info.group.name }}</span>{% elif info.author == user %} / by: <span>you</span>{% endif %}</h6>
+                                            <h6><br>priority: {{ info.priority }} / pk: {{ info.pk }} / from: {{ info.date }}{% if info.author_is_admin %} / by: <span style="color: #D36E5A;">Admin</span>{% elif info.group %} / by: <span style="color: #70962c;">{{ info.group.name }}</span>{% elif info.author == user %} / by: <span>you</span>{% endif %}</h6>
                                         </div>
                                     </div>
                                 </a>
@@ -133,7 +133,7 @@
                                             <div class="row">
                                                 <a class="list-group-footer-button" type="button" href="{% url 'basics:like_information' pk=info.id %}">
                                                     <div class="col-sm-4" id="list-group-footer-button-margin">
-                                                        <span class="glyphicon glyphicon-chevron-up"></span> Up Vote
+                                                        <span class="glyphicon glyphicon-chevron-up"></span> Upvote
                                                     </div>
                                                 </a>
                                                 <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
@@ -151,7 +151,7 @@
                                             <div class="row">
                                                 <a class="list-group-footer-button" type="button" href="{% url 'basics:like_information' pk=info.id %}">
                                                     <div class="col-sm-6" id="list-group-footer-button-margin">
-                                                        <span class="glyphicon glyphicon-chevron-up"></span> Up Vote
+                                                        <span class="glyphicon glyphicon-chevron-up"></span> Upvote
                                                     </div>
                                                 </a>
                                                 <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
