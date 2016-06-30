@@ -1154,7 +1154,15 @@ def group_detail(request, name):
                         messages.add_message(request, messages.INFO, 'wrong_email')
         users = gro.user_set.all()
         group = Groupdata.objects.get(name=gro.name)
-        return render(request, 'basics/group_detail.html', {'group':group, 'users':users})
+        claims = ClaimedArea.objects.filter(group=group.group)
+
+        #for claim in claims:
+        query = Q(adrAsPoint__within=claims[0].poly)
+        for q in claims[1:]:
+            query |= Q(adrAsPoint__within=q.poly)
+        needs = Need.objects.filter(query)
+        print(needs)
+        return render(request, 'basics/group_detail.html', {'group':group, 'users':users, 'needs':needs})
     return redirect('basics:actofgoods_startpage')
 
 
