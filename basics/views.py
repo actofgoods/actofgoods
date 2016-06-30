@@ -669,6 +669,7 @@ def needs_filter(request):
 
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
+        needs.sort(key=lambda x: x.priority, reverse=True)
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
         return HttpResponse(t.render({'needs':needs, 'page':page, 'page_range':page_range}))
