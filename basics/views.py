@@ -604,7 +604,7 @@ def needs_all(request):
                     priority = priority_need_user(hours_elapsed)
                 n.priority = priority
                 n.save()
-        needs = Need.objects.order_by('priority').reverse()
+        needs = Need.objects.order_by('priority', 'pk').reverse()
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "GET":
@@ -642,7 +642,7 @@ def needs_filter(request):
                     priority = priority_need_user(hours_elapsed)
                 n.priority = priority
                 n.save()
-        needs = Need.objects.order_by('priority').reverse()
+        needs = Need.objects.order_by('priority', 'pk').reverse()
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "POST":
@@ -671,7 +671,7 @@ def needs_filter(request):
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
-        return HttpResponse(t.render({'needs':needs, 'page':page, 'page_range':page_range}))
+        return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))
     return redirect('basics:actofgoods_startpage')
 
 
@@ -999,13 +999,17 @@ def sendmail(email, content, subject):
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
     mail.close()
 
-def report_need(request, pk):
+@csrf_protect
+def report_need(request):
+    pk=int(request.POST['pk'])
+    print(pk)
     need = Need.objects.get(pk=pk)
     need.was_reported = True
     need.number_reports += 1
     need.reported_by.add(request.user.userdata)
     need.save()
-    return needs_all(request)
+    print(Need.objects.get(pk=pk).reported_by.all())
+    return needs_filter(request)
 
 def report_information(request, pk):
     info = Information.objects.get(pk=pk)
