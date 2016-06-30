@@ -3,7 +3,7 @@ from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs, Need,
 from django.contrib.auth.models import User, Group
 from administration.forms import GroupFormRegister, SearchUserForm, RequestForm
 from basics.forms import CategoriesForm
-from basics.views import getAddress
+from basics.views import getAddress, sendmail
 from basics.models import Address
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
@@ -280,6 +280,7 @@ def user_delete(request, pk):
     if User.objects.filter(pk=pk):
         user = get_object_or_404(User, pk=pk)
         user.delete()
+        sendmail(user.email, "Ein Admin hat aus irgend einem Grund sie gelöscht.\n Denk mal lieber drüber nach.", "Sie wurden gelöscht.")
     else:
         messages.add_message(request, messages.INFO,'user_gone')
 	#return render(request, 'administration/users.html', {'users':users})
