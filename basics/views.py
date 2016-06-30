@@ -1,6 +1,5 @@
 import datetime
 from datetime import timedelta
-from django.utils import timezone
 import random
 import smtplib
 import string
@@ -333,7 +332,18 @@ def information_all(request):
     if request.user.is_authenticated():
         range = "Range"
         cards_per_page = "Cards per page"
-        infos = Information.objects.order_by('date')
+        infos = Information.objects.all()
+        for i in infos:
+            if i.update_at.update_at < timezone.now():
+                hours_elapsed = int((timzone.now() - i.date).seconds/3600)
+                i.update_at.update_at = timezone.now() + datetime.timedelta(hours=1)
+                if i.group:
+                    priority = priority_info_group(hours_elapsed, i.number_likes)
+                else:
+                    priority = priority_info_user(hours_elapsed, i.number_likes)
+                i.priority = priority
+                i.save()
+        infos = Information.objects.order_by('priority').reverse()
         if request.method == "POST":
             print(request.POST['range'], request.POST['cards_per_page'])
             if "" != request.POST['range']:
@@ -368,19 +378,23 @@ def information_new(request):
             if info.is_valid():
                 lat, lng = getAddress(request)
                 print(lat,lng)
+                u=Update.objects.create(update_at=(datetime.now() + timedelta(hours=1)))
+                priority = 0
+                group = None
+                data = info.cleaned_data
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                    group = Group.objects.get(pk=request.POST.get('group'))
+                    priority = priority_info_group(0, 0)
+                else:
+                    priority = priority_info_user(0, 0)
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
-                    data = info.cleaned_data
-                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                     infodata.save()
                     return redirect('basics:information_all')
                 else:
-                    address= request.user.userdata.address
-                data = info.cleaned_data
-                group = None
-                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
-                    group = Group.objects.get(pk=request.POST.get('group'))
-                infodata = Information(author=request.user, group=group, headline=data['headline'], text=data['text'], address =address)
+                    address= request.user.userdata.address    
+                infodata = Information(author=request.user, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
                 infodata.save()
                 return redirect('basics:information_all')
         info = InformationFormNew()
@@ -579,13 +593,15 @@ def needs_all(request):
         needs = Need.objects.all()
         for n in needs:
             if n.update_at.update_at < timezone.now():
-                hours_elapsed = int((timzone.now() - n.date).seconds/3600)
-                n.update_at.update_at = timezone.now() + datetime.timedelta(hours=1)
+                hours_elapsed = int((timezone.now() - n.date).seconds/3600)
+                n.update_at.update_at = timezone.now() + timedelta(hours=1)
                 if n.group:
                     priority = priority_need_group(hours_elapsed)
                 else:
                     priority = priority_need_user(hours_elapsed)
-        needs = Need.objects.order_by('priority')
+                n.priority = priority
+                n.save()
+        needs = Need.objects.order_by('priority').reverse()
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "GET":
@@ -600,6 +616,7 @@ def needs_all(request):
         return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'wordsearch':wordsearch, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
 
     return redirect('basics:actofgoods_startpage')
+
 def needs_filter(request):
     if request.user.is_authenticated():
         #TODO: Change this to somehing like user distance
@@ -614,13 +631,15 @@ def needs_filter(request):
         needs = Need.objects.all()
         for n in needs:
             if n.update_at.update_at < timezone.now():
-                hours_elapsed = int((timzone.now() - n.date).seconds/3600)
-                n.update_at.update_at = timezone.now() + datetime.timedelta(hours=1)
+                hours_elapsed = int((timezone.now() - n.date).seconds/3600)
+                n.update_at.update_at = timezone.now() + timedelta(hours=1)
                 if n.group:
                     priority = priority_need_group(hours_elapsed)
                 else:
                     priority = priority_need_user(hours_elapsed)
-        needs = Need.objects.order_by('priority')
+                n.priority = priority
+                n.save()
+        needs = Need.objects.order_by('priority').reverse()
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "POST":
@@ -716,10 +735,12 @@ def needs_new(request):
                     lng = address.longditude
                 data = need.cleaned_data
                 group = None
+                priority = 0
                 if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
                     group = Group.objects.get(pk=request.POST.get('group'))
-
-                priority = priority_need_user(0)
+                    priority = priority_need_group(0)
+                else:
+                    priority = priority_need_user(0)
                 u=Update.objects.create(update_at=(datetime.now() + timedelta(hours=1)))
                 needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                 needdata.save()
@@ -1160,17 +1181,25 @@ def priority_need_user(x):
     return 0
 
 def priority_need_group(x):
+    if x < 12 and x >= 0:
+        return pow(10, 4-(pow(x-12, 2)/144)) + 100
+    elif x >= 12:
+        return pow(11, 1-((x-12)/5184)) * 1000
     return 0
 
-def priority_info_user(x):
+def priority_info_user(x, likes):
     """x is number of hours since need was posted"""
-    if x < 24 and x >= 0:
-        return 5000
-    elif x >= 24:
-        return 75000/(x-9)
+    if (x-(likes/60)) < 24:
+        return (75000+(100*likes))/(15-(likes/60))
+    elif (x-(likes/60)) >= 24:
+        return (75000+(100*likes))/(x-9-(likes/60))
     return 0
 
-def priority_info_group(x):
+def priority_info_group(x, likes):
+    if (x-(likes/60)) < 24:
+        return (75000+(100*likes))/(12-(likes/60))
+    elif (x-(likes/60)) >= 24:
+        return (75000+(100*likes))/(x-12-(likes/60))
     return 0
 
 
