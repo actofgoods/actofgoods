@@ -382,19 +382,22 @@ def information_new(request):
                 priority = 0
                 group = None
                 data = info.cleaned_data
-                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None and request.POST.get('group') != 'admin':
                     group = Group.objects.get(pk=request.POST.get('group'))
                     priority = priority_info_group(0, 0)
                 else:
                     priority = priority_info_user(0, 0)
+                author_is_admin = False
+                if request.POST.get('group') == 'admin':
+                    author_is_admin = True
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
-                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
+                    infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                     infodata.save()
                     return redirect('basics:information_all')
                 else:
                     address= request.user.userdata.address    
-                infodata = Information(author=request.user, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
+                infodata = Information(author=request.user, author_is_admin=author_is_admin, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
                 infodata.save()
                 return redirect('basics:information_all')
         info = InformationFormNew()
