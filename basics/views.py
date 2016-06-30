@@ -1039,6 +1039,9 @@ def like_information(request, pk):
     info.number_likes += 1
     info.liked_by.add(request.user.userdata)
     info.save()
+    hours_elapsed = int((timezone.now() - info.date).seconds/3600)
+    info.priority = priority_info_user(hours_elapsed, info.number_likes)
+    info.save()
     return redirect('basics:information_all')
 
 def unlike_information(request, pk):
