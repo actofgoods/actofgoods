@@ -117,6 +117,7 @@
                 </form>
             </div>
         </div>
+        <div id="insert">
         <div class="modal-body" style="padding-bottom: 0px;">
             <div class="list-group" style="margin-bottom: 0px;" id="need-list">
                 {% if needs %}
@@ -218,6 +219,7 @@
                 </div>
             </div>
         </div>
+        </div> <!--div insert -->
 
     </div>
 </div>
@@ -287,7 +289,7 @@
       data: {page: $("#page").val(), range: $("#range").val(), cards_per_page: $("#cards_per_page").val(), category: $("#category").val(), wordsearch: $("#basic-url").val()},
 
       success: function(data){
-        $('#need-list').html(data);
+        $('#insert').html(data);
         console.log("success");
       },
 

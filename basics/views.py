@@ -649,7 +649,7 @@ def needs_filter(request):
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
-        return HttpResponse(t.render({'needs':needs}))
+        return HttpResponse(t.render({'needs':needs, 'page':page, 'page_range':page_range}))
     return redirect('basics:actofgoods_startpage')
 
 
