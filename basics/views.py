@@ -335,8 +335,8 @@ def information_all(request):
         infos = Information.objects.all()
         for i in infos:
             if i.update_at.update_at < timezone.now():
-                hours_elapsed = int((timzone.now() - i.date).seconds/3600)
-                i.update_at.update_at = timezone.now() + datetime.timedelta(hours=1)
+                hours_elapsed = int((timezone.now() - i.date).seconds/3600)
+                i.update_at.update_at = timezone.now() + timedelta(hours=1)
                 if i.group:
                     priority = priority_info_group(hours_elapsed, i.number_likes)
                 else:
