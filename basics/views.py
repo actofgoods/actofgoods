@@ -116,13 +116,15 @@ def chat(request):
     if request.user.is_authenticated():
         if request.method == "GET":
             try:
-                room=Room.objects.filter(Q(need__author =request.user) | Q(user_req = request.user)).latest('last_message')
+                room=get_valid_rooms(request.user).latest('last_message')
                 return redirect('basics:chat_room', roomname=room.name)
             except:
                 return render(request,'basics/no_chat.html')
 
     return redirect('basics:actofgoods_startpage')
 
+def get_valid_rooms(user):
+    return Room.objects.filter(Q(need__author =user) | Q(user_req = user, helper_out=False))
 
 def kick_user(request, roomname):
     if request.user.is_authenticated():
@@ -130,7 +132,7 @@ def kick_user(request, roomname):
         text = "Helper was kicked."
         if request.user == room.user_req:
             text = "Helper leaved."
-        room.user_req = None
+        room.helper_out = True
         room.save()
         ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')
@@ -149,7 +151,7 @@ def chat_room(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
         name = room.need.headline
-        if room.need.author == request.user or room.user_req == request.user:
+        if room.need.author == request.user or (room.user_req == request.user and not room.helper_out):
             room.set_saw(request.user)
             messages = ChatMessage.objects.filter(room=roomname).order_by('date')
             message_json = "["
@@ -169,7 +171,7 @@ def chat_room(request, roomname):
             message_json += "]"
             print(message_json)
             #Get all rooms where request.user is in contact with
-            rooms = Room.objects.filter(Q(need__author =request.user) | Q(user_req = request.user)).exclude(name=roomname).order_by('-last_message')
+            rooms = get_valid_rooms(request.user).exclude(name=roomname).order_by('-last_message')
 
             rooms_json = "["
             if len(rooms) > 0:
@@ -513,9 +515,6 @@ def immediate_aid(request):
                     data = need.cleaned_data
                     needdata = Need(author=user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     needdata.save()
-                    #TODO: id_generator will return random string; Could be already in use
-                    room = Room.objects.create(name=id_generator(), need=needdata)
-                    room.save()
 
 
                     #Content could also be possibly HTML! this way beautifull emails are possible
@@ -588,7 +587,6 @@ def fill_needs(request, count):
             lat = np.random.random()*50
             lng = np.random.random()*50
             need = Need.objects.create(author=request.user, headline=str(i) + " " + category.name, text=str(i), categorie=category, address = Address.objects.create(latitude=lat, longditude=lng), was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
-            room = Room.objects.create(name=id_generator(), need=need)
     return redirect(request, 'basics:needs_all')
 
 """
@@ -622,13 +620,14 @@ def needs_all(request):
                 n.priority = priority
                 n.save()
         needs = Need.objects.order_by('priority', 'pk').reverse()
+        needs = needs.exclude(author=request.user)
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "GET":
             if not request.user.is_superuser:
                 needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         #TODO: this way is fucking slow and should be changed but i didn't found a better solution
-        needs = [s for s in needs if Room.objects.get(need=s).user_req!= request.user and s.author!= request.user  ]
+        needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
 
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
@@ -660,6 +659,7 @@ def needs_filter(request):
                 n.priority = priority
                 n.save()
         needs = Need.objects.order_by('priority', 'pk').reverse()
+        needs = needs.exclude(author=request.user)
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "POST":
@@ -682,7 +682,7 @@ def needs_filter(request):
             if not request.user.is_superuser:
                 needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         #TODO: this way is fucking slow and should be changed but i didn't found a better solution
-        needs = [s for s in needs if Room.objects.get(need=s).user_req!= request.user and s.author!= request.user  ]
+        needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
 
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
@@ -699,8 +699,13 @@ def needs_help(request, id):
     if request.user.is_authenticated():
         if request.method == "GET":
             need = Need.objects.get(id=id)
-            room = Room.objects.get(need=need)
-            if room.need.author != request.user:
+
+            if need.author != request.user:
+                #TODO: id_generator will return random string; Could be already in use
+                if Room.objects.filter(need=need).filter(Q(user_req=request.user)|Q(helper_out=False)).exists():
+                    #TODO: add error message, 'This need is currently in work'
+                    return redirect('basics:actofgoods_startpage')
+                room = Room.objects.create(name=id_generator(), need=need)
                 room.user_req = request.user
                 room.save()
                 return redirect('basics:chat_room', roomname=room.name)
@@ -765,9 +770,7 @@ def needs_new(request):
                 u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                 needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                 needdata.save()
-                #TODO: id_generator will return random string; Could be already in use
-                room = Room.objects.create(name=id_generator(), need=needdata)
-                room.save()
+
                 send_notifications(needdata)
                 return redirect('basics:actofgoods_startpage')
 

@@ -82,7 +82,6 @@ class Need(models.Model):
 
 class Information(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-	author_is_admin = models.BooleanField(default=False)
 	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
 	headline = models.CharField(max_length=30, default='')
 	text = models.TextField(default='')
@@ -142,7 +141,8 @@ class Room(models.Model):
 	last_message = models.DateTimeField(auto_now=True)
 	req_saw = models.BooleanField(default=True)
 	off_saw =  models.BooleanField(default=True)
-
+	helper_out = models.BooleanField(default=False)
+	
 	def __unicode__(self):
 		return self.name
 

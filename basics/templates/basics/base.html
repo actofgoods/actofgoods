@@ -236,7 +236,7 @@
 						console.log(name + "fuck")
 						continue;
 					}
-	        //console.log(name);
+	        console.log(name);
 	        var url = ws_scheme + '://' + window.location.host + "/chat/" + name + '?username={{request.user.username}}';
 	        var socket = new WebSocket(url);
 					dic[name] = socket;
