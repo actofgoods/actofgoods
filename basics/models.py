@@ -81,24 +81,24 @@ class Need(models.Model):
 	update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
 
 class Information(models.Model):
-	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
-	headline = models.CharField(max_length=30, default='')
-	text = models.TextField(default='')
-	closed = models.BooleanField(default=False)
-	date = models.DateTimeField(auto_now_add=True)
-	address = models.ForeignKey(Address, on_delete=models.CASCADE)
-	was_reported = models.BooleanField(default=False)
-	number_reports = models.PositiveIntegerField(default=0)
-	adrAsPoint=models.PointField(null=True)
-	objects = models.GeoManager()
-	reported_by = models.ManyToManyField(Userdata, related_name="report")
-	was_liked = models.BooleanField(default=False)
-	number_likes = models.PositiveIntegerField(default=0)
-	liked_by = models.ManyToManyField(Userdata, related_name="like")
-	priority = models.FloatField(default=5000)
-	update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
-
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    author_is_admin = models.BooleanField(default=False)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
+    headline = models.CharField(max_length=30, default='')
+    text = models.TextField(default='')
+    closed = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    was_reported = models.BooleanField(default=False)
+    number_reports = models.PositiveIntegerField(default=0)
+    adrAsPoint=models.PointField(null=True)
+    objects = models.GeoManager()
+    reported_by = models.ManyToManyField(Userdata, related_name="report")
+    was_liked = models.BooleanField(default=False)
+    number_likes = models.PositiveIntegerField(default=0)
+    liked_by = models.ManyToManyField(Userdata, related_name="like")
+    priority = models.FloatField(default=5000)
+    update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
 
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)
@@ -142,7 +142,7 @@ class Room(models.Model):
 	req_saw = models.BooleanField(default=True)
 	off_saw =  models.BooleanField(default=True)
 	helper_out = models.BooleanField(default=False)
-	
+
 	def __unicode__(self):
 		return self.name
 
