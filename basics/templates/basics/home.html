@@ -338,13 +338,13 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                             <h2>{{elem.headline}}</h2>
-                                            <h6>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                            <h6>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ elem.group.name }}</a>{% endif %}</h6>
                                         </div>
                                         <div class="modal-body">
                                             <p>{{ elem.text|linebreaksbr }}</p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                            <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                                         </div>
                                     </div>
                                 </div>
@@ -353,7 +353,7 @@
                         {% elif elem in needs_you_help %}
                             <!-- need your helping -->
                             <div class="row">
-                                <div class="timeline-badge" title="need your helping"><i class="glyphicon glyphicon-header" style="padding-top: 7px; padding-left: 6px"></i></div>
+                                <div class="timeline-badge" title="need your help"><i class="glyphicon glyphicon-header" style="padding-top: 7px; padding-left: 6px"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
@@ -367,7 +367,7 @@
                                     <div class="list-group-footer">
                                         <div class="row">
                                             <a class="list-group-footer-button" type="button" href="{% url 'basics:chat_room' roomname=elem|get_roomname:request.user%}">
-                                                <div class="col-sm-12" id="list-group-footer-button-margin">
+                                                <div class="col-sm-12">
                                                     <span class="glyphicon glyphicon-comment"></span> Chat
                                                 </div>
                                             </a>
@@ -384,13 +384,13 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                             <h2>You help here: {{elem.headline}}</h2>
-                                            <h6>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                            <h6>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ elem.group.name }}</a>{% endif %}</h6>
                                         </div>
                                         <div class="modal-body">
                                             <p>{{ elem.text|linebreaksbr }}</p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                            <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                                         </div>
                                     </div>
                                 </div>
@@ -441,15 +441,15 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                             <h2>Information: {{ elem.inf.headline }}</h2>
-                                            <h6>from: {{ elem.inf.date }}{% if elem.group %} / by: <span style="color: #70962c;">{{ elem.inf.group.name }}</span>{% endif %}</h6>
+                                            <h6>from: {{ elem.inf.date }}{% if elem.inf.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.inf.group.name %}">{{ elem.inf.group.name }}</a>{% endif %}</h6>
                                         </div>
                                         <div class="modal-body">
                                             <h5>Your comment:</h5>
                                             <p>{{ elem.text|linebreaksbr }}</p>
-                                            <h6>from: {{ elem.date }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                            <h6>from: {{ elem.date }} {% if elem.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ elem.group.name }}</a>{% endif %}</h6>
                                         </div>
                                         <div class="modal-footer">
-                                            <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                            <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
                                         </div>
                                     </div>
                                 </div>

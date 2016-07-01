@@ -93,7 +93,7 @@
                                                     </div>
                                                 </a>
                                                 <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
-                                                    <div class="col-sm-4">
+                                                    <div class="col-sm-4" id="list-group-footer-button-margin">
                                                         <span class="glyphicon glyphicon-comment"></span> Comment
                                                     </div>
                                                 </a>
@@ -119,7 +119,7 @@
                                         {% elif not user.userdata in info.reported_by.all and user.userdata in info.liked_by.all  %}
                                             <div class="row">
                                                 <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
-                                                    <div class="col-sm-6">
+                                                    <div class="col-sm-6" id="list-group-footer-button-margin">
                                                         <span class="glyphicon glyphicon-comment"></span> Comment
                                                     </div>
                                                 </a>
