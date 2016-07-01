@@ -330,7 +330,10 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 @csrf_protect
 def information_all(request):
     if request.user.is_authenticated():
-        range = "Range"
+        if request.user.userdata:
+            dist = request.user.userdata.aux
+        else:
+            dist=500
         cards_per_page = "Cards per page"
         infos = Information.objects.all()
         for i in infos:
@@ -354,7 +357,7 @@ def information_all(request):
             print(request)
         else:
             print("will nicgt")
-        return render(request, 'basics/information_all.html',{'infos':infos, 'cards_per_page':cards_per_page, 'range':range})
+        return render(request, 'basics/information_all.html',{'infos':infos, 'cards_per_page':cards_per_page, 'range':dist})
 
     return redirect('basics:actofgoods_startpage')
 
