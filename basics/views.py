@@ -1157,12 +1157,18 @@ def group_detail(request, name):
         claims = ClaimedArea.objects.filter(group=group.group)
 
         #for claim in claims:
-        query = Q(adrAsPoint__within=claims[0].poly)
-        for q in claims[1:]:
-            query |= Q(adrAsPoint__within=q.poly)
-        needs = Need.objects.filter(query)
-        print(needs)
-        return render(request, 'basics/group_detail.html', {'group':group, 'users':users, 'needs':needs})
+        needs = []
+        infos = []
+        if claims.exists():
+            query = Q(adrAsPoint__within=claims[0].poly)
+            for q in claims[1:]:
+                query |= Q(adrAsPoint__within=q.poly)
+            needs = Need.objects.filter(query)
+            infos = Information.objects.filter(query)
+
+
+        print(infos)
+        return render(request, 'basics/group_detail.html', {'group':group, 'users':users, 'needs':needs, 'infos':infos})
     return redirect('basics:actofgoods_startpage')
 
 
