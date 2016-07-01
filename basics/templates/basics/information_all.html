@@ -16,19 +16,21 @@
             {%csrf_token%}
 
                 <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-sm-8 col-sm-offset-2" style="margin-bottom: 15px;">
+                        <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" placeholder="Search" aria-describedby="basic-addon3"></input>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-2">
                         <div class="row">
-                            <div class="col-sm-4" style="margin-bottom: 15px;">
-                                <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" placeholder="Search" aria-describedby="basic-addon3"></input>
-                            </div>
-                            <div class="col-sm-4" style="margin-bottom: 15px;">
+                            <div class="col-sm-6" style="margin-bottom: 15px;">
                                 <div class="input-group">
                                     <span class="input-group-addon">Range:</span>
                                     <input type="text" class="form-control" id="range" name="range" value="{{range}}" aria-describedby="basic-addon3"></input>
                                     <span class="input-group-addon">km</span>
                                 </div>
                             </div>
-                            <div class="col-sm-4" style="margin-bottom: 15px;">
+                            <div class="col-sm-6" style="margin-bottom: 15px;">
                                 <select style="width: 100%" title="{{cards_per_page}}" name="cards_per_page" id="cards_per_page">
                                     <option {% if 10 == cards_per_page %}selected{% endif %} value=10>10 information per page</option>
                                     <option {% if 25 == cards_per_page %}selected{% endif %} value=25>25 information per page</option>
@@ -42,10 +44,10 @@
                 <input type="hidden" class="form-control" id="page" name="page" value="1"/>
 
                 <div class="row">
-                    <div class="col-sm-3" style="margin-top: 5px; margin-bottom:15px;">
+                    <div class="col-sm-3 col-sm-offset-2" style="margin-top: 5px; margin-bottom:15px;">
                         <input type="button" class="btn btn-block btn-lg btn-primary standard-grey-button-bold" onclick="location.href='{% url 'basics:information_all' %}'" value="Clear Filter"/>
                     </div>
-                    <div class="col-sm-3 col-sm-offset-6" style="margin-top: 5px;">
+                    <div class="col-sm-3 col-sm-offset-2" style="margin-top: 5px;">
                         <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
                     </div>
                 </div>
