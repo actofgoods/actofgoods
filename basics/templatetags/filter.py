@@ -16,5 +16,5 @@ def is_own(roomname, user):
     return False;
 
 @register.filter
-def get_roomname(need):
-    return Room.objects.get(need=need).name
+def get_roomname(need, user):
+    return Room.objects.get(need=need, user_req=user).name
