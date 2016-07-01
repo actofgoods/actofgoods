@@ -249,3 +249,9 @@
     color: #70962c;
 }
 /* ----------- end pagination  ----------- */
+
+/* ----------- start coursor pointer  ----------- */
+#cursor-pointer {
+    cursor: pointer;
+}
+/* ----------- end coursor pointer  ----------- */

@@ -9,11 +9,9 @@
                             <div class="col-sm-12">
                                 <a class="list-group-item" id="standard-list-group-item-div">
                                     <div class="row">
-                                        <div class="col-sm-12" data-toggle="modal" data-target=".{{ need.id }}">
+                                        <div class="col-sm-12" data-toggle="modal" data-target=".{{ need.id }}" id="cursor-pointer">
                                             <h4 class="list-group-item-heading">{{ need.headline }}</h4>
                                             <p class="list-group-item-text">{{ need|get_short_text:160 }}</p>
-                                        </div>
-                                        <div class="col-sm-9" data-toggle="modal" data-target=".{{ need.id }}">
                                             <h6><br>from: {{ need.date }} / category: {{ need.categorie.name }}{% if need.group %} / by: <span style="color: #70962c;">{{ need.group.name }}</span>{% endif %}</h6>
                                         </div>
                                     </div>

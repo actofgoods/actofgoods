@@ -67,6 +67,7 @@
     border-top-left-radius: 50%;
     border-bottom-right-radius: 50%;
     border-bottom-left-radius: 50%;
+    cursor: help;
 }
 
 .timeline-badge > i {
@@ -306,7 +307,7 @@
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
-                                            <div class="col-sm-12" data-toggle="modal" data-target=".n{{elem.id}}">
+                                            <div class="col-sm-12" data-toggle="modal" data-target=".n{{elem.id}}" id="cursor-pointer">
                                                 <h4 class="list-group-item-heading">{{ elem.headline }}</h4>
                                                 <p class="list-group-item-text">{{ elem|get_short_text:160 }}</p>
                                                 <h6><br>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
@@ -357,7 +358,7 @@
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
-                                            <div class="col-sm-12" data-toggle="modal" data-target=".nh{{elem.id}}">
+                                            <div class="col-sm-12" data-toggle="modal" data-target=".nh{{elem.id}}" id="cursor-pointer">
                                                 <h4 class="list-group-item-heading">{{ elem.headline }}</h4>
                                                 <p class="list-group-item-text">{{ elem|get_short_text:160 }}</p>
                                                 <h6><br>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
@@ -403,12 +404,9 @@
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                       <div class="row">
-                                          <div class="col-sm-12" data-toggle="modal" data-target=".c{{elem.id}}">
+                                          <div class="col-sm-12" data-toggle="modal" data-target=".c{{elem.id}}" id="cursor-pointer">
                                               <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ elem.inf.headline }}</h4>
                                               <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:160 }}</p>
-                                          </div>
-
-                                          <div class="col-sm-9" data-toggle="modal" data-target=".c{{elem.id}}">
                                               <h6 style="color: #555; hover.color: #555;"><br>from: {{ elem.date }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
                                           </div>
                                       </div>
