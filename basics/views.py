@@ -1240,9 +1240,9 @@ def priority_need_group(x):
 
 def priority_info_user(x, likes):
     """x is number of hours since need was posted"""
-    if (x-(likes/60)) < 24:
+    if (x-(likes/60)) <= 24 and x > 0:
         return pow(10, 4+(likes/10000))
-    elif (x-(likes/60)) >= 24:
+    elif (x-(likes/60)) > 24:
         return pow(10, 4+(likes/10000)-pow(((x-(likes/60)-24)/(6+(likes/100))),2)/144)
     return 0
 
