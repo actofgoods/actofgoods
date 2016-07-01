@@ -332,7 +332,10 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 @csrf_protect
 def information_all(request):
     if request.user.is_authenticated():
-        range = "Range"
+        if request.user.userdata:
+            dist = request.user.userdata.aux
+        else:
+            dist=500
         cards_per_page = "Cards per page"
         infos = Information.objects.all()
         for i in infos:
@@ -356,7 +359,7 @@ def information_all(request):
             print(request)
         else:
             print("will nicgt")
-        return render(request, 'basics/information_all.html',{'infos':infos, 'cards_per_page':cards_per_page, 'range':range})
+        return render(request, 'basics/information_all.html',{'infos':infos, 'cards_per_page':cards_per_page, 'range':dist})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -383,20 +386,26 @@ def information_new(request):
                 u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                 priority = 0
                 group = None
+                author_is_admin = False
                 data = info.cleaned_data
-                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                print(request.POST)
+                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None and request.POST.get('group') != 'admin':
                     group = Group.objects.get(pk=request.POST.get('group'))
                     priority = priority_info_group(0, 0)
-                else:
+                elif request.POST.get('group') == 'no_group':
                     priority = priority_info_user(0, 0)
+                elif request.POST.get('group') == 'admin':
+                    priority = priority_info_group(0, 0)
+                    author_is_admin = True
+
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
-                    infodata = Information(author=request.user, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
+                    infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                     infodata.save()
                     return redirect('basics:information_all')
                 else:
                     address= request.user.userdata.address
-                infodata = Information(author=request.user, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
+                infodata = Information(author=request.user, author_is_admin=author_is_admin, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
                 infodata.save()
                 return redirect('basics:information_all')
         info = InformationFormNew()
