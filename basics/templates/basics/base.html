@@ -164,7 +164,9 @@
     													{% for message in messages %}
     														{% if message.message == 'lw' %}
 																<div class="form-group">
-																	<p id="login-error-message">Enter your email and your password correctly.</p>
+                                                                    <div class="error-messages">
+    																	<p id="login-error-message">Enter your email and your password correctly.</p>
+                                                                    </div>
 																</div>
     														{% endif %}
     													{% endfor %}
