@@ -39,19 +39,6 @@ def actofgoods_startpage(request):
     needs = Need.objects.all()
     if request.user.is_authenticated():
         return redirect('basics:home')
-        """"
-        needs = list(Need.objects.all().filter(author = request.user))
-        infos = list(Information.objects.all().filter(author=request.user))
-        comm = list(Comment.objects.all().filter(author=request.user))
-        rel_comms=[]
-        for c in comm:
-            if not c.inf in rel_comms:
-                rel_comms.append(c)
-        result_list = sorted(
-            chain(needs, infos, rel_comms),
-            key=lambda instance: instance.date, reverse=True)
-        return render(request, 'basics/home.html',{'needs':needs,'infos':infos, 'result_list':result_list})
-        """
     return render(request, 'basics/actofgoods_startpage.html', {'counter':len(needs),'registerform':registerform})
 
 """
@@ -102,6 +89,7 @@ def change_password(request):
         change=False
         return render(request,'basics/change_password.html',{'form':form,'change':change})
     return redirect('basics:actofgoods_startpage')
+
 """
     Needs authentication!
 
@@ -145,8 +133,6 @@ def kick_user(request, roomname):
     If user is not authenticated redirect to startpage.
     Otherwise the chat_room page will be rendered and returned.
 """
-
-
 def chat_room(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
@@ -154,41 +140,44 @@ def chat_room(request, roomname):
         if room.need.author == request.user or (room.user_req == request.user and not room.helper_out):
             room.set_saw(request.user)
             messages = ChatMessage.objects.filter(room=roomname).order_by('date')
-            message_json = "["
-            for message in messages:
-                try:
-                    message_json += json.dumps({
-                        'message': message.text,
-                        'username': message.author.username,
-                        'date': message.date.__str__()[:-13]
-                    }) + ","
-                except:
-                    message_json += json.dumps({
-                        'message': message.text,
-                        'username': 'null',
-                        'date': message.date.__str__()[:-13]
-                    }) + ","
-            message_json += "]"
-            print(message_json)
+            message_json = messages_to_json(messages)
             #Get all rooms where request.user is in contact with
             rooms = get_valid_rooms(request.user).exclude(name=roomname).order_by('-last_message')
-
-            rooms_json = "["
-            if len(rooms) > 0:
-                for room in rooms:
-                    rooms_json   += json.dumps({
-                        'name': room.need.headline,
-                        'hash': room.name,
-                        'date': room.last_message.__str__()[:-13]
-                    }) + ","
-                rooms_json = rooms_json[:-1]
-            rooms_json += "]"
-            print(rooms_json)
-
+            rooms_json = rooms_to_json(rooms)
             return render(request, 'basics/chat.html',{'name':name,'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
 
+def messages_to_json(messages):
+    message_json = "["
+    for message in messages:
+        try:
+            message_json += json.dumps({
+                'message': message.text,
+                'username': message.author.username,
+                'date': message.date.__str__()[:-13]
+            }) + ","
+        except:
+            message_json += json.dumps({
+                'message': message.text,
+                'username': 'null',
+                'date': message.date.__str__()[:-13]
+            }) + ","
+    message_json += "]"
+    return message_json
+
+def rooms_to_json(rooms):
+    rooms_json = "["
+    if len(rooms) > 0:
+        for room in rooms:
+            rooms_json   += json.dumps({
+                'name': room.need.headline,
+                'hash': room.name,
+                'date': room.last_message.__str__()[:-13]
+            }) + ","
+        rooms_json = rooms_json[:-1]
+    rooms_json += "]"
+    return rooms_json
 """
     Input: request
 
@@ -522,15 +511,8 @@ def immediate_aid(request):
                     subject = "Confirm Your Account"
                     print("\n",need.cleaned_data['categorie'],"\n")
                     data = need.cleaned_data
-                    group = None
-                    priority = 0
-                    if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
-                        group = Group.objects.get(pk=request.POST.get('group'))
-                        priority = priority_need_group(0)
-                    else:
-                        priority = priority_need_user(0)
                     u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
-                    needdata = Need(author=user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
+                    needdata = Need(author=user, group=None, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority_need_user(0), update_at=u)
                     needdata.save()
 
 
@@ -797,6 +779,7 @@ def needs_new(request):
         return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
     return redirect('basics:actofgoods_startpage')
+
 
 def send_notifications(needdata):
     users_to_inform = needdata.categorie.userdata_set.all()
