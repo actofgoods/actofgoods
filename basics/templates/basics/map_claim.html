@@ -40,7 +40,7 @@
 				<button id="standard-grey-button-bold" type="button" onclick="loadClaims('0')" class="btn btn-primary">Load All</button>
                 <button id="standard-grey-button-bold" type="button" onclick="loadClaims('1')" class="btn btn-primary">Load Own</button>
                 <button id="standard-grey-button-bold" type="button" onclick="newClaim()" class="btn btn-primary" >New</button>
-                <button id="standard-grey-button-bold" type="submit" class="btn btn-primary" >Save</button>
+                <button id="standard-grey-button-bold" type="button" onclick="post_poly()" class="btn btn-primary" >Save</button>
 	        </div>
 	        </form>
 
@@ -101,7 +101,7 @@ function deleteClaim(pk){
 
 		success: function(json){
             refreshClaim();
-			alert(json.result)
+			$.notify("Deletion successful.",{className: "info", position: "right-bottom"});
 		},
 		error: function(xhr, errmsg, err){
 			console.log(xhr.status + ": " + xhr.responseText);
@@ -139,11 +139,13 @@ function refreshClaim(){
     var loadedOwn = false;
     var loadedAll = false;
     var onedit=false;
+    var saved=false;
 
 
-	$('#post-form').on('submit', function(e) {
+    function post_poly(){
+    if(!saved){
 		pathi=save();
-		e.preventDefault();
+        saved=true;
 		console.log("form submitted!");
 		$.ajax({
 			url: "post/",
@@ -152,7 +154,7 @@ function refreshClaim(){
 
 			success: function(json){
                 refreshClaim();
-				alert("Succesfully created!");
+				$.notify("Creation successful!",{className: "success", position: "right-bottom"});
 				poly.setEditable(false);
                 onedit=false;
 				poly.addListener('click', function(event){
@@ -165,14 +167,17 @@ function refreshClaim(){
 			},
 
 			error: function(xhr, errmsg, err){
-				console.log(xhr.status + ": " + xhr.responseText);
+                $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
 			}
 		});
-
-	});
+    } else{
+        $.notify("You already saved your Area! Press New to create another.",{className: "info", position: "right-bottom"});
+    }
+}
 
 
     function newClaim(){
+        saved=false
         if (onedit==false){
         poly=new google.maps.Polygon({
                 paths: new google.maps.MVCArray([new google.maps.MVCArray]),
