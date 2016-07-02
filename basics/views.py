@@ -520,9 +520,17 @@ def immediate_aid(request):
                     userdata.save()
                     content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                     subject = "Confirm Your Account"
-                    #print("\n",need.cleaned_data['categorie'],"\n")
+                    print("\n",need.cleaned_data['categorie'],"\n")
                     data = need.cleaned_data
-                    needdata = Need(author=user, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                    group = None
+                    priority = 0
+                    if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                        group = Group.objects.get(pk=request.POST.get('group'))
+                        priority = priority_need_group(0)
+                    else:
+                        priority = priority_need_user(0)
+                    u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
+                    needdata = Need(author=user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                     needdata.save()
 
 

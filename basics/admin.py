@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CategoriesNeeds, Room, ChatMessage
+from .models import CategoriesNeeds, Room, ChatMessage, Need
 
 admin.site.register(
     CategoriesNeeds,
@@ -19,4 +19,11 @@ admin.site.register(
 	list_display=["author","date", "room", "text"],
 
 )
+
+admin.site.register(
+	Need,
+	list_display=["author","date", "headline","text"],
+
+)
+
 # Register your models here.
