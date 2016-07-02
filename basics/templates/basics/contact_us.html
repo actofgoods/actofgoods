@@ -1,30 +1,36 @@
 {% extends 'basics/base.html' %}
-
 {% block content %}
-<!-- Introduction Row -->
-	<div id="standard-modal">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="text-center" id="standard-modal-headline">Contact Us</h2>
-			</div>
-			<div class="modal-body">
-				<form class="form" role="form" method="post" accept-charset="UTF-8">
-					{%csrf_token%}
-						<div class="form-group">
-		  					<input type="email" class="form-control input-lg" placeholder="Email" name="email" maxlength="254" required/>
-		  				</div>
-						<div class="form-group">
-							<input type="description" class="form-control input-lg" placeholder="headline" name="headline" maxlength="30" rows="4"></textarea>
-						</div>
-					<div class="form-group">
-						<textarea type="description" class="form-control input-lg" placeholder="description" name="text" rows="4"></textarea>
-					</div>
 
-					<div class="form-group">
-						<input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Send"/>
-					</div>
-				</form>
-			</div>
+<!-- Introduction Row -->
+<div id="standard-modal">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h2 class="text-center" id="standard-modal-headline">Contact Us</h2>
+		</div>
+		<div class="modal-body">
+			<form class="form" role="form" method="post" accept-charset="UTF-8">
+			{%csrf_token%}
+                <h4>Enter email address to get an answer:</h4>
+				<div class="form-group">
+  					<input type="email" class="form-control input-lg" placeholder="Email" name="email" maxlength="254" required/>
+  				</div>
+                <h4>Enter a headline:</h4>
+				<div class="form-group">
+					<input type="description" class="form-control input-lg" placeholder="Headline" name="headline" maxlength="30" required></input>
+				</div>
+                <h4>Write a description:</h4>
+				<div class="form-group">
+					<textarea type="description" class="form-control input-lg" placeholder="Description" name="text" rows="4" required></textarea>
+				</div>
+				<div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-2 col-sm-offset-10">
+        					<input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Send"/>
+                        </div>
+                    </div>
+				</div>
+			</form>
 		</div>
 	</div>
+</div>
 {% endblock %}

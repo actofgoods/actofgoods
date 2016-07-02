@@ -243,7 +243,8 @@ def contact_us(request):
             contactUsData = ContactUs(email=email, headline=headline, text=text)
             print(contactUsData.text)
             contactUsData.save()
-            return render(request, 'basics/actofgoods_startpage.html')
+            return redirect('basics:actofgoods_startpage')
+            # return render(request, 'basics/actofgoods_startpage.html')
     return render(request, 'basics/contact_us.html')
 
 """
