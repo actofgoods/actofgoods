@@ -230,7 +230,7 @@
       data: {page: $("#page").val(), range: $("#range").val(), cards_per_page: $("#cards_per_page").val(), category: $("#category").val(), wordsearch: $("#basic-url").val()},
 
       beforeSend: function() {
-        $('#modal-body').html("<div class='modal-body' style='padding-bottom: 0px;'' id='loader'><center><img src='{% static 'basics/images/loader.gif' %}'/></center></div>");
+        $('#modal-body').html("<div class='modal-body' style='padding-bottom: 0px;'' id='loader'><center><img src='{% static 'basics/images/loader.gif' %}'/></center></div><br>");
       },
 
       success: function(data){
