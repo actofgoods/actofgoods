@@ -90,7 +90,6 @@
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css"></script>
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAmqqg6nhFweM6hPaowtRZT0kRsHPZSaBA"></script>
 <script>
 function deleteClaim(pk){
@@ -156,6 +155,7 @@ function refreshClaim(){
                 refreshClaim();
 				$.notify("Creation successful!",{className: "success", position: "right-bottom"});
 				poly.setEditable(false);
+                poly.setDraggable(false);
                 onedit=false;
 				poly.addListener('click', function(event){
 	  				info.setContent('<b>Group: </b>'+'{{group}}'+'<br><b>Owner: </b>' +json.owner + '<br><b>ID: '+json.pk+'</b>');
@@ -186,7 +186,8 @@ function refreshClaim(){
                 strokeWeight: 3,
                 fillColor: '#FF0000',
                 fillOpacity: 0.35,
-                editable: true
+                editable: true,
+                draggable: true
             });
         google.maps.event.addListener(map, 'click', addPoint);
     }
@@ -214,7 +215,8 @@ function refreshClaim(){
                 strokeWeight: 3,
                 fillColor: '#FF0000',
                 fillOpacity: 0.35,
-                editable: true
+                editable: true,
+                draggable: true
             });
   		google.maps.event.addListener(map, 'click', addPoint);
         /*google.maps.event.addListener(polypoints, 'set_at', function(){
