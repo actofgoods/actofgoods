@@ -1,6 +1,7 @@
 {% extends 'basics/base.html' %}
 {% load filter %}
 {% block content %}
+
 <!-- modal for every information -->
 <div id="standard-modal">
     <div class="modal-content">
@@ -8,7 +9,7 @@
             <div class="row">
                 <div class="col-sm-9">
                     <h2>{{information.headline}}</h2>
-                    <h6>from: {{ information.date }}{% if information.author_is_admin %} / by: <span style="color: #D36E5A;">Admin</span>{% elif information.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=information.group.name %}">{{ information.group.name }}</a>{% elif information.author == user %} / by: <span>you</span>{% endif %}</h6>
+                    <h6><i>from {{ information.date }}{% if information.author_is_admin %} by <span style="color: #D36E5A;">Admin</span>{% elif information.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=information.group.name %}">{{ information.group.name }}</a>{% elif information.author == user %} by <span>you</span>{% endif %}</i></h6>
                 </div>
                 <div class="col-sm-3">
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
@@ -19,52 +20,89 @@
         </div>
         <div class="modal-body">
             <p>{{ information.text | linebreaksbr }}</p>
-            <h5>Location:</h5>
+            <h5><i>Location:</i></h5>
             <div id="map-container" style="height: 450px; margin-top: 15px; margin-bottom: 20px;"></div>
             <div class="list-group">
-                {% for comment in comments %}
+                <div class="row">
+                    <div class="col-sm-10 col-sm-offset-1">
+                        {% for comment in comments %}
 
-                    <!-- list all informations -->
-                    <a class="list-group-item" id="standard-list-group-item-div">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <p class="list-group-item-text">{{ comment|get_short_text:160 }}</p>
+                            <!-- list all informations -->
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="list-group-item cursor-pointer" id="standard-list-group-item-div" data-toggle="modal" data-target=".{{ comment.id }}">
+                                        <p class="list-group-item-text">{{ comment|get_short_text:1024|linebreaksbr }}</p>
+                                    </div>
+                                    <div class="list-group-footer" style="margin-bottom: 15px;">
+                                        <div class="row">
+                                            {% if not user.userdata in comment.reported_by.all %}
+                                                <div class="col-sm-9" id="comment-meta-data">
+                                                    <p><i>from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% endif %}</i></p>
+                                                </div>
+                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:report_comment' pk=comment.id %}">
+                                                    <div class="col-sm-3">
+                                                        <span class="glyphicon glyphicon-ban-circle"></span> Report
+                                                    </div>
+                                                </a>
+                                            {% else %}
+                                                <div class="col-sm-12" id="comment-meta-data">
+                                                    <p><i>from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% endif %}</i></p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-sm-11" data-toggle="modal" data-target=".{{ comment.id }}">
-                                <h6><br>from: {{ comment.date }} / group: {{ comment.group }}</h6>
+
+                            <!-- modal for every comment -->
+                            <div class="modal fade {{ comment.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            <h2>Information: {{comment.inf.headline}}</h2>
+                                            <h6><i>from {{ comment.inf.date }}{% if comment.inf.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.inf.group.name %}">{{ comment.inf.group.name }}</a>{% endif %}</i></h6>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h5><i>Comment from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% endif %}:</i></h5>
+                                            <p>{{ comment.text|linebreaksbr }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal" style="margin-bottom: 10px;">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            {% if not user.userdata in comment.reported_by.all %}
-                              <div class="col-sm-1">
-                                <button type="button" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:report_comment' pk=comment.id%}'" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-alert"></span> Report</button>
-                              </div>
-                            {% else %}
-                              <div class="col-sm-1">
-                                <button type="button" class="btn btn-default btn-sml standard-grey-button-light disabled" onclick="#" style="float: right; margin-top: 10px;"><span class="glyphicon glyphicon-alert"></span> Report</button>
-                              </div>
+                        {% empty %}
+                            <h4>There are no comments for this information.</h4>
+                        {% endfor %}
+
+                        <h4>Write a Comment:</h4>
+                        <form action="{% url 'basics:information_view_comment' pk=information.pk %}" method="post">
+                        {%csrf_token%}
+                            <textarea hint="Your comment" class="form-control" name="comment_text" rows="6" placeholder="Comment" style="margin-bottom: 15px;" required></textarea>
+                            {% if user.groups.all|length != 0 %}
+                                <div class="row">
+                                    <div class="col-sm-5 col-sm-offset-4">
+                                        <select style="width: 100%; margin-top: 5px; margin-bottom: 15px;" name="group">
+                                            <option value="no_group">comment as normal user</option>
+                                            {% for group in user.groups.all %}
+                                                <option value="{{group.id}}">comment as {{group.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <button id="standard-grey-button-light" type="submit " class="btn btn-block btn-lg btn-primary"><span class="glyphicon glyphicon-comment"></span> Comment</button>
+                                    </div>
+                                </div>
                             {% endif %}
-                        </div>
-                    </a>
-                {% empty %}
-                    <h4>There are no comments for this information.</h4>
-                {% endfor %}
+                        </form>
+
+                    </div>
+                </div>
             </div>
-
-            <form action="{% url 'basics:information_view_comment' pk=information.pk %}" method="post">
-              {%csrf_token%}
-              <textarea hint="Your comment" class="form-control" name="comment_text" rows="3"></textarea>
-              {% if user.groups.all|length != 0 %}
-                <p style="font-size:160%;"> post as </p>
-                  <select class="form-control" name="group">
-                    <option value="no_group">User</option>
-                      {% for group in user.groups.all %}
-                        <option value="{{group.id}}">{{group.name}}</option>
-                      {% endfor %}
-                  </select>
-              {% endif %}
-              <br>
-              <button id="standard-grey-button-light" type="submit " class="btn btn-primary">Submit</button>
-            </form>
-
         </div>
 
         <div class="modal-footer">

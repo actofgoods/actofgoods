@@ -254,4 +254,19 @@
 #cursor-pointer {
     cursor: pointer;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
 /* ----------- end coursor pointer  ----------- */
+
+/* ----------- start comment meta data  ----------- */
+#comment-meta-data, #comment-meta-data-reported {
+   text-align: left;
+   font-size: .63em;
+}
+
+#comment-report {
+        text-align: right;
+}
+/* ----------- end comment meta data  ----------- */
