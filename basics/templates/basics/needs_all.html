@@ -1,6 +1,7 @@
 {% extends 'basics/base.html' %}
 {% load filter%}
 {% block content %}
+{% load staticfiles %}
 
 <!-- needs -->
 <div id="standard-modal" style="margin-bottom: 90px;">
@@ -60,7 +61,7 @@
             </form>
         </div>
         <div id="insert">
-        <div class="modal-body" style="padding-bottom: 0px;">
+        <div class="modal-body" style="padding-bottom: 0px;" id="modal-body">
             <div class="list-group" style="margin-bottom: 0px;" id="need-list">
                 {% if needs %}
                     {% for need in needs %}
@@ -218,6 +219,9 @@
 <script>
   $.ajaxSetup({
       data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+      beforeSend: function() {
+        $('#modal-body').html("<div class='modal-body' style='padding-bottom: 0px;'' id='loader'><center><img src='{% static 'basics/images/loader.gif' %}'/></center></div>");
+      },
   });
   $('#filter-form').on('submit', function(e) {
     console.log($("#page").val()+ " "+ $("#range").val()+ " "+ $("#cards_per_page").val()+ " "+ $("#category").val()+ " "+ $("#basic-url").val());
