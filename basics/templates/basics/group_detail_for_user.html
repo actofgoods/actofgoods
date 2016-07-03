@@ -7,8 +7,7 @@
         <div class="modal-header">
             <div class="row">
                 <div class="col-sm-10">
-                    <h2 class="text-center" id="standard-modal-headline">{{group.name}}</h2>
-                    <h4 class="text-center">This organisation represents a {% if group.is_GO %} governmental organisation. {% else %} nongovernmental organisation. {% endif %}</h4>
+                    <h2 class="text-center" id="standard-modal-headline">{{group.name}}<br><small>This organisation represents a {% if group.is_GO %} governmental organisation. {% else %} nongovernmental organisation. {% endif %}</small></h2>
                 </div>
                 <div class="col-sm-2">
                     <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" onClick="history.go(-1);return true;" style="float: right; margin: 15px;"><span class="glyphicon glyphicon-chevron-left"></span> Back</a>
@@ -56,7 +55,7 @@
                         <div class="col-sm-6">
                             <div class="row">
                                 <div class="col-sm-4">
-                                    <p id="description-label">Phonenumber:</p>
+                                    <p id="description-label">Phone Number:</p>
                                 </div>
                                 <div class="col-sm-8">
                                     <p id="description-text">{{group.phone}}</p>
