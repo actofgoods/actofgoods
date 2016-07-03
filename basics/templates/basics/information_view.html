@@ -35,19 +35,30 @@
                                     </div>
                                     <div class="list-group-footer" style="margin-bottom: 15px;">
                                         <div class="row">
-                                            {% if not user.userdata in comment.reported_by.all %}
+                                            {% if comment.author != user %}
+                                                {% if not user.userdata in comment.reported_by.all %}
+                                                    <div class="col-sm-9" id="comment-meta-data">
+                                                        <p><i>from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% endif %}</i></p>
+                                                    </div>
+                                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:report_comment' pk=comment.id %}">
+                                                        <div class="col-sm-3">
+                                                            <span class="glyphicon glyphicon-ban-circle"></span> Report
+                                                        </div>
+                                                    </a>
+                                                {% else %}
+                                                    <div class="col-sm-12" id="comment-meta-data">
+                                                        <p><i>from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% endif %}</i></p>
+                                                    </div>
+                                                {% endif %}
+                                            {% else %}
                                                 <div class="col-sm-9" id="comment-meta-data">
-                                                    <p><i>from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% endif %}</i></p>
+                                                    <p><i>from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% elif comment.author == user %} by <span>you</span>{% endif %}</i></p>
                                                 </div>
-                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:report_comment' pk=comment.id %}">
+                                                <a class="list-group-footer-button" type="button" href="">
                                                     <div class="col-sm-3">
-                                                        <span class="glyphicon glyphicon-ban-circle"></span> Report
+                                                        <span class="glyphicon glyphicon-remove"></span> Delete
                                                     </div>
                                                 </a>
-                                            {% else %}
-                                                <div class="col-sm-12" id="comment-meta-data">
-                                                    <p><i>from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% endif %}</i></p>
-                                                </div>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -63,10 +74,10 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                             <h2>Information: {{comment.inf.headline}}</h2>
-                                            <h6><i>from {{ comment.inf.date }}{% if comment.inf.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.inf.group.name %}">{{ comment.inf.group.name }}</a>{% endif %}</i></h6>
+                                            <h6><i>from {{ comment.inf.date }}{% if comment.inf.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.inf.group.name %}">{{ comment.inf.group.name }}</a>{% elif comment.author == user %} by <span>you</span>{% endif %}</i></h6>
                                         </div>
                                         <div class="modal-body">
-                                            <h5><i>Comment from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% endif %}:</i></h5>
+                                            <h5><i>Comment from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% elif comment.author == user %} by <span>you</span>{% endif %}:</i></h5>
                                             <p>{{ comment.text|linebreaksbr }}</p>
                                         </div>
                                         <div class="modal-footer">
