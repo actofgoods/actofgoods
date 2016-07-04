@@ -260,18 +260,20 @@ def getLatLng(location):
     jsongeocode = response.json()
     return jsongeocode['results'][0]['geometry']['location']['lat'], jsongeocode['results'][0]['geometry']['location']['lng']
 
+def faq_startpage(request):
+    return render(request, 'basics/faq_startpage.html')
+
 """
     Needs authentication!
 
     Input: request (user)
 
     If user is not authenticated redirect to startpage.
-    Otherwise the help page will be rendered and returned.
+    Otherwise the faq page will be rendered and returned.
 """
-def help(request):
+def faq_signin(request):
     if request.user.is_authenticated():
-        return render(request, 'basics/help.html')
-
+        return render(request, 'basics/faq_signin.html')
     return redirect('basics:actofgoods_startpage')
 
 """

@@ -222,19 +222,19 @@
                     <form class="form" role="form" method="get" accept-charset="UTF-8">
                         {%csrf_token%}
                         <div class="col-sm-4" style="margin-bottom: 15px;">
-                            <select style="width: 100%" name="activities">
+                            <select style="width: 100%;" name="activities">
                                 <option value="all_activities">all activities</option>
                                 <option value="posted_needs">posted needs</option>
-                                <option value="needs_helping">needs where you helping</option>
+                                <option value="needs_help">needs where you help</option>
                                 <option value="posted_information">posted information</option>
                                 <option value="written_comments">written comments</option>
                             </select>
                         </div>
                         <div  class="col-sm-4" style="margin-bottom: 15px;">
-                            <select style="width: 100%" name="group">
+                            <select style="width: 100%;" name="group">
                                 <option value="your_activities">your activities</option>
                                 {% for group in user.groups.all %}
-                                    <option value="{{group.name}}">activities of {{group.name}}</option>
+                                    <option value="{{group.name}}">your activities in {{group.name}}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -253,7 +253,7 @@
                             <select style="width: 100%" name="activities">
                                 <option value="all_activities">all activities</option>
                                 <option value="posted_needs">posted needs</option>
-                                <option value="needs_helping">needs where you helping</option>
+                                <option value="needs_help">needs where you help</option>
                                 <option value="posted_information">posted information</option>
                                 <option value="written_comments">written comments</option>
                             </select>
@@ -352,7 +352,7 @@
                             </div>
 
                         {% elif elem in needs_you_help %}
-                            <!-- need your helping -->
+                            <!-- need your help -->
                             <div class="row">
                                 <div class="timeline-badge" title="need your help"><i class="glyphicon glyphicon-header" style="padding-top: 7px; padding-left: 6px"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
@@ -459,7 +459,7 @@
                </div>
             </div>
             {% else %}
-                <h4>You haven't performed any activities. If you need help click Help at the navigation bar.</h4>
+                <h4>You haven't performed any activities. If you need help click FAQ at the navigation bar.</h4>
             {% endif %}
         </div>
     </div>

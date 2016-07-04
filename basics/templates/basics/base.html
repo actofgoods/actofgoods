@@ -98,9 +98,8 @@
 						<ul class="nav navbar-nav navbar-right">
 							{% if user.is_staff %}
 								<li id="navbar-with-divider" {% if "/administration/requests/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:requests' %}">Administration</a></li>
-							{% else %}
-							<li {% if "/help/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:help'%}">Help</a></li>
 							{% endif %}
+                            <li {% if "/faq_signin/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:faq_signin'%}">FAQ</a></li>
 							{% if not user.is_superuser %}
 							<li {% if "/profil/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}">Profil</a></li>
 							{% endif %}
@@ -131,9 +130,10 @@
 					<div class="collapse navbar-collapse" id="navbar-collapse">
                         <div id="navbar-with-divider">
 						    <ul class="nav navbar-nav navbar-left">
-							    <li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path and "/immediate_aid/" not in request.path and "/contact_us/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
-                                <li {% if "/contact_us/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:contact_us'%}"><span class="glyphicons glyphicons-group" aria-hidden="true"></span> Contact Us</a></li>
-                                <li {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}"><span class="glyphicons glyphicons-group" aria-hidden="true"></span> About Us</a></li>
+							    <li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path and "/immediate_aid/" not in request.path and "/contact_us/" not in request.path and "/faq_startpage/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
+                                <li {% if "/faq_startpage/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:faq_startpage'%}">FAQ</a></li>
+                                <li {% if "/contact_us/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:contact_us'%}">Contact Us</a></li>
+                                <li {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}">About Us</a></li>
 						    </ul>
                         </div>
 						<ul class="nav navbar-nav navbar-right">

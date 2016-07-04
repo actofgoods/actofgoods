@@ -78,7 +78,8 @@
                         </div>
 						<ul class="nav navbar-nav navbar-right">
 							<li id="navbar-with-divider" {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}">User Area</a></li>
-							<li><a href="{% url 'basics:logout' %}">Logout</a></li>
+                            <li {% if "/faq_administration/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:faq_administration'%}">FAQ</a></li>
+                            <li><a href="{% url 'basics:logout' %}">Logout</a></li>
 						</ul>
 					</div><!-- /.navbar-collapse -->
 				</div><!-- /.container-fluid -->
