@@ -68,8 +68,7 @@
         <div id="standard-modal" style="margin-bottom: 0px">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="text-center" id="standard-modal-headline">Profile of {{group.name}}</h2>
-                    <h4 class="text-center">This organisation represents a {% if group.is_GO %} governmental organisation. {% else %} nongovernmental organisation. {% endif %}</h4>
+                    <h2 class="text-center" id="standard-modal-headline">Profile of {{group.name}}<br><small>This organisation represents a {% if group.is_GO %} governmental organisation. {% else %} nongovernmental organisation. {% endif %}</small></h2>
                 </div>
                 <div class="modal-body">
                     <div class="list-group-item" id="standard-list-group-item-white-div" style="padding-top: 30px;">
@@ -117,13 +116,13 @@
                             <div class="col-sm-6">
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <p id="description-label">Phonenumber:</p>
+                                        <p id="description-label">Phone Number:</p>
                                     </div>
                                     <div class="col-sm-8">
                                         {% if group.phone %}
                                             <p id="description-text">{{group.phone}}</p>
                                         {% else %}
-                                            <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add phonenumber</a></p>
+                                            <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add phone number</a></p>
                                         {% endif %}
                                     </div>
                                 </div>

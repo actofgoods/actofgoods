@@ -1,45 +1,58 @@
 {% extends 'basics/base.html' %}
-
 {% block content %}
+
 <div id="standard-modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h1 class="text-center">Immediate Aid</h1>
+    <div class="modal-content">
+        <div class="modal-header">
+        <h2 class="text-center" id="standard-modal-headline">Immediate Aid<br><small>Use this form if you are not registered but need immediate aid.</small></h2>
+        </div>
+        <div class="modal-body">
+            <form class="form" role="form" method="post" accept-charset="UTF-8">
+            {%csrf_token%}
+                <h4>Enter an email address so we can create an account for you. Notice that nobody will see your email address:</h4>
+                <div class="form-group">
+                    <input type="Email" class="form-control input-lg" placeholder="Email" name="email"  rows="4" value="{{form.email.value}}"></textarea>
+                </div>
+                <h4>Enter a headline for your need:</h4>
+                <div class="form-group">
+                    <input type="description" class="form-control input-lg" placeholder="Headline" name="headline"  rows="4" value="{{need_form.headline.value}}" maxlength="30"></textarea>
+                </div>
+                <h4>Choose a category for your need:</h4>
+                <select style="width: 100%" name="{{need.categorie.name}}">
+                    {% for categorie in categories%}
+                        <option value="{{categorie.id}}">{{categorie.name}}</option>
+                    {% endfor %}
+                </select>
+                <h4>Write a description of your need:</h4>
+                <div class="form-group">
+                    <textarea type="description" class="form-control input-lg" placeholder="Description" name="text"  rows="4" value="{{need_form.text.value}}">{{need_form.text.value}}</textarea>
+                </div>
+                <h4>Finally we need your location to let people in your neighborhood know that you need help. Later you can change this location in your profile.</h4>
+                <div class="row">
+                    <div class="col-sm-4 col-sm-offset-4">
+                        <div class="form-group">
+                            {% include "basics/map_testing.html" %}</p>
+                        </div>
+                    </div>
+                </div>
+                <h4>By clicking on send we will create an account for you and send your help request anonymously to all users in your neighborhood.</h4>
+                <div class="row">
+                    <div class="col-sm-3 col-sm-offset-9">
+                        <div class="form-group">
+                            <input id="standard-grey-button-bold" type="submit" onclick="register()" class="btn btn-block btn-lg btn-primary" value="Send"/>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="modal-body">
-      <form class="form" role="form" method="post" accept-charset="UTF-8">
-        {%csrf_token%}
-        <p style="font-size:160%;"> category <p\>
-		<select class="form-control" name="{{need.categorie.name}}">
-			{% for categorie in categories%}
-				<option value="{{categorie.id}}">{{categorie.name}}</option>
-			{% endfor %}
-		</select>
-        <p style="font-size:160%;"> description <p\>
-        <div class="form-group">
-          <input type="Email" class="form-control input-lg" placeholder="email" name="email"  rows="4" value="{{form.email.value}}"></textarea>
-        </div>
-        <div class="form-group">
-          <input type="description" class="form-control input-lg" placeholder="headline" name="headline"  rows="4" value="{{need_form.headline.value}}" maxlength="30"></textarea>
-        </div>
-        <div class="form-group">
-          <textarea type="description" class="form-control input-lg" placeholder="description" name="text"  rows="4" value="{{need_form.text.value}}">{{need_form.text.value}}</textarea>
-        </div>
-		<div class="form-group">
-        	<p id="choose-location-text">At least we need your location to let people in your neighborhood know that you need help.
-      		{% include "basics/map_testing.html" %}</p>
-		</div>
-        <div class="form-group">
-          <input id="standard-grey-button-bold" type="submit" onclick="register()" class="btn btn-block btn-lg btn-primary" value="Create & Send"/>
-        </div>
-      </form>
-    </div>
-  </div>
 </div>
+
 <script>
   //because shit is not working
   function register(){
     $("#register_form").submit();
   }
 </script>
+
 {% endblock %}

@@ -242,7 +242,8 @@ def contact_us(request):
             contactUsData = ContactUs(email=email, headline=headline, text=text)
             #print(contactUsData.text)
             contactUsData.save()
-            return render(request, 'basics/actofgoods_startpage.html')
+            return redirect('basics:actofgoods_startpage')
+            # return render(request, 'basics/actofgoods_startpage.html')
     return render(request, 'basics/contact_us.html')
 
 """
@@ -998,7 +999,7 @@ def reset_password_page(request):
                     content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
                     subject = "Reset Password - Act Of Goods"
                     sendmail(email, content, subject )
-                    return redirect('basics:reset_password_confirmation')
+                    return redirect('basics:actofgoods_startpage')
             elif not capForm.is_valid():
                 messages.add_message(request, messages.INFO, 'wc')
 

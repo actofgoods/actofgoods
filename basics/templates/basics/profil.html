@@ -70,8 +70,7 @@
 <div id="standard-modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="text-center" id="standard-modal-headline">Your Profile</h2>
-            <h4 class="text-center">Note that your profile is exclusively visible for yourself!</h4>
+            <h2 class="text-center" id="standard-modal-headline">Your Profile<br><small>Note that your profile is exclusively visible for yourself!</small></h2>
         </div>
         <div class="modal-body">
 
@@ -109,13 +108,13 @@
                 <div class="col-sm-6">
                     <div class="row">
                         <div class="col-sm-4">
-                            <p id="description-label">Phonenumber:</p>
+                            <p id="description-label">Phone Number:</p>
                         </div>
                         <div class="col-sm-8">
                             {% if Userdata.phone %}
                                 <p id="description-text">{{Userdata.phone}}</p>
                             {% else %}
-                                <p id="description-text"><a id="green-link" href="{% url 'basics:profil_edit' %}">add phonenumber</a></p>
+                                <p id="description-text"><a id="green-link" href="{% url 'basics:profil_edit' %}">add phone number</a></p>
                             {% endif %}
                         </div>
                     </div>
@@ -125,7 +124,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     {% if Userdata.get_notifications %}
-                        <p id="description-label">You chose to be notified via email, if in your given auxiliary radius somebody need help in the following categories:</p>
+                        <p id="description-label">You have chosen to be notified via email, if somebody in your given auxiliary radius needs help in the following categories:</p>
                         <p id="description-text" style="padding-right: 20px; padding-left: 20px;"><i>
                             {% for cat in Userdata.inform_about.all %}
                                 {% if forloop.last %}
@@ -136,7 +135,7 @@
                             {% endfor %}
                         </i></p>
                     {% else %}
-                        <p id="description-label">Choose categories where we should notify you via email, if somebody in your given auxiliary radius needs help in your chosen categorie.<br><a id="green-link" href="{% url 'basics:profil_edit' %}" style="font-weight: normal;">add categories</a></p>
+                        <p id="description-label">Choose categories to let us know about what we should notify you via email, if somebody in your given auxiliary radius needs help.<br><a id="green-link" href="{% url 'basics:profil_edit' %}" style="font-weight: normal;">add categories</a></p>
                     {% endif %}
                 </div>
             </div>
