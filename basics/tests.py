@@ -96,6 +96,7 @@ class AuthenticatedTest(TestCase):
     def test_authenticated_chat_no_permition(self):
         c = Client()
         response = c.post('/chat/', follow = True)
+        print(response.redirect_chain, "Fuck yeah", response.content)
         self.assertTrue(response.redirect_chain[len(response.redirect_chain)-1][0] == '/')
 
     def test_authenticated_chat_permition(self):
@@ -144,3 +145,40 @@ class AuthenticatedTest(TestCase):
         c = Client()
         response = c.post('/profil/', follow = True)
         self.assertTrue(response.redirect_chain[len(response.redirect_chain)-1][0] == '/')
+
+class NewNeedTest(TestCase):
+    def setUp(self):
+        user = User.objects.create_user(username='adam@test.test', password='adam', email='adam@test.test',)
+        c = Client()
+        response = c.post('/register/', {'email': 'test@test.test', 'password': 'test', 'check_password': 'test' , 'address': '', 'lat':'-10.234', 'lng':'43.543'}, follow = True)
+
+    #TODO: New Need with/out headlin/text/location/group/
+
+class NewInfoTest(TestCase):
+    def setUp(self):
+        user = User.objects.create_user(username='adam@test.test', password='adam', email='adam@test.test',)
+        c = Client()
+        response = c.post('/register/', {'email': 'test@test.test', 'password': 'test', 'check_password': 'test' , 'address': '', 'lat':'-10.234', 'lng':'43.543'}, follow = True)
+
+class NewCommentTest(TestCase):
+    def setUp(self):
+        user = User.objects.create_user(username='adam@test.test', password='adam', email='adam@test.test',)
+        c = Client()
+        response = c.post('/register/', {'email': 'test@test.test', 'password': 'test', 'check_password': 'test' , 'address': '', 'lat':'-10.234', 'lng':'43.543'}, follow = True)
+class NewGroupTest(TestCase):
+    def setUp(self):
+        user = User.objects.create_user(username='adam@test.test', password='adam', email='adam@test.test',)
+        c = Client()
+        response = c.post('/register/', {'email': 'test@test.test', 'password': 'test', 'check_password': 'test' , 'address': '', 'lat':'-10.234', 'lng':'43.543'}, follow = True)
+
+class AdminTest(TestCase):
+    def setUp(self):
+        user = User.objects.create_user(username='adam@test.test', password='adam', email='adam@test.test',)
+        c = Client()
+        response = c.post('/register/', {'email': 'test@test.test', 'password': 'test', 'check_password': 'test' , 'address': '', 'lat':'-10.234', 'lng':'43.543'}, follow = True)
+
+class ChatTest(TestCase):
+    def setUp(self):
+        user = User.objects.create_user(username='adam@test.test', password='adam', email='adam@test.test',)
+        c = Client()
+        response = c.post('/register/', {'email': 'test@test.test', 'password': 'test', 'check_password': 'test' , 'address': '', 'lat':'-10.234', 'lng':'43.543'}, follow = True)

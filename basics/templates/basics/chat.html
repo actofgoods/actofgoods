@@ -366,7 +366,7 @@
           date: message.date,
           key: index });
       }.bind(this));
-
+      console.log(messages);
       var visibilityClass = !this.state.connected ? 'hidden' : '';
       return React.createElement(
         'div',

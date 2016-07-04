@@ -108,7 +108,6 @@ def chat(request):
                 return redirect('basics:chat_room', roomname=room.name)
             except:
                 return render(request,'basics/no_chat.html')
-
     return redirect('basics:actofgoods_startpage')
 
 def get_valid_rooms(user):
@@ -241,7 +240,7 @@ def contact_us(request):
             headline = request.POST.get('headline')
             text = request.POST.get('text')
             contactUsData = ContactUs(email=email, headline=headline, text=text)
-            print(contactUsData.text)
+            #print(contactUsData.text)
             contactUsData.save()
             return render(request, 'basics/actofgoods_startpage.html')
     return render(request, 'basics/contact_us.html')
@@ -285,7 +284,7 @@ def help(request):
 def home(request):
     if request.user.is_authenticated():
         needs = list(Need.objects.all().filter(author=request.user))
-        print("You help here: ", needs)
+        #print("You help here: ", needs)
         infos = list(Information.objects.all().filter(author=request.user))
         needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
         comm = list(Comment.objects.all().filter(author=request.user))
@@ -296,9 +295,9 @@ def home(request):
         result_list = sorted(
             chain(needs, infos, needs_you_help, rel_comms),
             key=lambda instance: instance.date, reverse=True)
-        print(list(map(lambda x: x.pk, needs_you_help)))
-        print(result_list)
-        print(list(map(lambda x: x.pk, result_list)))
+        #print(list(map(lambda x: x.pk, needs_you_help)))
+        #print(result_list)
+        #print(list(map(lambda x: x.pk, result_list)))
         return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list})
 
     return redirect('basics:actofgoods_startpage')
@@ -339,13 +338,13 @@ def information_all(request):
                 i.save()
         infos = Information.objects.order_by('priority', 'pk').reverse()
         if request.method == "POST":
-            print(request.POST['range'], request.POST['cards_per_page'])
+            #print(request.POST['range'], request.POST['cards_per_page'])
             if "" != request.POST['range']:
                 range = request.POST['range']
             if "" != request.POST['cards_per_page']:
                 cards_per_page = int(request.POST['cards_per_page'])
                 infos = infos[:cards_per_page]
-            print(request)
+            #print(request)
         else:
             print("will nicgt")
         return render(request, 'basics/information_all.html',{'infos':infos, 'cards_per_page':cards_per_page, 'range':dist})
@@ -371,13 +370,13 @@ def information_new(request):
             info = InformationFormNew(request.POST)
             if info.is_valid():
                 lat, lng = getAddress(request)
-                print(lat,lng)
+                #print(lat,lng)
                 u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                 priority = 0
                 group = None
                 author_is_admin = False
                 data = info.cleaned_data
-                print(request.POST)
+                #print(request.POST)
                 if request.POST.get('group') != 'no_group' and request.POST.get('group') != None and request.POST.get('group') != 'admin':
                     group = Group.objects.get(pk=request.POST.get('group'))
                     priority = priority_info_group(0, 0)
@@ -493,10 +492,10 @@ def immediate_aid(request):
         need = NeedFormNew(request.POST)
 
         # form.data.username = "user#" + str(User.objects.count())
-        #print(request.POST)
-        #print(form.data)
+        ##print(request.POST)
+        ##print(form.data)
         if form.is_valid() and need.is_valid():
-            #print(need.data)
+            ##print(need.data)
             password_d = id_generator(9)
             check_password = password_d
             if request.POST.get('email', "") != "":
@@ -509,7 +508,7 @@ def immediate_aid(request):
                     userdata.save()
                     content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                     subject = "Confirm Your Account"
-                    print("\n",need.cleaned_data['categorie'],"\n")
+                    #print("\n",need.cleaned_data['categorie'],"\n")
                     data = need.cleaned_data
                     u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                     needdata = Need(author=user, group=None, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority_need_user(0), update_at=u)
@@ -531,7 +530,7 @@ def immediate_aid(request):
 
         else:
             messages.add_message(request, messages.INFO, 'eae')
-            print(need.data)
+            #print(need.data)
 
     return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all, 'form' : form, 'need' : need })
 
@@ -551,7 +550,7 @@ def login(request):
         email = request.POST.get('email',None)
         password = request.POST.get('password',None)
         user = authenticate(username=email,password=password)
-        print(user)
+        #print(user)
         if user is not None:
             if user.is_active:
                 auth_login(request,user)
@@ -662,7 +661,7 @@ def needs_filter(request):
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "POST":
-            print(request.POST)
+            #print(request.POST)
             if "" != request.POST['page']:
                 page = int(request.POST['page'])
             if "" != request.POST['range']:
@@ -748,7 +747,7 @@ def needs_new(request):
     if request.user.is_authenticated():
         if request.method == "POST":
             need = NeedFormNew(request.POST)
-            print(need)
+            #print(need)
             if need.is_valid():
 
                 lat, lng = getAddress(request)
@@ -896,10 +895,10 @@ def register(request):
     if request.method == 'POST':
         form = UserFormRegister(request.POST)
         # form.data.username = "user#" + str(User.objects.count())
-        print(request.POST)
-        #print(form.data)
+        #print(request.POST)
+        ##print(form.data)
         if form.is_valid():
-            # print(form.cleaned_data)
+            # #print(form.cleaned_data)
             password = request.POST.get('password', "")
             check_password = request.POST.get('check_password', "")
             if password != "" and check_password != "" and request.POST.get('email', "") != "":
@@ -938,7 +937,7 @@ def verification(request,pk):
         email = request.POST.get('email', None)
         password = request.POST.get('password', None)
         user = authenticate(username=email, password=password)
-        print(email,password)
+        #print(email,password)
         if user is not None and user.userdata.pseudonym == pk :
             auth_login(request, user)
             user.is_active = True
@@ -957,7 +956,7 @@ def getAddress(request):
         if not lat == "" and not lng == "":
             lat = float(lat)
             lng = float(lng)
-            print(lat,lng)
+            #print(lat,lng)
         elif address != "":
             lat, lng = getLatLng(address)
         else:
@@ -993,7 +992,7 @@ def reset_password_page(request):
                     new_password = id_generator(9)
                     user.set_password(new_password)
                     user.save()
-                    print(new_password)
+                    #print(new_password)
                     #Content could also be possibly HTML! this way beautifull emails are possible
 
                     content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
@@ -1032,13 +1031,13 @@ def sendmail(email, content, subject):
 @csrf_protect
 def report_need(request):
     pk=int(request.POST['pk'])
-    print(pk)
+    #print(pk)
     need = Need.objects.get(pk=pk)
     need.was_reported = True
     need.number_reports += 1
     need.reported_by.add(request.user.userdata)
     need.save()
-    print(Need.objects.get(pk=pk).reported_by.all())
+    #print(Need.objects.get(pk=pk).reported_by.all())
     return needs_filter(request)
 
 def report_information(request, pk):
@@ -1170,7 +1169,7 @@ def group_detail(request, name):
             infos = Information.objects.filter(query)
 
 
-        print(infos)
+        #print(infos)
         return render(request, 'basics/group_detail.html', {'group':group, 'users':users, 'needs':needs, 'infos':infos})
     return redirect('basics:actofgoods_startpage')
 
@@ -1202,7 +1201,7 @@ def group_edit(request, pk):
     return redirect('basics:actofgoods_startpage')
 
 def group_leave(request, pk):
-    print(User.objects.get(email=request.user))
+    #print(User.objects.get(email=request.user))
     if request.user.is_authenticated():
         #if request.method == "POST":
         groupDa = Groupdata.objects.get(pk=pk)
