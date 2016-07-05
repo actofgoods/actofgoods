@@ -65,7 +65,7 @@
                                                             <h4 class="list-group-item-heading">{{ poly.pk }}</h4>
                                                         </div>
                                                         <div class="col-sm-3">
-                                                            <input type="checkbox" id="{{forloop.counter0}}" aria-label="..." style="float: right;">
+                                                            <input type="checkbox" id="checkbox{{forloop.counter0}}" aria-label="..." style="float: right;">
                                                         </div>
                                                     </div>
                                                 </a>
@@ -285,7 +285,10 @@ function refreshClaim(){
     }
 
     function initializeCheckbox(){
-            google.maps.event.addDomListener(("#showmap"), 'change', function() {
+        console.log("Checkboxes initialized");
+        for (i in ownPolys){
+            console.log(i);
+            google.maps.event.addDomListener($("#checkbox"+i.toString())[0], 'change', function() {
                 if($(this).is(':checked'))
                 {
                     window.alert('Checked!!');
@@ -295,6 +298,7 @@ function refreshClaim(){
                     window.alert('Unchecked!!');
                 }
             });
+        }
     }
 
     function createPoly(prop, path, group, email, pk) {
@@ -316,6 +320,7 @@ function refreshClaim(){
                 info.open(map);
             })
             claim.setMap(map);
+            ownPolys.push(claim);
         }
 
         else{
