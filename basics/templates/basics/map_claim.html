@@ -10,7 +10,6 @@
 
 
 </style>
-
 <div id="standard-modal">
     <div class="standard-modal" id="location-map-modal">
         <div class="modal-content">
@@ -147,11 +146,9 @@ function refreshClaim(){
 	var marker;
     var path = [];
 	var info = new google.maps.InfoWindow();
-    var loadedOwn = false;
     var loadedAll = false;
     var onedit=false;
     var saved=false;
-    var ownPolys=[];
     var othPolys=[];
 
 
@@ -235,7 +232,18 @@ function refreshClaim(){
                 editable: true,
                 draggable: true
             });
-        loadClaims('1');
+        loadClaims('2');
+        /*google.maps.event.addDomListener(deinemama, 'change', function() {
+            if($(this).is(':checked'))
+            {
+                window.alert('Checked!!');
+            }
+            else
+            {
+                window.alert('Unchecked!!');
+            }
+        });*/
+
   		google.maps.event.addListener(map, 'click', addPoint);
         /*google.maps.event.addListener(polypoints, 'set_at', function(){
             polygon.paths=polypoints;
@@ -244,31 +252,49 @@ function refreshClaim(){
 	}
 
     function loadClaims(prop){
-        {% for claim in polygons %}
-            path = [];
-            {% for point in claim.poly.0 %}
-                path.push(new google.maps.LatLng{{point}});
-            {% endfor%}
-            console.log("Test1");
-            createPoly(prop, path, '{{claim.group.name}}','{{claim.claimer.email}}','{{claim.pk}}');
-        {%endfor %}
+        if(prop=='2'){
+            {% for claim in polygons %}
+                path = [];
+                {% for point in claim.poly.0 %}
+                    path.push(new google.maps.LatLng{{point}});
+                {% endfor%}
+                console.log("Test1");
+                createPoly(prop, path, '{{claim.group.name}}','{{claim.claimer.email}}','{{claim.pk}}');
+            {%endfor %}
+        }
         if(prop=='0'){
             loadedAll=true;
-            loadedOwn=true;
             document.getElementById('button1').setAttribute("onclick","loadClaims('1')");
-            document.getElementById('button1').innerText="Load Own";
+            document.getElementById('button1').innerText="Show Own";
+            console.log("Das ist ein PreTest für Prop 0");
+            showClaims("1");
         }
         if(prop=='1'){
-            loadedOwn=true;
             loadedAll=false;
             document.getElementById('button1').setAttribute("onclick","loadClaims('0')");
-            document.getElementById('button1').innerText="Load All";
+            document.getElementById('button1').innerText="Show All";
+            showClaims("2");
+        }
+    }
+
+    function showClaims(prop){
+        if(prop=="1"){
+            for(i in othPolys){
+                claim=othPolys[i];
+                claim.setMap(map);
+            }
+        }
+        if(prop=="2"){
+            for(var i in othPolys){
+                claim=othPolys[i];
+                claim.setMap(null);
+            }
         }
     }
 
     function createPoly(prop, path, group, email, pk) {
         console.log("Test2"+group);
-        if ("{{group}}" == group && loadedOwn==false) {
+        if ("{{group}}" == group) {
             console.log("Test3");
         	var claim = new google.maps.Polygon({
                 paths: new google.maps.MVCArray(path),
@@ -280,15 +306,15 @@ function refreshClaim(){
                 editable: false
             });
             claim.addListener('click', function(event){
-            info.setContent('<b>Group: </b>'+group+'<br><b>Owner: </b>' +email + '<br><b>ID: '+pk+'</b>');
-            info.setPosition(event.latLng);
-            info.open(map);
+                info.setContent('<b>Group: </b>'+group+'<br><b>Owner: </b>' +email + '<br><b>ID: '+pk+'</b>');
+                info.setPosition(event.latLng);
+                info.open(map);
             })
             claim.setMap(map);
         }
 
         else{
-            if ("{{group}}" != group && prop==0){
+            if ("{{group}}" != group){
             var claim = new google.maps.Polygon({
                 paths: new google.maps.MVCArray(path),
                 fillColor: '#B8CE52',
@@ -300,11 +326,11 @@ function refreshClaim(){
                 editable: false
             });
             claim.addListener('click', function(event){
-            info.setContent('<b>Group: </b>' + group);
-            info.setPosition(event.latLng);
-            info.open(map);
+                info.setContent('<b>Group: </b>' + group);
+                info.setPosition(event.latLng);
+                info.open(map);
             });
-            claim.setMap(map);
+            othPolys.push(claim);
         }
         }
 
