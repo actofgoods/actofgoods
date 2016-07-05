@@ -10,7 +10,6 @@
 
 
 </style>
-
 <div id="standard-modal">
     <div class="standard-modal" id="location-map-modal">
         <div class="modal-content">
@@ -220,6 +219,17 @@ function refreshClaim(){
                 draggable: true
             });
         loadClaims('2');
+        /*google.maps.event.addDomListener(deinemama, 'change', function() {
+            if($(this).is(':checked'))
+            {
+                window.alert('Checked!!');
+            }
+            else
+            {
+                window.alert('Unchecked!!');
+            }    
+        });*/
+
   		google.maps.event.addListener(map, 'click', addPoint);
         /*google.maps.event.addListener(polypoints, 'set_at', function(){
             polygon.paths=polypoints;
