@@ -10,61 +10,80 @@
 
 
 </style>
-<div class ="row">
-<div class="col-md-12">
-<div class="standard-modal" id="location-map-modal">
-<div class="modal-content">
-<div class ="modal-header"><h2 class="text-center">Which area should be claimed?</h2></div>
-<div class="modal-body row">
 
-<div class="col-md-9">
+<div id="standard-modal">
+    <div class="standard-modal" id="location-map-modal">
+        <div class="modal-content">
+            <div class ="modal-header">
+                <h2 class="text-center" id="standard-modal-headline">Which area should be claimed?</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
 
-				<div class="form-group" id="location-form">
-					<p id="option"><b>1. Step(optional): </b>The easiest way to get your location is to use the autolocation function.<button id="standard-grey-button-bold" type="button" class="btn btn-primary" style="margin-left: 15px; margin-right: 15px" onclick="getLocation()">My Location</button></p>
-				</div>
-				<div class="form-group" id="location-form">
-					<p id="option"><b>2. Step: </b>Draw your polygon.</p>
-					<div id="map-container"></div>
-				</div>
+                    <h2 class="text-center">Claims of {{group}}</h2>
+                    <div class="col-sm-12">
+                        <div class="form-group" id="location-form">
+                            <p id="option"><b>1. Step(optional): </b>The easiest way to get your location is to use the autolocation function.<button id="standard-grey-button-bold" type="button" class="btn btn-primary" style="margin-left: 15px; margin-right: 15px" onclick="getLocation()">My Location</button></p>
+                        </div>
+                        <div class="form-group" id="location-form">
+                            <p id="option"><b>2. Step: </b>Draw your polygon.</p>
+                            <div id="map-container"></div>
+                        </div>
 
-<div class="row">
-<div class="col-md-12 text-right">
-<button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="loadClaims('0')" class="btn btn-primary">Load All</button>
-<button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="loadClaims('1')" class="btn btn-primary">Load Own</button>
-<button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="newClaim()" class="btn btn-primary" >New</button>
-<button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="post_poly()" class="btn btn-primary" >Save</button>
-</div>
-</div>
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="loadClaims('0')" class="btn btn-primary">Load All</button>
+                                <button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="loadClaims('1')" class="btn btn-primary">Load Own</button>
+                                <button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="newClaim()" class="btn btn-primary" >New</button>
+                                <button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="post_poly()" class="btn btn-primary" >Save</button>
+                            </div>
+                        </div>
 
-</div>
-<div class="col-md-3">
-    <h2 class="text-center">Your Claims</h2>
-        <div class="col-md-12" style="max-height: 400px; overflow-y: scroll;">
-                    <div class="list-group" id="poly-list">
-                        {% if polyuser %}
-                            {% for poly in polyuser %}
-                                <!-- list all needs -->
-                                <a class="list-group-item" id="standard-list-group-item-div">
-                                    <div class="row">
-                                            <h4 class="list-group-item-heading">{{ poly.pk }}</h4>
-                                            <p class="list-group-item-text">Owner: {{poly.claimer}}</p>
-                                            <button type="button" class="btn btn-default btn-sml standard-grey-button-light" onclick="deleteClaim({{poly.pk}})" style="float: right; "><span class="glyphicon glyphicon-remove"></span>Delete</button>
-
-                                    </div>
-                                </a>
-                            {% empty %}
-                                <h4>There are no needs.</h4>
-                            {% endfor %}
-                        {% endif %}
                     </div>
 
-        </div>
-</div>
+                    <div class="col-sm-12" style="margin-top:15px; margin-bottom: 15px;">
+                        <div style="max-height: 400px; overflow-y: scroll;">
+                            <div class="col-sm-12">
+                                <div class="list-group" id="poly-list">
+                                    {% if polyuser %}
+                                        {% for poly in polyuser %}
+                                            <div class="row" style="margin-right: -10px;">
+                                                <a class="list-group-item cursor-pointer" type="button" id="standard-list-group-item-div" onclick="">
+                                                    <div class="row">
+                                                        <div class="col-sm-9">
+                                                            <h4 class="list-group-item-heading">{{ poly.pk }}</h4>
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <input type="checkbox" aria-label="..." style="float: right;">
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                                <div class="list-group-footer" style="margin-bottom: 15px;">
+                                                    <div class="row">
+                                                        <div class="col-sm-9">
+                                                            <p style="text-align:left;"><i>Owner {% if user == poly.claimer %} you{% else %} {{poly.claimer}}{% endif %}</i></p>
+                                                        </div>
+                                                        <a class="list-group-footer-button cursor-pointer" type="button" onclick="deleteClaim({{poly.pk}})">
+                                                            <div class="col-sm-3">
+                                                                <span class="glyphicon glyphicon-remove"></span> Delete
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% empty %}
+                                            <h4>This organisation has no claims.</h4>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-</div>
-</div>
-</div>
-</div>
+                </div>
+            </div><!-- end modal body -->
+        </div>
+    </div>
 </div>
 
 
@@ -276,14 +295,14 @@ function refreshClaim(){
         //print_polygon();
         save();
     }
-                  
+
 	function addPoint(event) {
 		if(poly.editable==true){
 			poly.getPath().insertAt(poly.getPath().length, event.latLng);
 			print_polygon();
 			poly.setMap(map);
 		}
-	}    
+	}
 
     function save() {
         var googleToDjango="";
