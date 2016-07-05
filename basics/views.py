@@ -629,7 +629,7 @@ def needs_all(request):
             if not request.user.is_superuser:
                 needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         #TODO: this way is fucking slow and should be changed but i didn't found a better solution
-        needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
+        #needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
 
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
@@ -645,21 +645,11 @@ def needs_filter(request):
             dist = request.user.userdata.aux
         else:
             dist=500
-
+        x=timezone.now()
         category = "All"
         cards_per_page = 10
         wordsearch = ""
         needs = Need.objects.all()
-        for n in needs:
-            if n.update_at.update_at < timezone.now():
-                hours_elapsed = int((timezone.now() - n.date).seconds/3600)
-                n.update_at.update_at = timezone.now() + timedelta(hours=1)
-                if n.group:
-                    priority = priority_need_group(hours_elapsed)
-                else:
-                    priority = priority_need_user(hours_elapsed)
-                n.priority = priority
-                n.save()
         needs = Need.objects.order_by('priority', 'pk').reverse()
         needs = needs.exclude(author=request.user)
         page = 1
@@ -668,13 +658,13 @@ def needs_filter(request):
             #print(request.POST)
             if "" != request.POST['page']:
                 page = int(request.POST['page'])
-            if "" != request.POST['range']:
-                dist= int(request.POST['range'].replace(',',''))
-                if not request.user.is_superuser:
-                    needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
             if "" != request.POST['category'] and "All" != request.POST['category']:
                 category = request.POST['category']
                 needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
+            if "" != request.POST['range']:
+                dist= int(request.POST['range'].replace(',',''))
+                if not request.user.is_superuser:
+                    needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))            
             if "" != request.POST['wordsearch']:
                 wordsearch = request.POST['wordsearch']
                 needs = needs.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))
@@ -685,12 +675,15 @@ def needs_filter(request):
                 needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         #TODO: this way is fucking slow and should be changed but i didn't found a better solution
         needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
-
+        y=timezone.now()
+        print(y-x)
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
         needs.sort(key=lambda x: (x.priority, x.pk), reverse=True)
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
+        y=timezone.now()
+        print(y-x)
         return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))
     return redirect('basics:actofgoods_startpage')
 

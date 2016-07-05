@@ -29,10 +29,10 @@
 
 <div class="row">
 <div class="col-md-12 text-right">
-<button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="loadClaims('0')" class="btn btn-primary">Load All</button>
-<button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="loadClaims('1')" class="btn btn-primary">Load Own</button>
-<button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="newClaim()" class="btn btn-primary" >New</button>
-<button id="standard-grey-button-bold" style="margin:1px" type="button" onclick="post_poly()" class="btn btn-primary" >Save</button>
+<button id="button1" style="margin:1px" type="button" onclick="loadClaims('0')" class="btn btn-primary standard-grey-button-bold">Load All</button>
+<button id="button2" style="margin:1px" type="button" onclick="loadClaims('1')" class="btn btn-primary standard-grey-button-bold">Load Own</button>
+<button id="button3" style="margin:1px" type="button" onclick="newClaim()" class="btn btn-primary standard-grey-button-bold" >New</button>
+<button id="button4" style="margin:1px" type="button" onclick="post_poly()" class="btn btn-primary standard-grey-button-bold" >Save</button>
 </div>
 </div>
 
@@ -121,6 +121,8 @@ function refreshClaim(){
     var loadedAll = false;
     var onedit=false;
     var saved=false;
+    var ownPolys=[];
+    var othPolys=[];
 
 
     function post_poly(){
@@ -190,6 +192,7 @@ function refreshClaim(){
   		};
   		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
         onedit=true;
+        console.log(document.getElementById("button1").textContent);
   		poly=new google.maps.Polygon({
                 paths: new google.maps.MVCArray([new google.maps.MVCArray]),
                 strokeColor: '#FF0000',
@@ -200,6 +203,7 @@ function refreshClaim(){
                 editable: true,
                 draggable: true
             });
+        loadClaims('1');
   		google.maps.event.addListener(map, 'click', addPoint);
         /*google.maps.event.addListener(polypoints, 'set_at', function(){
             polygon.paths=polypoints;
@@ -208,7 +212,6 @@ function refreshClaim(){
 	}
 
     function loadClaims(prop){
-        if (loadedAll==false){
         {% for claim in polygons %}
             path = [];
             {% for point in claim.poly.0 %}
@@ -220,11 +223,14 @@ function refreshClaim(){
         if(prop=='0'){
             loadedAll=true;
             loadedOwn=true;
+            document.getElementById('button1').setAttribute("onclick","loadClaims('1')");
+            document.getElementById('button1').innerText="Load Own";
         }
         if(prop=='1'){
             loadedOwn=true;
-        }
-
+            loadedAll=false;
+            document.getElementById('button1').setAttribute("onclick","loadClaims('0')");
+            document.getElementById('button1').innerText="Load All";
         }
     }
 
