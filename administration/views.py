@@ -370,3 +370,12 @@ def administration(request):
     if not request.user.is_superuser and not request.user.is_staff:
         return redirect('basics:home')
     return redirect('administration:requests')
+
+def faq_administration(request):
+    if not request.user.is_authenticated():
+        return redirect('basics:actofgoods_startpage')
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active':False})
+    if not request.user.is_superuser and not request.user.is_staff:
+        return redirect('basics:home')
+    return render(request, 'administration/faq_administration.html')

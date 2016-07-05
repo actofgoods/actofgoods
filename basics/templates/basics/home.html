@@ -222,19 +222,19 @@
                     <form class="form" role="form" method="get" accept-charset="UTF-8">
                         {%csrf_token%}
                         <div class="col-sm-4" style="margin-bottom: 15px;">
-                            <select style="width: 100%" name="activities">
+                            <select style="width: 100%;" name="activities">
                                 <option value="all_activities">all activities</option>
                                 <option value="posted_needs">posted needs</option>
-                                <option value="needs_helping">needs where you helping</option>
+                                <option value="needs_help">needs where you help</option>
                                 <option value="posted_information">posted information</option>
                                 <option value="written_comments">written comments</option>
                             </select>
                         </div>
                         <div  class="col-sm-4" style="margin-bottom: 15px;">
-                            <select style="width: 100%" name="group">
+                            <select style="width: 100%;" name="group">
                                 <option value="your_activities">your activities</option>
                                 {% for group in user.groups.all %}
-                                    <option value="{{group.name}}">activities of {{group.name}}</option>
+                                    <option value="{{group.name}}">your activities in {{group.name}}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -253,7 +253,7 @@
                             <select style="width: 100%" name="activities">
                                 <option value="all_activities">all activities</option>
                                 <option value="posted_needs">posted needs</option>
-                                <option value="needs_helping">needs where you helping</option>
+                                <option value="needs_help">needs where you help</option>
                                 <option value="posted_information">posted information</option>
                                 <option value="written_comments">written comments</option>
                             </select>
@@ -282,8 +282,8 @@
                                               <a href="{% url 'basics:information_view' pk=elem.id %}">
                                                   <div class="col-sm-12">
                                                       <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ elem.headline }}<div style="font-size: .83em; color: #555; hover.color: #555; float: right;"><span class="glyphicon glyphicon-chevron-up"></span>{{ elem.number_likes }}</div></h4>
-                                                      <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:160 }}</p>
-                                                      <h6 style="color: #555; hover.color: #555;"><br>from: {{ elem.date }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                                      <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:512|linebreaksbr }}</p>
+                                                      <h6 style="color: #555; hover.color: #555;"><br><i>from {{ elem.date }} {% if elem.author_is_admin %} by <span style="color: #D36E5A;">Admin</span>{% elif elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
                                                   </div>
                                               </a>
                                         </div>
@@ -308,9 +308,9 @@
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
                                             <div class="col-sm-12" data-toggle="modal" data-target=".n{{elem.id}}" id="cursor-pointer">
-                                                <h4 class="list-group-item-heading">{{ elem.headline }}</h4>
-                                                <p class="list-group-item-text">{{ elem|get_short_text:160 }}</p>
-                                                <h6><br>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                                <h4 class="list-group-item-heading">{{ elem.headline }}<div style="font-size: .83em; color: #555; hover.color: #555; float: right;"><span title="wait for help" class="glyphicon glyphicon-hourglass"></span></div></h4>
+                                                <p class="list-group-item-text">{{ elem|get_short_text:512|linebreaksbr }}</p>
+                                                <h6><br><i>from {{ elem.date }} in category {{ elem.categorie.name }} {% if elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
                                             </div>
                                         </div>
                                     </a>
@@ -339,7 +339,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                             <h2>{{elem.headline}}</h2>
-                                            <h6>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ elem.group.name }}</a>{% endif %}</h6>
+                                            <h6><i>from {{ elem.date }} in category {{ elem.categorie.name }} {% if elem.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ elem.group.name }}</a>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
                                         </div>
                                         <div class="modal-body">
                                             <p>{{ elem.text|linebreaksbr }}</p>
@@ -352,7 +352,7 @@
                             </div>
 
                         {% elif elem in needs_you_help %}
-                            <!-- need your helping -->
+                            <!-- need your help -->
                             <div class="row">
                                 <div class="timeline-badge" title="need your help"><i class="glyphicon glyphicon-header" style="padding-top: 7px; padding-left: 6px"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
@@ -360,8 +360,8 @@
                                         <div class="row">
                                             <div class="col-sm-12" data-toggle="modal" data-target=".nh{{elem.id}}" id="cursor-pointer">
                                                 <h4 class="list-group-item-heading">{{ elem.headline }}</h4>
-                                                <p class="list-group-item-text">{{ elem|get_short_text:160 }}</p>
-                                                <h6><br>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                                <p class="list-group-item-text">{{ elem|get_short_text:512|linebreaksbr }}</p>
+                                                <h6><br><i>from {{ elem.date }} in category {{ elem.categorie.name }} {% if elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</i></h6>    <!-- TODO change date -->
                                             </div>
                                         </div>
                                     </a>
@@ -385,7 +385,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                             <h2>You help here: {{elem.headline}}</h2>
-                                            <h6>from: {{ elem.date }} / category: {{ elem.categorie.name }} {% if elem.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ elem.group.name }}</a>{% endif %}</h6>
+                                            <h6><i>from {{ elem.date }} in category {{ elem.categorie.name }} {% if elem.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ elem.group.name }}</a>{% endif %}</i></h6>      <!-- TODO maby change date here too -->
                                         </div>
                                         <div class="modal-body">
                                             <p>{{ elem.text|linebreaksbr }}</p>
@@ -406,8 +406,8 @@
                                       <div class="row">
                                           <div class="col-sm-12" data-toggle="modal" data-target=".c{{elem.id}}" id="cursor-pointer">
                                               <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ elem.inf.headline }}</h4>
-                                              <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:160 }}</p>
-                                              <h6 style="color: #555; hover.color: #555;"><br>from: {{ elem.date }} {% if elem.group %} / by: <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</h6>
+                                              <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:512|linebreaksbr }}</p>
+                                              <h6 style="color: #555; hover.color: #555;"><br><i>from {{ elem.date }} {% if elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
                                           </div>
                                       </div>
                                     </div>
@@ -439,12 +439,11 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                             <h2>Information: {{ elem.inf.headline }}</h2>
-                                            <h6>from: {{ elem.inf.date }}{% if elem.inf.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.inf.group.name %}">{{ elem.inf.group.name }}</a>{% endif %}</h6>
+                                            <h6><i>from {{ elem.inf.date }} {% if elem.inf.author_is_admin %} by <span style="color: #D36E5A;">Admin</span>{% elif elem.inf.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.inf.group.name %}">{{ elem.inf.group.name }}</a>{% elif elem.inf.author == user %} by <span>you</span>{% endif %}</i></h6>
                                         </div>
                                         <div class="modal-body">
-                                            <h5>Your comment:</h5>
+                                            <h5><i>Comment from {{ elem.date }} {% if elem.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ elem.group.name }}</a>{% elif elem.author == user %} by <span>you</span>{% endif %}:</i></h5>
                                             <p>{{ elem.text|linebreaksbr }}</p>
-                                            <h6>from: {{ elem.date }} {% if elem.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ elem.group.name }}</a>{% endif %}</h6>
                                         </div>
                                         <div class="modal-footer">
                                             <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -459,7 +458,7 @@
                </div>
             </div>
             {% else %}
-                <h4>You haven't performed any activities. If you need help click Help at the navigation bar.</h4>
+                <h4>You haven't performed any activities. If you need help click FAQ at the navigation bar.</h4>
             {% endif %}
         </div>
     </div>

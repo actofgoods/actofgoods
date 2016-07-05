@@ -1,10 +1,33 @@
 {% extends 'basics/base.html' %}
-
 {% block content %}
 
+<style>
+    #standard-notification {
+        background-color:  rgba(76,78,73,.9);
+        border: 2px solid #4C4E49;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    #standard-notification-text {
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #bbd153;
+    }
+</style>
 
 <div class="container-fluid" id="wrapper">
 	<div class="row">
+
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.message == 'success contact us' %}
+                        <div class="col-sm-12 succes-contact-us" id="standard-notification">
+                            <h3 id="standard-notification-text"><span class="glyphicon glyphicon-ok"></span> Successful send a contact us request!</h3>
+                        </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
 
 		<!-- description counter and immediat aid button -->
 		<div class="col-sm-7 col-sm-push-5">
@@ -198,6 +221,11 @@
   function register(){
     $("#register_form").submit();
   }
+
+  $('.succes-contact-us').delay(3000).fadeOut('slow','linear');
+
 </script>
+
+
 
 {% endblock %}
