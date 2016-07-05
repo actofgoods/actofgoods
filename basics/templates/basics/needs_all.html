@@ -124,7 +124,7 @@
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:needs_help' id=need.id %}';" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-comment"></span> Help</button>
                                         {% if not user.userdata in need.reported_by.all %}
-                                          <button  type="button" class="btn btn-default btn-sml standard-grey-button-light " onclick="report({{need.pk}})" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-ban-circle"></span> Report</button>
+                                          <button  type="button" class="btn btn-default btn-sml standard-grey-button-light " data-dismiss="modal" onclick="report({{need.pk}})" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-ban-circle"></span> Report</button>
                                         {% endif %}
                                         <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal" style="margin-bottom: 10px;">Close</button>
                                     </div>
