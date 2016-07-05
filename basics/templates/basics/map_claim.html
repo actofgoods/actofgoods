@@ -8,48 +8,85 @@
 		height: 50%;
 	}
 
+    #claim-new-container {
+        border: 1px solid #ddd;
+        border-bottom: 0px;
+        padding: 15px;
+        background-color: #FAFAFA;
+    }
+
+    #header-map-claim {
+        border: 1px solid #ddd;
+        border-bottom: 0px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        background-color: #EDEDED;
+        margin: 0px;
+        padding: 10px 15px;
+        text-align: center;
+    }
+
+    @media(max-width:768px) {
+
+        #heading-map-claim-button-over-last {
+            margin-bottom: 15px;
+        }
+
+    }
 
 </style>
 <div id="standard-modal">
     <div class="standard-modal" id="location-map-modal">
         <div class="modal-content">
             <div class ="modal-header">
-                <h2 class="text-center" id="standard-modal-headline">Claims of {{group}}</h2>
+                <h2 class="text-center" id="standard-modal-headline">Claims of {{group}}<br><small>This page is for organisation between organistaions.</small></h2>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <button id="standard-grey-button-bold" type="button" class="btn btn-block btn-primary" onclick="getLocation()" style="margin-bottom: 15px;">Get my Location</button>
-                            </div>
-                            <div class="col-sm-3 col-sm-offset-3">
-                                <button id="button1" style="margin-bottom: 15px;" type="button" onclick="loadClaims('0')" class="btn btn-block btn-primary standard-grey-button-bold">Show All</button>
-                            </div>
-                            <div class="col-sm-3">
-                                <button id="button3" style="margin-bottom: 15px;" type="button" onclick="newClaim()" class="btn btn-block btn-primary standard-grey-button-bold" >New Claim</button>
+                <div class="row" style="margin-top: 15px;">
+
+                        <div class="col-sm-12">
+                            <div class="row" id="header-map-claim">
+                                <a class="list-group-footer-button cursor-pointer" type="button" onclick="getLocation()">
+                                    <div class="col-sm-4" id="heading-map-claim-button-over-last">
+                                        <span class="glyphicon glyphicon-screenshot"></span> Get my Location
+                                    </div>
+                                </a>
+                                <a id="button1" class="list-group-footer-button cursor-pointer" type="button" onclick="loadClaims('0')">
+                                    <div class="col-sm-4" id="heading-map-claim-button-over-last">
+                                        <span class="glyphicon glyphicon-globe"></span> Show All
+                                    </div>
+                                </a>
+                                <a id="button3" class="list-group-footer-button cursor-pointer" type="button" onclick="newClaim()">
+                                    <div class="col-sm-4">
+                                        <span class="glyphicon glyphicon-flag"></span> New Claim
+                                    </div>
+                                </a>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="claim-new-area" style="display:none;">
-                        <div class="col-sm-10 col-sm-offset-1" style=" margin-top: 15px; margin-bottom: 15px;">
-                            <h4><span style="font-weight: bold">1.</span> Name for your claim:</h4>
-                            <div class="form-group">
-              					<input type="text" class="form-control input-lg" placeholder="Name for Claim" id="claimname" name="claimname" maxlength="30" required/>
-              				</div>
-                            <h4><span style="font-weight: bold">2.</span> Draw your polygon!</h4>
+                        <div id="claim-new-area" style="display:none;">
                             <div class="row">
-                                <div class="col-sm-3 col-sm-offset-9">
-                                    <button id="button4" style="margin:1px" type="button" onclick="post_poly()" class="btn btn-block btn-primary standard-grey-button-bold" >Save</button>
+                                <div class="col-sm-12" style="padding-left: 30px; padding-right: 30px;">
+                                    <div id="claim-new-container" class="col-sm-12">
+                                        <div class="col-sm-10 col-sm-offset-1" style="margin-top: 15px; margin-bottom: 15px;">
+                                            <h4><span style="font-weight: bold">1.</span> Name for your claim:</h4>
+                                            <div class="form-group">
+                              					<input type="text" class="form-control input-lg" placeholder="Name for Claim" id="claimname" name="claimname" maxlength="30" required/>
+                              				</div>
+                                            <h4><span style="font-weight: bold">2.</span> Draw your polygon!</h4>
+                                            <div class="row">
+                                                <div class="col-sm-3 col-sm-offset-9">
+                                                    <button id="button4" style="margin:1px" type="button" onclick="post_poly()" class="btn btn-block btn-primary standard-grey-button-bold" >Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
 
                     <div class="col-sm-12">
-                        <div id="map-container"></div>
+                        <div id="map-container" style="border: 1px solid #ddd;"></div>
                     </div>
 
                     <div class="col-sm-12" style="margin-top:15px; margin-bottom: 15px;">
@@ -59,10 +96,10 @@
                                     {% if polyuser %}
                                         {% for poly in polyuser %}
                                             <div class="row" style="margin-right: -10px;">
-                                                <a class="list-group-item cursor-pointer" type="button" id="standard-list-group-item-div" onclick="">
+                                                <a class="list-group-item" type="button" id="standard-list-group-item-div">
                                                     <div class="row">
                                                         <div class="col-sm-9">
-                                                            <h4 class="list-group-item-heading">{{ poly.pk }}</h4>
+                                                            <h4 class="list-group-item-heading">{{ poly.title }}</h4>
                                                         </div>
                                                         <div class="col-sm-3">
                                                             <input type="checkbox" id="checkbox{{forloop.counter0}}" aria-label="..." style="float: right;">
@@ -75,6 +112,7 @@
                                                             <p style="text-align:left;"><i>Owner {% if user == poly.claimer %} you{% else %} {{poly.claimer}}{% endif %}</i></p>
                                                         </div>
                                                         <a class="list-group-footer-button cursor-pointer" type="button" onclick="deleteClaim({{poly.pk}})">
+
                                                             <div class="col-sm-3">
                                                                 <span class="glyphicon glyphicon-remove"></span> Delete
                                                             </div>
@@ -257,14 +295,14 @@ function refreshClaim(){
         if(prop=='0'){
             loadedAll=true;
             document.getElementById('button1').setAttribute("onclick","loadClaims('1')");
-            document.getElementById('button1').innerText="Show Own";
+            document.getElementById('button1').innerHTML="<div class='col-sm-4' id='heading-map-claim-button-over-last'><span class='glyphicon glyphicon-globe'></span> Show Own</div>";
             console.log("Das ist ein PreTest für Prop 0");
             showClaims("1");
         }
         if(prop=='1'){
             loadedAll=false;
             document.getElementById('button1').setAttribute("onclick","loadClaims('0')");
-            document.getElementById('button1').innerText="Show All";
+            document.getElementById('button1').innerHTML="<div class='col-sm-4' id='heading-map-claim-button-over-last'><span class='glyphicon glyphicon-globe'></span> Show All</div>";
             showClaims("2");
         }
     }
