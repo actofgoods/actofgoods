@@ -330,11 +330,11 @@ function refreshClaim(){
                 google.maps.event.addDomListener($("#checkbox"+_i)[0], 'change', function(){
                 if($(this).is(':checked'))
                 {
-                    window.alert('Checked!!'+_i);
+                    ownPolys[_i].setOptions({fillOpacityt: 0.5, fillColor: '#71952F', strokeOpacity: 0.8, strokeColor: '#71952F'});
                 }
                 else
                 {
-                    window.alert('Unchecked!!'+_i);
+                    ownPolys[_i].setOptions({fillOpacityt: 0.35, fillColor: '#FF0000', strokeOpacity: 0.9, strokeColor: '#FF0000'});
                 }
             });
             })(i);
@@ -367,11 +367,10 @@ function refreshClaim(){
             if ("{{group}}" != group){
             var claim = new google.maps.Polygon({
                 paths: new google.maps.MVCArray(path),
-                fillColor: '#B8CE52',
-                strokeColor: '#71972C',
+                strokeColor: '#5D5F5B',
                 strokeOpacity: 0.8,
                 strokeWeight: 3,
-                fillColor: '#B8CE52',
+                fillColor: '#5D5F5B',
                 fillOpacity: 0.35,
                 editable: false
             });
