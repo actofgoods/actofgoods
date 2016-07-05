@@ -286,18 +286,20 @@ function refreshClaim(){
 
     function initializeCheckbox(){
         console.log("Checkboxes initialized");
-        for (i in ownPolys){
+        for (var i in ownPolys){
             console.log(i);
-            google.maps.event.addDomListener($("#checkbox"+i.toString())[0], 'change', function() {
+            (function(_i){
+                google.maps.event.addDomListener($("#checkbox"+_i)[0], 'change', function(){
                 if($(this).is(':checked'))
                 {
-                    window.alert('Checked!!');
+                    window.alert('Checked!!'+_i);
                 }
                 else
                 {
-                    window.alert('Unchecked!!');
+                    window.alert('Unchecked!!'+_i);
                 }
             });
+            })(i);
         }
     }
 
