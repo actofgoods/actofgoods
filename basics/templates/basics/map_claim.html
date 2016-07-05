@@ -330,11 +330,11 @@ function refreshClaim(){
                 google.maps.event.addDomListener($("#checkbox"+_i)[0], 'change', function(){
                 if($(this).is(':checked'))
                 {
-                    ownPolys[_i].setOptions({fillOpacityt: 0.5, fillColor: '#71952F', strokeOpacity: 0.8, strokeColor: '#71952F'});
+                    ownPolys[_i].setOptions({fillOpacity: 0.4, fillColor: '#006400', strokeOpacity: 3.0, strokeWeight: 6, strokeColor: '#006400'});
                 }
                 else
                 {
-                    ownPolys[_i].setOptions({fillOpacityt: 0.35, fillColor: '#FF0000', strokeOpacity: 0.9, strokeColor: '#FF0000'});
+                    ownPolys[_i].setOptions({fillOpacity: 0.35, fillColor: '#FF0000', strokeOpacity: 0.9, strokeWeight: 3, strokeColor: '#FF0000'});
                 }
             });
             })(i);
