@@ -15,30 +15,42 @@
     <div class="standard-modal" id="location-map-modal">
         <div class="modal-content">
             <div class ="modal-header">
-                <h2 class="text-center" id="standard-modal-headline">Which area should be claimed?</h2>
+                <h2 class="text-center" id="standard-modal-headline">Claims of {{group}}</h2>
             </div>
             <div class="modal-body">
                 <div class="row">
-
-                    <h2 class="text-center">Claims of {{group}}</h2>
                     <div class="col-sm-12">
-                        <div class="form-group" id="location-form">
-                            <p id="option"><b>1. Step(optional): </b>The easiest way to get your location is to use the autolocation function.<button id="standard-grey-button-bold" type="button" class="btn btn-primary" style="margin-left: 15px; margin-right: 15px" onclick="getLocation()">My Location</button></p>
-                        </div>
-                        <div class="form-group" id="location-form">
-                            <p id="option"><b>2. Step: </b>Draw your polygon.</p>
-                            <div id="map-container"></div>
-                        </div>
-
                         <div class="row">
-                            <div class="col-md-12 text-right">
-                                <button id="button1" style="margin:1px" type="button" onclick="loadClaims('0')" class="btn btn-primary standard-grey-button-bold">Load All</button>
-                                <button id="button2" style="margin:1px" type="button" onclick="loadClaims('1')" class="btn btn-primary standard-grey-button-bold">Load Own</button>
-                                <button id="button3" style="margin:1px" type="button" onclick="newClaim()" class="btn btn-primary standard-grey-button-bold" >New</button>
-                                <button id="button4" style="margin:1px" type="button" onclick="post_poly()" class="btn btn-primary standard-grey-button-bold" >Save</button>
+                            <div class="col-sm-3">
+                                <button id="standard-grey-button-bold" type="button" class="btn btn-block btn-primary" onclick="getLocation()" style="margin-bottom: 15px;">Get my Location</button>
+                            </div>
+                            <div class="col-sm-3 col-sm-offset-3">
+                                <button id="button1" style="margin-bottom: 15px;" type="button" onclick="loadClaims('0')" class="btn btn-block btn-primary standard-grey-button-bold">Show All</button>
+                            </div>
+                            <div class="col-sm-3">
+                                <button id="button3" style="margin-bottom: 15px;" type="button" onclick="newClaim()" class="btn btn-block btn-primary standard-grey-button-bold" >New Claim</button>
                             </div>
                         </div>
+                    </div>
 
+                    <div id="claim-new-area" style="display:none;">
+                        <div class="col-sm-10 col-sm-offset-1" style=" margin-top: 15px; margin-bottom: 15px;">
+                            <h4><span style="font-weight: bold">1.</span> Name for your claim:</h4>
+                            <div class="form-group">
+              					<input type="text" class="form-control input-lg" placeholder="Name for Claim" name="claimname" maxlength="30" required/>
+              				</div>
+                            <h4><span style="font-weight: bold">2.</span> Draw your polygon!</h4>
+                            <div class="row">
+                                <div class="col-sm-3 col-sm-offset-9">
+                                    <button id="button4" style="margin:1px" type="button" onclick="post_poly()" class="btn btn-block btn-primary standard-grey-button-bold" >Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-12">
+                        <div id="map-container"></div>
                     </div>
 
                     <div class="col-sm-12" style="margin-top:15px; margin-bottom: 15px;">
@@ -85,7 +97,6 @@
         </div>
     </div>
 </div>
-
 
 
 
@@ -146,6 +157,7 @@ function refreshClaim(){
 
     function post_poly(){
     if(!saved){
+        $("#claim-new-area").fadeOut('fast')
 		pathi=save();
         saved=true;
 		console.log("form submitted!");
@@ -180,6 +192,7 @@ function refreshClaim(){
 
 
     function newClaim(){
+        $("#claim-new-area").fadeIn('fast');
         saved=false
         if (onedit==false){
         poly=new google.maps.Polygon({
