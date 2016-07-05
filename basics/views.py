@@ -835,12 +835,25 @@ def profil(request):
     otherwise the profil will be changed.
 """
 def profil_edit(request):
-    if not request.user.is_active:
-        return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated():
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active': False})
         user=request.user
         userdata=request.user.userdata
         if request.method == "POST":
+            if request.POST.get('changePassword') == "on":
+                oldpw = request.POST['oldpw']
+                newpw1 = request.POST.get('newpw1')
+                newpw2 = request.POST.get('newpw2')
+                if (authenticate(username=user.email, password=oldpw) == user) and (newpw1 == newpw2):
+                    user.set_password(newpw1)
+                    user.save()
+                else:
+                    form = ProfileForm()
+                    return render(request, 'basics/profil_edit.html',
+                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all,
+                                   'selected': userdata.inform_about.all(), 'form': form, 'change':True})
+
             email= request.POST.get('email',None)
             pseudo=request.POST.get('pseudo',None)
             phone = request.POST.get('phone',None)

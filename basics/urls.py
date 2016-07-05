@@ -58,7 +58,6 @@ urlpatterns = [
     url(r'^profil_edit/$', views.profil_edit, name='profil_edit'),
     url(r'^profil_delete/$', views.profil_delete, name='profil_delete'),
     url(r'^register/$', views.register, name='register'),
-    url(r'^change_password/$', views.change_password, name='change_password'),
     url(r'^reset_password/$', views.reset_password_page, name='reset_password_page'),
     url(r'^reset_password_confirmation/$', views.reset_password_confirmation, name='reset_password_confirmation'),
 	url(r'^contact_us/$', views.contact_us, name='contact_us'),
