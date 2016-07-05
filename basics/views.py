@@ -195,15 +195,18 @@ def claim_post(request, name):
         if request.user.groups.filter(name=name).exists():
             if request.method=="POST":
                 poly_path=request.POST['path']
+                #name=request.POST['name']
                 response_data = {}
+                claimname=request.POST['claimname']
                 wkt = "POLYGON(("+poly_path+"))"
                 gro = request.user.groups.get(name=name)
-                claim = ClaimedArea.objects.create(claimer=request.user,group=gro, poly=wkt)
+                claim = ClaimedArea.objects.create(claimer=request.user,group=gro, poly=wkt, title=claimname)
                 claim.save()
                 response_data['result'] = 'Creation successful!'
                 response_data['owner']=request.user.email
                 response_data['poly']=claim.poly.geojson
                 response_data['pk']=claim.pk
+                response_data['claimname']=claim.title
 
                 return JsonResponse(response_data)
     return redirect('basics:actofgoods_startpage')

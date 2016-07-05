@@ -25,6 +25,7 @@ class ClaimedArea(models.Model):
 	claimer=models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
 	poly=models.PolygonField()
+	title=models.CharField(max_length=31, null=True)
 	objects = models.GeoManager()
 	def __unicode__(self):
 		return self.pk
