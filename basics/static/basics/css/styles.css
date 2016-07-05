@@ -38,11 +38,17 @@
 	left: 0;
 	right: 0;
 	top: 0;
+	position: relative;
 	overflow-y: scroll;
 	overflow-x: hidden;
 	height: 80%;
 }
 
+@media (max-width:995px) {
+	.room-container{
+		max-height: 10rem;
+	}
+}
 
 .room {
 	background-color: #bbd153;
@@ -50,7 +56,7 @@
 	border-radius: 1em;
 }
 .message-list {
-	height: 60%;
+	height:60%;
 	left: 0;
 	right: 0;
 	top: 0;

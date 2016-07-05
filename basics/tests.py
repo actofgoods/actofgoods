@@ -165,6 +165,7 @@ class NewCommentTest(TestCase):
         user = User.objects.create_user(username='adam@test.test', password='adam', email='adam@test.test',)
         c = Client()
         response = c.post('/register/', {'email': 'test@test.test', 'password': 'test', 'check_password': 'test' , 'address': '', 'lat':'-10.234', 'lng':'43.543'}, follow = True)
+        
 class NewGroupTest(TestCase):
     def setUp(self):
         user = User.objects.create_user(username='adam@test.test', password='adam', email='adam@test.test',)
