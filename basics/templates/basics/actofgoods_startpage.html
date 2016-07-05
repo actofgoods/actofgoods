@@ -22,9 +22,13 @@
         {% if messages %}
             {% for message in messages %}
                 {% if message.message == 'success contact us' %}
-                        <div class="col-sm-12 succes-contact-us" id="standard-notification">
-                            <h3 id="standard-notification-text"><span class="glyphicon glyphicon-ok"></span> Successful send a contact us request!</h3>
-                        </div>
+                    <div class="col-sm-12" id="standard-notification">
+                        <h3 id="standard-notification-text"><span class="glyphicon glyphicon-ok"></span> Successful send a contact us request!</h3>
+                    </div>
+                {% elif message.message == 'success reset password' %}
+                    <div class="col-sm-12" id="standard-notification">
+                        <h3 id="standard-notification-text"><span class="glyphicon glyphicon-ok"></span> Successful reset your password please check your emails!</h3>
+                    </div>
                 {% endif %}
             {% endfor %}
         {% endif %}
@@ -222,7 +226,7 @@
     $("#register_form").submit();
   }
 
-  $('.succes-contact-us').delay(3000).fadeOut('slow','linear');
+  $('#standard-notification').delay(3000).fadeOut('slow','linear');
 
 </script>
 

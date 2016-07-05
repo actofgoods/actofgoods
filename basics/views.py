@@ -1002,6 +1002,7 @@ def reset_password_page(request):
                     content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
                     subject = "Reset Password - Act Of Goods"
                     sendmail(email, content, subject )
+                    messages.add_message(request, messages.INFO, 'success reset password')
                     return redirect('basics:actofgoods_startpage')
             elif not capForm.is_valid():
                 messages.add_message(request, messages.INFO, 'wc')
