@@ -836,12 +836,12 @@ def profil(request):
 """
 def profil_edit(request):
     if request.user.is_authenticated():
-		if not request.user.is_active:
-        		return render(request, 'basics/verification.html', {'active': False})
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active': False})
         user=request.user
         userdata=request.user.userdata
         if request.method == "POST":
-	    if request.POST.get('changePassword') == "on":
+            if request.POST.get('changePassword') == "on":
                 oldpw = request.POST['oldpw']
                 newpw1 = request.POST.get('newpw1')
                 newpw2 = request.POST.get('newpw2')
