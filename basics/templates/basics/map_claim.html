@@ -65,7 +65,7 @@
                                                             <h4 class="list-group-item-heading">{{ poly.pk }}</h4>
                                                         </div>
                                                         <div class="col-sm-3">
-                                                            <input type="checkbox" aria-label="..." style="float: right;">
+                                                            <input type="checkbox" id="{{forloop.counter0}}" aria-label="..." style="float: right;">
                                                         </div>
                                                     </div>
                                                 </a>
@@ -150,6 +150,7 @@ function refreshClaim(){
     var onedit=false;
     var saved=false;
     var othPolys=[];
+    var ownPolys=[];
 
 
     function post_poly(){
@@ -222,7 +223,6 @@ function refreshClaim(){
         streetViewControl: false
   		};
   		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
-        onedit=true;
         console.log(document.getElementById("button1").textContent);
   		poly=new google.maps.Polygon({
                 paths: new google.maps.MVCArray([new google.maps.MVCArray]),
@@ -239,22 +239,7 @@ function refreshClaim(){
         google.maps.event.addDomListener(claimname, 'change', function(){
             console.log(document.getElementById("claimname").value);
         });
-        /*google.maps.event.addDomListener(deinemama, 'change', function() {
-            if($(this).is(':checked'))
-            {
-                window.alert('Checked!!');
-            }
-            else
-            {
-                window.alert('Unchecked!!');
-            }
-        });*/
-
   		google.maps.event.addListener(map, 'click', addPoint);
-        /*google.maps.event.addListener(polypoints, 'set_at', function(){
-            polygon.paths=polypoints;
-            console.log(polygon.getPath());
-        })*/
 	}
 
     function loadClaims(prop){
@@ -267,6 +252,7 @@ function refreshClaim(){
                 console.log("Test1");
                 createPoly(prop, path, '{{claim.group.name}}','{{claim.claimer.email}}','{{claim.pk}}');
             {%endfor %}
+            initializeCheckbox();
         }
         if(prop=='0'){
             loadedAll=true;
@@ -296,6 +282,19 @@ function refreshClaim(){
                 claim.setMap(null);
             }
         }
+    }
+
+    function initializeCheckbox(){
+            google.maps.event.addDomListener(("#showmap"), 'change', function() {
+                if($(this).is(':checked'))
+                {
+                    window.alert('Checked!!');
+                }
+                else
+                {
+                    window.alert('Unchecked!!');
+                }
+            });
     }
 
     function createPoly(prop, path, group, email, pk) {
@@ -342,13 +341,8 @@ function refreshClaim(){
 
     }
 
-    function test(){
-        //print_polygon();
-        save();
-    }
-
 	function addPoint(event) {
-		if(poly.editable==true){
+		if(poly.editable==true && onedit==true){
 			poly.getPath().insertAt(poly.getPath().length, event.latLng);
 			print_polygon();
 			poly.setMap(map);
