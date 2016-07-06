@@ -235,8 +235,10 @@ def claim_delete(request,name):
 def claim_refresh(request,name):
    if request.user.is_authenticated():
         if request.user.groups.filter(name=name).exists():
-            t = loader.get_template('snippets/map_claim.html')
-            return HttpResponse(t.render({'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))}))
+            index=request.POST['index']
+            pk = request.POST['pk']
+            t = loader.get_template('snippets/claim.html')
+            return HttpResponse(t.render({'index':index, 'poly': ClaimedArea.objects.get(pk=pk)}))
 
 
 

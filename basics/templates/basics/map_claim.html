@@ -154,14 +154,14 @@
                                 <div class="col-sm-12">
                                     <div class="list-group" id="poly-list">
                                         {% for poly in polyuser %}
-                                            <div class="row" style="margin-right: -10px;">
+                                            <div class="row" id="div{{forloop.counter0}}" style="margin-right: -10px;">
                                                 <a class="list-group-item" type="button" id="standard-list-group-item-div">
                                                     <div class="row">
                                                         <div class="col-sm-9">
                                                             <h4 class="list-group-item-heading">{{ poly.title }}</h4>
                                                         </div>
                                                         <div class="col-sm-3">
-                                                            <input type="checkbox" id="checkbox{{forloop.counter0}}" aria-label="..." style="float: right;">
+                                                            <input type="checkbox" value={{poly.pk}} id="checkbox{{forloop.counter0}}" aria-label="..." style="float: right;">
                                                         </div>
                                                     </div>
                                                 </a>
@@ -170,7 +170,7 @@
                                                         <div class="col-sm-9">
                                                             <p id="claim-owner"><i>Owner {% if user == poly.claimer %} you{% else %} {{poly.claimer}}{% endif %}</i></p>
                                                         </div>
-                                                        <a class="list-group-footer-button cursor-pointer" type="button" onclick="deleteClaim({{poly.pk}})">
+                                                        <a class="list-group-footer-button cursor-pointer" type="button" onclick="deleteClaim({{poly.pk}},{{forloop.counter0}})">
                                                             <div class="col-sm-3">
                                                                 <span class="glyphicon glyphicon-remove"></span> Delete
                                                             </div>
@@ -179,7 +179,6 @@
                                                 </div>
                                             </div>
                                         {% empty %}
-                                            <h4>This organisation has no claims.</h4>
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -248,41 +247,7 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAmqqg6nhFweM6hPaowtRZT0kRsHPZSaBA"></script>
-<script>
-function deleteClaim(pk){
-	$.ajax({
-		url: "delete/",
-		type: "POST",
-		data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk},
 
-		success: function(json){
-            refreshClaim();
-			$.notify("Deletion successful.",{className: "info", position: "right-bottom"});
-		},
-		error: function(xhr, errmsg, err){
-			console.log(xhr.status + ": " + xhr.responseText);
-		},
-	});
-}
-
-function refreshClaim(){
-   $.ajax({
-    url: "refresh/",
-    type: "POST",
-    data: {csrfmiddlewaretoken: '{{ csrf_token }}',},
-
-    success: function(data){
-        $('#poly-list').html(data);
-        console.log("success");
-    },
-
-    error: function(xhr, errmsg, err){
-        console.log(xhr.status + ": " + xhr.responseText);
-    }
-});
-
-}
-</script>
 
 <script>
 	var map, poly;
@@ -298,6 +263,55 @@ function refreshClaim(){
     var othPolys=[];
     var ownPolys=[];
 
+    function deleteClaim(pk,divid){
+        $.ajax({
+            url: "delete/",
+            type: "POST",
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk},
+
+            success: function(json){
+                //refreshClaim();
+                $.notify("Deletion successful.",{className: "info", position: "right-bottom"});
+                $("#div"+divid).remove();
+                ownPolys[divid].setMap(null);
+            },
+            error: function(xhr, errmsg, err){
+                console.log(xhr.status + ": " + xhr.responseText);
+            },
+        });
+    }
+
+
+    function refreshClaim(pk, index){
+       $.ajax({
+        url: "refresh/",
+        type: "POST",
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, index: index},
+
+        success: function(data){
+            $('#poly-list').append(data);
+            google.maps.event.addDomListener($("#checkbox"+index)[0], 'change', function(){
+                if($(this).is(':checked'))
+                {
+                    ownPolys[index].setOptions({fillOpacity: 0.4, fillColor: '#006400', strokeOpacity: 3.0, strokeWeight: 6, strokeColor: '#006400'});
+                    getChecked();
+                }
+                else
+                {
+                    ownPolys[index].setOptions({fillOpacity: 0.35, fillColor: '#FF0000', strokeOpacity: 0.9, strokeWeight: 3, strokeColor: '#FF0000'});
+                    getChecked();
+                }
+            });
+
+            console.log("success");
+        },
+
+        error: function(xhr, errmsg, err){
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+
+    }
 
     function post_poly(){
     if(!saved){
@@ -312,7 +326,7 @@ function refreshClaim(){
 			data: {csrfmiddlewaretoken: '{{ csrf_token }}', path: pathi, claimname: claimnam},
 
 			success: function(json){
-                refreshClaim();
+                refreshClaim(json.pk, ownPolys.length);
 				$.notify("Creation successful!",{className: "success", position: "right-bottom"});
 				poly.setEditable(false);
                 poly.setDraggable(false);
@@ -323,6 +337,7 @@ function refreshClaim(){
 	  				info.open(map);
   				})
 				console.log(json);
+                ownPolys.push(poly);
 				console.log("success");
 			},
 
@@ -336,6 +351,14 @@ function refreshClaim(){
     }
 }
 
+    function getChecked(){
+        var list=[];
+        $("input[type=checkbox]:checked").each(function(){
+            list.push($(this).val());
+        });
+        console.log(list);
+
+    }
 
     function newClaim(){
         $("#claim-new-area").fadeIn('fast');
@@ -439,10 +462,12 @@ function refreshClaim(){
                 if($(this).is(':checked'))
                 {
                     ownPolys[_i].setOptions({fillOpacity: 0.4, fillColor: '#006400', strokeOpacity: 3.0, strokeWeight: 6, strokeColor: '#006400'});
+                    getChecked();
                 }
                 else
                 {
                     ownPolys[_i].setOptions({fillOpacity: 0.35, fillColor: '#FF0000', strokeOpacity: 0.9, strokeWeight: 3, strokeColor: '#FF0000'});
+                    getChecked();
                 }
             });
             })(i);
