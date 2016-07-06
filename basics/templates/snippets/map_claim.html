@@ -1,15 +1,28 @@
-                {% if polyuser %}
-                    {% for poly in polyuser %}
-                        <!-- list all needs -->
-                        <a class="list-group-item" id="standard-list-group-item-div">
-                            <div class="row">
-                                    <h4 class="list-group-item-heading">{{ poly.pk }}</h4>
-                                    <p class="list-group-item-text">Owner: {{poly.claimer}}</p>
-                                    <button type="button" class="btn btn-default btn-sml standard-grey-button-light" onclick="deleteClaim({{poly.pk}})" style="float: right; "><span class="glyphicon glyphicon-remove"></span>Delete</button>
-
-                            </div>
-                        </a>
-                    {% empty %}
-                        <h4>There are no needs.</h4>
-                    {% endfor %}
-                {% endif %}
+{% for poly in polyuser %}
+    <div class="row" style="margin-right: -10px;">
+        <a class="list-group-item" type="button" id="standard-list-group-item-div">
+            <div class="row">
+                <div class="col-sm-9">
+                    <h4 class="list-group-item-heading">{{ poly.title }}</h4>
+                </div>
+                <div class="col-sm-3">
+                    <input type="checkbox" id="checkbox{{forloop.counter0}}" aria-label="..." style="float: right;">
+                </div>
+            </div>
+        </a>
+        <div class="list-group-footer" style="margin-bottom: 15px;">
+            <div class="row">
+                <div class="col-sm-9">
+                    <p id="claim-owner"><i>Owner {% if user == poly.claimer %} you{% else %} {{poly.claimer}}{% endif %}</i></p>
+                </div>
+                <a class="list-group-footer-button cursor-pointer" type="button" onclick="deleteClaim({{poly.pk}})">
+                    <div class="col-sm-3">
+                        <span class="glyphicon glyphicon-remove"></span> Delete
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+{% empty %}
+    <h4>This organisation has no claims.</h4>
+{% endfor %}

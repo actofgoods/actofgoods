@@ -26,12 +26,54 @@
         text-align: center;
     }
 
+    #claim-owner {
+        text-align:left;
+        margin-bottom: 0px;
+    }
+
     @media(max-width:768px) {
 
         #heading-map-claim-button-over-last {
             margin-bottom: 15px;
         }
 
+        #claim-owner {
+            margin-bottom: 10px;
+        }
+
+    }
+
+    #nav-pills-outer {
+        padding-left: 0px;
+        padding-right: 0px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    #nav-pills-outer > .nav-pills > li > a{
+        margin: 0px;
+        border-radius: 0px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        background-color: #EDEDED;
+    }
+
+    #nav-pills-outer > .nav-pills > li > a:hover,
+    #nav-pills-outer > .nav-pills > li > a:focus,
+    #nav-pills-outer > .nav-pills > li.active > a,
+    #nav-pills-outer > .nav-pills > li.active > a:hover,
+    #nav-pills-outer > .nav-pills > li.active > a:focus {
+        color: #bbd153;
+    }
+
+    #nav-pills-outer > .nav-pills {
+         background-color: #EDEDED;
+    }
+
+    .panel-body {
+        border-top: 1px solid #ddd;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
     }
 
 </style>
@@ -39,7 +81,7 @@
     <div class="standard-modal" id="location-map-modal">
         <div class="modal-content">
             <div class ="modal-header">
-                <h2 class="text-center" id="standard-modal-headline">Claims of {{group}}<br><small>This page is for organisation between organistaions.</small></h2>
+                <h2 class="text-center" id="standard-modal-headline">Claims of {{group}}<br><small>This page is for organisation in or between organistaions.</small></h2>
             </div>
             <div class="modal-body">
                 <div class="row" style="margin-top: 15px;">
@@ -93,37 +135,51 @@
                         <div style="max-height: 400px; overflow-y: scroll;">
                             <div class="col-sm-12">
                                 <div class="list-group" id="poly-list">
-                                    {% if polyuser %}
-                                        {% for poly in polyuser %}
-                                            <div class="row" style="margin-right: -10px;">
-                                                <a class="list-group-item" type="button" id="standard-list-group-item-div">
-                                                    <div class="row">
-                                                        <div class="col-sm-9">
-                                                            <h4 class="list-group-item-heading">{{ poly.title }}</h4>
-                                                        </div>
-                                                        <div class="col-sm-3">
-                                                            <input type="checkbox" id="checkbox{{forloop.counter0}}" aria-label="..." style="float: right;">
-                                                        </div>
+                                    {% for poly in polyuser %}
+                                        <div class="row" style="margin-right: -10px;">
+                                            <a class="list-group-item" type="button" id="standard-list-group-item-div">
+                                                <div class="row">
+                                                    <div class="col-sm-9">
+                                                        <h4 class="list-group-item-heading">{{ poly.title }}</h4>
                                                     </div>
-                                                </a>
-                                                <div class="list-group-footer" style="margin-bottom: 15px;">
-                                                    <div class="row">
-                                                        <div class="col-sm-9">
-                                                            <p style="text-align:left;"><i>Owner {% if user == poly.claimer %} you{% else %} {{poly.claimer}}{% endif %}</i></p>
-                                                        </div>
-                                                        <a class="list-group-footer-button cursor-pointer" type="button" onclick="deleteClaim({{poly.pk}})">
-
-                                                            <div class="col-sm-3">
-                                                                <span class="glyphicon glyphicon-remove"></span> Delete
-                                                            </div>
-                                                        </a>
+                                                    <div class="col-sm-3">
+                                                        <input type="checkbox" id="checkbox{{forloop.counter0}}" aria-label="..." style="float: right;">
                                                     </div>
                                                 </div>
+                                            </a>
+                                            <div class="list-group-footer" style="margin-bottom: 15px;">
+                                                <div class="row">
+                                                    <div class="col-sm-9">
+                                                        <p id="claim-owner"><i>Owner {% if user == poly.claimer %} you{% else %} {{poly.claimer}}{% endif %}</i></p>
+                                                    </div>
+                                                    <a class="list-group-footer-button cursor-pointer" type="button" onclick="deleteClaim({{poly.pk}})">
+                                                        <div class="col-sm-3">
+                                                            <span class="glyphicon glyphicon-remove"></span> Delete
+                                                        </div>
+                                                    </a>
+                                                </div>
                                             </div>
-                                        {% empty %}
-                                            <h4>This organisation has no claims.</h4>
-                                        {% endfor %}
-                                    {% endif %}
+                                        </div>
+                                    {% empty %}
+                                        <h4>This organisation has no claims.</h4>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- needs and information tabs -->
+                    <div class="col-sm-12" style="margin-bottom: 15px;">
+                        <div class="col-sm-12" id="nav-pills-outer">
+                            <ul class="nav nav-pills nav-justified">
+                                <li class="active"><a href="#tab-needs" data-toggle="tab"><h4 style="font-weight:bold;">Needs</h4></a></li>
+                                <li><a href="#tab-information" data-toggle="tab"><h4 style="font-weight:bold;">Information</h4></a></li>
+                            </ul>
+                            <div class="panel-body">
+                                <div class="tab-content">
+                                    <div class="tab-pane fade in active" id="tab-needs">Needs</div>
+                                    <div class="tab-pane fade" id="tab-information">Information</div>
                                 </div>
                             </div>
                         </div>
@@ -134,8 +190,6 @@
         </div>
     </div>
 </div>
-
-
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <!-- Include all compiled plugins (below), or include individual files as needed -->
