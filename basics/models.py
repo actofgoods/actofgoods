@@ -173,7 +173,7 @@ class Room(models.Model):
 		self.save()
 
 	def set_room_finished(self, user):
-	    if self.user_req ==user:
+		if self.user_req ==user:
 			self.help_user_finished = True
 		else:
 			self.need_user_finished = True
