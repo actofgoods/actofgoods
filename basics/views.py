@@ -437,7 +437,15 @@ def information_view(request, pk):
         information = get_object_or_404(Information, pk=pk)
         comments = Comment.objects.filter(inf=information).order_by('date')
         return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
+    return redirect('basics:actofgoods_startpage')
 
+def information_delete_comment(request, pk_inf, pk_comm):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated:
+        comment = Comment.objects.get(pk=pk_comm)
+        comment.delete()
+        return redirect('basics:information_view', pk=pk_inf)
     return redirect('basics:actofgoods_startpage')
 
 def information_view_comment(request, pk):
@@ -749,7 +757,6 @@ def needs_new(request):
             need = NeedFormNew(request.POST)
             #print(need)
             if need.is_valid():
-
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
@@ -1256,15 +1263,15 @@ def priority_need_group(x):
 
 def priority_info_user(x, likes):
     """x is number of hours since need was posted"""
-    if (x-(likes/60)) <= 24 and x >= 0:
-        return pow(10, 4+(likes/10000))
-    elif (x-(likes/60)) > 24:
-        return pow(10, 4+(likes/10000)-pow(((x-(likes/60)-24)/(6+(likes/100))),2)/100)
+    if (x-(likes/60)) < 24 and x >= 0:
+        return (75000+likes)/15
+    elif (x-(likes/60)) >= 24:
+        return (75000+likes)/(x-9-(likes/60))
     return 0
 
 def priority_info_group(x, likes):
-    if (x-(likes/60)) <= 24 and x >= 0:
-        return pow(10, 4+(likes/10000)) + 1000
-    elif (x-(likes/60)) > 24:
-        return pow(10, 4+(likes/10000)-pow(((x-(likes/60)-24)/(6+(likes/100))),2)/100) + 1000
+    if (x-(likes/40)) < 24 and x >= 0:
+        return ((3060000/41)+(3*likes))/(24-(384/41))
+    elif (x-(likes/40)) >= 24:
+        return ((3060000/41)+(3*likes))/(x-(384/41)-(likes/40)) 
     return 0
