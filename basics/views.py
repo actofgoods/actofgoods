@@ -481,7 +481,7 @@ def information_update(request, pk):
             if lat != None and lng != None:
                 information.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
             if text != "":
-                information.text = information.text + "\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S") +"\n" + text
+                information.text = information.text + "\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z") +"\n" + text
             information.save()
             return actofgoods_startpage(request)
         form = InformationFormNew()
