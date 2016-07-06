@@ -61,7 +61,7 @@
                             <div class="row">
                                 <div class="col-sm-12" data-toggle="modal" data-target=".{{ need.id }}">
                                     <h4 class="list-group-item-heading">{{ need.headline }}</h4>
-                                    <p class="list-group-item-text">{{ need|get_short_text:160 }}</p>
+                                    <p class="list-group-item-text" style="word-wrap: break-word;">{{ need|get_short_text:160 }}</p>
                                 </div>
                                 <div class="col-sm-11" data-toggle="modal" data-target=".{{ need.id }}">
                                     <h6><br>from: {{ need.date }} / category: {{ need.categorie.name }} / number of reports: {{ need.number_reports }}</h6>
@@ -84,7 +84,7 @@
                                         <h6>from: {{ need.date }} / category: {{ need.categorie.name }} / number of reports: {{ need.number_reports }}</h6>
                                     </div>
                                     <div class="modal-body">
-                                        <p>{{ need.text|linebreaksbr }}</p>
+                                        <p style="word-wrap: break-word;">{{ need.text|linebreaksbr }}</p>
                                     </div>
                                     <div class="modal-footer">
                                         <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>

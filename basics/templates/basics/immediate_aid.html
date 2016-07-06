@@ -11,7 +11,7 @@
             {%csrf_token%}
                 <h4>Enter an email address so we can create an account for you. Notice that nobody will see your email address:</h4>
                 <div class="form-group">
-                    <input type="Email" class="form-control input-lg" placeholder="Email" name="email"  rows="4" value="{{form.email.value}}"></textarea>
+                    <input type="Email" class="form-control input-lg" placeholder="Email" name="email"  rows="4" value="{{form.email.value}}" maxlength="255"></textarea>
                 </div>
                 <h4>Enter a headline for your need:</h4>
                 <div class="form-group">

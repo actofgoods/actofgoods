@@ -20,7 +20,7 @@
                         {%csrf_token%}
                             <div class="form-group">
                                 <div class="col-md-8 col-sm-6">
-                                    <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" maxlength="254" style="margin-top: 15px; margin-bottom: 15px;" required/>
+                                    <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" maxlength="255" style="margin-top: 15px; margin-bottom: 15px;" required/>
                                 </div>
                                 <div class="col-md-2 col-sm-3">
                                     <input name="filter_in_progress_requests" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Filter"/>
@@ -51,7 +51,7 @@
                                     {% endif %}
                                     <div class="row">
                                         <div class="col-sm-8">
-                                            <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" maxlength="254" style="margin-top: 15px; margin-bottom: 15px;" required/>
+                                            <input type="email" class="form-control input-lg" placeholder="Email to filter" name="email" maxlength="255" style="margin-top: 15px; margin-bottom: 15px;" required/>
                                         </div>
                                         <div class="col-sm-4">
                                             <input name="filter_in_progress_requests" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" style="margin-top: 15px;" value="Filter"/>
