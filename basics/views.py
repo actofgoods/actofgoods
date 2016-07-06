@@ -481,9 +481,7 @@ def information_update(request, pk):
             if lat != None and lng != None:
                 information.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
             if text != "":
-                information.text=text
-            else:
-                information.text = information + "\n UPDATE " + timezone.now() +"\n text"
+                information.text = information.text + "\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S") +"\n" + text
             information.save()
             return actofgoods_startpage(request)
         form = InformationFormNew()
@@ -1284,5 +1282,5 @@ def priority_info_group(x, likes):
     if (x-(likes/40)) < 24 and x >= 0:
         return ((3060000/41)+(3*likes))/(24-(384/41))
     elif (x-(likes/40)) >= 24:
-        return ((3060000/41)+(3*likes))/(x-(384/41)-(likes/40)) 
+        return ((3060000/41)+(3*likes))/(x-(384/41)-(likes/40))
     return 0
