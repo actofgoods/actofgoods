@@ -64,6 +64,9 @@ class Groupdata(models.Model):
 class Update(models.Model):
 	update_at = models.DateTimeField()
 
+class Helped(models.Model):
+	was_helped_at = models.DateTimeField()
+
 class Need(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
@@ -80,6 +83,7 @@ class Need(models.Model):
 	objects = models.GeoManager()
 	priority = models.FloatField(default=1000)
 	update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
+	was_helped_at = models.ForeignKey(Helped, on_delete=models.CASCADE, blank=True, null=True)
 
 class Information(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)

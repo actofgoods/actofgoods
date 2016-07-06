@@ -722,6 +722,9 @@ def needs_help(request, id):
                 room = Room.objects.create(name=id_generator(), need=need)
                 room.user_req = request.user
                 room.save()
+                helped_at = Helped.objects.create(was_helped_at=timezone.now())
+                need.was_helped_at = helped_at
+                need.save()
                 return redirect('basics:chat_room', roomname=room.name)
             else:
                 print("User: " + request.user.email + " tried to help his own need: " + room.need.headline + "\n TODO: print error message for User" )
