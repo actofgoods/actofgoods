@@ -41,6 +41,10 @@
             margin-bottom: 10px;
         }
 
+        #not-last-object {
+            margin-bottom: 15px;
+        }
+
     }
 
     #outer-claim-scroll {
@@ -183,7 +187,6 @@
                         </div>
                     </div>
 
-
                     <!-- needs and information tabs -->
                     <div class="col-sm-12" style="margin-bottom: 15px;">
                         <div class="col-sm-12" id="nav-pills-outer">
@@ -193,8 +196,44 @@
                             </ul>
                             <div class="panel-body">
                                 <div class="tab-content">
-                                    <div class="tab-pane fade in active" id="tab-needs">Needs</div>
-                                    <div class="tab-pane fade" id="tab-information">Information</div>
+                                    <div class="tab-pane fade in active" id="tab-needs">
+                                        <form class="form" id="filter-form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
+                                            {%csrf_token%}
+                                            <div class="row" style="margin-top: 15px; margin-bottom: 15px;">
+                                                <div class="col-sm-4 col-sm-offset-1" id="not-last-object" style="margin-top: 5px;">
+                                                    <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" placeholder="Search" aria-describedby="basic-addon3"></input>
+                                                </div>
+                                                <div class="col-sm-4" id="not-last-object" style="margin-top: 5px;">
+                                                    <select style="width: 100%" name="category" id="category">
+                                                        <option value="All" {% if 'All' == category %}selected{% endif %}>All categories</option>
+                                                        <!-- TODO insert all categories -->
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <p>
+                                            All needs from your chosen claims:
+                                        </p>
+                                    </div>
+                                    <div class="tab-pane fade" id="tab-information">
+                                        <form class="form" id="filter-form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
+                                            {%csrf_token%}
+                                            <div class="row" style="margin-top: 15px; margin-bottom: 15px;">
+                                                <div class="col-sm-8 col-sm-offset-1" id="not-last-object" style="margin-top: 5px;">
+                                                    <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" placeholder="Search" aria-describedby="basic-addon3"></input>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <p>
+                                            All information from your chosen claims:
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
