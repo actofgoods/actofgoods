@@ -194,7 +194,8 @@ def rooms_to_json(rooms):
 def claim(request, name):
     if request.user.is_authenticated():
         if request.user.groups.filter(name=name).exists():
-            return render(request, 'basics/map_claim.html', {'group': name, 'polygons': ClaimedArea.objects.all(), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
+            categories=CategoriesNeeds.objects.all
+            return render(request, 'basics/map_claim.html', {'categories': categories,'group': name, 'polygons': ClaimedArea.objects.all(), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -240,7 +241,58 @@ def claim_refresh(request,name):
             t = loader.get_template('snippets/claim.html')
             return HttpResponse(t.render({'index':index, 'poly': ClaimedArea.objects.get(pk=pk)}))
 
+@csrf_protect
+def claim_needs(request, name):
+    if request.user.is_authenticated():
+        #TODO: Change this to somehing like user distance
+        group = Groupdata.objects.get(name=name)
+        liste=request.POST.getlist('liste[]')
+        if liste:
+            claims = ClaimedArea.objects.filter(pk__in=liste)
+        else:
+            claims = ClaimedArea.objects.filter(group=group.group)
+        needs=Need.objects.all().order_by('priority', 'pk').reverse()
 
+        #for claim in claims:
+        if claims.exists():
+            query = Q(adrAsPoint__within=claims[0].poly)
+            for q in claims[1:]:
+                query |= Q(adrAsPoint__within=q.poly)
+            needs = needs.filter(query)     
+        if "" != request.POST['category'] and "All" != request.POST['category']:
+            category = request.POST['category']
+            needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
+        if "" != request.POST['wordsearch']:
+            wordsearch = request.POST['wordsearch']
+            needs = needs.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
+        t = loader.get_template('snippets/claim_needs.html')
+        return HttpResponse(t.render({'user': request.user, 'needs':needs}))
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def claim_information(request, name):
+    if request.user.is_authenticated():
+        #TODO: Change this to somehing like user distance
+        group = Groupdata.objects.get(name=name)
+        liste=request.POST.getlist('liste[]')
+        if liste:
+            claims = ClaimedArea.objects.filter(pk__in=liste)
+        else:
+            claims = ClaimedArea.objects.filter(group=group.group)
+        infos=Information.objects.all().order_by('priority', 'pk').reverse()
+
+        #for claim in claims:
+        if claims.exists():
+            query = Q(adrAsPoint__within=claims[0].poly)
+            for q in claims[1:]:
+                query |= Q(adrAsPoint__within=q.poly)
+            infos = infos.filter(query)     
+        if "" != request.POST['wordsearch']:
+            wordsearch = request.POST['wordsearch']
+            infos = infos.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
+        t = loader.get_template('snippets/claim_informations.html')
+        return HttpResponse(t.render({'user': request.user, 'infos':infos}))
+    return redirect('basics:actofgoods_startpage')
 
 
 
@@ -664,7 +716,6 @@ def needs_filter(request):
             dist = request.user.userdata.aux
         else:
             dist=500
-        x=timezone.now()
         category = "All"
         cards_per_page = 10
         wordsearch = ""
@@ -694,15 +745,11 @@ def needs_filter(request):
                 needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         #TODO: this way is fucking slow and should be changed but i didn't found a better solution
         needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
-        y=timezone.now()
-        print(y-x)
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
         needs.sort(key=lambda x: (x.priority, x.pk), reverse=True)
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
-        y=timezone.now()
-        print(y-x)
         return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))
     return redirect('basics:actofgoods_startpage')
 

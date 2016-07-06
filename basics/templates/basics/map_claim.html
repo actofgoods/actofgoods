@@ -1,5 +1,5 @@
 {% extends 'basics/base.html' %}
-
+{% load staticfiles %}
 {% block content %}
 
 <style>
@@ -196,42 +196,39 @@
                             <div class="panel-body">
                                 <div class="tab-content">
                                     <div class="tab-pane fade in active" id="tab-needs">
-                                        <form class="form" id="filter-form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
-                                            {%csrf_token%}
                                             <div class="row" style="margin-top: 15px; margin-bottom: 15px;">
                                                 <div class="col-sm-4 col-sm-offset-1" id="not-last-object" style="margin-top: 5px;">
-                                                    <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" placeholder="Search" aria-describedby="basic-addon3"></input>
+                                                    <input type="text" class="form-control" id="need-wordsearch" name="word-search" placeholder="Search" aria-describedby="basic-addon3"/>
                                                 </div>
                                                 <div class="col-sm-4" id="not-last-object" style="margin-top: 5px;">
                                                     <select style="width: 100%" name="category" id="category">
-                                                        <option value="All" {% if 'All' == category %}selected{% endif %}>All categories</option>
-                                                        <!-- TODO insert all categories -->
+                                                        <option value="All" {% if 'All' == category %}selected{% endif %}>All Categories</option>
+                                                        {% for cat in categories %}
+                                                            <option value="{{ cat.name }}" {% if cat.name == category %}selected{% endif %}>{{ cat.name }}</option>
+                                                        {% endfor %}
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                                                    <input id="standard-grey-button-bold" type="button" onclick="loadNeeds()" class="btn btn-block btn-lg btn-primary" value="Filter"/>
                                                 </div>
                                             </div>
-                                        </form>
-                                        <p>
-                                            All needs from your chosen claims:
-                                        </p>
+
+                                        <div class="list-group" style="margin-bottom: 0px;" id="need-list">
+
+                                        </div>
                                     </div>
                                     <div class="tab-pane fade" id="tab-information">
-                                        <form class="form" id="filter-form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
-                                            {%csrf_token%}
                                             <div class="row" style="margin-top: 15px; margin-bottom: 15px;">
                                                 <div class="col-sm-8 col-sm-offset-1" id="not-last-object" style="margin-top: 5px;">
-                                                    <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" placeholder="Search" aria-describedby="basic-addon3"></input>
+                                                    <input type="text" class="form-control" id="info-wordsearch" name="word-search" placeholder="Search" aria-describedby="basic-addon3"/>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                                                    <input id="standard-grey-button-bold" type="button" onclick="loadInfos()" class="btn btn-block btn-lg btn-primary" value="Filter"/>
                                                 </div>
                                             </div>
-                                        </form>
-                                        <p>
-                                            All information from your chosen claims:
-                                        </p>
+                                        <div class="list-group" style="margin-bottom: 0px;" id="info-list">
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -277,10 +274,58 @@
             },
             error: function(xhr, errmsg, err){
                 console.log(xhr.status + ": " + xhr.responseText);
+                $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
             },
         });
     }
 
+    function loadNeeds(){
+        liste=getChecked();
+        console.log(liste);
+        $.ajax({
+
+              url: "needs/",
+              type: "POST",
+              data: {csrfmiddlewaretoken: '{{ csrf_token }}', category: $("#category").val(), wordsearch: $("#need-wordsearch").val(), liste: liste},
+
+              beforeSend: function() {
+                $('#need-list').html("<div class='modal-body' style='padding-bottom: 0px;'' id='loader'><center><img src='{% static 'basics/images/loader.gif' %}'/></center></div><br>");
+              },
+
+              success: function(data){
+                $('#need-list').html(data);
+                console.log("success");
+              },
+
+              error: function(xhr, errmsg, err){
+                console.log(xhr.status + ": " + xhr.responseText);
+              }
+            });
+    }
+
+    function loadInfos(){
+        liste=getChecked();
+        console.log(liste);
+        $.ajax({
+
+              url: "infos/",
+              type: "POST",
+              data: {csrfmiddlewaretoken: '{{ csrf_token }}', wordsearch: $("#info-wordsearch").val(), liste: liste},
+
+              beforeSend: function() {
+                $('#info-list').html("<div class='modal-body' style='padding-bottom: 0px;'' id='loader'><center><img src='{% static 'basics/images/loader.gif' %}'/></center></div><br>");
+              },
+
+              success: function(data){
+                $('#info-list').html(data);
+                console.log("success");
+              },
+
+              error: function(xhr, errmsg, err){
+                console.log(xhr.status + ": " + xhr.responseText);
+              }
+            });
+    }
 
     function refreshClaim(pk, index){
        $.ajax({
@@ -294,12 +339,14 @@
                 if($(this).is(':checked'))
                 {
                     ownPolys[index].setOptions({fillOpacity: 0.4, fillColor: '#006400', strokeOpacity: 3.0, strokeWeight: 6, strokeColor: '#006400'});
-                    getChecked();
+                    loadNeeds();
+                    loadInfos();
                 }
                 else
                 {
                     ownPolys[index].setOptions({fillOpacity: 0.35, fillColor: '#FF0000', strokeOpacity: 0.9, strokeWeight: 3, strokeColor: '#FF0000'});
-                    getChecked();
+                    loadNeeds();
+                    loadInfos();
                 }
             });
 
@@ -308,6 +355,7 @@
 
         error: function(xhr, errmsg, err){
             console.log(xhr.status + ": " + xhr.responseText);
+            $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
         }
     });
 
@@ -352,11 +400,12 @@
 }
 
     function getChecked(){
-        var list=[];
+        var liste=[];
         $("input[type=checkbox]:checked").each(function(){
-            list.push($(this).val());
+            liste.push($(this).val());
         });
-        console.log(list);
+        console.log(liste);
+        return liste;
 
     }
 
@@ -462,12 +511,14 @@
                 if($(this).is(':checked'))
                 {
                     ownPolys[_i].setOptions({fillOpacity: 0.4, fillColor: '#006400', strokeOpacity: 3.0, strokeWeight: 6, strokeColor: '#006400'});
-                    getChecked();
+                    loadNeeds();
+                    loadInfos();
                 }
                 else
                 {
                     ownPolys[_i].setOptions({fillOpacity: 0.35, fillColor: '#FF0000', strokeOpacity: 0.9, strokeWeight: 3, strokeColor: '#FF0000'});
-                    getChecked();
+                    loadNeeds();
+                    loadInfos();
                 }
             });
             })(i);
