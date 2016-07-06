@@ -124,6 +124,13 @@ def kick_user(request, roomname):
         ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')
 
+def needs_finish(request, roomname):
+    if request.user.is_authenticated():
+        room = Room.objects.get(name=roomname)
+        text = request.user.username + " finished."
+        room.set_room_finished(room, request.user)
+        ChatMessage.objects.create(room=room, text=text, author=None)
+    return redirect('basics:actofgoods_startpage')
 """
     Needs authentication!
 
@@ -146,6 +153,7 @@ def chat_room(request, roomname):
             return render(request, 'basics/chat.html',{'name':name,'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
+
 
 def messages_to_json(messages):
     message_json = "["
@@ -675,7 +683,7 @@ def needs_filter(request):
             if "" != request.POST['range']:
                 dist= int(request.POST['range'].replace(',',''))
                 if not request.user.is_superuser:
-                    needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))            
+                    needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
             if "" != request.POST['wordsearch']:
                 wordsearch = request.POST['wordsearch']
                 needs = needs.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))

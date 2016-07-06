@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CategoriesNeeds, Room, ChatMessage, Need
+from .models import *
 
 admin.site.register(
     CategoriesNeeds,
@@ -26,4 +26,8 @@ admin.site.register(
 
 )
 
+admin.site.register(
+    ClaimedArea,
+    list_display=['claimer', 'group', 'title'],
+)
 # Register your models here.
