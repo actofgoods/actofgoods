@@ -281,8 +281,8 @@
                                         <div class="row">
                                               <a href="{% url 'basics:information_view' pk=elem.id %}">
                                                   <div class="col-sm-12">
-                                                      <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ elem.headline }}<div style="font-size: .83em; color: #555; hover.color: #555; float: right;"><span class="glyphicon glyphicon-chevron-up"></span>{{ elem.number_likes }}</div></h4>
-                                                      <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:512|linebreaksbr }}</p>
+                                                      <h4 class="list-group-item-heading" style="color: #333; hover.color: #333; word-wrap: break-word;">{{ elem.headline }}<div style="font-size: .83em; color: #555; hover.color: #555; float: right;"><span class="glyphicon glyphicon-chevron-up"></span>{{ elem.number_likes }}</div></h4>
+                                                      <p class="list-group-item-text" style="color: #555; hover.color: #555; word-wrap: break-word;">{{ elem|get_short_text:512|linebreaksbr  }}</p>
                                                       <h6 style="color: #555; hover.color: #555;"><br><i>from {{ elem.date }} {% if elem.author_is_admin %} by <span style="color: #D36E5A;">Admin</span>{% elif elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
                                                   </div>
                                               </a>
@@ -308,8 +308,8 @@
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
                                             <div class="col-sm-12" data-toggle="modal" data-target=".n{{elem.id}}" id="cursor-pointer">
-                                                <h4 class="list-group-item-heading">{{ elem.headline }}<div style="font-size: .83em; color: #555; hover.color: #555; float: right;"><span title="wait for help" class="glyphicon glyphicon-hourglass"></span></div></h4>
-                                                <p class="list-group-item-text">{{ elem|get_short_text:512|linebreaksbr }}</p>
+                                                <h4 class="list-group-item-heading" style="word-wrap: break-word;">{{ elem.headline }}<div style="font-size: .83em; color: #555; hover.color: #555; float: right; "><span title="wait for help" class="glyphicon glyphicon-hourglass"></span></div></h4>
+                                                <p class="list-group-item-text" style="word-wrap: break-word;">{{ elem|get_short_text:512|linebreaksbr }}</p>
                                                 <h6><br><i>from {{ elem.date }} in category {{ elem.categorie.name }} {% if elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
                                             </div>
                                         </div>
@@ -338,11 +338,11 @@
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <h2>{{elem.headline}}</h2>
+                                            <h2 style="word-wrap: break-word;">{{elem.headline}}</h2>
                                             <h6><i>from {{ elem.date }} in category {{ elem.categorie.name }} {% if elem.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ elem.group.name }}</a>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
                                         </div>
                                         <div class="modal-body">
-                                            <p>{{ elem.text|linebreaksbr }}</p>
+                                            <p style="word-wrap: break-word;">{{ elem|get_short_text:512|linebreaksbr }}</p>
                                         </div>
                                         <div class="modal-footer">
                                             <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -359,8 +359,8 @@
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
                                             <div class="col-sm-12" data-toggle="modal" data-target=".nh{{elem.id}}" id="cursor-pointer">
-                                                <h4 class="list-group-item-heading">{{ elem.headline }}</h4>
-                                                <p class="list-group-item-text">{{ elem|get_short_text:512|linebreaksbr }}</p>
+                                                <h4 class="list-group-item-heading" style="word-wrap: break-word;">{{ elem.headline }}</h4>
+                                                <p class="list-group-item-text" style="word-wrap: break-word;">{{ elem|get_short_text:512|linebreaksbr }}</p>
                                                 <h6><br><i>from {{ elem.date }} in category {{ elem.categorie.name }} {% if elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</i></h6>    <!-- TODO change date -->
                                             </div>
                                         </div>
@@ -384,11 +384,11 @@
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <h2>You help here: {{elem.headline}}</h2>
+                                            <h2 style="word-wrap: break-word;">You help here: {{elem.headline}}</h2>
                                             <h6><i>from {{ elem.date }} in category {{ elem.categorie.name }} {% if elem.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ elem.group.name }}</a>{% endif %}</i></h6>      <!-- TODO maby change date here too -->
                                         </div>
                                         <div class="modal-body">
-                                            <p>{{ elem.text|linebreaksbr }}</p>
+                                            <p style="word-wrap: break-word;">{{ elem.text|linebreaksbr }}</p>
                                         </div>
                                         <div class="modal-footer">
                                             <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -405,9 +405,9 @@
                                     <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                       <div class="row">
                                           <div class="col-sm-12" data-toggle="modal" data-target=".c{{elem.id}}" id="cursor-pointer">
-                                              <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ elem.inf.headline }}</h4>
-                                              <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ elem|get_short_text:512|linebreaksbr }}</p>
-                                              <h6 style="color: #555; hover.color: #555;"><br><i>from {{ elem.date }} {% if elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
+                                              <h4 class="list-group-item-heading" style="color: #333; hover.color: #333; word-wrap: break-word;">{{ elem.inf.headline }}</h4>
+                                              <p class="list-group-item-text" style="color: #555; hover.color: #555; word-wrap: break-word;">{{ elem|get_short_text:512|linebreaksbr }}</p>
+                                              <h6 style="color: #555; hover.color: #555; word-wrap: break-word;"><br><i>from {{ elem.date }} {% if elem.group %} by <span style="color: #70962c; word-wrap: break-word;">{{ elem.group.name }}</span>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
                                           </div>
                                       </div>
                                     </div>
@@ -438,7 +438,7 @@
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
-                                            <h2>Information: {{ elem.inf.headline }}</h2>
+                                            <h2 style="word-wrap: break-word;">Information: {{ elem.inf.headline }}</h2>
                                             <h6><i>from {{ elem.inf.date }} {% if elem.inf.author_is_admin %} by <span style="color: #D36E5A;">Admin</span>{% elif elem.inf.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.inf.group.name %}">{{ elem.inf.group.name }}</a>{% elif elem.inf.author == user %} by <span>you</span>{% endif %}</i></h6>
                                         </div>
                                         <div class="modal-body">

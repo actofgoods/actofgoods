@@ -11,7 +11,7 @@
                                     <div class="row">
                                         <div class="col-sm-12" data-toggle="modal" data-target=".{{ need.id }}" id="cursor-pointer">
                                             <h4 class="list-group-item-heading">{{ need.headline }}</h4>
-                                            <p class="list-group-item-text">{{ need|get_short_text:160 }}</p>
+                                            <p class="list-group-item-text" style="word-wrap: break-word;">{{ need|get_short_text:160 }}</p>
                                             <h6><br>from: {{ need.date }} / category: {{ need.categorie.name }}{% if need.group %} / by: <span style="color: #70962c;">{{ need.group.name }}</span>{% endif %}</h6>
                                         </div>
                                     </div>
@@ -57,7 +57,7 @@
                                         <h6>from: {{ need.date }} / category: {{ need.categorie.name }}{% if need.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=need.group.name %}">{{ need.group.name }}</a>{% endif %}</h6>
                                     </div>
                                     <div class="modal-body">
-                                        <p>{{ need.text|linebreaksbr }}</p>
+                                        <p style="word-wrap: break-word;">{{ need.text|linebreaksbr }}</p>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:needs_help' id=need.id %}';" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-comment"></span> Help</button>
