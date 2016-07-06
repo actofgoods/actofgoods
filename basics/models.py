@@ -139,10 +139,13 @@ class Room(models.Model):
 	slug = models.SlugField()
 	act_req = models.BooleanField(default=False)
 	act_off = models.BooleanField(default=False)
-	last_message = models.DateTimeField(auto_now=True)
+	last_message = models.DateTimeField(auto_now_add=True)
 	req_saw = models.BooleanField(default=True)
 	off_saw =  models.BooleanField(default=True)
 	helper_out = models.BooleanField(default=False)
+	need_user_finished = models.BooleanField(default=False)
+	help_user_finished = models.BooleanField(default=False)
+
 
 	def __unicode__(self):
 		return self.name
@@ -169,6 +172,12 @@ class Room(models.Model):
 			self.req_saw = False
 		self.save()
 
+	def set_room_finished(self, user):
+	    if self.user_req ==user:
+			self.help_user_finished = True
+		else:
+			self.need_user_finished = True
+		self.save()
 
 
 class ChatMessage(models.Model):
