@@ -51,6 +51,7 @@ urlpatterns = [
     url(r'^needs_all/report/$', views.report_need, name='report_need'),
     url(r'^needs_help/(?P<id>\d+)/$', views.needs_help, name='needs_help'),
     url(r'^needs_new/$', views.needs_new, name='needs_new'),
+    url(r'^needs_finish/(?P<roomname>[A-Za-z0-9]+)/$', views.needs_finish, name='needs_finish'),
     url(r'^needs_timeline/$', views.needs_timeline, name='needs_timeline'),
     url(r'^needs_view/(?P<pk>\d+)/$', views.needs_view, name='needs_view'),
     url(r'^privacy/$', views.privacy, name='privacy'),
