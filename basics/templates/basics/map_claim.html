@@ -43,6 +43,19 @@
 
     }
 
+    #outer-claim-scroll {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        padding-left: 10px;
+        padding-right: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-top: 0px;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        background-color: #FAFAFA;
+    }
+
     #nav-pills-outer {
         padding-left: 0px;
         padding-right: 0px;
@@ -131,38 +144,40 @@
                         <div id="map-container" style="border: 1px solid #ddd;"></div>
                     </div>
 
-                    <div class="col-sm-12" style="margin-top:15px; margin-bottom: 15px;">
-                        <div style="max-height: 400px; overflow-y: scroll;">
-                            <div class="col-sm-12">
-                                <div class="list-group" id="poly-list">
-                                    {% for poly in polyuser %}
-                                        <div class="row" style="margin-right: -10px;">
-                                            <a class="list-group-item" type="button" id="standard-list-group-item-div">
-                                                <div class="row">
-                                                    <div class="col-sm-9">
-                                                        <h4 class="list-group-item-heading">{{ poly.title }}</h4>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <input type="checkbox" id="checkbox{{forloop.counter0}}" aria-label="..." style="float: right;">
-                                                    </div>
-                                                </div>
-                                            </a>
-                                            <div class="list-group-footer" style="margin-bottom: 15px;">
-                                                <div class="row">
-                                                    <div class="col-sm-9">
-                                                        <p id="claim-owner"><i>Owner {% if user == poly.claimer %} you{% else %} {{poly.claimer}}{% endif %}</i></p>
-                                                    </div>
-                                                    <a class="list-group-footer-button cursor-pointer" type="button" onclick="deleteClaim({{poly.pk}})">
-                                                        <div class="col-sm-3">
-                                                            <span class="glyphicon glyphicon-remove"></span> Delete
+                    <div class="col-sm-12">
+                        <div class="col-sm-12" id="outer-claim-scroll">
+                            <div style="max-height: 410px; overflow-y: scroll;">
+                                <div class="col-sm-12">
+                                    <div class="list-group" id="poly-list">
+                                        {% for poly in polyuser %}
+                                            <div class="row" style="margin-right: -10px;">
+                                                <a class="list-group-item" type="button" id="standard-list-group-item-div">
+                                                    <div class="row">
+                                                        <div class="col-sm-9">
+                                                            <h4 class="list-group-item-heading">{{ poly.title }}</h4>
                                                         </div>
-                                                    </a>
+                                                        <div class="col-sm-3">
+                                                            <input type="checkbox" id="checkbox{{forloop.counter0}}" aria-label="..." style="float: right;">
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                                <div class="list-group-footer" style="margin-bottom: 15px;">
+                                                    <div class="row">
+                                                        <div class="col-sm-9">
+                                                            <p id="claim-owner"><i>Owner {% if user == poly.claimer %} you{% else %} {{poly.claimer}}{% endif %}</i></p>
+                                                        </div>
+                                                        <a class="list-group-footer-button cursor-pointer" type="button" onclick="deleteClaim({{poly.pk}})">
+                                                            <div class="col-sm-3">
+                                                                <span class="glyphicon glyphicon-remove"></span> Delete
+                                                            </div>
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    {% empty %}
-                                        <h4>This organisation has no claims.</h4>
-                                    {% endfor %}
+                                        {% empty %}
+                                            <h4>This organisation has no claims.</h4>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
