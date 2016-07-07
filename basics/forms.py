@@ -62,6 +62,13 @@ class ContactUsForm(forms.Form):
         model = ContactUs
         fields = ['email','headline','text']
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and User.objects.filter(email=email).count():
+            raise forms.ValidationError(u'Email addresses must be unique.')
+        return email
+
+
 class CategoriesForm(forms.Form):
     class Meta:
         model = CategoriesNeeds

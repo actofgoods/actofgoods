@@ -316,12 +316,21 @@ def contact_us(request):
             email = request.POST.get('email')
             headline = request.POST.get('headline')
             text = request.POST.get('text')
-            contactUsData = ContactUs(email=email, headline=headline, text=text)
-            #print(contactUsData.text)
-            contactUsData.save()
-            messages.add_message(request, messages.INFO, 'success contact us')
-            return redirect('basics:actofgoods_startpage')
-            # return render(request, 'basics/actofgoods_startpage.html')
+            if email != "":
+                if headline != "":
+                    if text != "":
+                        contactUsData = ContactUs(email=email, headline=headline, text=text)
+                        contactUsData.save()
+                        messages.add_message(request, messages.INFO, 'success contact us')
+                        return redirect('basics:actofgoods_startpage')
+                    else:
+                        messages.add_message(request, messages.INFO, 'no_description')
+                else:
+                    messages.add_message(request, messages.INFO, 'no_headline')
+            else:
+                messages.add_message(request, messages.INFO, 'empty_email')
+        else:
+            messages.add_message(request, messages.INFO, 'wrong_email')
     return render(request, 'basics/contact_us.html')
 
 """
