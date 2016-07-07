@@ -361,7 +361,7 @@
                                             <div class="col-sm-12" data-toggle="modal" data-target=".nh{{elem.id}}" id="cursor-pointer">
                                                 <h4 class="list-group-item-heading" style="word-wrap: break-word;">{{ elem.headline }}</h4>
                                                 <p class="list-group-item-text" style="word-wrap: break-word;">{{ elem|get_short_text:512|linebreaksbr }}</p>
-                                                <h6><br><i>from {{ elem.date }} in category {{ elem.categorie.name }} {% if elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</i></h6>    <!-- TODO change date -->
+                                                <h6><br><i>from {{ elem.was_helped_at.was_helped_at }} in category {{ elem.categorie.name }} {% if elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</i></h6>    <!-- TODO change date -->
                                             </div>
                                         </div>
                                     </a>
