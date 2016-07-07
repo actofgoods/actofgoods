@@ -383,6 +383,13 @@ def home(request):
 
     return redirect('basics:actofgoods_startpage')
 
+def delete_comment_timeline(request, pk):
+    if request.user.is_authenticated():
+        comment = Comment.objects.get(pk=pk)
+        comment.delete()
+        return redirect('basics:home')
+    return redirect('basics:actofgoods_startpage')
+
 """
     id_generator generates a random string 6 chars long if no other size is provided.
 """
