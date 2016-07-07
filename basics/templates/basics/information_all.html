@@ -26,7 +26,7 @@
                             <div class="col-sm-6" style="margin-bottom: 15px;">
                                 <div class="input-group">
                                     <span class="input-group-addon">Range:</span>
-                                    <input type="text" class="form-control" id="range" name="range" value="{{range}}" aria-describedby="basic-addon3"></input>
+                                    <input type="text" class="form-control" id="range" name="range" value="{{range}}" aria-describedby="basic-addon3" maxlength="5"></input>
                                     <span class="input-group-addon">km</span>
                                 </div>
                             </div>
@@ -67,7 +67,7 @@
                                     <div class="row">
                                         <div class="col-sm-12" data-toggle="modal" data-target=".{{ info.id }}">
                                             <h4 class="list-group-item-heading">{{ info.headline }}<div style="float: right;"><span class="glyphicon glyphicon-chevron-up"></span>{{ info.number_likes }}</div></h4>
-                                            <p class="list-group-item-text">{{ info|get_short_text:160 }}</p>
+                                            <p class="list-group-item-text" style="word-wrap: break-word;">{{ info|get_short_text:160 }}</p>
                                         </div>
                                         <div class="col-sm-9" data-toggle="modal" data-target=".{{ info.id }}">
                                             <h6><br>from: {{ info.date }}{% if info.author_is_admin %} / by: <span style="color: #D36E5A;">Admin</span>{% elif info.group %} / by: <span style="color: #70962c;">{{ info.group.name }}</span>{% elif info.author == user %} / by: <span>you</span>{% endif %}</h6>

@@ -1,5 +1,5 @@
 {% extends 'basics/base.html' %}
-
+{% load staticfiles %}
 {% block content %}
 
 <style>
@@ -154,14 +154,14 @@
                                 <div class="col-sm-12">
                                     <div class="list-group" id="poly-list">
                                         {% for poly in polyuser %}
-                                            <div class="row" style="margin-right: -10px;">
+                                            <div class="row" id="div{{forloop.counter0}}" style="margin-right: -10px;">
                                                 <a class="list-group-item" type="button" id="standard-list-group-item-div">
                                                     <div class="row">
                                                         <div class="col-sm-9">
                                                             <h4 class="list-group-item-heading">{{ poly.title }}</h4>
                                                         </div>
                                                         <div class="col-sm-3">
-                                                            <input type="checkbox" id="checkbox{{forloop.counter0}}" aria-label="..." style="float: right;">
+                                                            <input type="checkbox" value={{poly.pk}} id="checkbox{{forloop.counter0}}" aria-label="..." style="float: right;">
                                                         </div>
                                                     </div>
                                                 </a>
@@ -170,7 +170,7 @@
                                                         <div class="col-sm-9">
                                                             <p id="claim-owner"><i>Owner {% if user == poly.claimer %} you{% else %} {{poly.claimer}}{% endif %}</i></p>
                                                         </div>
-                                                        <a class="list-group-footer-button cursor-pointer" type="button" onclick="deleteClaim({{poly.pk}})">
+                                                        <a class="list-group-footer-button cursor-pointer" type="button" onclick="deleteClaim({{poly.pk}},{{forloop.counter0}})">
                                                             <div class="col-sm-3">
                                                                 <span class="glyphicon glyphicon-remove"></span> Delete
                                                             </div>
@@ -179,7 +179,6 @@
                                                 </div>
                                             </div>
                                         {% empty %}
-                                            <h4>This organisation has no claims.</h4>
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -197,42 +196,39 @@
                             <div class="panel-body">
                                 <div class="tab-content">
                                     <div class="tab-pane fade in active" id="tab-needs">
-                                        <form class="form" id="filter-form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
-                                            {%csrf_token%}
                                             <div class="row" style="margin-top: 15px; margin-bottom: 15px;">
                                                 <div class="col-sm-4 col-sm-offset-1" id="not-last-object" style="margin-top: 5px;">
-                                                    <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" placeholder="Search" aria-describedby="basic-addon3"></input>
+                                                    <input type="text" class="form-control" id="need-wordsearch" name="word-search" placeholder="Search" aria-describedby="basic-addon3"/>
                                                 </div>
                                                 <div class="col-sm-4" id="not-last-object" style="margin-top: 5px;">
                                                     <select style="width: 100%" name="category" id="category">
-                                                        <option value="All" {% if 'All' == category %}selected{% endif %}>All categories</option>
-                                                        <!-- TODO insert all categories -->
+                                                        <option value="All" {% if 'All' == category %}selected{% endif %}>All Categories</option>
+                                                        {% for cat in categories %}
+                                                            <option value="{{ cat.name }}" {% if cat.name == category %}selected{% endif %}>{{ cat.name }}</option>
+                                                        {% endfor %}
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                                                    <input id="standard-grey-button-bold" type="button" onclick="loadNeeds()" class="btn btn-block btn-lg btn-primary" value="Filter"/>
                                                 </div>
                                             </div>
-                                        </form>
-                                        <p>
-                                            All needs from your chosen claims:
-                                        </p>
+
+                                        <div class="list-group" style="margin-bottom: 0px;" id="need-list">
+
+                                        </div>
                                     </div>
                                     <div class="tab-pane fade" id="tab-information">
-                                        <form class="form" id="filter-form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
-                                            {%csrf_token%}
                                             <div class="row" style="margin-top: 15px; margin-bottom: 15px;">
                                                 <div class="col-sm-8 col-sm-offset-1" id="not-last-object" style="margin-top: 5px;">
-                                                    <input type="text" class="form-control" id="basic-url" name="word-search" value="{{wordsearch}}" placeholder="Search" aria-describedby="basic-addon3"></input>
+                                                    <input type="text" class="form-control" id="info-wordsearch" name="word-search" placeholder="Search" aria-describedby="basic-addon3"/>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                                                    <input id="standard-grey-button-bold" type="button" onclick="loadInfos()" class="btn btn-block btn-lg btn-primary" value="Filter"/>
                                                 </div>
                                             </div>
-                                        </form>
-                                        <p>
-                                            All information from your chosen claims:
-                                        </p>
+                                        <div class="list-group" style="margin-bottom: 0px;" id="info-list">
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -248,41 +244,7 @@
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAmqqg6nhFweM6hPaowtRZT0kRsHPZSaBA"></script>
-<script>
-function deleteClaim(pk){
-	$.ajax({
-		url: "delete/",
-		type: "POST",
-		data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk},
 
-		success: function(json){
-            refreshClaim();
-			$.notify("Deletion successful.",{className: "info", position: "right-bottom"});
-		},
-		error: function(xhr, errmsg, err){
-			console.log(xhr.status + ": " + xhr.responseText);
-		},
-	});
-}
-
-function refreshClaim(){
-   $.ajax({
-    url: "refresh/",
-    type: "POST",
-    data: {csrfmiddlewaretoken: '{{ csrf_token }}',},
-
-    success: function(data){
-        $('#poly-list').html(data);
-        console.log("success");
-    },
-
-    error: function(xhr, errmsg, err){
-        console.log(xhr.status + ": " + xhr.responseText);
-    }
-});
-
-}
-</script>
 
 <script>
 	var map, poly;
@@ -298,6 +260,123 @@ function refreshClaim(){
     var othPolys=[];
     var ownPolys=[];
 
+    function deleteClaim(pk,divid){
+        $.ajax({
+            url: "delete/",
+            type: "POST",
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk},
+
+            success: function(json){
+                //refreshClaim();
+                $.notify("Deletion successful.",{className: "info", position: "right-bottom"});
+                $("#div"+divid).remove();
+                ownPolys[divid].setMap(null);
+            },
+            error: function(xhr, errmsg, err){
+                console.log(xhr.status + ": " + xhr.responseText);
+                $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
+            },
+        });
+    }
+
+    function loadNeeds(){
+        liste=getChecked();
+        console.log(liste);
+        $.ajax({
+
+              url: "needs/",
+              type: "POST",
+              data: {csrfmiddlewaretoken: '{{ csrf_token }}', category: $("#category").val(), wordsearch: $("#need-wordsearch").val(), liste: liste},
+
+              beforeSend: function() {
+                $('#need-list').html("<div class='modal-body' style='padding-bottom: 0px;'' id='loader'><center><img src='{% static 'basics/images/loader.gif' %}'/></center></div><br>");
+              },
+
+              success: function(data){
+                $('#need-list').html(data);
+                console.log("success");
+              },
+
+              error: function(xhr, errmsg, err){
+                console.log(xhr.status + ": " + xhr.responseText);
+              }
+            });
+    }
+
+    function loadInfos(){
+        liste=getChecked();
+        console.log(liste);
+        $.ajax({
+
+              url: "infos/",
+              type: "POST",
+              data: {csrfmiddlewaretoken: '{{ csrf_token }}', wordsearch: $("#info-wordsearch").val(), liste: liste},
+
+              beforeSend: function() {
+                $('#info-list').html("<div class='modal-body' style='padding-bottom: 0px;'' id='loader'><center><img src='{% static 'basics/images/loader.gif' %}'/></center></div><br>");
+              },
+
+              success: function(data){
+                $('#info-list').html(data);
+                console.log("success");
+              },
+
+              error: function(xhr, errmsg, err){
+                console.log(xhr.status + ": " + xhr.responseText);
+              }
+            });
+    }
+    function report(pk){
+        console.log(pk)
+
+        $.ajax({
+            url: "reportNeed/",
+            type: "POST",
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk},
+
+            success: function(){
+                loadNeeds();
+            },
+            error: function(xhr, errmsg, err){
+                $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
+            }
+        });
+
+    }
+
+    function refreshClaim(pk, index){
+       $.ajax({
+        url: "refresh/",
+        type: "POST",
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, index: index},
+
+        success: function(data){
+            $('#poly-list').append(data);
+            google.maps.event.addDomListener($("#checkbox"+index)[0], 'change', function(){
+                if($(this).is(':checked'))
+                {
+                    ownPolys[index].setOptions({fillOpacity: 0.4, fillColor: '#006400', strokeOpacity: 3.0, strokeWeight: 6, strokeColor: '#006400'});
+                    loadNeeds();
+                    loadInfos();
+                }
+                else
+                {
+                    ownPolys[index].setOptions({fillOpacity: 0.35, fillColor: '#FF0000', strokeOpacity: 0.9, strokeWeight: 3, strokeColor: '#FF0000'});
+                    loadNeeds();
+                    loadInfos();
+                }
+            });
+
+            console.log("success");
+        },
+
+        error: function(xhr, errmsg, err){
+            console.log(xhr.status + ": " + xhr.responseText);
+            $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
+        }
+    });
+
+    }
 
     function post_poly(){
     if(!saved){
@@ -312,7 +391,7 @@ function refreshClaim(){
 			data: {csrfmiddlewaretoken: '{{ csrf_token }}', path: pathi, claimname: claimnam},
 
 			success: function(json){
-                refreshClaim();
+                refreshClaim(json.pk, ownPolys.length);
 				$.notify("Creation successful!",{className: "success", position: "right-bottom"});
 				poly.setEditable(false);
                 poly.setDraggable(false);
@@ -323,6 +402,7 @@ function refreshClaim(){
 	  				info.open(map);
   				})
 				console.log(json);
+                ownPolys.push(poly);
 				console.log("success");
 			},
 
@@ -336,6 +416,15 @@ function refreshClaim(){
     }
 }
 
+    function getChecked(){
+        var liste=[];
+        $("input[type=checkbox]:checked").each(function(){
+            liste.push($(this).val());
+        });
+        console.log(liste);
+        return liste;
+
+    }
 
     function newClaim(){
         $("#claim-new-area").fadeIn('fast');
@@ -439,10 +528,14 @@ function refreshClaim(){
                 if($(this).is(':checked'))
                 {
                     ownPolys[_i].setOptions({fillOpacity: 0.4, fillColor: '#006400', strokeOpacity: 3.0, strokeWeight: 6, strokeColor: '#006400'});
+                    loadNeeds();
+                    loadInfos();
                 }
                 else
                 {
                     ownPolys[_i].setOptions({fillOpacity: 0.35, fillColor: '#FF0000', strokeOpacity: 0.9, strokeWeight: 3, strokeColor: '#FF0000'});
+                    loadNeeds();
+                    loadInfos();
                 }
             });
             })(i);

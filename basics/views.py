@@ -124,6 +124,13 @@ def kick_user(request, roomname):
         ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')
 
+def needs_finish(request, roomname):
+    if request.user.is_authenticated():
+        room = Room.objects.get(name=roomname)
+        text = request.user.username + " finished."
+        room.set_room_finished(room, request.user)
+        ChatMessage.objects.create(room=room, text=text, author=None)
+    return redirect('basics:actofgoods_startpage')
 """
     Needs authentication!
 
@@ -146,6 +153,7 @@ def chat_room(request, roomname):
             return render(request, 'basics/chat.html',{'name':name,'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
+
 
 def messages_to_json(messages):
     message_json = "["
@@ -186,7 +194,8 @@ def rooms_to_json(rooms):
 def claim(request, name):
     if request.user.is_authenticated():
         if request.user.groups.filter(name=name).exists():
-            return render(request, 'basics/map_claim.html', {'group': name, 'polygons': ClaimedArea.objects.all(), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
+            categories=CategoriesNeeds.objects.all
+            return render(request, 'basics/map_claim.html', {'categories': categories,'group': name, 'polygons': ClaimedArea.objects.all(), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -227,10 +236,75 @@ def claim_delete(request,name):
 def claim_refresh(request,name):
    if request.user.is_authenticated():
         if request.user.groups.filter(name=name).exists():
-            t = loader.get_template('snippets/map_claim.html')
-            return HttpResponse(t.render({'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))}))
+            index=request.POST['index']
+            pk = request.POST['pk']
+            t = loader.get_template('snippets/claim.html')
+            return HttpResponse(t.render({'index':index, 'poly': ClaimedArea.objects.get(pk=pk)}))
 
+@csrf_protect
+def claim_needs(request, name):
+    if request.user.is_authenticated():
+        #TODO: Change this to somehing like user distance
+        group = Groupdata.objects.get(name=name)
+        liste=request.POST.getlist('liste[]')
+        if liste:
+            claims = ClaimedArea.objects.filter(pk__in=liste)
+        else:
+            claims = ClaimedArea.objects.filter(group=group.group)
+        needs=Need.objects.all().order_by('-priority', 'pk')
 
+        #for claim in claims:
+        if claims.exists():
+            query = Q(adrAsPoint__within=claims[0].poly)
+            for q in claims[1:]:
+                query |= Q(adrAsPoint__within=q.poly)
+            needs = needs.filter(query)     
+        if "" != request.POST['category'] and "All" != request.POST['category']:
+            category = request.POST['category']
+            needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
+        if "" != request.POST['wordsearch']:
+            wordsearch = request.POST['wordsearch']
+            needs = needs.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
+        t = loader.get_template('snippets/claim_needs.html')
+        return HttpResponse(t.render({'user': request.user, 'needs':needs}))
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def claim_information(request, name):
+    if request.user.is_authenticated():
+        #TODO: Change this to somehing like user distance
+        group = Groupdata.objects.get(name=name)
+        liste=request.POST.getlist('liste[]')
+        if liste:
+            claims = ClaimedArea.objects.filter(pk__in=liste)
+        else:
+            claims = ClaimedArea.objects.filter(group=group.group)
+        infos=Information.objects.all().order_by('priority', 'pk').reverse()
+
+        #for claim in claims:
+        if claims.exists():
+            query = Q(adrAsPoint__within=claims[0].poly)
+            for q in claims[1:]:
+                query |= Q(adrAsPoint__within=q.poly)
+            infos = infos.filter(query)     
+        if "" != request.POST['wordsearch']:
+            wordsearch = request.POST['wordsearch']
+            infos = infos.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
+        t = loader.get_template('snippets/claim_informations.html')
+        return HttpResponse(t.render({'user': request.user, 'infos':infos}))
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def claim_report(request, name):
+    pk=int(request.POST['pk'])
+    #print(pk)
+    need = Need.objects.get(pk=pk)
+    need.was_reported = True
+    need.number_reports += 1
+    need.save()
+    need.reported_by.add(request.user.userdata)
+    #print(Need.objects.get(pk=pk).reported_by.all())
+    return HttpResponse("True")
 
 
 
@@ -307,6 +381,13 @@ def home(request):
         #print(list(map(lambda x: x.pk, result_list)))
         return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list})
 
+    return redirect('basics:actofgoods_startpage')
+
+def delete_comment_timeline(request, pk):
+    if request.user.is_authenticated():
+        comment = Comment.objects.get(pk=pk)
+        comment.delete()
+        return redirect('basics:home')
     return redirect('basics:actofgoods_startpage')
 
 """
@@ -437,7 +518,15 @@ def information_view(request, pk):
         information = get_object_or_404(Information, pk=pk)
         comments = Comment.objects.filter(inf=information).order_by('date')
         return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
+    return redirect('basics:actofgoods_startpage')
 
+def information_delete_comment(request, pk_inf, pk_comm):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated:
+        comment = Comment.objects.get(pk=pk_comm)
+        comment.delete()
+        return redirect('basics:information_view', pk=pk_inf)
     return redirect('basics:actofgoods_startpage')
 
 def information_view_comment(request, pk):
@@ -465,9 +554,7 @@ def information_update(request, pk):
             if lat != None and lng != None:
                 information.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
             if text != "":
-                information.text=text
-            else:
-                information.text = information + "\n UPDATE " + timezone.now() +"\n text"
+                information.text = information.text + "\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z") +"\n" + text
             information.save()
             return actofgoods_startpage(request)
         form = InformationFormNew()
@@ -648,7 +735,6 @@ def needs_filter(request):
             dist = request.user.userdata.aux
         else:
             dist=500
-        x=timezone.now()
         category = "All"
         cards_per_page = 10
         wordsearch = ""
@@ -667,7 +753,7 @@ def needs_filter(request):
             if "" != request.POST['range']:
                 dist= int(request.POST['range'].replace(',',''))
                 if not request.user.is_superuser:
-                    needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))            
+                    needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
             if "" != request.POST['wordsearch']:
                 wordsearch = request.POST['wordsearch']
                 needs = needs.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))
@@ -678,15 +764,11 @@ def needs_filter(request):
                 needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         #TODO: this way is fucking slow and should be changed but i didn't found a better solution
         needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
-        y=timezone.now()
-        print(y-x)
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
         needs.sort(key=lambda x: (x.priority, x.pk), reverse=True)
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
-        y=timezone.now()
-        print(y-x)
         return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))
     return redirect('basics:actofgoods_startpage')
 
@@ -706,6 +788,9 @@ def needs_help(request, id):
                 room = Room.objects.create(name=id_generator(), need=need)
                 room.user_req = request.user
                 room.save()
+                helped_at = Helped.objects.create(was_helped_at=timezone.now())
+                need.was_helped_at = helped_at
+                need.save()
                 return redirect('basics:chat_room', roomname=room.name)
             else:
                 print("User: " + request.user.email + " tried to help his own need: " + room.need.headline + "\n TODO: print error message for User" )
@@ -749,7 +834,6 @@ def needs_new(request):
             need = NeedFormNew(request.POST)
             #print(need)
             if need.is_valid():
-
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
                     address = Address.objects.create(latitude=lat, longditude=lng)
@@ -1049,8 +1133,8 @@ def report_need(request):
     need = Need.objects.get(pk=pk)
     need.was_reported = True
     need.number_reports += 1
-    need.reported_by.add(request.user.userdata)
     need.save()
+    need.reported_by.add(request.user.userdata)
     #print(Need.objects.get(pk=pk).reported_by.all())
     return needs_filter(request)
 
@@ -1059,7 +1143,6 @@ def report_information(request, pk):
     info.was_reported = True
     info.number_reports += 1
     info.reported_by.add(request.user.userdata)
-    info.save()
     return redirect('basics:information_all')
 
 def like_information(request, pk):
@@ -1144,7 +1227,6 @@ def report_comment(request, pk):
     comment.was_reported = True
     comment.number_reports += 1
     comment.reported_by.add(request.user.userdata)
-    comment.save()
     return information_view(request, comment.inf.pk)
 
 ####################################################################################################################################################
@@ -1256,15 +1338,15 @@ def priority_need_group(x):
 
 def priority_info_user(x, likes):
     """x is number of hours since need was posted"""
-    if (x-(likes/60)) <= 24 and x >= 0:
-        return pow(10, 4+(likes/10000))
-    elif (x-(likes/60)) > 24:
-        return pow(10, 4+(likes/10000)-pow(((x-(likes/60)-24)/(6+(likes/100))),2)/100)
+    if (x-(likes/60)) < 24 and x >= 0:
+        return (75000+likes)/15
+    elif (x-(likes/60)) >= 24:
+        return (75000+likes)/(x-9-(likes/60))
     return 0
 
 def priority_info_group(x, likes):
-    if (x-(likes/60)) <= 24 and x >= 0:
-        return pow(10, 4+(likes/10000)) + 1000
-    elif (x-(likes/60)) > 24:
-        return pow(10, 4+(likes/10000)-pow(((x-(likes/60)-24)/(6+(likes/100))),2)/100) + 1000
+    if (x-(likes/40)) < 24 and x >= 0:
+        return ((3060000/41)+(3*likes))/(24-(384/41))
+    elif (x-(likes/40)) >= 24:
+        return ((3060000/41)+(3*likes))/(x-(384/41)-(likes/40))
     return 0

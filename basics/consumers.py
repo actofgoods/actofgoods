@@ -48,6 +48,8 @@ def ws_echo(message):
     chatMessage = ChatMessage(author=author, room=db_room, text=text)
     chatMessage.save()
     db_room.incomming_message(author)
+    db_room.last_message = datetime.now()
+    db_room.save()
     user = db_room.user_req
     print(user)
     if user == author:

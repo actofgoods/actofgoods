@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="modal-body">
-            <p>{{ information.text | linebreaksbr }}</p>
+            <p style="word-wrap: break-word;">{{ information.text | linebreaksbr }}</p>
             <h5>Location:</h5>
             <div id="map-container" style="height: 450px; margin-top: 15px; margin-bottom: 20px;"></div>
             <div class="list-group">
@@ -43,7 +43,7 @@
                     <a class="list-group-item" {% if comment.id == reported_comment.id %} id="red-list-group-item-div" {% else %} id="standard-list-group-item-div" {% endif %}>
                         <div class="row">
                             <div class="col-sm-12" data-toggle="modal" data-target=".{{ comment.id }}">
-                                <p class="list-group-item-text">{{ comment|get_short_text:160 }}</p>
+                                <p class="list-group-item-text" style="word-wrap: break-word;">{{ comment|get_short_text:160 }}</p>
                             </div>
                             <div class="col-sm-11" data-toggle="modal" data-target=".{{ comment.id }}">
                                 <h6><br>from: {{ comment.date }} / number of reports: {{ comment.number_reports }} </h6>
@@ -68,7 +68,7 @@
                                 </div>
                                 <div class="modal-body">
                                     {% autoescape on %}
-                                        <p>{{ comment.text|linebreaksbr }}</p>
+                                        <p style="word-wrap: break-word;">{{ comment.text|linebreaksbr }}</p>
                                     {% endautoescape %}
                                 </div>
                                 <div class="modal-footer">

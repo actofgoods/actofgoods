@@ -63,7 +63,7 @@
                             <a href="{% url 'administration:information_admin' pk=info.id %}">
                                 <div class="col-sm-12">
                                     <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">{{ info.headline }}</h4>
-                                    <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ info|get_short_text:160 }}</p>
+                                    <p class="list-group-item-text" style="color: #555; hover.color: #555; word-wrap: break-word;">{{ info|get_short_text:160 }}</p>
                                 </div>
                             </a>
                             <a href="{% url 'administration:information_admin' pk=info.id %}" style="color: #555; hover.color: #555;">
@@ -90,7 +90,7 @@
                                 <a href="{% url 'administration:information_reported_comment_admin' pki=comment.inf.id pkc=comment.id %}">
                                     <div class="col-sm-12">
                                         <h4 class="list-group-item-heading" style="color: #333; hover.color: #333;">Information Headline: {{ comment.inf.headline }}</h4>
-                                        <p class="list-group-item-text" style="color: #555; hover.color: #555;">{{ comment.text }}</p>
+                                        <p class="list-group-item-text" style="color: #555; hover.color: #555; word-wrap: break-word;">{{ comment.text }}</p>
                                     </div>
                                 </a>
                                 <a href="{% url 'administration:information_reported_comment_admin' pki=comment.inf.id pkc=comment.id %}" style="color: #555; hover.color: #555;">

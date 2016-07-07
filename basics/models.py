@@ -64,6 +64,9 @@ class Groupdata(models.Model):
 class Update(models.Model):
 	update_at = models.DateTimeField()
 
+class Helped(models.Model):
+	was_helped_at = models.DateTimeField()
+
 class Need(models.Model):
 	author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
@@ -80,6 +83,7 @@ class Need(models.Model):
 	objects = models.GeoManager()
 	priority = models.FloatField(default=1000)
 	update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
+	was_helped_at = models.ForeignKey(Helped, on_delete=models.CASCADE, blank=True, null=True)
 
 class Information(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -139,10 +143,13 @@ class Room(models.Model):
 	slug = models.SlugField()
 	act_req = models.BooleanField(default=False)
 	act_off = models.BooleanField(default=False)
-	last_message = models.DateTimeField(auto_now=True)
+	last_message = models.DateTimeField(auto_now_add=True)
 	req_saw = models.BooleanField(default=True)
 	off_saw =  models.BooleanField(default=True)
 	helper_out = models.BooleanField(default=False)
+	need_user_finished = models.BooleanField(default=False)
+	help_user_finished = models.BooleanField(default=False)
+
 
 	def __unicode__(self):
 		return self.name
@@ -169,6 +176,12 @@ class Room(models.Model):
 			self.req_saw = False
 		self.save()
 
+	def set_room_finished(self, user):
+		if self.user_req ==user:
+			self.help_user_finished = True
+		else:
+			self.need_user_finished = True
+		self.save()
 
 
 class ChatMessage(models.Model):
