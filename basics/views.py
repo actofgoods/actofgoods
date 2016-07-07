@@ -150,7 +150,7 @@ def chat_room(request, roomname):
             #Get all rooms where request.user is in contact with
             rooms = get_valid_rooms(request.user).exclude(name=roomname).order_by('-last_message')
             rooms_json = rooms_to_json(rooms)
-            return render(request, 'basics/chat.html',{'name':name,'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
+            return render(request, 'basics/chat.html',{'name':name, 'room':room, 'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
 
