@@ -316,12 +316,21 @@ def contact_us(request):
             email = request.POST.get('email')
             headline = request.POST.get('headline')
             text = request.POST.get('text')
-            contactUsData = ContactUs(email=email, headline=headline, text=text)
-            #print(contactUsData.text)
-            contactUsData.save()
-            messages.add_message(request, messages.INFO, 'success contact us')
-            return redirect('basics:actofgoods_startpage')
-            # return render(request, 'basics/actofgoods_startpage.html')
+            if email != "":
+                if headline != "":
+                    if text != "":
+                        contactUsData = ContactUs(email=email, headline=headline, text=text)
+                        contactUsData.save()
+                        messages.add_message(request, messages.INFO, 'success contact us')
+                        return redirect('basics:actofgoods_startpage')
+                    else:
+                        messages.add_message(request, messages.INFO, 'no_description')
+                else:
+                    messages.add_message(request, messages.INFO, 'no_headline')
+            else:
+                messages.add_message(request, messages.INFO, 'empty_email')
+        else:
+            messages.add_message(request, messages.INFO, 'wrong_email')
     return render(request, 'basics/contact_us.html')
 
 """
@@ -381,6 +390,13 @@ def home(request):
         #print(list(map(lambda x: x.pk, result_list)))
         return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list})
 
+    return redirect('basics:actofgoods_startpage')
+
+def delete_comment_timeline(request, pk):
+    if request.user.is_authenticated():
+        comment = Comment.objects.get(pk=pk)
+        comment.delete()
+        return redirect('basics:home')
     return redirect('basics:actofgoods_startpage')
 
 """
