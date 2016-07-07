@@ -258,7 +258,7 @@ def claim_needs(request, name):
             query = Q(adrAsPoint__within=claims[0].poly)
             for q in claims[1:]:
                 query |= Q(adrAsPoint__within=q.poly)
-            needs = needs.filter(query)     
+            needs = needs.filter(query)
         if "" != request.POST['category'] and "All" != request.POST['category']:
             category = request.POST['category']
             needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
@@ -286,7 +286,7 @@ def claim_information(request, name):
             query = Q(adrAsPoint__within=claims[0].poly)
             for q in claims[1:]:
                 query |= Q(adrAsPoint__within=q.poly)
-            infos = infos.filter(query)     
+            infos = infos.filter(query)
         if "" != request.POST['wordsearch']:
             wordsearch = request.POST['wordsearch']
             infos = infos.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
@@ -563,7 +563,7 @@ def information_update(request, pk):
             text = request.POST.get('text', None)
             lat, lng = getAddress(request)
             if lat != None and lng != None:
-                information.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
+                information.address=Address.objects.create(latitude=lat, longditude=lng)
             if text != "":
                 information.text = information.text + "\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z") +"\n" + text
             else:
