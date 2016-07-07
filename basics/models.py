@@ -5,6 +5,7 @@ from django.utils.timezone import now
 from django.contrib.auth.models import User, Group
 from django.contrib.gis.db import models
 from django.core.validators import RegexValidator
+from django.contrib.auth import get_user_model
 
 # Create your models here.
 class Message(models.Model):
@@ -85,10 +86,13 @@ class Need(models.Model):
 	update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
 	was_helped_at = models.ForeignKey(Helped, on_delete=models.CASCADE, blank=True, null=True)
 
+def DELETE_USER():
+    return get_user_model().objects.get_or_create(username='deleted')[0]
+
 class Information(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    author = models.ForeignKey(User, on_delete=models.SET(DELETE_USER), blank=True, null=True)
     author_is_admin = models.BooleanField(default=False)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
+    group = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True)
     headline = models.CharField(max_length=30, default='')
     text = models.TextField(default='')
     closed = models.BooleanField(default=False)
@@ -107,8 +111,8 @@ class Information(models.Model):
 
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)
-	author = models.ForeignKey(User, on_delete=models.CASCADE)
-	group = models.ForeignKey(Group, on_delete=models.CASCADE, blank=True, null=True)
+	author = models.ForeignKey(User, on_delete=models.SET(DELETE_USER), null=True)
+	group = models.ForeignKey(Group, on_delete=models.SET_NULL, blank=True, null=True)
 	text = models.TextField(default='')
 	date = models.DateTimeField(auto_now_add=True)
 	was_reported = models.BooleanField(default=False)
