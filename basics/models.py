@@ -38,13 +38,15 @@ class Userdata(models.Model):
 	messages= models.ManyToManyField(Message)
 	GENDER = (('m', 'Male'),('f', 'Female'),)
 	gender = models.CharField(max_length=1, choices=GENDER)
-	address = models.ForeignKey(Address, on_delete=models.CASCADE)
 	get_notifications = models.BooleanField(default=False)
 	inform_about = models.ManyToManyField(CategoriesNeeds)
 	aux = models.PositiveIntegerField(default=50)
 	adrAsPoint=models.PointField(null=True)
 	def __unicode__(self):
 		return self.pseudonym
+
+	def get_lat_lng(self):
+		return self.adrAsPoint.y, self.adrAsPoint.x
 
 class CategoriesRep(models.Model):
 	name = models.CharField(max_length=50)
@@ -75,7 +77,6 @@ class Need(models.Model):
 	closed = models.BooleanField(default=False)
 	date = models.DateTimeField(auto_now_add=True)
 	categorie = models.ForeignKey(CategoriesNeeds)
-	address = models.ForeignKey(Address, on_delete=models.CASCADE)
 	was_reported = models.BooleanField(default=False)
 	number_reports = models.PositiveIntegerField(default=0)
 	reported_by = models.ManyToManyField(Userdata)
@@ -93,7 +94,6 @@ class Information(models.Model):
     text = models.TextField(default='')
     closed = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
     was_reported = models.BooleanField(default=False)
     number_reports = models.PositiveIntegerField(default=0)
     adrAsPoint=models.PointField(null=True)
