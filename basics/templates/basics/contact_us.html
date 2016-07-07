@@ -10,14 +10,50 @@
 			<form class="form" role="form" method="post" accept-charset="UTF-8">
 			{%csrf_token%}
                 <h4>Enter email address to get an answer:</h4>
+                {% if messages %}
+		            {% for message in messages %}
+		                {% if message.message == 'wrong_email' %}
+		                    <div class="col-sm-12" id="standard-notification">
+		                        <p>Wrong E-Mail!</p>
+		                    </div>
+		                {% endif %}
+		            {% endfor %}
+		        {% endif %}
+		        {% if messages %}
+		            {% for message in messages %}
+		                {% if message.message == 'empty_email' %}
+		                    <div class="col-sm-12" id="standard-notification">
+		                        <p>Please type in an E-Mail!</p>
+		                    </div>
+		                {% endif %}
+		            {% endfor %}
+		        {% endif %}
 				<div class="form-group">
   					<input type="email" class="form-control input-lg" placeholder="Email" name="email" maxlength="255" required/>
   				</div>
                 <h4>Enter a headline:</h4>
+                {% if messages %}
+		            {% for message in messages %}
+		                {% if message.message == 'no_headline' %}
+		                    <div class="col-sm-12" id="standard-notification">
+		                        <p>Please type in an headline!</p>
+		                    </div>
+		                {% endif %}
+		            {% endfor %}
+		        {% endif %}
 				<div class="form-group">
 					<input type="description" class="form-control input-lg" placeholder="Headline" name="headline" maxlength="30" required></input>
 				</div>
                 <h4>Write a description:</h4>
+                {% if messages %}
+		            {% for message in messages %}
+		                {% if message.message == 'no_description' %}
+		                    <div class="col-sm-12" id="standard-notification">
+		                        <p>Please type in an description!</p>
+		                    </div>
+		                {% endif %}
+		            {% endfor %}
+		        {% endif %}
 				<div class="form-group">
 					<textarea type="description" class="form-control input-lg" placeholder="Description" name="text" rows="4" required></textarea>
 				</div>
