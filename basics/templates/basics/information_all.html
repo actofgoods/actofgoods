@@ -92,14 +92,14 @@
                                                         <span class="glyphicon glyphicon-chevron-up"></span> Upvote
                                                     </div>
                                                 </a>
-                                                {% if user.userdata in info.followed_by %}
-                                                    <a class="list-group-footer-button" type="button" href="">
+                                                {% if user.userdata in info.followed_by.all %}
+                                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:unfollow' pk=info.pk %}">
                                                         <div class="col-sm-3" id="list-group-footer-button-margin">
                                                             <span class="glyphicon glyphicon-bookmark"></span> Unfollow
                                                         </div>
                                                     </a>
                                                 {% else %}
-                                                    <a class="list-group-footer-button" type="button" href="">
+                                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:follow' pk=info.pk %}">
                                                         <div class="col-sm-3" id="list-group-footer-button-margin">
                                                             <span class="glyphicon glyphicon-bookmark"></span> Follow
                                                         </div>

@@ -575,6 +575,22 @@ def information_update(request, pk):
         return render(request, 'basics/information_update.html', {'information':information})
     return redirect('basics:actofgoods_startpage')
 
+def follow(request, pk):
+    if request.user.is_authenticated():
+        info = Information.objects.get(pk=pk)
+        info.followed_by.add(request.user.userdata)
+        info.save()
+        return redirect('basics:information_all')
+    return redirect('basics:actofgoods_startpage')
+
+def unfollow(request, pk):
+    if request.user.is_authenticated():
+        info = Information.objects.get(pk=pk)
+        info.followed_by.remove(request.user.userdata)
+        info.save()
+        return redirect('basics:information_all')
+    return redirect('basics:actofgoods_startpage')
+
 """
     Input: request(Email, Password)
 

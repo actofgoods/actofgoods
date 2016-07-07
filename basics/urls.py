@@ -75,6 +75,8 @@ urlpatterns = [
     url(r'^info_delete/(?P<pk>\w+)$', views.info_delete, name='info_delete'),
     url(r'^comm_delete/(?P<pk>\w+)$', views.comm_delete, name='comm_delete'),
     url(r'^home/delete_comment_timeline/(?P<pk>\w+)$', views.delete_comment_timeline, name='delete_comment_timeline'),
+    url(r'^information_all/follow/(?P<pk>\w+)$', views.follow, name='follow'),
+    url(r'^information_all/unfollow/(?P<pk>\w+)$', views.unfollow, name='unfollow'),
 
     url(r'^groups/all/$', views.groups_all, name='groups_all'),
     url(r'^groups/detail/(?P<name>[A-Za-z0-9 ]+)/$', views.group_detail, name='group_detail'),
