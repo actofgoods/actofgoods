@@ -108,7 +108,7 @@ class Information(models.Model):
     liked_by = models.ManyToManyField(Userdata, related_name="like")
     priority = models.FloatField(default=5000)
     update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
-    followed_by = models.ForeignKey(Userdata, related_name="follow")
+    followed_by = models.ManyToManyField(Userdata, related_name="follow")
 
 class Comment(models.Model):
 	inf = models.ForeignKey(Information,on_delete=models.CASCADE)
