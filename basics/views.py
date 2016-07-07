@@ -566,6 +566,9 @@ def information_update(request, pk):
                 information.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
             if text != "":
                 information.text = information.text + "\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z") +"\n" + text
+            else:
+                messages.add_message(request, messages.INFO, 'empty_text')
+                return render(request, 'basics/information_update.html', {'information':information})
             information.save()
             return actofgoods_startpage(request)
         form = InformationFormNew()
