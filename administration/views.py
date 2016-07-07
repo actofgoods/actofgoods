@@ -24,8 +24,11 @@ def categories(request):
             if 'create_category' in form.data:
                 name = request.POST.get('name')
                 if not {'name':name} in CategoriesNeeds.objects.values('name'):
-                    categorie = CategoriesNeeds.objects.create(name=name)
-                    categorie.save()
+                    if name != "":
+                        categorie = CategoriesNeeds.objects.create(name=name)
+                        categorie.save()
+                    else:
+                        messages.add_message(request, messages.INFO, 'empty_category')
                 else:
                     messages.add_message(request, messages.INFO, 'categorie_exists')
             elif 'search_category' in form.data:

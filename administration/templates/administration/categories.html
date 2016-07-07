@@ -25,6 +25,17 @@
 							{% endif %}
     					{% endfor %}
 					{% endif %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.message == 'empty_category' %}
+                                <div class="form-group">
+                                    <div class="error-messages">
+                                        <p>Type in an name!</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
 				    <form class="form" role="form" method="post" accept-charset="UTF-8">
 					{%csrf_token%}
 					    <div class="form-group">

@@ -258,7 +258,7 @@ def claim_needs(request, name):
             query = Q(adrAsPoint__within=claims[0].poly)
             for q in claims[1:]:
                 query |= Q(adrAsPoint__within=q.poly)
-            needs = needs.filter(query)     
+            needs = needs.filter(query)
         if "" != request.POST['category'] and "All" != request.POST['category']:
             category = request.POST['category']
             needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
@@ -286,7 +286,7 @@ def claim_information(request, name):
             query = Q(adrAsPoint__within=claims[0].poly)
             for q in claims[1:]:
                 query |= Q(adrAsPoint__within=q.poly)
-            infos = infos.filter(query)     
+            infos = infos.filter(query)
         if "" != request.POST['wordsearch']:
             wordsearch = request.POST['wordsearch']
             infos = infos.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
@@ -493,6 +493,8 @@ def information_new(request):
                 infodata = Information(author=request.user, author_is_admin=author_is_admin, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
                 infodata.save()
                 return redirect('basics:information_all')
+            else:
+                messages.add_message(request, messages.INFO, 'not_valid')
         info = InformationFormNew()
         return render(request, 'basics/information_new.html', {'info':info})
 
@@ -561,9 +563,12 @@ def information_update(request, pk):
             text = request.POST.get('text', None)
             lat, lng = getAddress(request)
             if lat != None and lng != None:
-                information.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
+                information.address=Address.objects.create(latitude=lat, longditude=lng)
             if text != "":
                 information.text = information.text + "\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z") +"\n" + text
+            else:
+                messages.add_message(request, messages.INFO, 'empty_text')
+                return render(request, 'basics/information_update.html', {'information':information})
             information.save()
             return actofgoods_startpage(request)
         form = InformationFormNew()
@@ -851,20 +856,29 @@ def needs_new(request):
                     lat = address.latitude
                     lng = address.longditude
                 data = need.cleaned_data
-                group = None
-                priority = 0
-                if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
-                    group = Group.objects.get(pk=request.POST.get('group'))
-                    priority = priority_need_group(0)
+                print('head')
+                print(data['headline'])
+                if data['headline'] != "":
+                    if data['text'] != "":
+                        group = None
+                        priority = 0
+                        if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                            group = Group.objects.get(pk=request.POST.get('group'))
+                            priority = priority_need_group(0)
+                        else:
+                            priority = priority_need_user(0)
+                        u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
+                        needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
+                        needdata.save()
+
+                        send_notifications(needdata)
+                        return redirect('basics:actofgoods_startpage')
+                    else:
+                        messages.add_message(request, messages.INFO, 'no_text')
                 else:
-                    priority = priority_need_user(0)
-                u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
-                needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
-                needdata.save()
-
-                send_notifications(needdata)
-                return redirect('basics:actofgoods_startpage')
-
+                    messages.add_message(request, messages.INFO, 'no_headline')
+            else:
+                messages.add_message(request, messages.INFO, 'not_valid')
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
         c.save
