@@ -251,7 +251,7 @@ def claim_needs(request, name):
             claims = ClaimedArea.objects.filter(pk__in=liste)
         else:
             claims = ClaimedArea.objects.filter(group=group.group)
-        needs=Need.objects.all().order_by('priority', 'pk').reverse()
+        needs=Need.objects.all().order_by('-priority', 'pk')
 
         #for claim in claims:
         if claims.exists():
@@ -293,6 +293,18 @@ def claim_information(request, name):
         t = loader.get_template('snippets/claim_informations.html')
         return HttpResponse(t.render({'user': request.user, 'infos':infos}))
     return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def claim_report(request, name):
+    pk=int(request.POST['pk'])
+    #print(pk)
+    need = Need.objects.get(pk=pk)
+    need.was_reported = True
+    need.number_reports += 1
+    need.save()
+    need.reported_by.add(request.user.userdata)
+    #print(Need.objects.get(pk=pk).reported_by.all())
+    return HttpResponse("True")
 
 
 
@@ -1114,8 +1126,8 @@ def report_need(request):
     need = Need.objects.get(pk=pk)
     need.was_reported = True
     need.number_reports += 1
-    need.reported_by.add(request.user.userdata)
     need.save()
+    need.reported_by.add(request.user.userdata)
     #print(Need.objects.get(pk=pk).reported_by.all())
     return needs_filter(request)
 
@@ -1124,7 +1136,6 @@ def report_information(request, pk):
     info.was_reported = True
     info.number_reports += 1
     info.reported_by.add(request.user.userdata)
-    info.save()
     return redirect('basics:information_all')
 
 def like_information(request, pk):
@@ -1209,7 +1220,6 @@ def report_comment(request, pk):
     comment.was_reported = True
     comment.number_reports += 1
     comment.reported_by.add(request.user.userdata)
-    comment.save()
     return information_view(request, comment.inf.pk)
 
 ####################################################################################################################################################

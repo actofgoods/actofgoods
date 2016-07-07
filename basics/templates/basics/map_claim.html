@@ -326,6 +326,23 @@
               }
             });
     }
+    function report(pk){
+        console.log(pk)
+
+        $.ajax({
+            url: "reportNeed/",
+            type: "POST",
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk},
+
+            success: function(){
+                loadNeeds();
+            },
+            error: function(xhr, errmsg, err){
+                $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
+            }
+        });
+
+    }
 
     function refreshClaim(pk, index){
        $.ajax({

@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/delete/$', views.claim_delete, name='claim_delete'),
     url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/needs/$', views.claim_needs, name='claim_needs'),
     url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/infos/$', views.claim_information, name='claim_information'),
+    url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/reportNeed/$', views.claim_report, name='claim_report'),
     url(r'^fill_needs/(?P<count>[0-9]+)$', views.fill_needs, name='fill_needs'),
     url(r'^faq_signin/$', views.faq_signin, name='faq_signin'),
     url(r'^faq_startpage/$', views.faq_startpage, name='faq_startpage'),
