@@ -4,14 +4,9 @@
 {% load filter %}
 {% load staticfiles %}
 
-
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.blue_grey-blue.min.css" />
     <link rel="stylesheet" href="{% static 'basics/css/styles.css' %}"/>
     <script src="https://fb.me/react-15.0.2.js"></script>
     <script src="https://fb.me/react-dom-15.0.2.js"></script>
-    <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 
@@ -19,35 +14,231 @@
   <!--<div class = "row " style="min-height: 500px; box-shadow: 0 0 30px black; height:70%; border-radius: 1em;" >-->
 
 
-    <div class="row">
-      <div class="container col-md-4" >
-        <div id="standart-modal"  >
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Your Chats</h4>
-            </div>
-            <div class="modal-body">
-              <div id="rooms-container">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<style>
+    #chat-css-container {
+        margin-left: 0px;
+        margin-right: 0px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #EDEDED;
+    }
 
-      <div class="col-md-8 col-xs-12 shadow-small" >
-        <div id="standart-modal"  >
+    #chats-css-container {
+        border-right: 1px solid #ddd;
+        background-color: #EDEDED;
+    }
+
+    #chat-room-css-container {
+        border-left: 1px solid #ddd;
+        margin-left: -1px;
+        background-color: #FAFAFA;
+    }
+
+    #header-css-chat {
+        border-bottom: 1px solid #ddd;
+        background-color: #EDEDED;
+        margin-right: -16px;
+        padding: 10px 15px;
+        text-align: center;
+    }
+
+    #header-css-chats {
+        border-bottom: 1px solid #ddd;
+        background-color: #EDEDED;
+        margin-left: -15px;
+        margin-right: -15px;
+        padding: 10px 15px;
+        text-align: left;
+    }
+
+    #footer-chat-container {
+        background-color: #EDEDED;
+        margin-right: -16px;
+        border-top: 1px solid #ddd;
+    }
+
+    #header-css-description-container {
+        text-align: left;
+        padding: 0px;
+    }
+
+    #header-css-chat-description {
+        margin-bottom: 0px;
+    }
+
+    #header-css-button-container, #header-css-middle-button-container {
+        padding: 0px;
+    }
+
+    #chat-info-container {
+        margin-top: 10px;
+    }
+
+    #chat-input-container{
+        margin-bottom: 15px;
+        margin-top: 15px;
+    }
+
+    #send-button-container {
+        margin-bottom: 15px;
+    }
+
+    #chat-send-number-container {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    #chat-mesage-container {
+        margin-bottom: 15px;
+        margin-top: 10px;
+        margin-left: -15px;
+        margin-right: -15px;
+        height: 60%;
+        overflow-y: scroll;
+    	overflow-x: hidden;
+    }
+
+    #rooms-container {
+        margin-top: 15px;
+        margin-bottom: 15px;
+        background-color: #EDEDED;
+        position: relative;
+    	overflow-y: scroll;
+    	overflow-x: hidden;
+    	height: 80%;
+    }
+
+    #standard-list-group-item-div {
+        color: #70962c;
+    }
+
+    #chats-date-headline {
+        color: #000000;
+    }
+
+/*---------- start Messages ----------*/
+
+#chat-list-group-item-div-right {
+    background-color: #DDE6CD;
+}
+
+#chat-list-group-item-div-left {
+    background-color: #EDEDED;
+}
+
+#chat-list-group-item-div-middle {
+    background-color: #E1E1E1;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#chat-message-timestamp {
+    margin-bottom: 0px;
+}
+
+/* left arrow */
+.message-panel-left:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 15px 15px 15px 0;
+    border-color: transparent #DDD;
+    display: block;
+    width: 0;
+    z-index: 1;
+    left: -15px;
+    top: 10px;
+}
+
+/* right arrow */
+.message-panel-right:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 15px 0 15px 15px;
+    border-color: transparent #ddd;
+    display: block;
+    width: 0;
+    z-index: 1;
+    right: -15px;
+    top: 10px;
+}
+
+#left-message-block {
+    padding-left: 30px;
+    margin-bottom: 15px;
+}
+
+#right-message-block {
+    padding-right: 30px;
+    margin-bottom: 15px;
+}
+
+/*---------- end Messages ----------*/
+
+    @media(max-width: 992px) {
+
+        #chats-css-container {
+            border-right: 0px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #chat-room-css-container {
+            border-left: 0px;
+            margin-left: 0px;
+        }
+
+        #header-css-chat {
+            margin-right: -15px;
+        }
+
+        #footer-chat-container {
+            margin-right: -15px;
+        }
+
+        #rooms-container {
+        	height: 50%;
+        }
+
+    }
+
+    @media(max-width:768px) {
+
+        #header-css-chat-description, #header-css-middle-button-container {
+            margin-bottom: 10px;
+        }
+
+        #rooms-container {
+            margin-left: -10px;
+            margin-right: -10px;
+        }
+
+    }
+</style>
+
+
+        <div id="standard-modal"  >
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title">{{ roomname }}</h4>
+              <h2 class="text-center" id="standard-modal-headline">Chat<br><small>On this page you can communicate with other user.</small></h2>
             </div>
             <div class="modal-body">
-              <div id="app">
-              </div>
+                <div class="row" id="chat-css-container">
+                    <div class="col-md-4" id="chats-css-container">
+                        <div className="row" id="header-css-chats">
+                            <p style="margin-bottom: 0px;">Your chats:</p>
+                        </div>
+                        <div id="rooms-container"></div>
+                    </div>
+                    <div class="col-md-8" id="chat-room-css-container">
+                        <div id="app"></div>
+                    </div>
+                </div>
+                </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+
+
   <script type="text/babel">
 'use strict';
 
@@ -60,23 +251,29 @@
 
 
   var Message = function Message(props) {
-    var classString = props.ownMessage ? 'own message__text' : 'message__text';
-    var classString = props.systemMessage ? 'system ':classString;
-    var longClassString = classString + "text-center message clearfix"
-    var user = props.ownMessage ? 'Own' : 'Other '
-    var user = props.systemMessage? '': user
+    var classOwnOtherSystem = props.ownMessage ? 'col-xs-10 col-xs-offset-2' : 'col-xs-10';
+    classOwnOtherSystem = props.systemMessage ? 'col-xs-8 col-xs-offset-2': classOwnOtherSystem;
+    var idLeftRightMiddleMessage = props.ownMessage ? 'right-message-block' : 'left-message-block';
+    idLeftRightMiddleMessage = props.systemMessage ? 'middle-message-block': idLeftRightMiddleMessage;
+    var classLeftRightMiddlePanel = props.ownMessage ? 'message-panel-right' : 'message-panel-left';
+    classLeftRightMiddlePanel = props.systemMessage ? 'message-panel-middle': classLeftRightMiddlePanel;
+    classLeftRightMiddlePanel = "list-group-item " + classLeftRightMiddlePanel
+    var chatListGroupItemDiv = props.ownMessage ? 'chat-list-group-item-div-right' : 'chat-list-group-item-div-left';
+    chatListGroupItemDiv = props.systemMessage ? 'chat-list-group-item-div-middle': chatListGroupItemDiv;
     return (
-      <div className={longClassString}>
-        <div className="message__author">
-          {user}
+
+        <div className="row">
+            <div className={classOwnOtherSystem} id={idLeftRightMiddleMessage}>
+                <div className={classLeftRightMiddlePanel} id={chatListGroupItemDiv}>
+                    <div className="row">
+                        <div className="col-sm-12">
+                            <p className="list-group-item-text">{props.text}</p>
+                            <h6 id="chat-message-timestamp"><i>{props.date}</i></h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div className={classString}>
-          {props.text}
-          <div className="small-text">
-            {props.date}
-          </div>
-        </div>
-      </div>
     );
   };
 
@@ -93,13 +290,8 @@
     },
 
     render: function render() {
-      return (/*React.createElement(
-          'div',
-          { className: 'message-list', ref: this.getNodeRef},
-          this.props.children
-       );*/
-
-        <div className="message-list" ref={this.getNodeRef}>
+      return (
+        <div id="chat-mesage-container" className="message-list" ref={this.getNodeRef}>
           {this.props.children}
         </div>
       );
@@ -107,61 +299,31 @@
   });
 
   var InputSection = function InputSection(props) {
-    var firstClass = "clearfix";
     return (
-      <div className={firstClass}>
-        <div className="form-group">
-        <div>
-          <textarea onKeyDown= {props.handleKeyDown}
-          className= 'form-control input-lg'
-          type= 'text'
-          id= 'chat-input'
-          value= {props.inputValue}
-          onChange= {props.handleChange}
-          onBlur= {props.handleBlur}/>
+
+        <div className="row" id="footer-chat-container">
+            <div className="col-sm-12" id="chat-input-container">
+                <textarea onKeyDown= {props.handleKeyDown}
+                className= 'form-control input-lg'
+                type= 'text'
+                id= 'chat-input'
+                rows='3'
+                value= {props.inputValue}
+                onChange= {props.handleChange}
+                onBlur= {props.handleBlur}
+                placeholder={props.labelText}
+                required/>
+            </div>
+            <div className="col-sm-4 col-sm-offset-8" id="send-button-container">
+                <button onClick={props.handleClick}
+                className= 'btn btn-primary btn-block'
+                id="standard-grey-button-light"
+                type= 'submit' >
+                    <span className="glyphicon glyphicon-send"></span> {props.buttonText}
+                </button>
+            </div>
         </div>
-        </div>
-        <div className="float-right button-container">
-          <button onClick={props.handleClick}
-          className= 'btn btn-primary'
-          type= 'submit' >
-          {props.buttonText}
-          </button>
-        </div>
-      </div>
-    );
-    React.createElement(
-      'div',
-      { className: props.specificClass + ' clearfix' },
-      React.createElement(
-        'div',
-        { className: 'mdl-textfield mdl-js-textfield mdl-textfield--floating-label float-left' },
-        React.createElement('input', {
-          onKeyDown: props.handleKeyDown,
-          className: 'mdl-textfield__input',
-          type: 'text',
-          id: 'chat-input',
-          value: props.inputValue,
-          onChange: props.handleChange,
-          onBlur: props.handleBlur }),
-        React.createElement(
-          'label',
-          { className: 'mdl-textfield__label' },
-          props.labelText
-        )
-      ),
-      React.createElement(
-        'div',
-        { className: 'float-right button-container' },
-        React.createElement(
-          'button',
-          {
-            onClick: props.handleClick,
-            className: 'btn btn-primary',
-            type: 'submit' },
-          props.buttonText
-        )
-      )
+
     );
   };
 
@@ -211,7 +373,7 @@
         handleChange: this.handleChange,
         labelText: 'Enter your message...',
         handleClick: this.sendMessage,
-        buttonText: 'Send message'
+        buttonText: 'Send Message'
       });
     }
 
@@ -333,62 +495,43 @@
       return (
         <div className="mdl-cell--stretch" ref={this.getNodeRef}>
           {!this.state.connected ? React.createElement(LoadingBar, null) : null}
-          <div>
-            <h4>{this.state.name}</h4>
-            <a id="standard-grey-button-bold" className="btn btn-primary btn-kick" href="{% url 'basics:kick_user' roomname=roomname %}">
-              {% if roomname|is_own:request.user %} 'Kick User' {% else %} 'leave' {% endif %}
-            </a>
-            <a id="standard-grey-button-bold" className="btn btn-primary btn-kick" onClick={this.sendNumber.bind(null, 'number')}>
-              Send Number
-            </a>
+
+          <div className="row" id="header-css-chat">
+              <div className="col-sm-7" id="header-css-description-container">
+                  <p id="header-css-chat-description">Chat: {{name}}</p>
+              </div>
+              <a className="list-group-footer-button cursor-pointer" type="button" href="">
+                  <div className="col-sm-2" id="header-css-middle-button-container">
+                      <span className="glyphicon glyphicon-ok"></span> Done
+                  </div>
+              </a>
+              <a className="list-group-footer-button cursor-pointer" type="button" href="{% url 'basics:kick_user' roomname=roomname %}">
+                  <div className="col-sm-3" id="header-css-button-container">
+                      <span className="glyphicon glyphicon-log-out"></span> {% if roomname|is_own:request.user %} Kick User {% else %} Leave Chat {% endif %}
+                  </div>
+              </a>
           </div>
+          <div className="row">
+            <div className="col-sm-8" id="chat-info-container">
+                <p><i> {% if roomname|is_own:request.user %} You are getting help TODO{% else %} You are helping TODO{% endif %}</i></p>
+            </div>
+            <div className="col-sm-4" id="chat-send-number-container">
+                <a id="standard-grey-button-light" className="btn btn-primary btn-block" onClick={this.sendNumber.bind(null, 'number')}>
+                    <span className="glyphicon glyphicon-earphone"></span> Send Number
+                </a>
+            </div>
+          </div>
+
           <MessageList>
             {messages}
           </MessageList>
-          <div className="actions-containers ">
-            <MessageEditor sendMessage={this.sendMessage}>
 
-            </MessageEditor>
+          <div className="actions-containers ">
+            <MessageEditor sendMessage={this.sendMessage}></MessageEditor>
           </div>
+
         </div>
-      );/*
-      return React.createElement(
-        'div',
-        { className: ' mdl-cell--stretch', ref: this.getNodeRef },
-        !this.state.connected ? React.createElement(LoadingBar, null) : null,
-        React.createElement(
-          'div',
-          {},
-          React.createElement(
-            'h4',
-            {},
-            this.state.name
-          ),
-          React.createElement(
-            'a',
-            {id:'standard-grey-button-bold', className:'btn btn-primary btn-kick', href:'{% url 'basics:kick_user' roomname=roomname %}'},
-            {% if roomname|is_own:request.user %} 'Kick User' {% else %} 'leave' {% endif %}
-          ),
-          React.createElement(
-            'a',
-            {id:'standard-grey-button-bold', className:'btn btn-primary btn-kick', onClick:this.sendNumber.bind(null, 'number')},
-            'Send Number'
-          )
-        ),
-        React.createElement(
-          MessageList,
-          null,
-          messages
-        ),
-        React.createElement(
-          'div',
-          { className: 'actions-containers mdl-shadow--3dp ' + visibilityClass },
-          /*React.createElement(ChannelSelector, {
-            currentChannel: this.state.channel,
-            handleChatChange: this.handleChatChange }),
-          React.createElement(MessageEditor, { sendMessage: this.sendMessage })
-        )
-      );*/
+      );
     }
 
   });
@@ -396,46 +539,17 @@
   var Room = function Room(props){
     var href = "/chat/"+props['room']['hash'];
     return (
-      <a className="goupe-list-element" id="standard-list-group-item-div" href={href}>
-        <div className="row">
-        <div className="col-sm-11 grey room" id="standart-modal">
-          <div>
-            <div className="card card-block">
-              <h3 className="card-title">{props['room']['name']} </h3>
-              <p className="card-text"> {props['room']['date']} </p>
+        <a className="list-group-item" id="standard-list-group-item-div" href={href}>
+            <div className="row">
+                <div className="col-sm-12">
+                    <h4 >{props['room']['name']}</h4>
+                </div>
+                <div className="col-sm-12">
+                    <h6 id="chats-date-headline">{props['room']['date']}</h6>
+                </div>
             </div>
-          </div>
-        </div>
-        </div>
-      </a>
+        </a>
     );
-    /*React.createElement(
-      'a',
-      {className:'goupe-list-element ', id:'standard-list-group-item-div', href:"/chat/"+props['room']['hash'] },
-      React.createElement(
-        'div',
-          {className:'col-sm-11 grey room',  id:'standart-modal'},
-        React.createElement(
-          'div',
-          {className:''},
-          React.createElement(
-            'div',
-            {className:'card card-block'},
-            React.createElement(
-              'h3',
-              {className:'card-title'},
-              props['room']['name']
-            ),
-            React.createElement(
-              'p',
-              {className:'card-text'},
-              props['room']['date']
-            )
-          )
-        )
-      )
-    );
-    */
   };
   var RoomsContainer = React.createClass({
     displayName: 'RoomsContainer',
@@ -483,11 +597,7 @@
         <div className="room-container" ref={this.getNodeRef}>
           {rendered_rooms}
         </div>
-      );/*React.createElement(
-        'div',
-        { className: 'room-container room-container-small', ref: this.getNodeRef },
-        rendered_rooms
-      );*/
+      );
 
     }
   })
