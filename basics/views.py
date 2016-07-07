@@ -384,7 +384,7 @@ def home(request):
                 rel_comms.append(c)
         result_list = sorted(
             chain(needs, infos, needs_you_help, rel_comms),
-            key=lambda instance: instance.date, reverse=True)
+            key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
         #print(list(map(lambda x: x.pk, needs_you_help)))
         #print(result_list)
         #print(list(map(lambda x: x.pk, result_list)))
