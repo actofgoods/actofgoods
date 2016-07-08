@@ -735,7 +735,7 @@ def needs_all(request):
                     priority = priority_need_user(hours_elapsed)
                 n.priority = priority
                 n.save()
-        needs = Need.objects.order_by('priority', 'pk').reverse()
+        needs=needs.order_by('-priority','pk')
         needs = needs.exclude(author=request.user)
         page = 1
         page_range = np.arange(1, 5)
@@ -743,10 +743,10 @@ def needs_all(request):
             if not request.user.is_superuser:
                 needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         #TODO: this way is fucking slow and should be changed but i didn't found a better solution
-        #needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
-
+        needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
+        #needs.sort(key=lambda x: (-x.priority, x.pk))
         page_range = np.arange(1,max_page+1)
         return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'wordsearch':wordsearch, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
 
@@ -762,8 +762,7 @@ def needs_filter(request):
         category = "All"
         cards_per_page = 10
         wordsearch = ""
-        needs = Need.objects.all()
-        needs = Need.objects.order_by('priority', 'pk').reverse()
+        needs=Need.objects.all().order_by('-priority', 'pk')
         needs = needs.exclude(author=request.user)
         page = 1
         page_range = np.arange(1, 5)
@@ -790,7 +789,7 @@ def needs_filter(request):
         needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
-        needs.sort(key=lambda x: (x.priority, x.pk), reverse=True)
+        #needs.sort(key=lambda x: (-x.priority, x.pk))
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
         return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))
@@ -1159,8 +1158,10 @@ def report_need(request):
     pk=int(request.POST['pk'])
     #print(pk)
     need = Need.objects.get(pk=pk)
+    
     need.was_reported = True
     need.number_reports += 1
+    need.priority=need.priority
     need.save()
     need.reported_by.add(request.user.userdata)
     #print(Need.objects.get(pk=pk).reported_by.all())
