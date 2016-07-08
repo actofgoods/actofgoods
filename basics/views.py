@@ -1343,8 +1343,7 @@ def group_leave(request, pk):
 
 def group_detail_for_user(request, name):
     if request.user.is_authenticated():
-        gro = request.user.groups.get(name=name)
-        group = Groupdata.objects.get(name=gro.name)
+        group = Groupdata.objects.get(name=name)
         return render(request, 'basics/group_detail_for_user.html', {'group':group})
     return redirect('basics:actofgoods_startpage')
 
