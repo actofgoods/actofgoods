@@ -3,6 +3,8 @@
 {% block content %}
 
 <!-- modal for every information -->
+
+
 <div id="standard-modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -27,7 +29,32 @@
                     <div class="col-sm-10 col-sm-offset-1">
                         {% for comment in comments %}
 
-                            <!-- list all informations -->
+                        <div class="modal fade" id="commentDelete" role="dialog">
+                        <div class="modal-dialog">
+
+                         <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Delete This comment</h4>
+                                 </div>
+                                <div class="modal-body">
+                                    <p>If you delete this comment, the data will be permanently lost.</p>
+                                    <p>Would you like to rethink your decision?</p>
+                                </div>
+                                 <div class="modal-footer">
+                                     <a type="button" class="btn btn-default" href="{% url 'basics:information_delete_comment' pk_inf=information.pk pk_comm=comment.pk %}">
+
+                                                    <span class="glyphicon glyphicon-remove"></span> Delete
+                                                </a>
+                                    <button type="button" class="btn btn-success" data-dismiss="modal">Rethink</button>
+                                 </div>
+                            </div>
+
+                        </div>
+                        </div>
+
+                            <!-- list all information -->
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="list-group-item cursor-pointer" id="standard-list-group-item-div" data-toggle="modal" data-target=".{{ comment.id }}">
@@ -54,7 +81,7 @@
                                                 <div class="col-sm-9" id="comment-meta-data">
                                                     <p><i>from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% elif comment.author == user %} by <span>you</span>{% endif %}</i></p>
                                                 </div>
-                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:information_delete_comment' pk_inf=information.pk pk_comm=comment.pk %}">
+                                                <a class="list-group-footer-button" type="button" data-toggle="modal" data-target="#commentDelete" >
                                                     <div class="col-sm-3">
                                                         <span class="glyphicon glyphicon-remove"></span> Delete
                                                     </div>
