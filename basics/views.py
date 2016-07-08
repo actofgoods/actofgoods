@@ -1000,7 +1000,7 @@ def profil_edit(request):
             userdata.save()
             return render(request, 'basics/profil.html', {'Userdata':userdata, 'selected': userdata.inform_about.all()})
         form = ProfileForm()
-        return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all, 'selected': userdata.inform_about.all(),'form':form})
+        return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all, 'selected': userdata.inform_about.all(),'form':form,'change':False})
     return redirect('basics:actofgoods_startpage')
 
 def profil_delete(request):
@@ -1039,7 +1039,7 @@ def register(request):
                         userdata.save()
                         content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                         subject = "Confirm Your Account"
-                        sendmail(user.email, content, subject)
+                        #sendmail(user.email, content, subject)
                         return login(request)
                     else:
                         messages.add_message(request, messages.INFO, 'location_failed')

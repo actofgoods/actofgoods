@@ -272,6 +272,31 @@
                 <div class="list-group" style="margin-bottom: 0px; margin-top: 15px;">
                     {% for elem in result_list %}
 
+                        <div class="modal fade" id="myModal" role="dialog">
+                        <div class="modal-dialog">
+
+                         <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Delete Your Need</h4>
+                                 </div>
+                                <div class="modal-body">
+                                    <p>If you delete This Need, the data will be permanently lost.</p>
+                                    <p>Would you like to rethink your decision?</p>
+                                </div>
+                                 <div class="modal-footer">
+                                     <a type="button" class="btn btn-default" href="{% url 'basics:need_delete' pk=elem.pk %}">
+
+                                                    <span class="glyphicon glyphicon-remove"></span> Delete
+                                                </a>
+                                    <button type="button" class="btn btn-success" data-dismiss="modal">Rethink</button>
+                                 </div>
+                            </div>
+
+                        </div>
+                        </div>
+
                         {% if elem in infos %}
                             <!-- information -->
                             <div class="row">
@@ -321,11 +346,10 @@
                                                     <span class="glyphicon glyphicon-pencil"></span> Edit
                                                 </div>
                                             </a>
-                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:need_delete' pk=elem.pk %}">
+                                            <a class="list-group-footer-button" type="button" data-toggle="modal" data-target="#myModal" >
                                                 <div class="col-sm-6">
                                                     <span class="glyphicon glyphicon-remove"></span> Delete
-                                                </div>
-                                            </a>
+                                                </div></a>
                                         </div>
                                     </div>
                                 </div>

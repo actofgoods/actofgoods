@@ -67,6 +67,31 @@
 
 </style>
 
+<div class="modal fade" id="myModal" role="dialog">
+                        <div class="modal-dialog">
+
+                         <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Delete Your Profile</h4>
+                                 </div>
+                                <div class="modal-body">
+                                    <p>If you delete your profile, your data will be permanently lost.</p>
+                                    <p>Would you like to rethink your decision?</p>
+                                </div>
+                                 <div class="modal-footer">
+                                     <a type="button" class="btn btn-default" href="{% url 'basics:profil_delete' %}">
+
+                                                    <span class="glyphicon glyphicon-remove"></span> Delete
+                                                </a>
+                                    <button type="button" class="btn btn-success" data-dismiss="modal">Rethink</button>
+                                 </div>
+                            </div>
+
+                        </div>
+                        </div>
+
 <div id="standard-modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -153,7 +178,7 @@
                 <div class="col-sm-12">
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
                         <a id="standard-grey-button-light" class="btn btn-sm" href="{% url 'basics:profil_edit' %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit my profile</a>
-                        <a id="standard-grey-button-light" class="btn btn-sm" href="{% url 'basics:profil_delete' %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-remove"></span> Delete my account</a>
+                        <a id="standard-grey-button-light" class="btn btn-sm" data-toggle="modal" data-target="#myModal" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-remove"></span> Delete my account</a>
                     </div>
                 </div>
             </div>
