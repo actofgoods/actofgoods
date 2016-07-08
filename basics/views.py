@@ -150,7 +150,7 @@ def chat_room(request, roomname):
             #Get all rooms where request.user is in contact with
             rooms = get_valid_rooms(request.user).exclude(name=roomname).order_by('-last_message')
             rooms_json = rooms_to_json(rooms)
-            return render(request, 'basics/chat.html',{'name':name,'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
+            return render(request, 'basics/chat.html',{'name':name, 'room':room, 'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -483,14 +483,9 @@ def information_new(request):
                     priority = priority_info_group(0, 0)
                     author_is_admin = True
 
-                if lat != None and lng != None:
-                    address = Address.objects.create(latitude=lat, longditude=lng)
-                    infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
-                    infodata.save()
-                    return redirect('basics:information_all')
-                else:
-                    address= request.user.userdata.address
-                infodata = Information(author=request.user, author_is_admin=author_is_admin, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
+                if lat == None or lng == None:
+                    lat, lng = Userdata.objects.get(user=request.user).get_lat_lng();
+                infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                 infodata.save()
                 return redirect('basics:information_all')
             else:
@@ -626,16 +621,15 @@ def immediate_aid(request):
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
                     user_data = form.cleaned_data
-                    address = Address.objects.create(latitude=lat, longditude=lng)
                     user = User.objects.create_user(username=user_data['email'], password=password_d, email=user_data['email'])
-                    userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                    userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     userdata.save()
                     content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                     subject = "Confirm Your Account"
                     #print("\n",need.cleaned_data['categorie'],"\n")
                     data = need.cleaned_data
                     u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
-                    needdata = Need(author=user, group=None, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority_need_user(0), update_at=u)
+                    needdata = Need(author=user, group=None, headline=data['headline'], text=data['text'], categorie=data['categorie'], was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority_need_user(0), update_at=u)
                     needdata.save()
 
 
@@ -708,7 +702,7 @@ def fill_needs(request, count):
         for i in range(int(count)):
             lat = np.random.random()*50
             lng = np.random.random()*50
-            need = Need.objects.create(author=request.user, headline=str(i) + " " + category.name, text=str(i), categorie=category, address = Address.objects.create(latitude=lat, longditude=lng), was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+            need = Need.objects.create(author=request.user, headline=str(i) + " " + category.name, text=str(i), categorie=category, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
     return redirect(request, 'basics:needs_all')
 
 """
@@ -864,12 +858,9 @@ def needs_new(request):
             #print(need)
             if need.is_valid():
                 lat, lng = getAddress(request)
-                if lat != None and lng != None:
-                    address = Address.objects.create(latitude=lat, longditude=lng)
-                else :
-                    address=request.user.userdata.address
-                    lat = address.latitude
-                    lng = address.longditude
+                if lat == None or lng == None:
+                    lat, lng =request.user.userdata.get_lat_lng()
+
                 data = need.cleaned_data
                 print('head')
                 print(data['headline'])
@@ -883,7 +874,7 @@ def needs_new(request):
                         else:
                             priority = priority_need_user(0)
                         u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
-                        needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
+                        needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                         needdata.save()
 
                         send_notifications(needdata)
@@ -891,6 +882,7 @@ def needs_new(request):
                     else:
                         messages.add_message(request, messages.INFO, 'no_text')
                 else:
+                    priority = priority_need_user(0)
                     messages.add_message(request, messages.INFO, 'no_headline')
             else:
                 messages.add_message(request, messages.INFO, 'not_valid')
@@ -978,10 +970,8 @@ def profil_edit(request):
             aux= request.POST.get('aux',None)
             lat, lng = getAddress(request)
             if lat != None and lng != None:
-                userdata.address.latitude=lat
-                userdata.address.longditude=lng
                 userdata.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
-                userdata.address.save()
+                userdata.save()
             if aux != "":
                 try:
                     userdata.aux= float(aux)
@@ -1041,9 +1031,8 @@ def register(request):
                     lat, lng = getAddress(request)
                     if lat != None and lng != None:
                         data = form.cleaned_data
-                        address = Address.objects.create(latitude=lat, longditude=lng)
                         user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
-                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                         userdata.save()
                         content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                         subject = "Confirm Your Account"
@@ -1169,7 +1158,7 @@ def report_need(request):
     pk=int(request.POST['pk'])
     #print(pk)
     need = Need.objects.get(pk=pk)
-    
+
     need.was_reported = True
     need.number_reports += 1
     need.save()
@@ -1346,7 +1335,7 @@ def group_leave(request, pk):
         if len(group.user_set.all()) == 0:
             group.delete()
 
-    return render(request, 'basics/home.html')
+    return redirect('basics:home')
 
 def group_detail_for_user(request, name):
     if request.user.is_authenticated():

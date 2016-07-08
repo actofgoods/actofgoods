@@ -82,9 +82,9 @@
 							<li {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}">Home</a></li>
                             <li {% if "/needs" in request.path %} class="active" {% endif %}><a href="{% url 'basics:needs_all' %}">Needs</a></li>
                             <li {% if "/information" in request.path %} class="active" {% endif %}><a href="{% url 'basics:information_all' %}">Information</a></li>
-							<li id="navbar-with-divider" {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}">Chats  <span class="badge" id="badge-container"></span></a></li>
+							<li {% if user.groups.all|length == 0 %} id="navbar-with-divider" {% endif %} {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}">Chats  <span class="badge" id="badge-container"></span></a></li>
                             {% if user.groups.all|length != 0 %}
-                                <li {% if "/groups" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
+                                <li id="navbar-with-divider" {% if "/groups" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
 								    <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Organisations <span class="caret"></span></a>
 								    <ul id="navbar-dropdown-menu" class="dropdown-menu">
                 	                    {% for group in user.groups.all %}
