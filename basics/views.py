@@ -305,8 +305,8 @@ def claim_report(request, name):
     need.save()
     need.reported_by.add(request.user.userdata)
     #print(Need.objects.get(pk=pk).reported_by.all())
-    return HttpResponse("True")
-
+    t = loader.get_template('snippets/claim_report.html')
+    return HttpResponse(t.render({'user': request.user, 'need':need}))
 
 
 @csrf_protect
@@ -736,8 +736,13 @@ def needs_all(request):
                     priority = priority_need_user(hours_elapsed)
                 n.priority = priority
                 n.save()
+<<<<<<< HEAD
         needs=needs.order_by('-priority','pk')
         needs = needs.exclude(author=request.user).filter(done=False)
+=======
+        needs=Need.objects.all().order_by('-priority','pk')
+        needs = needs.exclude(author=request.user)
+>>>>>>> 2c34922874610e5e2001a2903204f8bae943a131
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "GET":
@@ -1163,7 +1168,6 @@ def report_need(request):
 
     need.was_reported = True
     need.number_reports += 1
-    need.priority=need.priority
     need.save()
     need.reported_by.add(request.user.userdata)
     #print(Need.objects.get(pk=pk).reported_by.all())
@@ -1338,7 +1342,7 @@ def group_leave(request, pk):
         if len(group.user_set.all()) == 0:
             group.delete()
 
-    return render(request, 'basics/home.html')
+    return redirect('basics:home')
 
 def group_detail_for_user(request, name):
     if request.user.is_authenticated():

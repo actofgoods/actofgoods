@@ -323,6 +323,7 @@
 
               error: function(xhr, errmsg, err){
                 console.log(xhr.status + ": " + xhr.responseText);
+                $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
               }
             });
     }
@@ -334,8 +335,8 @@
             type: "POST",
             data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk},
 
-            success: function(){
-                loadNeeds();
+            success: function(data){
+                $('#divneed'+pk).html(data);
             },
             error: function(xhr, errmsg, err){
                 $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
