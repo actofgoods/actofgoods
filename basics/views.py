@@ -487,6 +487,7 @@ def information_new(request):
                 if lat == None or lng == None:
                     lat, lng = Userdata.objects.get(user=request.user).get_lat_lng();
                 infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
+                infodata.group = group
                 infodata.save()
                 return redirect('basics:information_all')
             else:
