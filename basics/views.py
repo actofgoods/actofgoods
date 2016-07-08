@@ -749,7 +749,7 @@ def needs_all(request):
             if not request.user.is_superuser:
                 needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         #TODO: this way is fucking slow and should be changed but i didn't found a better solution
-        #needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
+        needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
 
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
@@ -1346,7 +1346,7 @@ def group_leave(request, pk):
         if len(group.user_set.all()) == 0:
             group.delete()
 
-    return render(request, 'basics/home.html')
+    return redirect('basics:home')
 
 def group_detail_for_user(request, name):
     if request.user.is_authenticated():
