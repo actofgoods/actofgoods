@@ -55,6 +55,31 @@
             <div class="list-group">
                 {% if needs %}
                     {% for need in needs %}
+                        <div class="modal fade" id="deleteModal" role="dialog">
+                            <div class="modal-dialog">
+
+                             <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Delete THis Need</h4>
+                                     </div>
+                                    <div class="modal-body">
+                                        <p>If you delete This Need, the data will be permanently lost.</p>
+                                        <p>Would you like to rethink your decision?</p>
+                                    </div>
+                                     <div class="modal-footer">
+                                        <button id="standard-grey-button-light" type="button" class="btn btn-default" data-dismiss="modal">Rethink</button>
+                                        <a id="standard-grey-button-light" type="button" class="btn btn-default" href="{% url 'administration:need_delete' pk=need.pk %}">
+                                            <span class="glyphicon glyphicon-remove"></span> Delete
+                                        </a>
+                                     </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
 
                         <!-- list all needs -->
                         <a class="list-group-item" id="standard-list-group-item-div">
@@ -67,7 +92,7 @@
                                     <h6><br>from: {{ need.date }} / category: {{ need.categorie.name }} / number of reports: {{ need.number_reports }}</h6>
                                 </div>
                                 <div class="col-sm-1">
-                                    <button type="button" class="btn btn-default btn-sml standard-grey-button-light " style="float: right; margin-top: 10px;" onclick="location.href='{% url 'administration:need_delete' pk=need.pk %}'"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                                    <button type="button" class="btn btn-default btn-sml standard-grey-button-light " style="float: right; margin-top: 10px;" data-toggle="modal" data-target="#deleteModal"><span class="glyphicon glyphicon-remove"></span> Delete</button>
                                 </div>
                             </div>
                         </a>

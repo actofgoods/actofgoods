@@ -86,18 +86,18 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Delete This user</h4>
+                                    <h4 class="modal-title">Delete This User</h4>
                                  </div>
                                 <div class="modal-body">
                                     <p>If you delete this user, his data will be permanently lost.</p>
                                     <p>Would you like to rethink your decision?</p>
                                 </div>
                                  <div class="modal-footer">
-                                     <a type="button" class="btn btn-default" href="{% url 'administration:user_delete' pk=usr.pk %}">
+                                     <a id="standard-grey-button-light" type="button" class="btn btn-default"  href="{% url 'administration:user_delete' pk=usr.pk %}">
 
                                                     <span class="glyphicon glyphicon-remove"></span> Delete
                                                 </a>
-                                    <button type="button" class="btn btn-success" data-dismiss="modal">Rethink</button>
+                                    <button id="standard-grey-button-light" type="button" class="btn btn-default"  data-dismiss="modal">Rethink</button>
                                  </div>
                             </div>
 
@@ -134,18 +134,18 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Delete This user</h4>
+                                    <h4 class="modal-title">Delete This User</h4>
                                  </div>
                                 <div class="modal-body">
                                     <p>If you delete this user, his data will be permanently lost.</p>
                                     <p>Would you like to rethink your decision?</p>
                                 </div>
                                  <div class="modal-footer">
-                                     <a type="button" class="btn btn-default" href="{% url 'administration:user_delete' pk=user.pk %}">
+                                     <a id="standard-grey-button-light" type="button" class="btn btn-default"  href="{% url 'administration:user_delete' pk=user.pk %}">
 
                                                     <span class="glyphicon glyphicon-remove"></span> Delete
                                                 </a>
-                                    <button type="button" class="btn btn-success" data-dismiss="modal">Rethink</button>
+                                    <button id="standard-grey-button-light" type="button" class="btn btn-default"  data-dismiss="modal">Rethink</button>
                                  </div>
                             </div>
 
