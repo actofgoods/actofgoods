@@ -10,6 +10,15 @@
 			<div class="modal-body">
 				<form class="form" role="form" method="post" accept-charset="UTF-8">
 					{%csrf_token%}
+					{% if messages %}
+                        {% for message in messages %}
+                            {% if message.message == 'not_valid' %}
+                                <div class="error-messages">
+                                    <p>Please fill in all fields!</p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
 					<p style="font-size:160%;"> description <p\>
 						<div class="form-group">
 							<input type="description" class="form-control input-lg" placeholder="headline" name="headline"  rows="4" maxlength="30">

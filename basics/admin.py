@@ -8,6 +8,13 @@ admin.site.register(
 )
 
 admin.site.register(
+    Information,
+    list_display=["headline", "text", "adrAsPoint"],
+
+)
+
+
+admin.site.register(
 	Room,
 	list_display=["name","user_req", "slug", "need"],
 	prepopulated_fields={"slug": ("name",)},

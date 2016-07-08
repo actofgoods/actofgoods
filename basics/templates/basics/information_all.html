@@ -70,7 +70,7 @@
                                             <p class="list-group-item-text" style="word-wrap: break-word;">{{ info|get_short_text:160 }}</p>
                                         </div>
                                         <div class="col-sm-9" data-toggle="modal" data-target=".{{ info.id }}">
-                                            <h6><br>from: {{ info.date }}{% if info.author_is_admin %} / by: <span style="color: #D36E5A;">Admin</span>{% elif info.group %} / by: <span style="color: #70962c;">{{ info.group.name }}</span>{% elif info.author == user %} / by: <span>you</span>{% endif %}</h6>
+                                            <h6><br><i>from {{ info.date }}{% if info.author_is_admin %} by <span style="color: #D36E5A;">Admin</span>{% elif info.group %} by <span style="color: #70962c;">{{ info.group.name }}</span>{% elif info.author == user %} by <span>you</span>{% endif %}</i></h6>
                                         </div>
                                     </div>
                                 </a>
@@ -88,10 +88,75 @@
                                         {% if not user.userdata in info.reported_by.all and not user.userdata in info.liked_by.all %}
                                             <div class="row">
                                                 <a class="list-group-footer-button" type="button" href="{% url 'basics:like_information' pk=info.id %}">
+                                                    <div class="col-sm-3" id="list-group-footer-button-margin">
+                                                        <span class="glyphicon glyphicon-chevron-up"></span> Upvote
+                                                    </div>
+                                                </a>
+                                                {% if user.userdata in info.followed_by.all %}
+                                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:unfollow' pk=info.pk %}">
+                                                        <div class="col-sm-3" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-bookmark"></span> Unfollow
+                                                        </div>
+                                                    </a>
+                                                {% else %}
+                                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:follow' pk=info.pk %}">
+                                                        <div class="col-sm-3" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-bookmark"></span> Follow
+                                                        </div>
+                                                    </a>
+                                                {% endif %}
+                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
+                                                    <div class="col-sm-3" id="list-group-footer-button-margin">
+                                                        <span class="glyphicon glyphicon-comment"></span> Comment
+                                                    </div>
+                                                </a>
+                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:report_information' pk=info.id%}">
+                                                    <div class="col-sm-3">
+                                                        <span class="glyphicon glyphicon-ban-circle"></span> Report
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        {% elif user.userdata in info.reported_by.all and not user.userdata in info.liked_by.all  %}
+                                            <div class="row">
+                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:like_information' pk=info.id %}">
                                                     <div class="col-sm-4" id="list-group-footer-button-margin">
                                                         <span class="glyphicon glyphicon-chevron-up"></span> Upvote
                                                     </div>
                                                 </a>
+                                                {% if user.userdata in info.followed_by %}
+                                                    <a class="list-group-footer-button" type="button" href="">
+                                                        <div class="col-sm-4" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-bookmark"></span> Unfollow
+                                                        </div>
+                                                    </a>
+                                                {% else %}
+                                                    <a class="list-group-footer-button" type="button" href="">
+                                                        <div class="col-sm-4" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-bookmark"></span> Follow
+                                                        </div>
+                                                    </a>
+                                                {% endif %}
+                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
+                                                    <div class="col-sm-4">
+                                                        <span class="glyphicon glyphicon-comment"></span> Comment
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        {% elif not user.userdata in info.reported_by.all and user.userdata in info.liked_by.all  %}
+                                            <div class="row">
+                                                {% if user.userdata in info.followed_by %}
+                                                    <a class="list-group-footer-button" type="button" href="">
+                                                        <div class="col-sm-4" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-bookmark"></span> Unfollow
+                                                        </div>
+                                                    </a>
+                                                {% else %}
+                                                    <a class="list-group-footer-button" type="button" href="">
+                                                        <div class="col-sm-4" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-bookmark"></span> Follow
+                                                        </div>
+                                                    </a>
+                                                {% endif %}
                                                 <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
                                                     <div class="col-sm-4" id="list-group-footer-button-margin">
                                                         <span class="glyphicon glyphicon-comment"></span> Comment
@@ -103,36 +168,23 @@
                                                     </div>
                                                 </a>
                                             </div>
-                                        {% elif user.userdata in info.reported_by.all and not user.userdata in info.liked_by.all  %}
-                                            <div class="row">
-                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:like_information' pk=info.id %}">
-                                                    <div class="col-sm-6" id="list-group-footer-button-margin">
-                                                        <span class="glyphicon glyphicon-chevron-up"></span> Upvote
-                                                    </div>
-                                                </a>
-                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
-                                                    <div class="col-sm-6">
-                                                        <span class="glyphicon glyphicon-comment"></span> Comment
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        {% elif not user.userdata in info.reported_by.all and user.userdata in info.liked_by.all  %}
-                                            <div class="row">
-                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
-                                                    <div class="col-sm-6" id="list-group-footer-button-margin">
-                                                        <span class="glyphicon glyphicon-comment"></span> Comment
-                                                    </div>
-                                                </a>
-                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:report_information' pk=info.id%}">
-                                                    <div class="col-sm-6">
-                                                        <span class="glyphicon glyphicon-ban-circle"></span> Report
-                                                    </div>
-                                                </a>
-                                            </div>
                                         {% else %}
                                             <div class="row">
+                                                {% if user.userdata in info.followed_by %}
+                                                    <a class="list-group-footer-button" type="button" href="">
+                                                        <div class="col-sm-6" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-bookmark"></span> Unfollow
+                                                        </div>
+                                                    </a>
+                                                {% else %}
+                                                    <a class="list-group-footer-button" type="button" href="">
+                                                        <div class="col-sm-6" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-bookmark"></span> Follow
+                                                        </div>
+                                                    </a>
+                                                {% endif %}
                                                 <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
-                                                    <div class="col-sm-12">
+                                                    <div class="col-sm-6">
                                                         <span class="glyphicon glyphicon-comment"></span> Comment
                                                     </div>
                                                 </a>

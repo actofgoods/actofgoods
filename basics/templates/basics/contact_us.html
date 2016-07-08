@@ -13,7 +13,7 @@
                 {% if messages %}
 		            {% for message in messages %}
 		                {% if message.message == 'wrong_email' %}
-		                    <div class="col-sm-12" id="standard-notification">
+		                    <div class="error-messages">
 		                        <p>Wrong E-Mail!</p>
 		                    </div>
 		                {% endif %}
@@ -22,7 +22,7 @@
 		        {% if messages %}
 		            {% for message in messages %}
 		                {% if message.message == 'empty_email' %}
-		                    <div class="col-sm-12" id="standard-notification">
+		                    <div class="error-messages">
 		                        <p>Please type in an E-Mail!</p>
 		                    </div>
 		                {% endif %}
@@ -35,7 +35,7 @@
                 {% if messages %}
 		            {% for message in messages %}
 		                {% if message.message == 'no_headline' %}
-		                    <div class="col-sm-12" id="standard-notification">
+		                    <div class="error-messages">
 		                        <p>Please type in an headline!</p>
 		                    </div>
 		                {% endif %}
@@ -48,7 +48,7 @@
                 {% if messages %}
 		            {% for message in messages %}
 		                {% if message.message == 'no_description' %}
-		                    <div class="col-sm-12" id="standard-notification">
+		                    <div class="error-messages">
 		                        <p>Please type in an description!</p>
 		                    </div>
 		                {% endif %}
