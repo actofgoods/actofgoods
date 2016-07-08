@@ -531,7 +531,7 @@
                   <p id="header-css-chat-description">Chat: {{name}}</p>
               </a>
 
-              <a className="list-group-footer-button cursor-pointer {% if room.helper_out %}not-active {% endif %}"  data-toggle="modal" data-target="#need-modal" type="button" >
+              <a className="list-group-footer-button cursor-pointer {% if room.helper_out %}not-active {% endif %}"  type="button" href="{% url 'basics:needs_finish' roomname=roomname %}">
                   <div className="col-sm-2" id="header-css-middle-button-container">
                       <span className="glyphicon glyphicon-ok"></span> Done
                   </div>

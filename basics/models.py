@@ -86,6 +86,7 @@ class Need(models.Model):
 	priority = models.FloatField(default=1000)
 	update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
 	was_helped_at = models.ForeignKey(Helped, on_delete=models.CASCADE, blank=True, null=True)
+	done = models.BooleanField(default=False)
 
 def DELETE_USER():
     return get_user_model().objects.get_or_create(username='deleted')[0]
@@ -186,6 +187,9 @@ class Room(models.Model):
 			self.help_user_finished = True
 		else:
 			self.need_user_finished = True
+		if self.help_user_finished and self.need_user_finished:
+			self.need.done = True
+			self.need.save()
 		self.save()
 
 
