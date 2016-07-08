@@ -327,7 +327,7 @@
               }
             });
     }
-    function report(pk){
+    function reportNeed(pk){
         console.log(pk)
 
         $.ajax({
@@ -340,6 +340,104 @@
             },
             error: function(xhr, errmsg, err){
                 $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
+            }
+        });
+
+    }
+    function reportInfo(pk){
+        console.log(pk)
+
+        $.ajax({
+            url: "reportInfo/",
+            type: "POST",
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, wordsearch: $("#info-wordsearch").val(), liste: liste},
+
+            success: function(data){
+                $('#info-list').html(data);
+            },
+            error: function(xhr, errmsg, err){
+                $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
+                console.log(xhr)
+            }
+        });
+
+    }
+
+    function follow(pk){
+        console.log(pk)
+
+        $.ajax({
+            url: "follow/",
+            type: "POST",
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, wordsearch: $("#info-wordsearch").val(), liste: liste},
+
+            success: function(data){
+                $('#info-list').html(data);
+                console.log("success");
+            },
+
+            error: function(xhr, errmsg, err){
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+
+    }
+
+    function unfollow(pk){
+        console.log(pk)
+
+        $.ajax({
+            url: "unfollow/",
+            type: "POST",
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, wordsearch: $("#info-wordsearch").val(), liste: liste},
+
+            success: function(data){
+                $('#info-list').html(data);
+                console.log("success");
+            },
+
+            error: function(xhr, errmsg, err){
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+
+    }
+
+    function like(pk){
+        console.log(pk)
+
+        $.ajax({
+            url: "like/",
+            type: "POST",
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, wordsearch: $("#info-wordsearch").val(), liste: liste},
+
+            success: function(data){
+                $('#info-list').html(data);
+                console.log("success");
+            },
+
+            error: function(xhr, errmsg, err){
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+
+    }
+
+    function unlike(pk){
+        console.log(pk)
+
+        $.ajax({
+            url: "unlike/",
+            type: "POST",
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, page: $("#page").val(), range: $("#range").val(), cards_per_page: $("#cards_per_page").val(), wordsearch: $("#basic-url").val()},
+
+            success: function(data){
+                $('#info-list').html(data);
+                console.log("success");
+            },
+
+            error: function(xhr, errmsg, err){
+                console.log(xhr.status + ": " + xhr.responseText);
             }
         });
 

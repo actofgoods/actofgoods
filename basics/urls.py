@@ -23,21 +23,30 @@ urlpatterns = [
     url(r'^$', views.actofgoods_startpage, name='actofgoods_startpage'),
     url(r'^aboutus/$', views.aboutus, name='aboutus'),
     url(r'^admin_page/$', views.admin_page, name='admin_page'),
+    
     url(r'^chat/$', views.chat, name='chat'),
     url(r'^chat/(?P<roomname>[A-Za-z0-9]+)/$', views.chat_room, name='chat_room'),
     url(r'^chat/(?P<roomname>[A-Za-z0-9]+)/kick_user$', views.kick_user, name='kick_user'),
+
     url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/$', views.claim, name='claim'),
     url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/refresh/$', views.claim_refresh, name='claim_refresh'),
     url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/post/$', views.claim_post, name='claim_post'),
     url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/delete/$', views.claim_delete, name='claim_delete'),
     url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/needs/$', views.claim_needs, name='claim_needs'),
     url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/infos/$', views.claim_information, name='claim_information'),
-    url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/reportNeed/$', views.claim_report, name='claim_report'),
+    url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/reportNeed/$', views.claim_reportNeed, name='claim_reportNeed'),
+    url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/reportInfo/$', views.claim_reportInfo, name='claim_reportInfo'),
+    url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/follow/$', views.claim_follow, name='claim_follow'),
+    url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/unfollow/$', views.claim_unfollow, name='claim_unfollow'),
+    url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/like/$', views.claim_like, name='claim_like'),
+    url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/unlike/$', views.claim_unlike, name='claim_unlike'),
+
     url(r'^fill_needs/(?P<count>[0-9]+)$', views.fill_needs, name='fill_needs'),
     url(r'^faq_signin/$', views.faq_signin, name='faq_signin'),
     url(r'^faq_startpage/$', views.faq_startpage, name='faq_startpage'),
     url(r'^home/$', views.home, name='home'),
     url(r'^immediate_aid/$', views.immediate_aid, name='immediate_aid'),
+
     url(r'^information_all/$', views.information_all, name='information_all'),
     url(r'^information_all/filter/$', views.information_filter, name='information_filter'),
     url(r'^information_all/report/$', views.report_information, name='report_information'),
@@ -55,6 +64,7 @@ urlpatterns = [
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
     url(r'^maptesting/$', views.map_testing, name='map_testing'),
+
     url(r'^needs_all/$', views.needs_all, name='needs_all'),
     url(r'^needs_all/filter/$', views.needs_filter, name='needs_filter'),
     url(r'^needs_all/report/$', views.report_need, name='report_need'),
@@ -63,13 +73,18 @@ urlpatterns = [
     url(r'^needs_finish/(?P<roomname>[A-Za-z0-9]+)/$', views.needs_finish, name='needs_finish'),
     url(r'^needs_timeline/$', views.needs_timeline, name='needs_timeline'),
     url(r'^needs_view/(?P<pk>\d+)/$', views.needs_view, name='needs_view'),
+
     url(r'^privacy/$', views.privacy, name='privacy'),
+
     url(r'^profil/$', views.profil, name='profil'),
     url(r'^profil_edit/$', views.profil_edit, name='profil_edit'),
     url(r'^profil_delete/$', views.profil_delete, name='profil_delete'),
+
     url(r'^register/$', views.register, name='register'),
+
     url(r'^reset_password/$', views.reset_password_page, name='reset_password_page'),
     url(r'^reset_password_confirmation/$', views.reset_password_confirmation, name='reset_password_confirmation'),
+
 	url(r'^contact_us/$', views.contact_us, name='contact_us'),
     url(r'^comment/report/(?P<pk>\d+)/$', views.report_comment, name='report_comment'),
     url(r'^verification/(?P<pk>\w+)$', views.verification, name='verification'),
@@ -79,6 +94,7 @@ urlpatterns = [
     url(r'^info_delete/(?P<pk>\w+)$', views.info_delete, name='info_delete'),
     url(r'^comm_delete/(?P<pk>\w+)$', views.comm_delete, name='comm_delete'),
     url(r'^home/delete_comment_timeline/(?P<pk>\w+)$', views.delete_comment_timeline, name='delete_comment_timeline'),
+
     url(r'^groups/all/$', views.groups_all, name='groups_all'),
     url(r'^groups/detail/(?P<name>[A-Za-z0-9 ]+)/$', views.group_detail, name='group_detail'),
     url(r'^groups/edit/(?P<pk>\d+)/$', views.group_edit, name='group_edit'),

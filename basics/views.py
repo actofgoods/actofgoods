@@ -296,7 +296,7 @@ def claim_information(request, name):
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
-def claim_report(request, name):
+def claim_reportNeed(request, name):
     pk=int(request.POST['pk'])
     #print(pk)
     need = Need.objects.get(pk=pk)
@@ -307,6 +307,56 @@ def claim_report(request, name):
     #print(Need.objects.get(pk=pk).reported_by.all())
     t = loader.get_template('snippets/claim_report.html')
     return HttpResponse(t.render({'user': request.user, 'need':need}))
+
+@csrf_protect
+def claim_reportInfo(request, name):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.was_reported = True
+    info.number_reports += 1
+    info.save()
+    info.reported_by.add(request.user.userdata)
+    return claim_information(request, name)
+
+@csrf_protect
+def claim_like(request, name):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.was_liked = True
+    info.number_likes += 1
+    info.liked_by.add(request.user.userdata)
+    info.save()
+    hours_elapsed = int((timezone.now() - info.date).seconds/3600)
+    info.priority = priority_info_user(hours_elapsed, info.number_likes)
+    info.save()
+    return claim_information(request, name)
+
+@csrf_protect
+def claim_unlike(request, name):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.number_likes -= 1
+    if info.number_likes == 0:
+        info.was_liked = False
+    info.liked_by.remove(request.user.userdata)
+    info.save()
+    return claim_information(request, name)
+
+@csrf_protect
+def claim_follow(request, name):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.followed_by.add(request.user.userdata)
+    info.save()
+    return claim_information(request, name)
+
+@csrf_protect
+def claim_unfollow(request, name):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.followed_by.remove(request.user.userdata)
+    info.save()
+    return claim_information(request, name)
 
 
 @csrf_protect
@@ -606,6 +656,7 @@ def information_update(request, pk):
         return render(request, 'basics/information_update.html', {'information':information})
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def follow(request):
     pk=int(request.POST['pk'])
     info = Information.objects.get(pk=pk)
@@ -613,6 +664,7 @@ def follow(request):
     info.save()
     return information_filter(request)
 
+@csrf_protect
 def unfollow(request):
     pk=int(request.POST['pk'])
     info = Information.objects.get(pk=pk)
@@ -1202,6 +1254,7 @@ def report_need(request):
     #print(Need.objects.get(pk=pk).reported_by.all())
     return needs_filter(request)
 
+@csrf_protect
 def report_information(request):
     pk=int(request.POST['pk'])
     info = Information.objects.get(pk=pk)
@@ -1211,6 +1264,7 @@ def report_information(request):
     info.reported_by.add(request.user.userdata)
     return information_filter(request)
 
+@csrf_protect
 def like_information(request):
     pk=int(request.POST['pk'])
     info = Information.objects.get(pk=pk)
@@ -1223,6 +1277,7 @@ def like_information(request):
     info.save()
     return information_filter(request)
 
+@csrf_protect
 def unlike_information(request):
     pk=int(request.POST['pk'])
     info = Information.objects.get(pk=pk)
