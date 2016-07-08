@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from decimal import Decimal
 from django.utils import timezone
 from django.utils.timezone import now
 from django.contrib.auth.models import User, Group
@@ -83,9 +84,10 @@ class Need(models.Model):
 	reported_by = models.ManyToManyField(Userdata)
 	adrAsPoint=models.PointField(null=True)
 	objects = models.GeoManager()
-	priority = models.FloatField(default=1000)
+	priority = models.DecimalField(max_digits=12, decimal_places=4, default=1000.0000)
 	update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
 	was_helped_at = models.ForeignKey(Helped, on_delete=models.CASCADE, blank=True, null=True)
+	done = models.BooleanField(default=False)
 
 def DELETE_USER():
     return get_user_model().objects.get_or_create(username='deleted')[0]
@@ -106,7 +108,7 @@ class Information(models.Model):
     was_liked = models.BooleanField(default=False)
     number_likes = models.PositiveIntegerField(default=0)
     liked_by = models.ManyToManyField(Userdata, related_name="like")
-    priority = models.FloatField(default=5000)
+    priority = models.DecimalField(max_digits=12, decimal_places=4, default=5000.0000)
     update_at = models.ForeignKey(Update, on_delete=models.CASCADE, blank=True, null=True)
     followed_by = models.ManyToManyField(Userdata, related_name="follow")
 
@@ -186,6 +188,9 @@ class Room(models.Model):
 			self.help_user_finished = True
 		else:
 			self.need_user_finished = True
+		if self.help_user_finished and self.need_user_finished:
+			self.need.done = True
+			self.need.save()
 		self.save()
 
 

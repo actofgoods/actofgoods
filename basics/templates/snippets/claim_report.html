@@ -1,7 +1,4 @@
-{% load filter%}    
-                      {% if needs %}
-                          {% for need in needs %}
-                          <div id="divneed{{need.pk}}">
+{% load filter%}   
                               <!-- list all needs -->
                               <div class="row">
                                   <div class="col-sm-12">
@@ -69,8 +66,3 @@
                                       </div>
                                   </div>
                               </div>
-                              </div>
-                          {% empty %}
-                              <h4>There are no needs.</h4>
-                          {% endfor %}
-                      {% endif %}
