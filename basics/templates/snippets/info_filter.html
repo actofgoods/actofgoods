@@ -62,7 +62,7 @@
                                             </div>
                                         {% elif not user.userdata in info.reported_by.all and user.userdata in info.liked_by.all  %}
                                             <div class="row">
-                                                {% if user.userdata in info.followed_by %}
+                                                {% if user.userdata in info.followed_by.all %}
                                                     <a class="list-group-footer-button" type="button" style="cursor:pointer" id="unfollow{{info.pk}}" onclick="unfollow({{info.pk}})">
                                                         <div class="col-sm-4" id="list-group-footer-button-margin">
                                                             <span class="glyphicon glyphicon-bookmark"></span> Unfollow
@@ -93,7 +93,7 @@
                                                         <span class="glyphicon glyphicon-chevron-up"></span> Upvote
                                                     </div>
                                                 </a>
-                                                {% if user.userdata in info.followed_by %}
+                                                {% if user.userdata in info.followed_by.all %}
                                                     <a class="list-group-footer-button" type="button" style="cursor:pointer" id="unfollow{{info.pk}}" onclick="unfollow({{info.pk}})">
                                                         <div class="col-sm-4" id="list-group-footer-button-margin">
                                                             <span class="glyphicon glyphicon-bookmark"></span> Unfollow
@@ -114,7 +114,7 @@
                                             </div>
                                         {% elif user.userdata in info.reported_by.all and user.userdata in info.liked_by.all %}
                                             <div class="row">
-                                                {% if user.userdata in info.followed_by %}
+                                                {% if user.userdata in info.followed_by.all %}
                                                     <a class="list-group-footer-button" type="button" style="cursor:pointer" id="unfollow{{info.pk}}" onclick="unfollow({{info.pk}})">
                                                         <div class="col-sm-6" id="list-group-footer-button-margin">
                                                             <span class="glyphicon glyphicon-bookmark"></span> Unfollow
