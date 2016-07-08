@@ -154,7 +154,7 @@
 
         map = new google.maps.Map(document.getElementById("map-container"),mapProp);
 
-        placeMarker(new google.maps.LatLng(parseFloat("{{ information.address.latitude }}".replace(",", ".")), parseFloat("{{ information.address.longditude }}".replace(",", "."))));
+        placeMarker(new google.maps.LatLng(parseFloat("{{ information.adrAsPoint.y }}".replace(",", ".")), parseFloat("{{ information.adrAsPoint.x }}".replace(",", "."))));
   }
 
   function placeMarker(location) {
