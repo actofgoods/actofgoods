@@ -304,8 +304,8 @@ def claim_report(request, name):
     need.save()
     need.reported_by.add(request.user.userdata)
     #print(Need.objects.get(pk=pk).reported_by.all())
-    return HttpResponse("True")
-
+    t = loader.get_template('snippets/claim_report.html')
+    return HttpResponse(t.render({'user': request.user, 'need':need}))
 
 
 @csrf_protect
@@ -741,7 +741,7 @@ def needs_all(request):
                     priority = priority_need_user(hours_elapsed)
                 n.priority = priority
                 n.save()
-        needs=needs.order_by('-priority','pk')
+        needs=Need.objects.all().order_by('-priority','pk')
         needs = needs.exclude(author=request.user)
         page = 1
         page_range = np.arange(1, 5)
@@ -1172,7 +1172,6 @@ def report_need(request):
     
     need.was_reported = True
     need.number_reports += 1
-    need.priority=need.priority
     need.save()
     need.reported_by.add(request.user.userdata)
     #print(Need.objects.get(pk=pk).reported_by.all())
