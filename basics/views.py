@@ -418,11 +418,13 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 @csrf_protect
 def information_all(request):
     if request.user.is_authenticated():
+        #TODO: Change this to somehing like user distance
         if request.user.userdata:
             dist = request.user.userdata.aux
         else:
             dist=500
-        cards_per_page = "Cards per page"
+        cards_per_page = 10
+        wordsearch = ""
         infos = Information.objects.all()
         for i in infos:
             if i.update_at.update_at < timezone.now():
@@ -434,19 +436,51 @@ def information_all(request):
                     priority = priority_info_user(hours_elapsed, i.number_likes)
                 i.priority = priority
                 i.save()
-        infos = Information.objects.order_by('priority', 'pk').reverse()
+
+        infos=infos.order_by('-priority','pk')
+        page = 1
+        page_range = np.arange(1, 5)
+        if request.method == "GET":
+            if not request.user.is_superuser:
+                infos=infos.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
+        max_page = int(len(infos)/cards_per_page)+1
+        infos = infos[cards_per_page*(page-1):cards_per_page*(page)]
+        page_range = np.arange(1,max_page+1)
+        return render(request, 'basics/information_all.html',{'infos':infos, 'wordsearch':wordsearch, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
+
+    return redirect('basics:actofgoods_startpage')
+
+
+def information_filter(request):
+    if request.user.is_authenticated():
+        #TODO: Change this to somehing like user distance
+        if request.user.userdata:
+            dist = request.user.userdata.aux
+        else:
+            dist=500
+        cards_per_page = 10
+        wordsearch = ""
+        infos=Information.objects.all().order_by('-priority', 'pk')
+        page = 1
+        page_range = np.arange(1, 5)
         if request.method == "POST":
-            #print(request.POST['range'], request.POST['cards_per_page'])
+            #print(request.POST)
+            if "" != request.POST['page']:
+                page = int(request.POST['page'])
             if "" != request.POST['range']:
-                range = request.POST['range']
+                dist= int(request.POST['range'].replace(',',''))
+                if not request.user.is_superuser:
+                    infos=infos.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
+            if "" != request.POST['wordsearch']:
+                wordsearch = request.POST['wordsearch']
+                infos = infos.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))
             if "" != request.POST['cards_per_page']:
                 cards_per_page = int(request.POST['cards_per_page'])
-                infos = infos[:cards_per_page]
-            #print(request)
-        else:
-            print("will nicgt")
-        return render(request, 'basics/information_all.html',{'infos':infos, 'cards_per_page':cards_per_page, 'range':dist})
-
+        max_page = int(len(infos)/cards_per_page)+1
+        infos = infos[cards_per_page*(page-1):cards_per_page*(page)]
+        page_range = np.arange(1,max_page+1)
+        t = loader.get_template('snippets/info_filter.html')
+        return HttpResponse(t.render({'user': request.user, 'infos':infos, 'page':page, 'page_range':page_range}))
     return redirect('basics:actofgoods_startpage')
 
 """
@@ -572,21 +606,19 @@ def information_update(request, pk):
         return render(request, 'basics/information_update.html', {'information':information})
     return redirect('basics:actofgoods_startpage')
 
-def follow(request, pk):
-    if request.user.is_authenticated():
-        info = Information.objects.get(pk=pk)
-        info.followed_by.add(request.user.userdata)
-        info.save()
-        return redirect('basics:information_all')
-    return redirect('basics:actofgoods_startpage')
+def follow(request):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.followed_by.add(request.user.userdata)
+    info.save()
+    return information_filter(request)
 
-def unfollow(request, pk):
-    if request.user.is_authenticated():
-        info = Information.objects.get(pk=pk)
-        info.followed_by.remove(request.user.userdata)
-        info.save()
-        return redirect('basics:information_all')
-    return redirect('basics:actofgoods_startpage')
+def unfollow(request):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.followed_by.remove(request.user.userdata)
+    info.save()
+    return information_filter(request)
 
 """
     Input: request(Email, Password)
@@ -1170,14 +1202,17 @@ def report_need(request):
     #print(Need.objects.get(pk=pk).reported_by.all())
     return needs_filter(request)
 
-def report_information(request, pk):
+def report_information(request):
+    pk=int(request.POST['pk'])
     info = Information.objects.get(pk=pk)
     info.was_reported = True
     info.number_reports += 1
+    info.save()
     info.reported_by.add(request.user.userdata)
-    return redirect('basics:information_all')
+    return information_filter(request)
 
-def like_information(request, pk):
+def like_information(request):
+    pk=int(request.POST['pk'])
     info = Information.objects.get(pk=pk)
     info.was_liked = True
     info.number_likes += 1
@@ -1186,16 +1221,17 @@ def like_information(request, pk):
     hours_elapsed = int((timezone.now() - info.date).seconds/3600)
     info.priority = priority_info_user(hours_elapsed, info.number_likes)
     info.save()
-    return redirect('basics:information_all')
+    return information_filter(request)
 
-def unlike_information(request, pk):
+def unlike_information(request):
+    pk=int(request.POST['pk'])
     info = Information.objects.get(pk=pk)
     info.number_likes -= 1
     if info.number_likes == 0:
         info.was_liked = False
     info.liked_by.remove(request.user.userdata)
     info.save()
-    return redirect('basics:information_all')
+    return information_filter(request)
 
 def need_delete(request, pk):
     need = Need.objects.all().get(pk=pk)

@@ -1,6 +1,7 @@
 {% extends 'basics/base.html' %}
 {% load filter %}
 {% block content %}
+{% load staticfiles %}
 
 <!-- information-->
 <div id="standard-modal" style="margin-bottom: 90px">
@@ -12,7 +13,7 @@
                     <h2 class="text-center" id="standard-modal-headline">Information</h2>
                 </div>
             </div>
-            <form class="form" id="filter-form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
+            <form class="form" id="filter-form" role="form" method="post" accept-charset="UTF-8">
             {%csrf_token%}
 
                 <div class="row">
@@ -54,9 +55,9 @@
 
             </form>
         </div>
-
-        <div class="modal-body" style="padding-bottom: 0px;">
-            <div class="list-group" style="margin-bottom: 0px;">
+        <div id="insert">
+        <div class="modal-body" style="padding-bottom: 0px;" id="modal-body">
+            <div class="list-group" style="margin-bottom: 0px;" id="info-list">
                 {% if infos %}
                     {% for info in infos %}
 
@@ -87,19 +88,19 @@
                                     {% else %}
                                         {% if not user.userdata in info.reported_by.all and not user.userdata in info.liked_by.all %}
                                             <div class="row">
-                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:like_information' pk=info.id %}">
+                                                <a class="list-group-footer-button" type="button" style="cursor:pointer" id="like{{info.pk}}" onclick="like({{info.pk}})">
                                                     <div class="col-sm-3" id="list-group-footer-button-margin">
                                                         <span class="glyphicon glyphicon-chevron-up"></span> Upvote
                                                     </div>
                                                 </a>
                                                 {% if user.userdata in info.followed_by.all %}
-                                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:unfollow' pk=info.pk %}">
+                                                    <a class="list-group-footer-button" type="button" style="cursor:pointer" id="unfollow{{info.pk}}" onclick="unfollow({{info.pk}})">
                                                         <div class="col-sm-3" id="list-group-footer-button-margin">
                                                             <span class="glyphicon glyphicon-bookmark"></span> Unfollow
                                                         </div>
                                                     </a>
-                                                {% else %}
-                                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:follow' pk=info.pk %}">
+                                                {% elif not user.userdata in info.followed_by.all%}
+                                                    <a class="list-group-footer-button" type="button" style="cursor:pointer" id="follow{{info.pk}}" onclick="follow({{info.pk}})">
                                                         <div class="col-sm-3" id="list-group-footer-button-margin">
                                                             <span class="glyphicon glyphicon-bookmark"></span> Follow
                                                         </div>
@@ -110,48 +111,22 @@
                                                         <span class="glyphicon glyphicon-comment"></span> Comment
                                                     </div>
                                                 </a>
-                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:report_information' pk=info.id%}">
+                                                <a class="list-group-footer-button" type="button" style="cursor:pointer" id="report{{info.pk}}" onclick="report({{info.pk}})">
                                                     <div class="col-sm-3">
                                                         <span class="glyphicon glyphicon-ban-circle"></span> Report
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        {% elif user.userdata in info.reported_by.all and not user.userdata in info.liked_by.all  %}
-                                            <div class="row">
-                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:like_information' pk=info.id %}">
-                                                    <div class="col-sm-4" id="list-group-footer-button-margin">
-                                                        <span class="glyphicon glyphicon-chevron-up"></span> Upvote
-                                                    </div>
-                                                </a>
-                                                {% if user.userdata in info.followed_by %}
-                                                    <a class="list-group-footer-button" type="button" href="">
-                                                        <div class="col-sm-4" id="list-group-footer-button-margin">
-                                                            <span class="glyphicon glyphicon-bookmark"></span> Unfollow
-                                                        </div>
-                                                    </a>
-                                                {% else %}
-                                                    <a class="list-group-footer-button" type="button" href="">
-                                                        <div class="col-sm-4" id="list-group-footer-button-margin">
-                                                            <span class="glyphicon glyphicon-bookmark"></span> Follow
-                                                        </div>
-                                                    </a>
-                                                {% endif %}
-                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
-                                                    <div class="col-sm-4">
-                                                        <span class="glyphicon glyphicon-comment"></span> Comment
                                                     </div>
                                                 </a>
                                             </div>
                                         {% elif not user.userdata in info.reported_by.all and user.userdata in info.liked_by.all  %}
                                             <div class="row">
                                                 {% if user.userdata in info.followed_by %}
-                                                    <a class="list-group-footer-button" type="button" href="">
+                                                    <a class="list-group-footer-button" type="button" style="cursor:pointer" id="unfollow{{info.pk}}" onclick="unfollow({{info.pk}})">
                                                         <div class="col-sm-4" id="list-group-footer-button-margin">
                                                             <span class="glyphicon glyphicon-bookmark"></span> Unfollow
                                                         </div>
                                                     </a>
-                                                {% else %}
-                                                    <a class="list-group-footer-button" type="button" href="">
+                                                {% elif not user.userdata in info.followed_by.all%}
+                                                    <a class="list-group-footer-button" type="button" style="cursor:pointer" id="follow{{info.pk}}" onclick="follow({{info.pk}})">
                                                         <div class="col-sm-4" id="list-group-footer-button-margin">
                                                             <span class="glyphicon glyphicon-bookmark"></span> Follow
                                                         </div>
@@ -162,22 +137,48 @@
                                                         <span class="glyphicon glyphicon-comment"></span> Comment
                                                     </div>
                                                 </a>
-                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:report_information' pk=info.id%}">
+                                                <a class="list-group-footer-button" type="button" style="cursor:pointer" id="report{{info.pk}}" onclick="report({{info.pk}})">
                                                     <div class="col-sm-4">
                                                         <span class="glyphicon glyphicon-ban-circle"></span> Report
                                                     </div>
                                                 </a>
                                             </div>
-                                        {% else %}
+                                        {% elif user.userdata in info.reported_by.all and not user.userdata in info.liked_by.all  %}
+                                            <div class="row">
+                                                <a class="list-group-footer-button" type="button" style="cursor:pointer" id="like{{info.pk}}" onclick="like({{info.pk}})">
+                                                    <div class="col-sm-4" id="list-group-footer-button-margin">
+                                                        <span class="glyphicon glyphicon-chevron-up"></span> Upvote
+                                                    </div>
+                                                </a>
+                                                {% if user.userdata in info.followed_by %}
+                                                    <a class="list-group-footer-button" type="button" style="cursor:pointer" id="unfollow{{info.pk}}" onclick="unfollow({{info.pk}})">
+                                                        <div class="col-sm-4" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-bookmark"></span> Unfollow
+                                                        </div>
+                                                    </a>
+                                                {% elif not user.userdata in info.followed_by.all%}
+                                                    <a class="list-group-footer-button" type="button" style="cursor:pointer" id="follow{{info.pk}}" onclick="follow({{info.pk}})">
+                                                        <div class="col-sm-4" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-bookmark"></span> Follow
+                                                        </div>
+                                                    </a>
+                                                {% endif %}
+                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
+                                                    <div class="col-sm-4">
+                                                        <span class="glyphicon glyphicon-comment"></span> Comment
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        {% elif user.userdata in info.reported_by.all and user.userdata in info.liked_by.all %}
                                             <div class="row">
                                                 {% if user.userdata in info.followed_by %}
-                                                    <a class="list-group-footer-button" type="button" href="">
+                                                    <a class="list-group-footer-button" type="button" style="cursor:pointer" id="unfollow{{info.pk}}" onclick="unfollow({{info.pk}})">
                                                         <div class="col-sm-6" id="list-group-footer-button-margin">
                                                             <span class="glyphicon glyphicon-bookmark"></span> Unfollow
                                                         </div>
                                                     </a>
-                                                {% else %}
-                                                    <a class="list-group-footer-button" type="button" href="">
+                                                {% elif not user.userdata in info.followed_by.all%}
+                                                    <a class="list-group-footer-button" type="button" style="cursor:pointer" id="follow{{info.pk}}" onclick="follow({{info.pk}})">
                                                         <div class="col-sm-6" id="list-group-footer-button-margin">
                                                             <span class="glyphicon glyphicon-bookmark"></span> Follow
                                                         </div>
@@ -207,16 +208,16 @@
                 <div class="col-xs-12 col-sm-offset-2 col-sm-8 text-center">
                     <nav>
                         <ul class="pagination">
-                            <li {% if 1 == page %}class="disabled"{% endif %}><a id="pagination-left-right" value="{{number}}" onclick="submit_page(this)" aria-label="Previous"><span aria-hidden="true" class="glyphicon glyphicon-menu-left"></span></a></li>
+                            <li style="cursor:pointer" {% if 1 == page %}class="disabled"{% endif %}><a id="pagination-left-right" value="{{number}}" onclick="submit_page(this)" aria-label="Previous"><span aria-hidden="true" class="glyphicon glyphicon-menu-left"></span></a></li>
                             {% for number in page_range %}
                                 {% if number == page %}
                                     <li class="active"><a id="pagination-number-active" onclick="submit_page(this)" value="{{number}}">{{number}} <span class="sr-only">(current)</span></a></li>
                                 {% else %}
-                                    <li><a id="pagination-number" onclick="submit_page(this)" value="{{number}}">{{number}}</a></li>
+                                    <li><a id="pagination-number" onclick="submit_page(this)" style="cursor:pointer" value="{{number}}">{{number}}</a></li>
                                 {% endif %}
                             {% endfor %}
                             <li>
-                                <a id="pagination-left-right" onclick="submit_page(this)" value="{{number}}" aria-label="Next">
+                                <a id="pagination-left-right" style="cursor:pointer" onclick="submit_page(this)" value="{{number}}" aria-label="Next">
                                     <span aria-hidden="true" class="glyphicon glyphicon-menu-right"></span>
                                 </a>
                             </li>
@@ -225,6 +226,7 @@
                 </div>
             </div>
         </div>
+        </div> <!--insert-->
     </div>
 </div><!-- end Information -->
 
@@ -233,6 +235,15 @@
         <a id="standard-grey-button-light" type="button" class="btn btn-default button-float" onclick="location.href='{% url 'basics:information_new' %}'" title="create new information or question" style="font-size: 26px;"><span class="glyphicon glyphicon-plus"/></a>
     </div>
 </div>
+
+<script>
+    function submit_page(button){
+      var button = $(button).attr("value");
+      $("#page").val(button);
+      console.log($(button).attr("value"));
+      $("#filter-form").submit();
+    }
+  </script>
 
 <script>
 
@@ -263,6 +274,139 @@
              $('.button-float').css('bottom', '20px');
          }
      });
+
+</script>
+
+<script>
+  $.ajaxSetup({
+      data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+  });
+  $('#filter-form').on('submit', function(e) {
+    e.preventDefault();
+    console.log("form submitted!");
+    $.ajax({
+      url: "filter/",
+      type: "POST",
+      data: {page: $("#page").val(), range: $("#range").val(), cards_per_page: $("#cards_per_page").val(), wordsearch: $("#basic-url").val()},
+
+      beforeSend: function() {
+        $('#modal-body').html("<div class='modal-body' style='padding-bottom: 0px;'' id='loader'><center><img src='{% static 'basics/images/loader.gif' %}'/></center></div><br>");
+      },
+
+      success: function(data){
+        $('#insert').html(data);
+        console.log("success");
+      },
+
+      error: function(xhr, errmsg, err){
+        console.log(xhr.status + ": " + xhr.responseText);
+      }
+    });
+  });
+
+</script>
+
+<script>
+
+function report(pk){
+    console.log(pk)
+
+    $.ajax({
+        url: "report/",
+        type: "POST",
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, page: $("#page").val(), range: $("#range").val(), cards_per_page: $("#cards_per_page").val(), wordsearch: $("#basic-url").val()},
+
+        success: function(data){
+        $('#insert').html(data);
+            console.log("success");
+        },
+
+        error: function(xhr, errmsg, err){
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+
+}
+
+function follow(pk){
+    console.log(pk)
+
+    $.ajax({
+        url: "follow/",
+        type: "POST",
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, page: $("#page").val(), range: $("#range").val(), cards_per_page: $("#cards_per_page").val(), wordsearch: $("#basic-url").val()},
+
+        success: function(data){
+        $('#insert').html(data);
+            console.log("success");
+        },
+
+        error: function(xhr, errmsg, err){
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+
+}
+
+function unfollow(pk){
+    console.log(pk)
+
+    $.ajax({
+        url: "unfollow/",
+        type: "POST",
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, page: $("#page").val(), range: $("#range").val(), cards_per_page: $("#cards_per_page").val(), wordsearch: $("#basic-url").val()},
+
+        success: function(data){
+        $('#insert').html(data);
+            console.log("success");
+        },
+
+        error: function(xhr, errmsg, err){
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+
+}
+
+function like(pk){
+    console.log(pk)
+
+    $.ajax({
+        url: "like/",
+        type: "POST",
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, page: $("#page").val(), range: $("#range").val(), cards_per_page: $("#cards_per_page").val(), wordsearch: $("#basic-url").val()},
+
+        success: function(data){
+        $('#insert').html(data);
+            console.log("success");
+        },
+
+        error: function(xhr, errmsg, err){
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+
+}
+
+function unlike(pk){
+    console.log(pk)
+
+    $.ajax({
+        url: "unlike/",
+        type: "POST",
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, page: $("#page").val(), range: $("#range").val(), cards_per_page: $("#cards_per_page").val(), wordsearch: $("#basic-url").val()},
+
+        success: function(data){
+        $('#insert').html(data);
+            console.log("success");
+        },
+
+        error: function(xhr, errmsg, err){
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+
+}
 
 </script>
 {% endblock %}

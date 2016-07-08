@@ -12,7 +12,7 @@
                     <h2 class="text-center" id="standard-modal-headline">Needs</h2>
                 </div>
             </div>
-            <form class="form" id="filter-form" role="form" method="post" action="{% url 'basics:needs_all'%}" accept-charset="UTF-8">
+            <form class="form" id="filter-form" role="form" method="post" accept-charset="UTF-8">
             {%csrf_token%}
                 <div class="row">
                     <div class="col-sm-8 col-sm-offset-2">
@@ -87,7 +87,7 @@
                                                     <span class="glyphicon glyphicon-comment"></span> Help
                                                 </div>
                                             </a>
-                                             <a class="list-group-footer-button" type="button" style="cursor:pointer" id="report{{need.pk}}"" onclick="report({{need.pk}})"">
+                                             <a class="list-group-footer-button" type="button" style="cursor:pointer" id="report{{need.pk}}" onclick="report({{need.pk}})"">
                                                 <div class="col-sm-6">
                                                      <span class="glyphicon glyphicon-ban-circle"></span> Report
                                                 </div>
