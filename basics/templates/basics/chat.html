@@ -15,6 +15,11 @@
 
 
 <style>
+    .not-active {
+        pointer-events: none;
+        cursor: default;
+
+    }
     #chat-css-container {
         margin-left: 0px;
         margin-right: 0px;
@@ -238,6 +243,25 @@
             </div>
           </div>
 
+          <div class="modal fade need-modal" id="need-modal" role="dialog" aria-labelledby="request" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                          <h2 style="word-wrap: break-word;">{{room.need.headline}}</h2>
+                          <h6><i>from {{ room.need.date }} in category {{ room.need.categorie.name }} {% if room.need.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ room.need.group.name }}</a>{% elif room.need.author == user %} by <span>you</span>{% endif %}</i></h6>
+                      </div>
+                      <div class="modal-body">
+                          <p style="word-wrap: break-word;">{{ room.need|get_short_text:512|linebreaksbr }}</p>
+                      </div>
+                      <div class="modal-footer">
+                          <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
 
   <script type="text/babel">
 'use strict';
@@ -314,13 +338,18 @@
                 placeholder={props.labelText}
                 required/>
             </div>
-            <div className="col-sm-4 col-sm-offset-8" id="send-button-container">
+            <div className="col-sm-4 col-sm-offset-8 {% if room.helper_out %}not-active {% endif %}" id="send-button-container">
                 <button onClick={props.handleClick}
                 className= 'btn btn-primary btn-block'
                 id="standard-grey-button-light"
                 type= 'submit' >
                     <span className="glyphicon glyphicon-send"></span> {props.buttonText}
                 </button>
+            </div>
+            <div className="col-sm-4 {% if room.helper_out or not request.user|has_number %}not-active {% endif %}" id="chat-send-number-container" onClick={props.sendNumber.bind(null, 'number')}>
+                <a id="standard-grey-button-light" className="btn btn-primary btn-block" >
+                    <span className="glyphicon glyphicon-earphone"></span> Send Number
+                </a>
             </div>
         </div>
 
@@ -373,7 +402,8 @@
         handleChange: this.handleChange,
         labelText: 'Enter your message...',
         handleClick: this.sendMessage,
-        buttonText: 'Send Message'
+        buttonText: 'Send Message',
+        sendNumber: this.props.sendNumber
       });
     }
 
@@ -497,15 +527,16 @@
           {!this.state.connected ? React.createElement(LoadingBar, null) : null}
 
           <div className="row" id="header-css-chat">
-              <div className="col-sm-7" id="header-css-description-container">
+              <a className="col-sm-7" id="header-css-description-container "  data-toggle="modal" data-target="#need-modal" type="button">
                   <p id="header-css-chat-description">Chat: {{name}}</p>
-              </div>
-              <a className="list-group-footer-button cursor-pointer" type="button" href="">
+              </a>
+
+              <a className="list-group-footer-button cursor-pointer {% if room.helper_out %}not-active {% endif %}"  type="button" href="{% url 'basics:needs_finish' roomname=roomname %}">
                   <div className="col-sm-2" id="header-css-middle-button-container">
                       <span className="glyphicon glyphicon-ok"></span> Done
                   </div>
               </a>
-              <a className="list-group-footer-button cursor-pointer" type="button" href="{% url 'basics:kick_user' roomname=roomname %}">
+              <a className="list-group-footer-button cursor-pointer {% if room.helper_out %}not-active {% endif %}" type="button" href="{% url 'basics:kick_user' roomname=roomname %}">
                   <div className="col-sm-3" id="header-css-button-container">
                       <span className="glyphicon glyphicon-log-out"></span> {% if roomname|is_own:request.user %} Kick User {% else %} Leave Chat {% endif %}
                   </div>
@@ -515,11 +546,7 @@
             <div className="col-sm-8" id="chat-info-container">
                 <p><i> {% if roomname|is_own:request.user %} You are getting help TODO{% else %} You are helping TODO{% endif %}</i></p>
             </div>
-            <div className="col-sm-4" id="chat-send-number-container">
-                <a id="standard-grey-button-light" className="btn btn-primary btn-block" onClick={this.sendNumber.bind(null, 'number')}>
-                    <span className="glyphicon glyphicon-earphone"></span> Send Number
-                </a>
-            </div>
+
           </div>
 
           <MessageList>
@@ -527,7 +554,7 @@
           </MessageList>
 
           <div className="actions-containers ">
-            <MessageEditor sendMessage={this.sendMessage}></MessageEditor>
+            <MessageEditor sendMessage={this.sendMessage} sendNumber={this.sendNumber}></MessageEditor>
           </div>
 
         </div>

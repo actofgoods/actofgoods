@@ -18,3 +18,14 @@ def is_own(roomname, user):
 @register.filter
 def get_roomname(need, user):
     return Room.objects.get(need=need, user_req=user).name
+
+@register.filter
+def has_number(user):
+    print("fuck of")
+    print(user.username)
+    print(Userdata.objects.get(user=user).phone)
+    if  Userdata.objects.get(user=user).phone != None and Userdata.objects.get(user=user).phone != "":
+        print("True")
+        return True
+    print("False")
+    return False

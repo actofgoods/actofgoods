@@ -213,7 +213,7 @@
 
     	map = new google.maps.Map(document.getElementById("map-container"),mapProp);
 
-        placeMarker(new google.maps.LatLng(parseFloat("{{ Userdata.address.latitude }}".replace(",", ".")), parseFloat("{{ Userdata.address.longditude }}".replace(",", "."))));
+        placeMarker(new google.maps.LatLng(parseFloat("{{ Userdata.adrAsPoint.x }}".replace(",", ".")), parseFloat("{{ Userdata.adrAsPoint.y }}".replace(",", "."))));
         var circle = new google.maps.Circle({
             strokeColor: '#FF0000',
             strokeOpacity: 0.8,
