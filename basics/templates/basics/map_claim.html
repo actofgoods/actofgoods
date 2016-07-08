@@ -356,7 +356,7 @@
             google.maps.event.addDomListener($("#checkbox"+index)[0], 'change', function(){
                 if($(this).is(':checked'))
                 {
-                    ownPolys[index].setOptions({fillOpacity: 0.4, fillColor: '#006400', strokeOpacity: 3.0, strokeWeight: 6, strokeColor: '#006400'});
+                    ownPolys[index].setOptions({fillOpacity: 0.35, fillColor: '#006400', strokeOpacity: 0.9, strokeWeight: 3, strokeColor: '#006400'});
                     loadNeeds();
                     loadInfos();
                 }
@@ -398,7 +398,7 @@
                 poly.setDraggable(false);
                 onedit=false;
 				poly.addListener('click', function(event){
-	  				info.setContent('<b>Group: </b>'+'{{group}}'+'<br><b>Owner: </b>' +json.owner + '<br><b>ID: '+json.pk+'</b>');
+	  				info.setContent('<b>Group: </b>'+'{{group}}'+'<br><b>Owner: </b>' +json.owner + '<br><b>Title: '+json.claimname+'</b>');
 	  				info.setPosition(event.latLng);
 	  				info.open(map);
   				})
@@ -486,7 +486,7 @@
                     path.push(new google.maps.LatLng{{point}});
                 {% endfor%}
                 console.log("Test1");
-                createPoly(prop, path, '{{claim.group.name}}','{{claim.claimer.email}}','{{claim.pk}}');
+                createPoly(prop, path, '{{claim.group.name}}','{{claim.claimer.email}}','{{claim.title}}');
             {%endfor %}
             initializeCheckbox();
         }
@@ -528,7 +528,7 @@
                 google.maps.event.addDomListener($("#checkbox"+_i)[0], 'change', function(){
                 if($(this).is(':checked'))
                 {
-                    ownPolys[_i].setOptions({fillOpacity: 0.4, fillColor: '#006400', strokeOpacity: 3.0, strokeWeight: 6, strokeColor: '#006400'});
+                    ownPolys[_i].setOptions({fillOpacity: 0.35, fillColor: '#006400', strokeOpacity: 0.9, strokeWeight: 3, strokeColor: '#006400'});
                     loadNeeds();
                     loadInfos();
                 }
@@ -543,7 +543,7 @@
         }
     }
 
-    function createPoly(prop, path, group, email, pk) {
+    function createPoly(prop, path, group, email, title) {
         console.log("Test2"+group);
         if ("{{group}}" == group) {
             console.log("Test3");
@@ -551,13 +551,13 @@
                 paths: new google.maps.MVCArray(path),
                 strokeColor: '#FF0000',
                 fillColor: '#FF0000',
-                strokeOpacity: 0.8,
+                strokeOpacity: 0.9,
                 strokeWeight: 3,
                 fillOpacity: 0.35,
                 editable: false
             });
             claim.addListener('click', function(event){
-                info.setContent('<b>Group: </b>'+group+'<br><b>Owner: </b>' +email + '<br><b>ID: '+pk+'</b>');
+                info.setContent('<b>Group: </b>'+group+'<br><b>Owner: </b>' +email + '<br><b>Title: '+title+'</b>');
                 info.setPosition(event.latLng);
                 info.open(map);
             })
@@ -570,7 +570,7 @@
             var claim = new google.maps.Polygon({
                 paths: new google.maps.MVCArray(path),
                 strokeColor: '#5D5F5B',
-                strokeOpacity: 0.8,
+                strokeOpacity: 0.9,
                 strokeWeight: 3,
                 fillColor: '#5D5F5B',
                 fillOpacity: 0.35,

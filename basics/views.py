@@ -736,13 +736,9 @@ def needs_all(request):
                     priority = priority_need_user(hours_elapsed)
                 n.priority = priority
                 n.save()
-<<<<<<< HEAD
+
         needs=needs.order_by('-priority','pk')
         needs = needs.exclude(author=request.user).filter(done=False)
-=======
-        needs=Need.objects.all().order_by('-priority','pk')
-        needs = needs.exclude(author=request.user)
->>>>>>> 2c34922874610e5e2001a2903204f8bae943a131
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "GET":
