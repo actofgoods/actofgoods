@@ -273,7 +273,6 @@
                 ownPolys[divid].setMap(null);
             },
             error: function(xhr, errmsg, err){
-                console.log(xhr.status + ": " + xhr.responseText);
                 $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
             },
         });
@@ -281,7 +280,6 @@
 
     function loadNeeds(){
         liste=getChecked();
-        console.log(liste);
         $.ajax({
 
               url: "needs/",
@@ -294,18 +292,15 @@
 
               success: function(data){
                 $('#need-list').html(data);
-                console.log("success");
               },
 
               error: function(xhr, errmsg, err){
-                console.log(xhr.status + ": " + xhr.responseText);
               }
             });
     }
 
     function loadInfos(){
         liste=getChecked();
-        console.log(liste);
         $.ajax({
 
               url: "infos/",
@@ -318,17 +313,14 @@
 
               success: function(data){
                 $('#info-list').html(data);
-                console.log("success");
               },
 
               error: function(xhr, errmsg, err){
-                console.log(xhr.status + ": " + xhr.responseText);
                 $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
               }
             });
     }
     function reportNeed(pk){
-        console.log(pk)
 
         $.ajax({
             url: "reportNeed/",
@@ -345,7 +337,6 @@
 
     }
     function reportInfo(pk){
-        console.log(pk)
 
         $.ajax({
             url: "reportInfo/",
@@ -357,14 +348,12 @@
             },
             error: function(xhr, errmsg, err){
                 $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
-                console.log(xhr)
             }
         });
 
     }
 
     function follow(pk){
-        console.log(pk)
 
         $.ajax({
             url: "follow/",
@@ -373,18 +362,15 @@
 
             success: function(data){
                 $('#info-list').html(data);
-                console.log("success");
             },
 
             error: function(xhr, errmsg, err){
-                console.log(xhr.status + ": " + xhr.responseText);
             }
         });
 
     }
 
     function unfollow(pk){
-        console.log(pk)
 
         $.ajax({
             url: "unfollow/",
@@ -393,19 +379,15 @@
 
             success: function(data){
                 $('#info-list').html(data);
-                console.log("success");
             },
 
             error: function(xhr, errmsg, err){
-                console.log(xhr.status + ": " + xhr.responseText);
             }
         });
 
     }
 
     function like(pk){
-        console.log(pk)
-
         $.ajax({
             url: "like/",
             type: "POST",
@@ -413,18 +395,15 @@
 
             success: function(data){
                 $('#info-list').html(data);
-                console.log("success");
             },
 
             error: function(xhr, errmsg, err){
-                console.log(xhr.status + ": " + xhr.responseText);
             }
         });
 
     }
 
     function unlike(pk){
-        console.log(pk)
 
         $.ajax({
             url: "unlike/",
@@ -433,11 +412,9 @@
 
             success: function(data){
                 $('#info-list').html(data);
-                console.log("success");
             },
 
             error: function(xhr, errmsg, err){
-                console.log(xhr.status + ": " + xhr.responseText);
             }
         });
 
@@ -466,11 +443,9 @@
                 }
             });
 
-            console.log("success");
         },
 
         error: function(xhr, errmsg, err){
-            console.log(xhr.status + ": " + xhr.responseText);
             $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
         }
     });
@@ -479,37 +454,38 @@
 
     function post_poly(){
     if(!saved){
-        $("#claim-new-area").fadeOut('fast')
-		pathi=save();
-        saved=true;
-		console.log("form submitted!");
-        claimnam = document.getElementById("claimname").value;
-		$.ajax({
-			url: "post/",
-			type: "POST",
-			data: {csrfmiddlewaretoken: '{{ csrf_token }}', path: pathi, claimname: claimnam},
+        if(document.getElementById("claimname").value != "") {
+            if(poly.getPath().length > 4) {
+                $("#claim-new-area").fadeOut('fast')
+        		pathi=save();
+                saved=true;
+                claimnam = document.getElementById("claimname").value;
+        		$.ajax({
+        			url: "post/",
+        			type: "POST",
+        			data: {csrfmiddlewaretoken: '{{ csrf_token }}', path: pathi, claimname: claimnam},
 
-			success: function(json){
-                refreshClaim(json.pk, ownPolys.length);
-				$.notify("Creation successful!",{className: "success", position: "right-bottom"});
-				poly.setEditable(false);
-                poly.setDraggable(false);
-                onedit=false;
-				poly.addListener('click', function(event){
-	  				info.setContent('<b>Group: </b>'+'{{group}}'+'<br><b>Owner: </b>' +json.owner + '<br><b>Title: '+json.claimname+'</b>');
-	  				info.setPosition(event.latLng);
-	  				info.open(map);
-  				})
-				console.log(json);
-                ownPolys.push(poly);
-				console.log("success");
-			},
+        			success: function(json){
+                        refreshClaim(json.pk, ownPolys.length);
+        				$.notify("Creation successful!",{className: "success", position: "right-bottom"});
+        				poly.setEditable(false);
+                        poly.setDraggable(false);
+                        onedit=false;
+        				poly.addListener('click', function(event){
+        	  				info.setContent('<b>Group: </b>'+'{{group}}'+'<br><b>Owner: </b>' +json.owner + '<br><b>Title: '+json.claimname+'</b>');
+        	  				info.setPosition(event.latLng);
+        	  				info.open(map);
+          				})
+                        ownPolys.push(poly);
+        			},
 
-			error: function(xhr, errmsg, err){
-                console.log(xhr+ errmsg+ err);
-                $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
-			}
-		});
+        			error: function(xhr, errmsg, err){
+                        $.notify("Opps! Something went wrong :(",{className: "error", position: "right-bottom"});
+        			}
+        		});
+            }else{$.notify("Please choose at least 3 points for your claim.",{className: "info", position: "right-bottom"})}
+        }else{$.notify("Please choose a title for your Claim.",{className: "info", position: "right-bottom"})}
+    
     } else{
         $.notify("You already saved your Area! Press New to create another.",{className: "info", position: "right-bottom"});
     }
@@ -520,7 +496,6 @@
         $("input[type=checkbox]:checked").each(function(){
             liste.push($(this).val());
         });
-        console.log(liste);
         return liste;
 
     }
@@ -557,7 +532,6 @@
         streetViewControl: false
   		};
   		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
-        console.log(document.getElementById("button1").textContent);
   		poly=new google.maps.Polygon({
                 paths: new google.maps.MVCArray([new google.maps.MVCArray]),
                 strokeColor: '#FF0000',
@@ -571,7 +545,6 @@
         loadClaims('2');
 
         google.maps.event.addDomListener(claimname, 'change', function(){
-            console.log(document.getElementById("claimname").value);
         });
   		google.maps.event.addListener(map, 'click', addPoint);
 	}
@@ -583,7 +556,6 @@
                 {% for point in claim.poly.0 %}
                     path.push(new google.maps.LatLng{{point}});
                 {% endfor%}
-                console.log("Test1");
                 createPoly(prop, path, '{{claim.group.name}}','{{claim.claimer.email}}','{{claim.title}}');
             {%endfor %}
             initializeCheckbox();
@@ -592,7 +564,6 @@
             loadedAll=true;
             document.getElementById('button1').setAttribute("onclick","loadClaims('1')");
             document.getElementById('button1').innerHTML="<div class='col-sm-4' id='heading-map-claim-button-over-last'><span class='glyphicon glyphicon-globe'></span> Show Own</div>";
-            console.log("Das ist ein PreTest für Prop 0");
             showClaims("1");
         }
         if(prop=='1'){
@@ -619,9 +590,7 @@
     }
 
     function initializeCheckbox(){
-        console.log("Checkboxes initialized");
         for (var i in ownPolys){
-            console.log(i);
             (function(_i){
                 google.maps.event.addDomListener($("#checkbox"+_i)[0], 'change', function(){
                 if($(this).is(':checked'))
@@ -632,7 +601,7 @@
                 }
                 else
                 {
-                    ownPolys[_i].setOptions({fillOpacity: 0.35, fillColor: '#FF0000', strokeOpacity: 0.9, strokeWeight: 3, strokeColor: '#FF0000'});
+                    ownPolys[_i].setOptions({fillOpacity: 0.35, fillColor: '#0000CD', strokeOpacity: 0.9, strokeWeight: 3, strokeColor: '#0000CD'});
                     loadNeeds();
                     loadInfos();
                 }
@@ -642,13 +611,11 @@
     }
 
     function createPoly(prop, path, group, email, title) {
-        console.log("Test2"+group);
         if ("{{group}}" == group) {
-            console.log("Test3");
         	var claim = new google.maps.Polygon({
                 paths: new google.maps.MVCArray(path),
-                strokeColor: '#FF0000',
-                fillColor: '#FF0000',
+                strokeColor: '#0000CD',
+                fillColor: '#0000CD',
                 strokeOpacity: 0.9,
                 strokeWeight: 3,
                 fillOpacity: 0.35,
@@ -702,14 +669,11 @@
             googleToDjango+=poly.getPath().getAt(i).lat()+" "+poly.getPath().getAt(i).lng();
         }
         googleToDjango+=", "+poly.getPath().getAt(0).lat()+" "+poly.getPath().getAt(0).lng();
-        console.log(JSON.stringify(googleToDjango));
         return googleToDjango;
     }
 
     function print_polygon(){
-    	console.log("Neues Poly! Länge: " + poly.getPath().length);
         for (var i=0; i<poly.getPath().length; i++){
-            console.log(poly.getPath().getAt(i).lat());
         }
     }
 
@@ -726,10 +690,10 @@
                 paths.push(event.latLng);
                 poly=new google.maps.Polygon({
                 paths: paths,
-                strokeColor: '#FF0000',
+                strokeColor: '#0000CD',
                 strokeOpacity: 0.8,
                 strokeWeight: 3,
-                fillColor: '#FF0000',
+                fillColor: '#0000CD',
                 fillOpacity: 0.35,
                 editable: false
             });
