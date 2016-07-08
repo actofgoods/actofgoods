@@ -346,7 +346,7 @@
                     <span className="glyphicon glyphicon-send"></span> {props.buttonText}
                 </button>
             </div>
-            <div className="col-sm-4 {% if room.helper_out %}not-active {% endif %}" id="chat-send-number-container" onClick={props.sendNumber.bind(null, 'number')}>
+            <div className="col-sm-4 {% if room.helper_out or not request.user|has_number %}not-active {% endif %}" id="chat-send-number-container" onClick={props.sendNumber.bind(null, 'number')}>
                 <a id="standard-grey-button-light" className="btn btn-primary btn-block" >
                     <span className="glyphicon glyphicon-earphone"></span> Send Number
                 </a>
