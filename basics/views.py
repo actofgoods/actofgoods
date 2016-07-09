@@ -128,7 +128,8 @@ def needs_finish(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
         text = request.user.username + " finished."
-        room.set_room_finished(room, request.user)
+        print(room.name, request.user.username)
+        room.set_room_finished(request.user)
         ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')
 """
@@ -150,7 +151,7 @@ def chat_room(request, roomname):
             #Get all rooms where request.user is in contact with
             rooms = get_valid_rooms(request.user).exclude(name=roomname).order_by('-last_message')
             rooms_json = rooms_to_json(rooms)
-            return render(request, 'basics/chat.html',{'name':name,'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
+            return render(request, 'basics/chat.html',{'name':name, 'room':room, 'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -295,7 +296,7 @@ def claim_information(request, name):
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
-def claim_report(request, name):
+def claim_reportNeed(request, name):
     pk=int(request.POST['pk'])
     #print(pk)
     need = Need.objects.get(pk=pk)
@@ -304,8 +305,58 @@ def claim_report(request, name):
     need.save()
     need.reported_by.add(request.user.userdata)
     #print(Need.objects.get(pk=pk).reported_by.all())
-    return HttpResponse("True")
+    t = loader.get_template('snippets/claim_report.html')
+    return HttpResponse(t.render({'user': request.user, 'need':need}))
 
+@csrf_protect
+def claim_reportInfo(request, name):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.was_reported = True
+    info.number_reports += 1
+    info.save()
+    info.reported_by.add(request.user.userdata)
+    return claim_information(request, name)
+
+@csrf_protect
+def claim_like(request, name):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.was_liked = True
+    info.number_likes += 1
+    info.liked_by.add(request.user.userdata)
+    info.save()
+    hours_elapsed = int((timezone.now() - info.date).seconds/3600)
+    info.priority = priority_info_user(hours_elapsed, info.number_likes)
+    info.save()
+    return claim_information(request, name)
+
+@csrf_protect
+def claim_unlike(request, name):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.number_likes -= 1
+    if info.number_likes == 0:
+        info.was_liked = False
+    info.liked_by.remove(request.user.userdata)
+    info.save()
+    return claim_information(request, name)
+
+@csrf_protect
+def claim_follow(request, name):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.followed_by.add(request.user.userdata)
+    info.save()
+    return claim_information(request, name)
+
+@csrf_protect
+def claim_unfollow(request, name):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.followed_by.remove(request.user.userdata)
+    info.save()
+    return claim_information(request, name)
 
 
 @csrf_protect
@@ -417,11 +468,13 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
 @csrf_protect
 def information_all(request):
     if request.user.is_authenticated():
+        #TODO: Change this to somehing like user distance
         if request.user.userdata:
             dist = request.user.userdata.aux
         else:
             dist=500
-        cards_per_page = "Cards per page"
+        cards_per_page = 10
+        wordsearch = ""
         infos = Information.objects.all()
         for i in infos:
             if i.update_at.update_at < timezone.now():
@@ -433,19 +486,51 @@ def information_all(request):
                     priority = priority_info_user(hours_elapsed, i.number_likes)
                 i.priority = priority
                 i.save()
-        infos = Information.objects.order_by('priority', 'pk').reverse()
+
+        infos=infos.order_by('-priority','pk')
+        page = 1
+        page_range = np.arange(1, 5)
+        if request.method == "GET":
+            if not request.user.is_superuser:
+                infos=infos.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
+        max_page = int(len(infos)/cards_per_page)+1
+        infos = infos[cards_per_page*(page-1):cards_per_page*(page)]
+        page_range = np.arange(1,max_page+1)
+        return render(request, 'basics/information_all.html',{'infos':infos, 'wordsearch':wordsearch, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
+
+    return redirect('basics:actofgoods_startpage')
+
+
+def information_filter(request):
+    if request.user.is_authenticated():
+        #TODO: Change this to somehing like user distance
+        if request.user.userdata:
+            dist = request.user.userdata.aux
+        else:
+            dist=500
+        cards_per_page = 10
+        wordsearch = ""
+        infos=Information.objects.all().order_by('-priority', 'pk')
+        page = 1
+        page_range = np.arange(1, 5)
         if request.method == "POST":
-            #print(request.POST['range'], request.POST['cards_per_page'])
+            #print(request.POST)
+            if "" != request.POST['page']:
+                page = int(request.POST['page'])
             if "" != request.POST['range']:
-                range = request.POST['range']
+                dist= int(request.POST['range'].replace(',',''))
+                if not request.user.is_superuser:
+                    infos=infos.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
+            if "" != request.POST['wordsearch']:
+                wordsearch = request.POST['wordsearch']
+                infos = infos.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))
             if "" != request.POST['cards_per_page']:
                 cards_per_page = int(request.POST['cards_per_page'])
-                infos = infos[:cards_per_page]
-            #print(request)
-        else:
-            print("will nicgt")
-        return render(request, 'basics/information_all.html',{'infos':infos, 'cards_per_page':cards_per_page, 'range':dist})
-
+        max_page = int(len(infos)/cards_per_page)+1
+        infos = infos[cards_per_page*(page-1):cards_per_page*(page)]
+        page_range = np.arange(1,max_page+1)
+        t = loader.get_template('snippets/info_filter.html')
+        return HttpResponse(t.render({'user': request.user, 'infos':infos, 'page':page, 'page_range':page_range}))
     return redirect('basics:actofgoods_startpage')
 
 """
@@ -483,14 +568,10 @@ def information_new(request):
                     priority = priority_info_group(0, 0)
                     author_is_admin = True
 
-                if lat != None and lng != None:
-                    address = Address.objects.create(latitude=lat, longditude=lng)
-                    infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], address =address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
-                    infodata.save()
-                    return redirect('basics:information_all')
-                else:
-                    address= request.user.userdata.address
-                infodata = Information(author=request.user, author_is_admin=author_is_admin, group=group, headline=data['headline'], text=data['text'], address =address, priority=priority, update_at=u)
+                if lat == None or lng == None:
+                    lat, lng = Userdata.objects.get(user=request.user).get_lat_lng();
+                infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
+                infodata.group = group
                 infodata.save()
                 return redirect('basics:information_all')
             else:
@@ -565,7 +646,7 @@ def information_update(request, pk):
             if lat != None and lng != None:
                 information.address=Address.objects.create(latitude=lat, longditude=lng)
             if text != "":
-                information.text = information.text + "\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z") +"\n" + text
+                information.text = information.text + "\n\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z") +"\n\n" + text
             else:
                 messages.add_message(request, messages.INFO, 'empty_text')
                 return render(request, 'basics/information_update.html', {'information':information})
@@ -575,21 +656,21 @@ def information_update(request, pk):
         return render(request, 'basics/information_update.html', {'information':information})
     return redirect('basics:actofgoods_startpage')
 
-def follow(request, pk):
-    if request.user.is_authenticated():
-        info = Information.objects.get(pk=pk)
-        info.followed_by.add(request.user.userdata)
-        info.save()
-        return redirect('basics:information_all')
-    return redirect('basics:actofgoods_startpage')
+@csrf_protect
+def follow(request):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.followed_by.add(request.user.userdata)
+    info.save()
+    return information_filter(request)
 
-def unfollow(request, pk):
-    if request.user.is_authenticated():
-        info = Information.objects.get(pk=pk)
-        info.followed_by.remove(request.user.userdata)
-        info.save()
-        return redirect('basics:information_all')
-    return redirect('basics:actofgoods_startpage')
+@csrf_protect
+def unfollow(request):
+    pk=int(request.POST['pk'])
+    info = Information.objects.get(pk=pk)
+    info.followed_by.remove(request.user.userdata)
+    info.save()
+    return information_filter(request)
 
 """
     Input: request(Email, Password)
@@ -626,16 +707,15 @@ def immediate_aid(request):
                 lat, lng = getAddress(request)
                 if lat != None and lng != None:
                     user_data = form.cleaned_data
-                    address = Address.objects.create(latitude=lat, longditude=lng)
                     user = User.objects.create_user(username=user_data['email'], password=password_d, email=user_data['email'])
-                    userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                    userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     userdata.save()
                     content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                     subject = "Confirm Your Account"
                     #print("\n",need.cleaned_data['categorie'],"\n")
                     data = need.cleaned_data
                     u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
-                    needdata = Need(author=user, group=None, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority_need_user(0), update_at=u)
+                    needdata = Need(author=user, group=None, headline=data['headline'], text=data['text'], categorie=data['categorie'], was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority_need_user(0), update_at=u)
                     needdata.save()
 
 
@@ -708,7 +788,7 @@ def fill_needs(request, count):
         for i in range(int(count)):
             lat = np.random.random()*50
             lng = np.random.random()*50
-            need = Need.objects.create(author=request.user, headline=str(i) + " " + category.name, text=str(i), categorie=category, address = Address.objects.create(latitude=lat, longditude=lng), was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+            need = Need.objects.create(author=request.user, headline=str(i) + " " + category.name, text=str(i), categorie=category, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
     return redirect(request, 'basics:needs_all')
 
 """
@@ -741,18 +821,19 @@ def needs_all(request):
                     priority = priority_need_user(hours_elapsed)
                 n.priority = priority
                 n.save()
-        needs = Need.objects.order_by('priority', 'pk').reverse()
-        needs = needs.exclude(author=request.user)
+
+        needs=needs.order_by('-priority','pk')
+        needs = needs.exclude(author=request.user).filter(done=False)
         page = 1
         page_range = np.arange(1, 5)
         if request.method == "GET":
             if not request.user.is_superuser:
                 needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         #TODO: this way is fucking slow and should be changed but i didn't found a better solution
-        #needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
-
+        needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
+        #needs.sort(key=lambda x: (-x.priority, x.pk))
         page_range = np.arange(1,max_page+1)
         return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'wordsearch':wordsearch, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
 
@@ -768,8 +849,7 @@ def needs_filter(request):
         category = "All"
         cards_per_page = 10
         wordsearch = ""
-        needs = Need.objects.all()
-        needs = Need.objects.order_by('priority', 'pk').reverse()
+        needs=Need.objects.all().order_by('-priority', 'pk')
         needs = needs.exclude(author=request.user)
         page = 1
         page_range = np.arange(1, 5)
@@ -796,7 +876,7 @@ def needs_filter(request):
         needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
         max_page = int(len(needs)/cards_per_page)+1
         needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
-        needs.sort(key=lambda x: (x.priority, x.pk), reverse=True)
+        #needs.sort(key=lambda x: (-x.priority, x.pk))
         page_range = np.arange(1,max_page+1)
         t = loader.get_template('snippets/need_filter.html')
         return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))
@@ -865,12 +945,9 @@ def needs_new(request):
             #print(need)
             if need.is_valid():
                 lat, lng = getAddress(request)
-                if lat != None and lng != None:
-                    address = Address.objects.create(latitude=lat, longditude=lng)
-                else :
-                    address=request.user.userdata.address
-                    lat = address.latitude
-                    lng = address.longditude
+                if lat == None or lng == None:
+                    lat, lng =request.user.userdata.get_lat_lng()
+
                 data = need.cleaned_data
                 print('head')
                 print(data['headline'])
@@ -884,7 +961,7 @@ def needs_new(request):
                         else:
                             priority = priority_need_user(0)
                         u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
-                        needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], address = address, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
+                        needdata = Need(author=request.user, group=group, headline=data['headline'], text=data['text'], categorie=data['categorie'], was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                         needdata.save()
 
                         send_notifications(needdata)
@@ -892,6 +969,7 @@ def needs_new(request):
                     else:
                         messages.add_message(request, messages.INFO, 'no_text')
                 else:
+                    priority = priority_need_user(0)
                     messages.add_message(request, messages.INFO, 'no_headline')
             else:
                 messages.add_message(request, messages.INFO, 'not_valid')
@@ -974,15 +1052,12 @@ def profil_edit(request):
                                    'selected': userdata.inform_about.all(), 'form': form, 'change':True})
 
             email= request.POST.get('email',None)
-            pseudo=request.POST.get('pseudo',None)
             phone = request.POST.get('phone',None)
             aux= request.POST.get('aux',None)
             lat, lng = getAddress(request)
             if lat != None and lng != None:
-                userdata.address.latitude=lat
-                userdata.address.longditude=lng
                 userdata.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
-                userdata.address.save()
+                userdata.save()
             if aux != "":
                 try:
                     userdata.aux= float(aux)
@@ -991,8 +1066,6 @@ def profil_edit(request):
             if email!="":
                 user.email=email
                 user.save()
-            if pseudo!= "":
-                userdata.pseudonym=pseudo
             if phone!= "":
                 userdata.phone=phone
             if request.POST.get('information') == "on":
@@ -1008,7 +1081,7 @@ def profil_edit(request):
             userdata.save()
             return render(request, 'basics/profil.html', {'Userdata':userdata, 'selected': userdata.inform_about.all()})
         form = ProfileForm()
-        return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all, 'selected': userdata.inform_about.all(),'form':form})
+        return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all, 'selected': userdata.inform_about.all(),'form':form,'change':False})
     return redirect('basics:actofgoods_startpage')
 
 def profil_delete(request):
@@ -1042,13 +1115,12 @@ def register(request):
                     lat, lng = getAddress(request)
                     if lat != None and lng != None:
                         data = form.cleaned_data
-                        address = Address.objects.create(latitude=lat, longditude=lng)
                         user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
-                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), address=address, get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                         userdata.save()
                         content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
                         subject = "Confirm Your Account"
-                        sendmail(user.email, content, subject)
+                        #sendmail(user.email, content, subject)
                         return login(request)
                     else:
                         messages.add_message(request, messages.INFO, 'location_failed')
@@ -1099,6 +1171,7 @@ def getAddress(request):
             lat = None
             lng = None
 
+        print("current address lat: ", lat, " lng ", lng)
         return lat, lng
     except:
         return None, None
@@ -1170,6 +1243,7 @@ def report_need(request):
     pk=int(request.POST['pk'])
     #print(pk)
     need = Need.objects.get(pk=pk)
+
     need.was_reported = True
     need.number_reports += 1
     need.save()
@@ -1177,14 +1251,19 @@ def report_need(request):
     #print(Need.objects.get(pk=pk).reported_by.all())
     return needs_filter(request)
 
-def report_information(request, pk):
+@csrf_protect
+def report_information(request):
+    pk=int(request.POST['pk'])
     info = Information.objects.get(pk=pk)
     info.was_reported = True
     info.number_reports += 1
+    info.save()
     info.reported_by.add(request.user.userdata)
-    return redirect('basics:information_all')
+    return information_filter(request)
 
-def like_information(request, pk):
+@csrf_protect
+def like_information(request):
+    pk=int(request.POST['pk'])
     info = Information.objects.get(pk=pk)
     info.was_liked = True
     info.number_likes += 1
@@ -1193,16 +1272,18 @@ def like_information(request, pk):
     hours_elapsed = int((timezone.now() - info.date).seconds/3600)
     info.priority = priority_info_user(hours_elapsed, info.number_likes)
     info.save()
-    return redirect('basics:information_all')
+    return information_filter(request)
 
-def unlike_information(request, pk):
+@csrf_protect
+def unlike_information(request):
+    pk=int(request.POST['pk'])
     info = Information.objects.get(pk=pk)
     info.number_likes -= 1
     if info.number_likes == 0:
         info.was_liked = False
     info.liked_by.remove(request.user.userdata)
     info.save()
-    return redirect('basics:information_all')
+    return information_filter(request)
 
 def need_delete(request, pk):
     need = Need.objects.all().get(pk=pk)
@@ -1292,6 +1373,7 @@ def group_detail(request, name):
         users = gro.user_set.all()
         group = Groupdata.objects.get(name=gro.name)
         claims = ClaimedArea.objects.filter(group=group.group)
+        groups = Groupdata.objects.all().order_by('name')
 
         #for claim in claims:
         needs = []
@@ -1305,7 +1387,7 @@ def group_detail(request, name):
 
 
         #print(infos)
-        return render(request, 'basics/group_detail.html', {'group':group, 'users':users, 'needs':needs, 'infos':infos})
+        return render(request, 'basics/group_detail.html', {'group':group, 'groups':groups, 'users':users, 'needs':needs, 'infos':infos})
     return redirect('basics:actofgoods_startpage')
 
 
@@ -1346,12 +1428,11 @@ def group_leave(request, pk):
         if len(group.user_set.all()) == 0:
             group.delete()
 
-    return render(request, 'basics/home.html')
+    return redirect('basics:home')
 
 def group_detail_for_user(request, name):
     if request.user.is_authenticated():
-        gro = request.user.groups.get(name=name)
-        group = Groupdata.objects.get(name=gro.name)
+        group = Groupdata.objects.get(name=name)
         return render(request, 'basics/group_detail_for_user.html', {'group':group})
     return redirect('basics:actofgoods_startpage')
 

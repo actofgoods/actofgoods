@@ -1,5 +1,6 @@
 import datetime
 import json
+import re
 import urllib.parse
 import logging
 from .models import *
@@ -33,7 +34,8 @@ def ws_echo(message):
                      message.content['text'], message.channel_session['username'],
                      room)
         db_room = Room.objects.get(name=room)
-
+        if db_room.helper_out:
+            return 
         print(message.channel_session['username'])
         author = User.objects.get(username=message.channel_session['username'])
         text = message.content['text']
@@ -43,8 +45,13 @@ def ws_echo(message):
             db_room.set_saw(author)
             print(db_room.req_saw, db_room.off_saw)
             return
-        if text == "number":
-            text = "You can contact me via this phone number: "+Userdata.objects.get(user=author).phone
+    if text == "number" :
+        if Userdata.objects.get(user=author).phone == "" or Userdata.objects.get(user=author).phone == None:
+            return
+        text = "You can contact me via this phone number: "+Userdata.objects.get(user=author).phone
+    pattern = re.compile(u'^[\n ]+$')
+    if pattern.search(text) is not None or text == "":
+        return
     chatMessage = ChatMessage(author=author, room=db_room, text=text)
     chatMessage.save()
     db_room.incomming_message(author)

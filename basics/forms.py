@@ -34,7 +34,8 @@ class ProfileForm(forms.Form):
     information= forms.BooleanField(required=True)
     class Meta:
         model = Userdata
-        fields= ['pseudonym','phone']
+        fields= ['phone']
+        # fields= ['pseudonym','phone']
 
 class ProfileUserForm(forms.Form):
     class Meta:
@@ -95,4 +96,3 @@ class GroupAddUserForm(forms.Form):
             if email and not User.objects.filter(email=email).count():
                 raise forms.ValidationError(u'Email address must be from registered User')
             return email
-

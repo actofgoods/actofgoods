@@ -124,6 +124,30 @@
                     <div class="list-group">
                         <!-- list the searched category -->
                         {% if categ %}
+                        <div class="modal fade" id="categoryDeleteSearched" role="dialog">
+                        <div class="modal-dialog">
+
+                         <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Delete This category</h4>
+                                 </div>
+                                <div class="modal-body">
+                                    <p>If you delete this category, the data will be permanently lost.</p>
+                                    <p>Would you like to rethink your decision?</p>
+                                </div>
+                                 <div class="modal-footer">
+                                     <a id="standard-grey-button-light" type="button" class="btn btn-default"  href="{% url 'administration:categories_delete' pk=categ.pk %}">
+
+                                                    <span class="glyphicon glyphicon-remove"></span> Delete
+                                                </a>
+                                    <button id="standard-grey-button-light" type="button" class="btn btn-default"  data-dismiss="modal">Rethink</button>
+                                 </div>
+                            </div>
+
+                            </div>
+                            </div>
                             <div class="list-group-item" id="standard-list-group-item-div">
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -133,13 +157,39 @@
                                         <h6>Number of members: {{ categ|filter_cats|length }}</h6>
                                     </div>
                                     <div class="col-sm-2">
-                                        <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:categories_delete' pk=categ.pk %}" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                        <a id="standard-grey-button-light" class="btn btn-default btn-sml" data-toggle="modal" data-target="#categoryDeleteSearched" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
                                     </div>
                                 </div>
                             </div>
                         <!-- end list the searched category -->
                         {% else %}
                             {% for categorie in categories %}
+
+                            <div class="modal fade" id="categoryDelete" role="dialog">
+                        <div class="modal-dialog">
+
+                         <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Delete This category</h4>
+                                 </div>
+                                <div class="modal-body">
+                                    <p>If you delete this category, the data will be permanently lost.</p>
+                                    <p>Would you like to rethink your decision?</p>
+                                </div>
+                                 <div class="modal-footer">
+                                     <a id="standard-grey-button-light" type="button" class="btn btn-default"  href="{% url 'administration:categories_delete' pk=categorie.pk %}">
+
+                                                    <span class="glyphicon glyphicon-remove"></span> Delete
+                                                </a>
+                                    <button id="standard-grey-button-light" type="button" class="btn btn-default" data-dismiss="modal">Rethink</button>
+                                 </div>
+                            </div>
+
+                            </div>
+                            </div>
+
                                 <div class="list-group-item" id="standard-list-group-item-div">
                                     <div class="row">
                                         <div class="col-sm-12">
@@ -149,7 +199,7 @@
                                             <h6>Number of members: {{ categorie|filter_cats|length }}</h6>
                                         </div>
                                         <div class="col-sm-2">
-                                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:categories_delete' pk=categorie.pk %}" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" data-toggle="modal" data-target="#categoryDelete" style="float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
                                         </div>
                                     </div>
                                 </div>

@@ -29,7 +29,6 @@
 
 }
 
-
 .pagination {
     margin: 0px;
 }
@@ -61,145 +60,225 @@
     color: #70962c;
 }
 
+#member-of-organisation {
+    margin-top: 35px;
+    margin-bottom: 20px;
+    padding: 0px;
+}
+
+#add-member-input-without-addon {
+    display: none;
+}
+
+#header-organisation-detail {
+    border: 1px solid #ddd;
+    border-bottom: 0px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    background-color: #EDEDED;
+    margin: 0px;
+    padding: 10px 15px;
+    text-align: center;
+}
+
+@media(max-width:768px){
+
+    #member-of-organisation {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    #add-member-input {
+        margin-bottom: 15px;
+    }
+
+    #add-member-input-with-addon {
+        display: none;
+    }
+
+    #add-member-input-without-addon {
+        display: block;
+    }
+
+    #heading-button-over-last {
+        margin-bottom: 15px;
+    }
+
+}
+
 </style>
 
-<div class="row">
-    <div class="col-sm-12">
-        <div id="standard-modal" style="margin-bottom: 0px">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="text-center" id="standard-modal-headline">Profile of {{group.name}}<br><small>This organisation represents a {% if group.is_GO %} governmental organisation. {% else %} nongovernmental organisation. {% endif %}</small></h2>
-                </div>
-                <div class="modal-body">
-                    <div class="list-group-item" id="standard-list-group-item-white-div" style="padding-top: 30px;">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <p id="description-label">Organisation:</p>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        <p id="description-text">{{group.name}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <p id="description-label">Homepage:</p>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        {% if group.webpage %}
-                                            <p id="description-text"><a id="green-link" href="{{group.webpage}}" target="_blank">{{group.webpage}}</a></p>
-                                        {% else %}
-                                            <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add homepage</a></p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row" style="margin-bottom: 15px;">
-                            <div class="col-sm-6">
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <p id="description-label">Email:</p>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        {% if group.email %}
-                                            <p id="description-text">{{group.email}}</p>
-                                        {% else %}
-                                            <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add Email address</a></p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <p id="description-label">Phone Number:</p>
-                                    </div>
-                                    <div class="col-sm-8">
-                                        {% if group.phone %}
-                                            <p id="description-text">{{group.phone}}</p>
-                                        {% else %}
-                                            <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add phone number</a></p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% if not group.description %}
-                            <div class="row" style="margin-bottom: 15px;">
-                                <div class="col-sm-6">
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <p id="description-label">Description:</p>
-                                        </div>
-                                        <div class="col-sm-8">
-                                            <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add description</a></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
 
-                        {% if group.description %}
+<div id="standard-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="text-center" id="standard-modal-headline">{{group.name}}<br><small>This organisation represents a {% if group.is_GO %} governmental organisation. {% else %} nongovernmental organisation. {% endif %}</small></h2>
+        </div>
+        <div class="modal-body">
+            <div class="modal fade" id="groupLeave" role="dialog">
+                            <div class="modal-dialog">
+
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Leave This Group</h4>
+                                 </div>
+                                <div class="modal-body">
+                                    <p>If you leave this group, you will not be able to become a member unless you are invited again!</p>
+                                    <p>Would you like to rethink your decision?</p>
+                                </div>
+                                 <div class="modal-footer">
+                                    <button id="standard-grey-button-light" type="button" class="btn btn-default"  data-dismiss="modal">Rethink</button>
+                                    <a id="standard-grey-button-light" type="button" class="btn btn-default"  href="{% url 'basics:group_leave' pk=group.pk %}">
+                                        <span class="glyphicon glyphicon-remove"></span> Delete
+                                    </a>
+                                 </div>
+                            </div>
+
+                            </div>
+                            </div>
+
+
+            <div class="row" style="margin-top: 15px;">
+                <div class="col-sm-12">
+                    <div class="row" id="header-organisation-detail">
+                        <a class="list-group-footer-button cursor-pointer" type="button" href="{% url 'basics:claim' name=group.name%}">
+                            <div class="col-sm-4" id="heading-button-over-last">
+                                <span class="glyphicon glyphicon-globe"></span> Claimed Areas
+                            </div>
+                        </a>
+                        <a id="button1" class="list-group-footer-button cursor-pointer" type="button" href="{% url 'basics:group_edit' pk=group.pk %}">
+                            <div class="col-sm-4" id="heading-button-over-last">
+                                <span class="glyphicon glyphicon-pencil"></span> Edit Profile
+                            </div>
+                        </a>
+                        <a id="button3" class="list-group-footer-button cursor-pointer" type="button" data-toggle="modal" data-target="#groupLeave" >
+                            <div class="col-sm-4">
+                                <span class="glyphicon glyphicon-log-out"></span> Leave Organisation
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-group-item" id="standard-list-group-item-white-div" style="padding-top: 30px; margin-bottom: 15px; padding-bottom: 15px;">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Organisation:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p id="description-text">{{group.name}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Homepage:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                {% if group.webpage %}
+                                    <p id="description-text"><a id="green-link" href="{{group.webpage}}" target="_blank">{{group.webpage}}</a></p>
+                                {% else %}
+                                    <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add homepage</a></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 15px;">
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Email:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                {% if group.email %}
+                                    <p id="description-text">{{group.email}}</p>
+                                {% else %}
+                                    <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add Email address</a></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Phone Number:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                {% if group.phone %}
+                                    <p id="description-text">{{group.phone}}</p>
+                                {% else %}
+                                    <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add phone number</a></p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if not group.description %}
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-sm-6">
                             <div class="row">
-                                <div class="col-sm-12">
+                                <div class="col-sm-4">
                                     <p id="description-label">Description:</p>
                                 </div>
-                            </div>
-                            <div class="row" style="margin-bottom: 15px;">
-                                <div class="col-sm-12">
-                                    <p id="description-text">{{group.description | linebreaks }}</p>
-                                </div>
-                            </div>
-                        {% endif %}
-                        {% if group.address %}
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <p id="description-label">Location of Head Office:</p>
-                                    <div id="map-container" style="height: 40%; margin-top: 15px; margin-bottom: 20px;"></div>
-                                </div>
-                            </div>
-                        {% else %}
-                            <div class="row" style="margin-bottom: 15px;">
-                                <div class="col-sm-4">
-                                    <p id="description-label">Location of Head Office:</p>
-                                </div>
                                 <div class="col-sm-8">
-                                    <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add the location of the head office</a></p>
+                                    <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add description</a></p>
                                 </div>
-                            </div>
-                        {% endif %}
-
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
-                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_edit' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit Profile</a>
-                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:claim' name=group.name%}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-globe"></span> Claim Area</a>
-                                <a id="standard-grey-button-light" class="btn btn-default btn-sml" type="button" href="{% url 'basics:group_leave' pk=group.pk %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-log-out"></span> Leave Organisation</a>
                             </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
+
+                {% if group.description %}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <p id="description-label">Description:</p>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-sm-12">
+                            <p id="description-text">{{group.description | linebreaks }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if group.address %}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <p id="description-label">Location of Head Office:</p>
+                            <div id="map-container" style="height: 40%; margin-top: 15px; border: 1px solid #ddd;"></div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-sm-4">
+                            <p id="description-label">Location of Head Office:</p>
+                        </div>
+                        <div class="col-sm-8">
+                            <p id="description-text"><a id="green-link" href="{% url 'basics:group_edit' pk=group.pk %}">add the location of the head office</a></p>
+                        </div>
+                    </div>
+                {% endif %}
 
             </div>
-        </div>
-    </div>
 
-    <div class="col-sm-5 col-sm-push-7">
-        <!-- add user to group -->
-        <div id="standard-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="text-center" id="standard-modal-headline">Add new Member</h2>
+        </div>
+
+        <div style="border-top: 1px solid #ddd;">
+            <div class="row" style="margin-left: 0px; margin-right: 0px">
+                <div class="col-sm-12" style="margin-top: 15px; margin-bottom: 15px;">
+                    <h2 class="text-center" id="standard-modal-headline" style="margin-top: 10px;">Member of {{group.name}}<br><small>Here you can add new member and see a list of all members of this organisation.</small></h2>
                 </div>
-                <div class="modal-body">
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid #ddd;">
+            <div class="row" style="margin-left: 0px; margin-right: 0px">
+                <div class="col-sm-10 col-sm-offset-1" id="member-of-organisation">
                     <form class="form" role="form" method="post" accept-charset="UTF-8">
                         {%csrf_token%}
                         {% if messages %}
@@ -214,228 +293,62 @@
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
-                        <div class="form-group">
-                            <input type="email" class="form-control input-lg" placeholder="Email from Group-User" name="email" required/>
+                        <div class="col-sm-8" id="add-member-input">
+                            <div class="form-group">
+                                <input type="email" class="form-control input-lg" placeholder="Email of new member" name="email" required/>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <input name="add_group_member" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Add"/>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <input name="add_group_member" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Add Member"/>
+                            </div>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div><!-- end add new member -->
-    </div>
-    <div class="col-sm-7 col-sm-pull-5">
-        <!-- list of group member -->
-        <div id="standard-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="text-center" id="standard-modal-headline">Member of this Organisation</h2>
-                </div>
-                <div class="modal-body">
-                    {% if users %}
-                        {% for user in users %}
-                            <div class="list-group-item" id="standard-list-group-item-div">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <p>{{ user.email }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            </div>
-        </div><!-- end list of group member -->
-    </div>
-    <div class="col-sm-7 col-sm-pull-5">
-        <!-- list of group member -->
-        <div id="standard-modal">
-            <div class="modal-content">
-              <div class="modal-header">
-                  <h2 class="text-center" id="standard-modal-headline">Needs in Claims</h2>
-              </div>
-              <div class="modal-body" style="padding-bottom: 0px;">
-                  <div class="list-group" style="margin-bottom: 0px;" id="need-list">
-                      {% if needs %}
-                          {% for need in needs %}
-
-                              <!-- list all needs -->
-                              <div class="row">
-                                  <div class="col-sm-12">
-                              <a class="list-group-item" id="standard-list-group-item-div">
-                                  <div class="row">
-                                      <div class="col-sm-12" data-toggle="modal" data-target=".{{ need.id }}">
-                                          <h4 class="list-group-item-heading">{{ need.headline }}</h4>
-                                          <p class="list-group-item-text">{{ need|get_short_text:160 }}</p>
-                                      </div>
-                                      <div class="col-sm-9" data-toggle="modal" data-target=".{{ need.id }}">
-                                          <h6><br>priority: {{ need.priority }} / pk: {{ need.pk }} / from: {{ need.date }} / category: {{ need.categorie.name }}{% if need.group %} / by: <span style="color: #70962c;">{{ need.group.name }}</span>{% endif %}</h6>
-                                      </div>
-                                  </div>
-                              </a>
-
-                              <div class="list-group-footer" style="margin-bottom: 15px;">
-                                      <div class="row">
-                                          <a class="list-group-footer-button" type="button" href="{% url 'basics:needs_help' id=need.id %}">
-                                              <div class="col-sm-6" id="list-group-footer-button-margin">
-                                                  <span class="glyphicon glyphicon-comment"></span> Help
-                                              </div>
-                                          </a>
-                                          {% if not user.userdata in need.reported_by.all %}
-                                          <a class="list-group-footer-button" type="button" style="cursor:pointer" id="report{{need.pk}}"" onclick="report({{need.pk}})"">
-                                              <div class="col-sm-6">
-                                                  <span class="glyphicon glyphicon-ban-circle"></span>Report
-                                              </div>
-                                          </a>
-                                          {% endif %}
-                                      </div>
-
-                              </div>
-
-                                  </div>
-                              </div>
-
-                              <!-- modal for every need -->
-                              <div class="modal fade {{ need.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
-                                  <div class="modal-dialog modal-lg">
-                                      <div class="modal-content">
-                                          <div class="modal-header">
-                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                  <span aria-hidden="true">&times;</span>
-                                              </button>
-                                              <h2>{{need.headline}}</h2>
-                                              <h6>from: {{ need.date }} / category: {{ need.categorie.name }}{% if need.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=need.group.name %}">{{ need.group.name }}</a>{% endif %}</h6>
-                                          </div>
-                                          <div class="modal-body">
-                                              <p>{{ need.text|linebreaksbr }}</p>
-                                          </div>
-                                          <div class="modal-footer">
-                                              <button type="button" id="standard-grey-button-bold" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:needs_help' id=need.id %}';" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-comment"></span> Help</button>
-                                              {% if not user.userdata in need.reported_by.all %}
-                                                <button  type="button" id="standard-grey-button-bold" class="btn btn-default btn-sml standard-grey-button-light " onclick="report({{need.pk}})"" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-ban-circle"></span>Report</button>
-                                              {% endif %}
-                                              <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal" style="margin-bottom: 10px;">Close</button>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          {% empty %}
-                              <h4>There are no needs.</h4>
-                          {% endfor %}
-                      {% endif %}
-                  </div>
-              </div>
-            </div>
-            </div> <!--div insert -->
-            <div id="standard-modal" style="margin-bottom: 90px">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div class="row">
-                            <div class="col-sm-4" style="padding: 15px">
-                                <h2 class="text-center" id="standard-modal-headline">Information</h2>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal-body" style="padding-bottom: 0px;">
-                        <div class="list-group" style="margin-bottom: 0px;">
-                            {% if infos %}
-                                {% for info in infos %}
-
-                                    <!-- list all needs -->
+                    <div class="col-sm-10 col-sm-offset-1" style="margin-bottom: 15px; margin-top: 20px;">
+                        {% if users %}
+                            {% for user in users %}
+                                <div class="list-group-item" id="standard-list-group-item-div">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <a class="list-group-item" id="standard-list-group-item-div" href="{% url 'basics:information_view' pk=info.id %}">
-                                                <div class="row">
-                                                    <div class="col-sm-12" data-toggle="modal" data-target=".{{ info.id }}">
-                                                        <h4 class="list-group-item-heading">{{ info.headline }}<div style="float: right;"><span class="glyphicon glyphicon-chevron-up"></span>{{ info.number_likes }}</div></h4>
-                                                        <p class="list-group-item-text">{{ info|get_short_text:160 }}</p>
-                                                    </div>
-                                                    <div class="col-sm-9" data-toggle="modal" data-target=".{{ info.id }}">
-                                                        <h6><br>priority: {{ info.priority }} / pk: {{ info.pk }} / from: {{ info.date }}{% if info.author_is_admin %} / by: <span style="color: #D36E5A;">Admin</span>{% elif info.group %} / by: <span style="color: #70962c;">{{ info.group.name }}</span>{% elif info.author == user %} / by: <span>you</span>{% endif %}</h6>
-                                                    </div>
-                                                </div>
-                                            </a>
-
-                                            <div class="list-group-footer" style="margin-bottom: 15px;">
-                                                {% if user == info.author %}
-                                                    <div class="row">
-                                                        <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
-                                                            <div class="col-sm-12">
-                                                                <span class="glyphicon glyphicon-comment"></span> Comment
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                {% else %}
-                                                    {% if not user.userdata in info.reported_by.all and not user.userdata in info.liked_by.all %}
-                                                        <div class="row">
-                                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:like_information' pk=info.id %}">
-                                                                <div class="col-sm-4" id="list-group-footer-button-margin">
-                                                                    <span class="glyphicon glyphicon-chevron-up"></span> Upvote
-                                                                </div>
-                                                            </a>
-                                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
-                                                                <div class="col-sm-4">
-                                                                    <span class="glyphicon glyphicon-comment"></span> Comment
-                                                                </div>
-                                                            </a>
-                                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:report_information' pk=info.id%}">
-                                                                <div class="col-sm-4">
-                                                                    <span class="glyphicon glyphicon-ban-circle"></span> Report
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                    {% elif user.userdata in info.reported_by.all and not user.userdata in info.liked_by.all  %}
-                                                        <div class="row">
-                                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:like_information' pk=info.id %}">
-                                                                <div class="col-sm-6" id="list-group-footer-button-margin">
-                                                                    <span class="glyphicon glyphicon-chevron-up"></span> Upvote
-                                                                </div>
-                                                            </a>
-                                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
-                                                                <div class="col-sm-6">
-                                                                    <span class="glyphicon glyphicon-comment"></span> Comment
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                    {% elif not user.userdata in info.reported_by.all and user.userdata in info.liked_by.all  %}
-                                                        <div class="row">
-                                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
-                                                                <div class="col-sm-6">
-                                                                    <span class="glyphicon glyphicon-comment"></span> Comment
-                                                                </div>
-                                                            </a>
-                                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:report_information' pk=info.id%}">
-                                                                <div class="col-sm-6">
-                                                                    <span class="glyphicon glyphicon-ban-circle"></span> Report
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                    {% else %}
-                                                        <div class="row">
-                                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:information_view' pk=info.id %}">
-                                                                <div class="col-sm-12">
-                                                                    <span class="glyphicon glyphicon-comment"></span> Comment
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                    {% endif %}
-                                                {% endif %}
-                                            </div>
-
+                                            <p style="margin-bottom: 0px;">{{ user.email }}</p>
                                         </div>
                                     </div>
-
-                                {% empty %}
-                                    <h4>There are no information.</h4>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
                     </div>
+                </div>
+            </div>
+        </div>
+        <div style="border-top: 1px solid #ddd;">
+            <div class="row" style="margin-left: 0px; margin-right: 0px">
+                <div class="col-sm-12" style="margin-top: 15px; margin-bottom: 15px;">
+                    <h2 class="text-center" id="standard-modal-headline" style="margin-top: 10px;">Organisations of Act of Goods<br><small>Here you can see a list of all organisations acting in Act of Goods.</small></h2>
+                </div>
+            </div>
+        </div>
+        <div style="border-top: 1px solid #ddd;">
+            <div class="row" style="margin-left: 0px; margin-right: 0px">
+                <div class="col-sm-10 col-sm-offset-1" id="member-of-organisation">
+                    <div class="col-sm-10 col-sm-offset-1" style="margin-bottom: 15px;">
+                        {% if groups %}
+                            {% for groups in groups %}
+                                {% if groups != group %}
+                                  <a class="list-group-item" id="standard-list-group-item-div" href="{% url 'basics:group_detail_for_user' name=groups.name %}">
+                                      <div class="row">
+                                          <div class="col-sm-12">
+                                              <p style="margin-bottom: 0px;">{{ groups.name }}</p>
+                                          </div>
+                                      </div>
+                                  </a>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
 
-              </div><!-- end needs -->
-        </div><!-- end list of group member -->
     </div>
 </div>
 
