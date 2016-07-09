@@ -16,6 +16,7 @@ import time
 def ws_add(message, room):
     print(message)
     query = urllib.parse.parse_qs(message['query_string'])
+    print(query)
     if 'username' not in query:
         print("ws_add: no username")
         return
