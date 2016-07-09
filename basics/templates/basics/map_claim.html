@@ -484,7 +484,7 @@
         			}
         		});
             }else{$.notify("Please choose at least 3 points for your claim.",{className: "info", position: "right-bottom"})}
-        }else{$.notify("Please choose a title for your Claim.",{className: "info", position: "right-bottom"})}
+        }else{$("#claimname").notify("Please choose a title for your Claim.",{className: "error", position: "top-right"})}
     
     } else{
         $.notify("You already saved your Area! Press New to create another.",{className: "info", position: "right-bottom"});
@@ -532,21 +532,10 @@
         streetViewControl: false
   		};
   		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
-  		poly=new google.maps.Polygon({
-                paths: new google.maps.MVCArray([new google.maps.MVCArray]),
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 3,
-                fillColor: '#FF0000',
-                fillOpacity: 0.35,
-                editable: true,
-                draggable: true
-            });
         loadClaims('2');
 
         google.maps.event.addDomListener(claimname, 'change', function(){
         });
-  		google.maps.event.addListener(map, 'click', addPoint);
 	}
 
     function loadClaims(prop){

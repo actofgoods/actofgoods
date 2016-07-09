@@ -48,7 +48,7 @@ class Userdata(models.Model):
 		return self.pseudonym
 
 	def get_lat_lng(self):
-		return self.adrAsPoint.y, self.adrAsPoint.x
+		return self.adrAsPoint.x, self.adrAsPoint.y
 
 class CategoriesRep(models.Model):
 	name = models.CharField(max_length=50)
