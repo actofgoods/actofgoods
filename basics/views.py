@@ -1376,6 +1376,7 @@ def group_detail(request, name):
         users = gro.user_set.all()
         group = Groupdata.objects.get(name=gro.name)
         claims = ClaimedArea.objects.filter(group=group.group)
+        groups = Groupdata.objects.all()
 
         #for claim in claims:
         needs = []
@@ -1389,7 +1390,7 @@ def group_detail(request, name):
 
 
         #print(infos)
-        return render(request, 'basics/group_detail.html', {'group':group, 'users':users, 'needs':needs, 'infos':infos})
+        return render(request, 'basics/group_detail.html', {'group':group, 'groups':groups, 'users':users, 'needs':needs, 'infos':infos})
     return redirect('basics:actofgoods_startpage')
 
 

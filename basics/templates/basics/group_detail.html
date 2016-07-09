@@ -326,6 +326,28 @@
                             {% endfor %}
                         {% endif %}
                     </div>
+                    <div style="border-top: 1px solid #ddd;">
+                        <div class="row" style="margin-left: 0px; margin-right: 0px">
+                            <div class="col-sm-12" style="margin-top: 15px; margin-bottom: 15px;">
+                                <h2 class="text-center" id="standard-modal-headline" style="margin-top: 10px;">Organisations of actofgoods<br><small>Here you can see a list of all organisations acting in actofgoods.</small></h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-10 col-sm-offset-1" style="margin-bottom: 15px; margin-top: 20px;">
+                        {% if groups %}
+                            {% for groups in groups %}
+                                {% if groups != group %}
+                                  <div class="list-group-item" id="standard-list-group-item-div">
+                                      <div class="row">
+                                          <div class="col-sm-12">
+                                              <p style="margin-bottom: 0px;"><a id="green-link" href="{% url 'basics:group_detail_for_user' name=groups.name %}">{{ groups.name }}</a></p>
+                                          </div>
+                                      </div>
+                                  </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
