@@ -26,7 +26,9 @@ def ws_add(message, room):
 
 @channel_session
 def ws_echo(message):
+    print(message.channel_session["username"])
     if 'username' not in message.channel_session:
+        print("no username")
         return
     with transaction.atomic():
         room = message.channel_session['room']
