@@ -1376,7 +1376,7 @@ def group_detail(request, name):
         users = gro.user_set.all()
         group = Groupdata.objects.get(name=gro.name)
         claims = ClaimedArea.objects.filter(group=group.group)
-        groups = Groupdata.objects.all()
+        groups = Groupdata.objects.all().order_by('name')
 
         #for claim in claims:
         needs = []
