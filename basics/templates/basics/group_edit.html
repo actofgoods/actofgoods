@@ -5,61 +5,87 @@
 	<div id="standard-modal">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h1 class="text-center">Edit Your Group</h1>
+                <h2 class="text-center" id="standard-modal-headline">Edit your Organisation Profile<br><small>Use this form to add or change all important information for your organisation profile.</small></h2>
 			</div>
 			<div class="modal-body">
 				<form class="form" role="form" method="post" accept-charset="UTF-8">
 				    {% csrf_token %}
-    				
+
 					<div class="form-group">
-						<p style="font-size:130%;"> E-Mail </p>
 						{% if group.email == "" %}
-							<input type="email" class="form-control input-lg" placeholder=email name="email" maxlength="254">
+                            <h4>Add an email address: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This email address is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <input type="email" class="form-control input-lg" placeholder=Email name="email" maxlength="254">
 						{% else %}
+                            <h4>Change email address: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This email address is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 							<input type="email" class="form-control input-lg" value= '{{ group.email }}' name="email" maxlength="254">
 						{% endif %}
 					</div>
 
 					<div class="form-group">
-						<p style="font-size:130%;"> Phone </p>
 						{% if group.phone == "" %}
-							<input type="description" class="form-control input-lg" placeholder=phonenumber name="phone" maxlength="15" >
+                            <h4>Add a phone number: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This phone number is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <input type="description" class="form-control input-lg" placeholder="Phone Number" name="phone" maxlength="15" >
 						{% else %}
+                            <h4>Change phone number: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This phone number is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 							<input type="description" class="form-control input-lg" value= {{ group.phone }} name="phone" maxlength="15" >
 						{% endif %}
 					</div>
 
 					<div class="form-group">
-						<p style="font-size:130%;"> Webpage </p>
 						{% if group.webpage == "" %}
-							<input type="description" class="form-control input-lg" placeholder=webpage name="page" maxlength="256" >
+                            <h4>Add a webpage: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This webpage link is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+							<input type="description" class="form-control input-lg" placeholder=Webpage name="page" maxlength="256" >
 						{% else %}
+                            <h4>Change webpage: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This webpage link is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 							<input type="description" class="form-control input-lg" value= {{ group.webpage }} name="page" maxlength="256" >
 						{% endif %}
 					</div>
 
 					<div class="form-group">
-						<p style="font-size:130%;"> Group Description </p>
 						{% if group.description == "" %}
-							<textarea type="description" class="form-control input-lg" placeholder="description" name="description"  rows="4"></textarea>
+                            <h4>Add a description: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This description of your organisation is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+							<textarea type="description" class="form-control input-lg" placeholder="Description" name="description"  rows="4"></textarea>
 						{% else %}
+                            <h4>Change description: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This description of your organisation is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 							<textarea type="description" class="form-control input-lg" name="description"  rows="4">{{ group.description }}</textarea>
 						{% endif %}
 
 					</div>
-
-
-
-					<div class="form-group">
-						
-						{% include "basics/map_testing.html" %}
-					</div>
-					<div class="form-group">
-						<input id="standard-grey-button-bold" type="submit" onclick="group_edit" class="btn btn-block btn-lg btn-primary" value="Save"/>
-					</div>
+                    <div class="row">
+                        <div class="col-lg-7 col-md-8 col-sm-12">
+                            <h4>Choose/or change the location of the head quarter of your organisation: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This location of your organisation is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-4">
+                            <div class="form-group">
+                                {% include "basics/map_testing.html" %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-lg-offset-8 col-md-4 col-md-offset-8 col-sm-6 col-sm-offset-6">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <a id="standard-grey-button-bold" class="btn btn-default btn-lg btn-block" type="button" href="{% url 'basics:group_detail' name=group.name %}"><span class="glyphicon glyphicon-chevron-left"></span> Back</a>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                						<input id="standard-grey-button-bold" type="submit" onclick="group_edit" class="btn btn-block btn-lg btn-primary" value="Save"/>
+                					</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 				</form>
 			</div>
 		</div>
 	</div>
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 
 {% endblock %}
