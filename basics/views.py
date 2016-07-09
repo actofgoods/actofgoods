@@ -646,7 +646,7 @@ def information_update(request, pk):
             if lat != None and lng != None:
                 information.address=Address.objects.create(latitude=lat, longditude=lng)
             if text != "":
-                information.text = information.text + "\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z") +"\n" + text
+                information.text = information.text + "\n\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z") +"\n\n" + text
             else:
                 messages.add_message(request, messages.INFO, 'empty_text')
                 return render(request, 'basics/information_update.html', {'information':information})
