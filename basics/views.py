@@ -1052,7 +1052,6 @@ def profil_edit(request):
                                    'selected': userdata.inform_about.all(), 'form': form, 'change':True})
 
             email= request.POST.get('email',None)
-            pseudo=request.POST.get('pseudo',None)
             phone = request.POST.get('phone',None)
             aux= request.POST.get('aux',None)
             lat, lng = getAddress(request)
@@ -1067,8 +1066,6 @@ def profil_edit(request):
             if email!="":
                 user.email=email
                 user.save()
-            if pseudo!= "":
-                userdata.pseudonym=pseudo
             if phone!= "":
                 userdata.phone=phone
             if request.POST.get('information') == "on":

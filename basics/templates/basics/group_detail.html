@@ -129,17 +129,15 @@
                                     <p>Would you like to rethink your decision?</p>
                                 </div>
                                  <div class="modal-footer">
-                                     <a id="standard-grey-button-light" type="button" class="btn btn-default"  href="{% url 'basics:group_leave' pk=group.pk %}">
-
-                                                    <span class="glyphicon glyphicon-remove"></span> Delete
-                                                </a>
                                     <button id="standard-grey-button-light" type="button" class="btn btn-default"  data-dismiss="modal">Rethink</button>
+                                    <a id="standard-grey-button-light" type="button" class="btn btn-default"  href="{% url 'basics:group_leave' pk=group.pk %}">
+                                        <span class="glyphicon glyphicon-remove"></span> Delete
+                                    </a>
                                  </div>
                             </div>
 
                             </div>
                             </div>
-
 
 
             <div class="row" style="margin-top: 15px;">
@@ -164,7 +162,7 @@
                 </div>
             </div>
 
-            <div class="list-group-item" id="standard-list-group-item-white-div" style="padding-top: 30px; margin-bottom: 15px;">
+            <div class="list-group-item" id="standard-list-group-item-white-div" style="padding-top: 30px; margin-bottom: 15px; padding-bottom: 15px;">
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="row">
@@ -252,7 +250,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <p id="description-label">Location of Head Office:</p>
-                            <div id="map-container" style="height: 40%; margin-top: 15px; margin-bottom: 20px; border: 1px solid #ddd;"></div>
+                            <div id="map-container" style="height: 40%; margin-top: 15px; border: 1px solid #ddd;"></div>
                         </div>
                     </div>
                 {% else %}
