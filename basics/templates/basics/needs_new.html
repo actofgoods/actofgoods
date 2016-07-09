@@ -31,7 +31,7 @@
                             {% endfor %}
                         {% endif %}
                         <div class="form-group">
-                            <input type="description" class="form-control input-lg" placeholder="Headline" name="{{need.headline.name}}"  rows="4" maxlength="30"></textarea>
+                            <input type="description" class="form-control input-lg" placeholder="Headline" name="{{need.headline.name}}"  rows="4" maxlength="30" required></textarea>
                         </div>
                         <h4>Category for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Choose a suitable category for your need so that other user can find your need easily."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                         <select style="width: 100%;" name="{{need.categorie.name}}">
@@ -50,7 +50,7 @@
                             {% endfor %}
                         {% endif %}
                         <div class="form-group">
-                            <textarea type="description" class="form-control input-lg" placeholder="Description" name="{{need.text.name}}"  rows="4"></textarea>
+                            <textarea type="description" class="form-control input-lg" placeholder="Description" name="{{need.text.name}}"  rows="4" required></textarea>
                         </div>
                         <div class="row">
                             <div class="col-lg-5 col-md-6 col-sm-8">
