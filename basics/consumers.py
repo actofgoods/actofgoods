@@ -14,8 +14,10 @@ import time
 
 @channel_session
 def ws_add(message, room):
+    print(message)
     query = urllib.parse.parse_qs(message['query_string'])
     if 'username' not in query:
+        print("ws_add: no username")
         return
     logging.info('Adding websocket with username %s in room %s',
                  query['username'][0], room)
@@ -26,7 +28,6 @@ def ws_add(message, room):
 
 @channel_session
 def ws_echo(message):
-    print(message.channel_session["username"])
     if 'username' not in message.channel_session:
         print("no username")
         return
