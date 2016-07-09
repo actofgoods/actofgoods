@@ -296,13 +296,6 @@
                             {% endfor %}
                         {% endif %}
                         <div class="col-sm-8" id="add-member-input">
-                            <!-- <div class="input-group" id="add-member-input-with-addon">
-                                <span class="input-group-addon">Add Member:</span>
-                                <input type="email" class="form-control input-lg" placeholder="Email of new Member" name="email" required/>
-                            </div>
-                            <div class="form-group" id="add-member-input-without-addon">
-                                <input type="email" class="form-control input-lg" placeholder="Email of new Member" name="email" required/>
-                            </div> -->
                             <div class="form-group">
                                 <input type="email" class="form-control input-lg" placeholder="Email of new member" name="email" required/>
                             </div>
@@ -326,24 +319,30 @@
                             {% endfor %}
                         {% endif %}
                     </div>
-                    <div style="border-top: 1px solid #ddd;">
-                        <div class="row" style="margin-left: 0px; margin-right: 0px">
-                            <div class="col-sm-12" style="margin-top: 15px; margin-bottom: 15px;">
-                                <h2 class="text-center" id="standard-modal-headline" style="margin-top: 10px;">Organisations of actofgoods<br><small>Here you can see a list of all organisations acting in actofgoods.</small></h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-10 col-sm-offset-1" style="margin-bottom: 15px; margin-top: 20px;">
+                </div>
+            </div>
+        </div>
+        <div style="border-top: 1px solid #ddd;">
+            <div class="row" style="margin-left: 0px; margin-right: 0px">
+                <div class="col-sm-12" style="margin-top: 15px; margin-bottom: 15px;">
+                    <h2 class="text-center" id="standard-modal-headline" style="margin-top: 10px;">Organisations of Act of Goods<br><small>Here you can see a list of all organisations acting in Act of Goods.</small></h2>
+                </div>
+            </div>
+        </div>
+        <div style="border-top: 1px solid #ddd;">
+            <div class="row" style="margin-left: 0px; margin-right: 0px">
+                <div class="col-sm-10 col-sm-offset-1" id="member-of-organisation">
+                    <div class="col-sm-10 col-sm-offset-1" style="margin-bottom: 15px;">
                         {% if groups %}
                             {% for groups in groups %}
                                 {% if groups != group %}
-                                  <div class="list-group-item" id="standard-list-group-item-div">
+                                  <a class="list-group-item" id="standard-list-group-item-div" href="{% url 'basics:group_detail_for_user' name=groups.name %}">
                                       <div class="row">
                                           <div class="col-sm-12">
-                                              <p style="margin-bottom: 0px;"><a id="green-link" href="{% url 'basics:group_detail_for_user' name=groups.name %}">{{ groups.name }}</a></p>
+                                              <p style="margin-bottom: 0px;">{{ groups.name }}</p>
                                           </div>
                                       </div>
-                                  </div>
+                                  </a>
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
@@ -351,7 +350,6 @@
                 </div>
             </div>
         </div>
-
 
     </div>
 </div>
