@@ -270,3 +270,18 @@
         text-align: right;
 }
 /* ----------- end comment meta data  ----------- */
+
+/* ----------- start tooltip for infos  ----------- */
+#tooltip-info {
+    cursor: default;
+}
+#tooltip-info + .tooltip > .tooltip-inner {
+    color: #000000;
+    background-color: #FAFAFA;
+    border: 1px solid  #5D5F5B;
+    border-radius: 2px;
+}
+#tooltip-info + .tooltip > .tooltip-arrow {
+    border-bottom-color:  #5D5F5B;
+}
+/* ----------- end tooltip for infos  ----------- */
