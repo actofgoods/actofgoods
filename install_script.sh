@@ -5,7 +5,5 @@
 #!/bin/bash
 message=test
 echo "$message"
-apt-get install postgresql
-apt-get install python3
-apt-get install python3-pip
-apt-get install redis-server
+List = [postgresql, python3, python3-pip, redis-server]
+apt-get install $List
