@@ -1530,3 +1530,20 @@ def priority_info_group(x, likes):
     elif (x-(likes/40)) >= 24:
         return ((3060000/41)+(3*likes))/(x-(384/41)-(likes/40))
     return 0
+
+
+####################################################################################################################################################
+###                             Error Views
+####################################################################################################################################################
+
+def bad_request(request):
+    return render(request, 'basics/404.html', {'content': "400 - Bad Request"})
+
+def permission_denied(request):
+    return render(request, 'basics/404.html', {'content': "403 - Permission denied"})
+
+def page_not_found(request):
+    return render(request, 'basics/404.html', {'content': "404 - Page not found"})
+
+def server_error(request):
+    return render(request, 'basics/404.html', {'content': "500 - Server-Error"})
