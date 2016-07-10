@@ -1,42 +1,40 @@
 {% extends 'basics/base.html' %}
-
 {% block content %}
+
 <!-- Introduction Row -->
-	<div class="modal-dialog" id="sign-up">
+	<div id="standard-modal">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h1 class="text-center">Verification</h1>
+				<h2 class="text-center" id="standard-modal-headline">Verification<br><small>Please verify your email.</small></h2>
 			</div>
 			<div class="modal-body">
                 {% if active == False %}
 
-                <p> Before you can use this, please verify your account!</p>
-                <p>Check your emails for further information!</p>
+                    <p>Before you can use this, please verify your account!</p>
+                    <p>Check your emails for further information!</p>
 
                 {% else %}
 
 
 				    {% if verified == True %}
 
-                    <p> Thank you for verifiying your Profile.</p>
+                        <p> Thank you for verifiying your Profile.</p>
 
                    {% else %}
-                    <form class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <input type="email" class="form-control input-lg" placeholder="email" name="email" />
-                     </div>
+                        <form class="form" role="form" method="post" accept-charset="UTF-8">
+                        {% csrf_token %}
+                            <div class="form-group">
+                                <input type="email" class="form-control input-lg" placeholder="email" name="email" />
+                             </div>
 
 	    	  				<div class="form-group">
 		      					<input type="password" class="form-control input-lg" placeholder="Password" name="password" required/>
 		  	    			</div>
 
-                        <div class="form-group">
-                            <input type="submit" onclick="verifcation(pk)" class="btn btn-block btn-lg btn-primary" value="verify"/>
-						</div>
-                    </form>
-
-
+                            <div class="form-group">
+                                <input id="standard-grey-button-bold" type="submit" onclick="verifcation(pk)" class="btn btn-block btn-lg btn-primary" value="Verify"/>
+    						</div>
+                        </form>
                     {% endif %}
                 {% endif %}
 

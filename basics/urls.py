@@ -22,7 +22,6 @@ app_name = 'basics'
 urlpatterns = [
     url(r'^$', views.actofgoods_startpage, name='actofgoods_startpage'),
     url(r'^aboutus/$', views.aboutus, name='aboutus'),
-    url(r'^admin_page/$', views.admin_page, name='admin_page'),
     
     url(r'^chat/$', views.chat, name='chat'),
     url(r'^chat/(?P<roomname>[A-Za-z0-9]+)/$', views.chat_room, name='chat_room'),
@@ -45,6 +44,7 @@ urlpatterns = [
     url(r'^faq_signin/$', views.faq_signin, name='faq_signin'),
     url(r'^faq_startpage/$', views.faq_startpage, name='faq_startpage'),
     url(r'^home/$', views.home, name='home'),
+    url(r'^home/filter/$', views.home_filter, name='home_filter'),  
     url(r'^immediate_aid/$', views.immediate_aid, name='immediate_aid'),
 
     url(r'^information_all/$', views.information_all, name='information_all'),
@@ -55,7 +55,6 @@ urlpatterns = [
     url(r'^information_all/like/$', views.like_information, name='like_information'),
     url(r'^information_all/unlike/$', views.unlike_information, name='unlike_information'),
     url(r'^information_new/$', views.information_new, name='information_new'),
-    url(r'^information_timeline/$', views.information_timeline, name='information_timeline'),
     url(r'^information_view/(?P<pk>\d+)/$', views.information_view, name='information_view'),
     url(r'^information_view/(?P<pk>\d+)/comment$', views.information_view_comment, name='information_view_comment'),
     url(r'^information_view/comment/delete/(?P<pk_inf>\w+)/(?P<pk_comm>\w+)/$', views.information_delete_comment, name='information_delete_comment'),
@@ -63,7 +62,6 @@ urlpatterns = [
 
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
-    url(r'^maptesting/$', views.map_testing, name='map_testing'),
 
     url(r'^needs_all/$', views.needs_all, name='needs_all'),
     url(r'^needs_all/filter/$', views.needs_filter, name='needs_filter'),
@@ -71,7 +69,6 @@ urlpatterns = [
     url(r'^needs_help/(?P<id>\d+)/$', views.needs_help, name='needs_help'),
     url(r'^needs_new/$', views.needs_new, name='needs_new'),
     url(r'^needs_finish/(?P<roomname>[A-Za-z0-9]+)/$', views.needs_finish, name='needs_finish'),
-    url(r'^needs_timeline/$', views.needs_timeline, name='needs_timeline'),
     url(r'^needs_view/(?P<pk>\d+)/$', views.needs_view, name='needs_view'),
 
     url(r'^privacy/$', views.privacy, name='privacy'),

@@ -29,7 +29,7 @@ admin.site.register(
 
 admin.site.register(
 	Need,
-	list_display=["author","date", "headline","text"],
+	list_display=["author","date", "headline","text", "adrAsPoint"],
 
 )
 

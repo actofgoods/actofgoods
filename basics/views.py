@@ -49,13 +49,6 @@ def actofgoods_startpage(request):
 def aboutus(request):
     return render(request, 'basics/aboutus.html')
 
-"""
-    Input: request
-
-    admin_page will be rendered and returned.
-"""
-def admin_page(request):
-    return render(request, 'basics/admin_page.html')
 
 """
     Needs authentication!
@@ -65,6 +58,8 @@ def admin_page(request):
     If user is not authenticated redirect to startpage.
     ...
 """
+
+@csrf_protect
 def change_password(request):
     if request.user.is_authenticated():
         if not request.user.is_active:
@@ -98,6 +93,7 @@ def change_password(request):
     If user is not authenticated redirect to startpage.
     Otherwise the chat page will be rendered and returned.
 """
+@csrf_protect
 def chat(request):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -113,6 +109,7 @@ def chat(request):
 def get_valid_rooms(user):
     return Room.objects.filter(Q(need__author =user) | Q(user_req = user, helper_out=False))
 
+@csrf_protect
 def kick_user(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
@@ -124,6 +121,7 @@ def kick_user(request, roomname):
         ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def needs_finish(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
@@ -140,6 +138,8 @@ def needs_finish(request, roomname):
     If user is not authenticated redirect to startpage.
     Otherwise the chat_room page will be rendered and returned.
 """
+
+@csrf_protect
 def chat_room(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
@@ -150,7 +150,7 @@ def chat_room(request, roomname):
             message_json = messages_to_json(messages)
             #Get all rooms where request.user is in contact with
             rooms = get_valid_rooms(request.user).exclude(name=roomname).order_by('-last_message')
-            rooms_json = rooms_to_json(rooms)
+            rooms_json = rooms_to_json(rooms, request.user)
             return render(request, 'basics/chat.html',{'name':name, 'room':room, 'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
@@ -174,17 +174,21 @@ def messages_to_json(messages):
     message_json += "]"
     return message_json
 
-def rooms_to_json(rooms):
+def rooms_to_json(rooms, user):
     rooms_json = "["
     if len(rooms) > 0:
         for room in rooms:
+            new_message =  "true" if room.new_message(user) else "false"
             rooms_json   += json.dumps({
                 'name': room.need.headline,
                 'hash': room.name,
+                'new': new_message,
+                'last_message': room.recent_message(),
                 'date': room.last_message.__str__()[:-13]
             }) + ","
         rooms_json = rooms_json[:-1]
     rooms_json += "]"
+    print(rooms_json)
     return rooms_json
 """
     Input: request
@@ -359,7 +363,7 @@ def claim_unfollow(request, name):
     return claim_information(request, name)
 
 
-@csrf_protect
+
 def contact_us(request):
     if request.method == "POST":
         form = ContactUsForm(request.POST)
@@ -408,6 +412,8 @@ def faq_startpage(request):
     If user is not authenticated redirect to startpage.
     Otherwise the faq page will be rendered and returned.
 """
+
+@csrf_protect
 def faq_signin(request):
     if request.user.is_authenticated():
         return render(request, 'basics/faq_signin.html')
@@ -422,6 +428,8 @@ def faq_signin(request):
     Otherwise a list of needs will be pult out of the database and added to ...
     The home page will be rendered and returned.
 """
+
+@csrf_protect
 def home(request):
     if request.user.is_authenticated():
         needs = list(Need.objects.all().filter(author=request.user))
@@ -443,6 +451,52 @@ def home(request):
 
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
+def home_filter(request):
+    if request.user.is_authenticated():
+        if request.POST['group']:
+            print(request.POST['group'])
+            group= Groupdata.objects.get(name=request.POST['group'])
+            needs = list(Need.objects.all().filter(author=request.user, group=group.group))
+            infos = list(Information.objects.all().filter(author=request.user, group=group.group))
+            needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
+            comm = list(Comment.objects.all().filter(author=request.user, group=group.group))
+        else: 
+            needs = list(Need.objects.all().filter(author=request.user))
+            infos = list(Information.objects.all().filter(author=request.user))
+            needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
+            comm = list(Comment.objects.all().filter(author=request.user))
+
+        rel_comms = []
+        for c in comm:
+            if not c.inf in rel_comms:
+                rel_comms.append(c)
+        activity=request.POST['activity']
+
+        if activity=="all_activities":
+            result_list = sorted(
+                chain(needs, infos, needs_you_help, rel_comms),
+                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+        elif activity=="posted_needs":
+            result_list = sorted(
+                chain(needs),
+                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+        elif activity=="needs_help":
+            result_list = sorted(
+                chain(needs_you_help),
+                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+        elif activity=="posted_information":
+            result_list = sorted(
+                chain(infos),
+                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+        elif activity=="written_comments":
+            result_list = sorted(
+                chain(rel_comms),
+                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+        t = loader.get_template('snippets/home_filter.html')
+        return HttpResponse(t.render({'request': request, 'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list}))
+
+@csrf_protect
 def delete_comment_timeline(request, pk):
     if request.user.is_authenticated():
         comment = Comment.objects.get(pk=pk)
@@ -500,7 +554,7 @@ def information_all(request):
 
     return redirect('basics:actofgoods_startpage')
 
-
+@csrf_protect
 def information_filter(request):
     if request.user.is_authenticated():
         #TODO: Change this to somehing like user distance
@@ -573,7 +627,7 @@ def information_new(request):
                 infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                 infodata.group = group
                 infodata.save()
-                return redirect('basics:information_all')
+                return redirect('basics:actofgoods_startpage')
             else:
                 messages.add_message(request, messages.INFO, 'not_valid')
         info = InformationFormNew()
@@ -581,19 +635,6 @@ def information_new(request):
 
     return redirect('basics:actofgoods_startpage')
 
-"""
-    Needs authentication!
-
-    Input: request (user)
-
-    If user is not authenticated redirect to startpage.
-    Otherwise the information_timeline page will be rendered and returned.
-"""
-def information_timeline(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/information_timeline.html')
-
-    return redirect('basics:actofgoods_startpage')
 
 """
     Needs authentication!
@@ -603,6 +644,8 @@ def information_timeline(request):
     If user is not authenticated redirect to startpage.
     Otherwise the needs_view_edit page will be rendered and returned.
 """
+
+@csrf_protect
 def information_view(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -612,6 +655,7 @@ def information_view(request, pk):
         return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def information_delete_comment(request, pk_inf, pk_comm):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -621,6 +665,7 @@ def information_delete_comment(request, pk_inf, pk_comm):
         return redirect('basics:information_view', pk=pk_inf)
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def information_view_comment(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -635,6 +680,7 @@ def information_view_comment(request, pk):
 
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def information_update(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -644,7 +690,7 @@ def information_update(request, pk):
             text = request.POST.get('text', None)
             lat, lng = getAddress(request)
             if lat != None and lng != None:
-                information.address=Address.objects.create(latitude=lat, longditude=lng)
+                information.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
             if text != "":
                 information.text = information.text + "\n\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z") +"\n\n" + text
             else:
@@ -769,6 +815,8 @@ def login(request):
 
     Current user will be loged out.
 """
+
+@csrf_protect
 def logout(request):
     auth_logout(request)
     return HttpResponse(actofgoods_startpage(request))
@@ -776,12 +824,12 @@ def logout(request):
 """
     will return map_testing for resing purposes
 """
-def map_testing(request):
-    return render(request, 'basics/map_testing.html')
 
 """
 Fills the Database with count needs of every category thats in the database
 """
+
+@csrf_protect
 def fill_needs(request, count):
     categories = CategoriesNeeds.objects.all()
     for category in categories:
@@ -800,6 +848,7 @@ def fill_needs(request, count):
     Otherwise a list of needs will be pult out of the database and added to ...
     The needs_all page will be rendered and returned.
 """
+@csrf_protect
 def needs_all(request):
     if request.user.is_authenticated():
         #TODO: Change this to somehing like user distance
@@ -839,6 +888,7 @@ def needs_all(request):
 
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def needs_filter(request):
     if request.user.is_authenticated():
         #TODO: Change this to somehing like user distance
@@ -917,6 +967,8 @@ def needs_help(request, id):
     If user is not authenticated redirect to startpage.
     Otherwise the needs_view_edit page will be rendered and returned.
 """
+
+@csrf_protect
 def needs_view(request, pk):
     if request.user.is_authenticated:
         need = get_object_or_404(Need, pk=pk)
@@ -995,11 +1047,6 @@ def send_notifications(needdata):
     If user is not authenticated redirect to startpage.
     Otherwise the profil page will be rendered and returned.
 """
-def needs_timeline(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/needs_timeline.html')
-
-    return redirect('basics:actofgoods_startpage')
 
 """
     privacy, will render and return privacy.html
@@ -1015,6 +1062,8 @@ def privacy(request):
     If user is not authenticated redirect to startpage.
     Otherwise the profil page will be rendered and returned.
 """
+
+@csrf_protect
 def profil(request):
     if request.user.is_authenticated():
         userdata=request.user.userdata
@@ -1031,6 +1080,8 @@ def profil(request):
     if not it will render the profil_edit page again
     otherwise the profil will be changed.
 """
+
+@csrf_protect
 def profil_edit(request):
     if request.user.is_authenticated():
         if not request.user.is_active:
@@ -1084,6 +1135,7 @@ def profil_edit(request):
         return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all, 'selected': userdata.inform_about.all(),'form':form,'change':False})
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def profil_delete(request):
     user=request.user
     user.delete()
@@ -1133,6 +1185,7 @@ def register(request):
 
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def verification(request,pk):
     if request.user.is_authenticated():
         if request.user.userdata.pseudonym == pk:
@@ -1285,21 +1338,25 @@ def unlike_information(request):
     info.save()
     return information_filter(request)
 
+@csrf_protect
 def need_delete(request, pk):
     need = Need.objects.all().get(pk=pk)
     need.delete()
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def info_delete(request, pk):
     info = Information.objects.all().get(pk=pk)
     info.delete()
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def comm_delete(request, pk):
     comm = Comment.objects.all().get(pk=pk)
     comm.delete()
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def need_edit(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -1321,6 +1378,7 @@ def need_edit(request, pk):
         return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all()})
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def info_edit(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -1390,7 +1448,7 @@ def group_detail(request, name):
         return render(request, 'basics/group_detail.html', {'group':group, 'groups':groups, 'users':users, 'needs':needs, 'infos':infos})
     return redirect('basics:actofgoods_startpage')
 
-
+@csrf_protect
 def group_edit(request, pk):
     if request.user.is_authenticated():
         if request.method == "GET":
@@ -1417,6 +1475,7 @@ def group_edit(request, pk):
                 return group_detail(request, group.name)
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def group_leave(request, pk):
     #print(User.objects.get(email=request.user))
     if request.user.is_authenticated():
@@ -1430,6 +1489,7 @@ def group_leave(request, pk):
 
     return redirect('basics:home')
 
+@csrf_protect
 def group_detail_for_user(request, name):
     if request.user.is_authenticated():
         group = Groupdata.objects.get(name=name)

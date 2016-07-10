@@ -565,11 +565,19 @@
 
   var Room = function Room(props){
     var href = "/chat/"+props['room']['hash'];
+    var new_msg;
+    if (props['room']['new']==="true")
+    {
+      new_msg=(<span className="badge">new</span>)
+    }
     return (
         <a className="list-group-item" id="standard-list-group-item-div" href={href}>
             <div className="row">
                 <div className="col-sm-12">
                     <h4 >{props['room']['name']}</h4>
+                </div>
+                <div className="col-sm-12">
+                    <h5 >{props['room']['last_message']}{new_msg}</h5>
                 </div>
                 <div className="col-sm-12">
                     <h6 id="chats-date-headline">{props['room']['date']}</h6>
@@ -593,16 +601,17 @@
 
         socket.onmessage = function(message) {
             var j = 0;
-            var room = JSON.parse(message.data)['room'];
+
+            var room = JSON.parse(message.data);
             for(j=0;j<rooms.length;j++){
-              console.log(rooms[j]['hash'], room);
-              if(rooms[j]['hash'] === room){
+              console.log(rooms[j]['hash'], room['room']);
+              if(rooms[j]['hash'] === room['room']){
                 //TODO: Change value of date; we need some sort of flag for messages if they where read
                 break;
               }
             };
-
-            rooms.unshift(rooms.splice(j,1)[0]);
+            rooms.splice(j,1)[0];
+            rooms.unshift(room);
             console.log(rooms);
             this.setState({
               rooms:rooms

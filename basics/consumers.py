@@ -48,7 +48,7 @@ def ws_echo(message):
                      room)
         db_room = Room.objects.get(name=room)
         if db_room.helper_out:
-            return 
+            return
         print(message.channel_session['username'])
         author = User.objects.get(username=message.channel_session['username'])
         text = message.content['text']
@@ -78,6 +78,10 @@ def ws_echo(message):
     t1.start()
     Group('chat-%s' % room).send({
         'text': json.dumps({
+            'name': db_room.need.headline,
+            'hash': db_room.name,
+            'last_message': db_room.recent_message(),
+            'new': "true",
             'message': text,
             'username': message.channel_session['username'],
             'room': message.channel_session['room'],
