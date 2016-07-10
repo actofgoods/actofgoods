@@ -3,6 +3,7 @@
 # Setup Environment
 # ------------------------------------------------------------
 #!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 message=test
 echo "$message"
 apt-get update
@@ -11,16 +12,15 @@ apt-get install postgresql python3 python3-pip redis-server nginx postgresql-con
 # install virtualenv through pip
 pip3 install virtualenv
 # create virtualenv
-virtualenv ./venv
+virtualenv $DIR/venv
 #
-. ./venv/bin/activate
+. $DIR/venv/bin/activate
 # install software through pip in virtualenv
-pip3 install -r ./requirements.txt
+pip3 install -r $DIR/requirements.txt
 # virtualenv deactivate
 deactivate
-basename "$PWD"
 # copy conf file to nginx
-cp ./conf/actofgoods_nginx /etc/nginx/sites-available/actofgoods
+cp $DIR/conf/actofgoods_nginx /etc/nginx/sites-available/actofgoods
 # create sys link for sites-availbe
 ln -s /etc/nginx/sites-available/actofgoods /etc/nginx/sites-enabled
 
