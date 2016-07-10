@@ -40,7 +40,6 @@ urlpatterns = [
     url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/like/$', views.claim_like, name='claim_like'),
     url(r'^claim/(?P<name>[A-Za-z0-9 ]+)/unlike/$', views.claim_unlike, name='claim_unlike'),
 
-    url(r'^fill_needs/(?P<count>[0-9]+)$', views.fill_needs, name='fill_needs'),
     url(r'^faq_signin/$', views.faq_signin, name='faq_signin'),
     url(r'^faq_startpage/$', views.faq_startpage, name='faq_startpage'),
     url(r'^home/$', views.home, name='home'),

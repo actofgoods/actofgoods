@@ -249,118 +249,128 @@ def claim_refresh(request,name):
 @csrf_protect
 def claim_needs(request, name):
     if request.user.is_authenticated():
-        #TODO: Change this to somehing like user distance
-        group = Groupdata.objects.get(name=name)
-        liste=request.POST.getlist('liste[]')
-        if liste:
-            claims = ClaimedArea.objects.filter(pk__in=liste)
-        else:
-            claims = ClaimedArea.objects.filter(group=group.group)
-        needs=Need.objects.all().order_by('-priority', 'pk')
+        if request.user.groups.filter(name=name).exists():
+            #TODO: Change this to somehing like user distance
+            group = Groupdata.objects.get(name=name)
+            liste=request.POST.getlist('liste[]')
+            if liste:
+                claims = ClaimedArea.objects.filter(pk__in=liste)
+            else:
+                claims = ClaimedArea.objects.filter(group=group.group)
+            needs=Need.objects.all().order_by('-priority', 'pk')
 
-        #for claim in claims:
-        if claims.exists():
-            query = Q(adrAsPoint__within=claims[0].poly)
-            for q in claims[1:]:
-                query |= Q(adrAsPoint__within=q.poly)
-            needs = needs.filter(query)
-        if "" != request.POST['category'] and "All" != request.POST['category']:
-            category = request.POST['category']
-            needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
-        if "" != request.POST['wordsearch']:
-            wordsearch = request.POST['wordsearch']
-            needs = needs.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
-        t = loader.get_template('snippets/claim_needs.html')
-        return HttpResponse(t.render({'user': request.user, 'needs':needs}))
+            #for claim in claims:
+            if claims.exists():
+                query = Q(adrAsPoint__within=claims[0].poly)
+                for q in claims[1:]:
+                    query |= Q(adrAsPoint__within=q.poly)
+                needs = needs.filter(query)
+            if "" != request.POST['category'] and "All" != request.POST['category']:
+                category = request.POST['category']
+                needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
+            if "" != request.POST['wordsearch']:
+                wordsearch = request.POST['wordsearch']
+                needs = needs.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
+            t = loader.get_template('snippets/claim_needs.html')
+            return HttpResponse(t.render({'user': request.user, 'needs':needs}))
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def claim_information(request, name):
     if request.user.is_authenticated():
-        #TODO: Change this to somehing like user distance
-        group = Groupdata.objects.get(name=name)
-        liste=request.POST.getlist('liste[]')
-        if liste:
-            claims = ClaimedArea.objects.filter(pk__in=liste)
-        else:
-            claims = ClaimedArea.objects.filter(group=group.group)
-        infos=Information.objects.all().order_by('priority', 'pk').reverse()
+        if request.user.groups.filter(name=name).exists():
+            #TODO: Change this to somehing like user distance
+            group = Groupdata.objects.get(name=name)
+            liste=request.POST.getlist('liste[]')
+            if liste:
+                claims = ClaimedArea.objects.filter(pk__in=liste)
+            else:
+                claims = ClaimedArea.objects.filter(group=group.group)
+            infos=Information.objects.all().order_by('priority', 'pk').reverse()
 
-        #for claim in claims:
-        if claims.exists():
-            query = Q(adrAsPoint__within=claims[0].poly)
-            for q in claims[1:]:
-                query |= Q(adrAsPoint__within=q.poly)
-            infos = infos.filter(query)
-        if "" != request.POST['wordsearch']:
-            wordsearch = request.POST['wordsearch']
-            infos = infos.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
-        t = loader.get_template('snippets/claim_informations.html')
-        return HttpResponse(t.render({'user': request.user, 'infos':infos}))
+            #for claim in claims:
+            if claims.exists():
+                query = Q(adrAsPoint__within=claims[0].poly)
+                for q in claims[1:]:
+                    query |= Q(adrAsPoint__within=q.poly)
+                infos = infos.filter(query)
+            if "" != request.POST['wordsearch']:
+                wordsearch = request.POST['wordsearch']
+                infos = infos.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
+            t = loader.get_template('snippets/claim_informations.html')
+            return HttpResponse(t.render({'user': request.user, 'infos':infos}))
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def claim_reportNeed(request, name):
-    pk=int(request.POST['pk'])
-    #print(pk)
-    need = Need.objects.get(pk=pk)
-    need.was_reported = True
-    need.number_reports += 1
-    need.save()
-    need.reported_by.add(request.user.userdata)
-    #print(Need.objects.get(pk=pk).reported_by.all())
-    t = loader.get_template('snippets/claim_report.html')
-    return HttpResponse(t.render({'user': request.user, 'need':need}))
+    if request.user.is_authenticated():
+        pk=int(request.POST['pk'])
+        #print(pk)
+        need = Need.objects.get(pk=pk)
+        need.was_reported = True
+        need.number_reports += 1
+        need.save()
+        need.reported_by.add(request.user.userdata)
+        #print(Need.objects.get(pk=pk).reported_by.all())
+        t = loader.get_template('snippets/claim_report.html')
+        return HttpResponse(t.render({'user': request.user, 'need':need}))
+    return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def claim_reportInfo(request, name):
-    pk=int(request.POST['pk'])
-    info = Information.objects.get(pk=pk)
-    info.was_reported = True
-    info.number_reports += 1
-    info.save()
-    info.reported_by.add(request.user.userdata)
-    return claim_information(request, name)
+    if request.user.is_authenticated():
+        pk=int(request.POST['pk'])
+        info = Information.objects.get(pk=pk)
+        info.was_reported = True
+        info.number_reports += 1
+        info.save()
+        info.reported_by.add(request.user.userdata)
+        return claim_information(request, name)
+    return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def claim_like(request, name):
-    pk=int(request.POST['pk'])
-    info = Information.objects.get(pk=pk)
-    info.was_liked = True
-    info.number_likes += 1
-    info.liked_by.add(request.user.userdata)
-    info.save()
-    hours_elapsed = int((timezone.now() - info.date).seconds/3600)
-    info.priority = priority_info_user(hours_elapsed, info.number_likes)
-    info.save()
-    return claim_information(request, name)
+    if request.user.is_authenticated():
+        pk=int(request.POST['pk'])
+        info = Information.objects.get(pk=pk)
+        info.was_liked = True
+        info.number_likes += 1
+        info.liked_by.add(request.user.userdata)
+        info.save()
+        hours_elapsed = int((timezone.now() - info.date).seconds/3600)
+        info.priority = priority_info_user(hours_elapsed, info.number_likes)
+        info.save()
+        return claim_information(request, name)
 
 @csrf_protect
 def claim_unlike(request, name):
-    pk=int(request.POST['pk'])
-    info = Information.objects.get(pk=pk)
-    info.number_likes -= 1
-    if info.number_likes == 0:
-        info.was_liked = False
-    info.liked_by.remove(request.user.userdata)
-    info.save()
-    return claim_information(request, name)
+    if request.user.is_authenticated():
+        pk=int(request.POST['pk'])
+        info = Information.objects.get(pk=pk)
+        info.number_likes -= 1
+        if info.number_likes == 0:
+            info.was_liked = False
+        info.liked_by.remove(request.user.userdata)
+        info.save()
+        return claim_information(request, name)
 
 @csrf_protect
 def claim_follow(request, name):
-    pk=int(request.POST['pk'])
-    info = Information.objects.get(pk=pk)
-    info.followed_by.add(request.user.userdata)
-    info.save()
-    return claim_information(request, name)
+    if request.user.is_authenticated():
+        pk=int(request.POST['pk'])
+        info = Information.objects.get(pk=pk)
+        info.followed_by.add(request.user.userdata)
+        info.save()
+        return claim_information(request, name)
 
 @csrf_protect
 def claim_unfollow(request, name):
-    pk=int(request.POST['pk'])
-    info = Information.objects.get(pk=pk)
-    info.followed_by.remove(request.user.userdata)
-    info.save()
-    return claim_information(request, name)
+    if request.user.is_authenticated():
+        pk=int(request.POST['pk'])
+        info = Information.objects.get(pk=pk)
+        info.followed_by.remove(request.user.userdata)
+        info.save()
+        return claim_information(request, name)
 
 
 
@@ -454,47 +464,48 @@ def home(request):
 @csrf_protect
 def home_filter(request):
     if request.user.is_authenticated():
-        if request.POST['group']:
-            print(request.POST['group'])
-            group= Groupdata.objects.get(name=request.POST['group'])
-            needs = list(Need.objects.all().filter(author=request.user, group=group.group))
-            infos = list(Information.objects.all().filter(author=request.user, group=group.group))
-            needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
-            comm = list(Comment.objects.all().filter(author=request.user, group=group.group))
-        else: 
-            needs = list(Need.objects.all().filter(author=request.user))
-            infos = list(Information.objects.all().filter(author=request.user))
-            needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
-            comm = list(Comment.objects.all().filter(author=request.user))
+        if request.is_ajax():
+            if request.POST['group']:
+                print(request.POST['group'])
+                group= Groupdata.objects.get(name=request.POST['group'])
+                needs = list(Need.objects.all().filter(author=request.user, group=group.group))
+                infos = list(Information.objects.all().filter(author=request.user, group=group.group))
+                needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
+                comm = list(Comment.objects.all().filter(author=request.user, group=group.group))
+            else: 
+                needs = list(Need.objects.all().filter(author=request.user))
+                infos = list(Information.objects.all().filter(author=request.user))
+                needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
+                comm = list(Comment.objects.all().filter(author=request.user))
 
-        rel_comms = []
-        for c in comm:
-            if not c.inf in rel_comms:
-                rel_comms.append(c)
-        activity=request.POST['activity']
+            rel_comms = []
+            for c in comm:
+                if not c.inf in rel_comms:
+                    rel_comms.append(c)
+            activity=request.POST['activity']
 
-        if activity=="all_activities":
-            result_list = sorted(
-                chain(needs, infos, needs_you_help, rel_comms),
-                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-        elif activity=="posted_needs":
-            result_list = sorted(
-                chain(needs),
-                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-        elif activity=="needs_help":
-            result_list = sorted(
-                chain(needs_you_help),
-                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-        elif activity=="posted_information":
-            result_list = sorted(
-                chain(infos),
-                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-        elif activity=="written_comments":
-            result_list = sorted(
-                chain(rel_comms),
-                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-        t = loader.get_template('snippets/home_filter.html')
-        return HttpResponse(t.render({'request': request, 'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list}))
+            if activity=="all_activities":
+                result_list = sorted(
+                    chain(needs, infos, needs_you_help, rel_comms),
+                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+            elif activity=="posted_needs":
+                result_list = sorted(
+                    chain(needs),
+                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+            elif activity=="needs_help":
+                result_list = sorted(
+                    chain(needs_you_help),
+                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+            elif activity=="posted_information":
+                result_list = sorted(
+                    chain(infos),
+                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+            elif activity=="written_comments":
+                result_list = sorted(
+                    chain(rel_comms),
+                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+            t = loader.get_template('snippets/home_filter.html')
+            return HttpResponse(t.render({'request': request, 'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list}))
 
 @csrf_protect
 def delete_comment_timeline(request, pk):
@@ -557,34 +568,35 @@ def information_all(request):
 @csrf_protect
 def information_filter(request):
     if request.user.is_authenticated():
-        #TODO: Change this to somehing like user distance
-        if request.user.userdata:
-            dist = request.user.userdata.aux
-        else:
-            dist=500
-        cards_per_page = 10
-        wordsearch = ""
-        infos=Information.objects.all().order_by('-priority', 'pk')
-        page = 1
-        page_range = np.arange(1, 5)
-        if request.method == "POST":
-            #print(request.POST)
-            if "" != request.POST['page']:
-                page = int(request.POST['page'])
-            if "" != request.POST['range']:
-                dist= int(request.POST['range'].replace(',',''))
-                if not request.user.is_superuser:
-                    infos=infos.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
-            if "" != request.POST['wordsearch']:
-                wordsearch = request.POST['wordsearch']
-                infos = infos.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))
-            if "" != request.POST['cards_per_page']:
-                cards_per_page = int(request.POST['cards_per_page'])
-        max_page = int(len(infos)/cards_per_page)+1
-        infos = infos[cards_per_page*(page-1):cards_per_page*(page)]
-        page_range = np.arange(1,max_page+1)
-        t = loader.get_template('snippets/info_filter.html')
-        return HttpResponse(t.render({'user': request.user, 'infos':infos, 'page':page, 'page_range':page_range}))
+        if request.is_ajax():
+            #TODO: Change this to somehing like user distance
+            if request.user.userdata:
+                dist = request.user.userdata.aux
+            else:
+                dist=500
+            cards_per_page = 10
+            wordsearch = ""
+            infos=Information.objects.all().order_by('-priority', 'pk')
+            page = 1
+            page_range = np.arange(1, 5)
+            if request.method == "POST":
+                #print(request.POST)
+                if "" != request.POST['page']:
+                    page = int(request.POST['page'])
+                if "" != request.POST['range']:
+                    dist= int(request.POST['range'].replace(',',''))
+                    if not request.user.is_superuser:
+                        infos=infos.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
+                if "" != request.POST['wordsearch']:
+                    wordsearch = request.POST['wordsearch']
+                    infos = infos.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))
+                if "" != request.POST['cards_per_page']:
+                    cards_per_page = int(request.POST['cards_per_page'])
+            max_page = int(len(infos)/cards_per_page)+1
+            infos = infos[cards_per_page*(page-1):cards_per_page*(page)]
+            page_range = np.arange(1,max_page+1)
+            t = loader.get_template('snippets/info_filter.html')
+            return HttpResponse(t.render({'user': request.user, 'infos':infos, 'page':page, 'page_range':page_range}))
     return redirect('basics:actofgoods_startpage')
 
 """
@@ -704,19 +716,23 @@ def information_update(request, pk):
 
 @csrf_protect
 def follow(request):
-    pk=int(request.POST['pk'])
-    info = Information.objects.get(pk=pk)
-    info.followed_by.add(request.user.userdata)
-    info.save()
-    return information_filter(request)
+    if request.user.is_authenticated():
+        if request.is_ajax():
+            pk=int(request.POST['pk'])
+            info = Information.objects.get(pk=pk)
+            info.followed_by.add(request.user.userdata)
+            info.save()
+            return information_filter(request)
 
 @csrf_protect
 def unfollow(request):
-    pk=int(request.POST['pk'])
-    info = Information.objects.get(pk=pk)
-    info.followed_by.remove(request.user.userdata)
-    info.save()
-    return information_filter(request)
+    if request.user.is_authenticated():
+        if request.is_ajax():
+            pk=int(request.POST['pk'])
+            info = Information.objects.get(pk=pk)
+            info.followed_by.remove(request.user.userdata)
+            info.save()
+            return information_filter(request)
 
 """
     Input: request(Email, Password)
@@ -826,20 +842,6 @@ def logout(request):
 """
 
 """
-Fills the Database with count needs of every category thats in the database
-"""
-
-@csrf_protect
-def fill_needs(request, count):
-    categories = CategoriesNeeds.objects.all()
-    for category in categories:
-        for i in range(int(count)):
-            lat = np.random.random()*50
-            lng = np.random.random()*50
-            need = Need.objects.create(author=request.user, headline=str(i) + " " + category.name, text=str(i), categorie=category, was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
-    return redirect(request, 'basics:needs_all')
-
-"""
     Needs authentication!
 
     Input: request (user)
@@ -891,45 +893,46 @@ def needs_all(request):
 @csrf_protect
 def needs_filter(request):
     if request.user.is_authenticated():
-        #TODO: Change this to somehing like user distance
-        if request.user.userdata:
-            dist = request.user.userdata.aux
-        else:
-            dist=500
-        category = "All"
-        cards_per_page = 10
-        wordsearch = ""
-        needs=Need.objects.all().order_by('-priority', 'pk')
-        needs = needs.exclude(author=request.user)
-        page = 1
-        page_range = np.arange(1, 5)
-        if request.method == "POST":
-            #print(request.POST)
-            if "" != request.POST['page']:
-                page = int(request.POST['page'])
-            if "" != request.POST['category'] and "All" != request.POST['category']:
-                category = request.POST['category']
-                needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
-            if "" != request.POST['range']:
-                dist= int(request.POST['range'].replace(',',''))
+        if request.is_ajax():
+            #TODO: Change this to somehing like user distance
+            if request.user.userdata:
+                dist = request.user.userdata.aux
+            else:
+                dist=500
+            category = "All"
+            cards_per_page = 10
+            wordsearch = ""
+            needs=Need.objects.all().order_by('-priority', 'pk')
+            needs = needs.exclude(author=request.user)
+            page = 1
+            page_range = np.arange(1, 5)
+            if request.method == "POST":
+                #print(request.POST)
+                if "" != request.POST['page']:
+                    page = int(request.POST['page'])
+                if "" != request.POST['category'] and "All" != request.POST['category']:
+                    category = request.POST['category']
+                    needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
+                if "" != request.POST['range']:
+                    dist= int(request.POST['range'].replace(',',''))
+                    if not request.user.is_superuser:
+                        needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
+                if "" != request.POST['wordsearch']:
+                    wordsearch = request.POST['wordsearch']
+                    needs = needs.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))
+                if "" != request.POST['cards_per_page']:
+                    cards_per_page = int(request.POST['cards_per_page'])
+            elif request.method == "GET":
                 if not request.user.is_superuser:
                     needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
-            if "" != request.POST['wordsearch']:
-                wordsearch = request.POST['wordsearch']
-                needs = needs.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))
-            if "" != request.POST['cards_per_page']:
-                cards_per_page = int(request.POST['cards_per_page'])
-        elif request.method == "GET":
-            if not request.user.is_superuser:
-                needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
-        #TODO: this way is fucking slow and should be changed but i didn't found a better solution
-        needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
-        max_page = int(len(needs)/cards_per_page)+1
-        needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
-        #needs.sort(key=lambda x: (-x.priority, x.pk))
-        page_range = np.arange(1,max_page+1)
-        t = loader.get_template('snippets/need_filter.html')
-        return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))
+            #TODO: this way is fucking slow and should be changed but i didn't found a better solution
+            needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
+            max_page = int(len(needs)/cards_per_page)+1
+            needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
+            #needs.sort(key=lambda x: (-x.priority, x.pk))
+            page_range = np.arange(1,max_page+1)
+            t = loader.get_template('snippets/need_filter.html')
+            return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))
     return redirect('basics:actofgoods_startpage')
 
 
@@ -1236,6 +1239,7 @@ def getAddress(request):
     password is generated and send via his email. He then will be redirected
     to reset_password_confirmation page.
 """
+
 def reset_password_page(request):
     #If request.method is POST, reset_password_page will
     #parse the email provided and send an email
@@ -1293,50 +1297,58 @@ def sendmail(email, content, subject):
 
 @csrf_protect
 def report_need(request):
-    pk=int(request.POST['pk'])
-    #print(pk)
-    need = Need.objects.get(pk=pk)
+    if request.user.is_authenticated():
+        if request.is_ajax():
+            pk=int(request.POST['pk'])
+            #print(pk)
+            need = Need.objects.get(pk=pk)
 
-    need.was_reported = True
-    need.number_reports += 1
-    need.save()
-    need.reported_by.add(request.user.userdata)
-    #print(Need.objects.get(pk=pk).reported_by.all())
-    return needs_filter(request)
+            need.was_reported = True
+            need.number_reports += 1
+            need.save()
+            need.reported_by.add(request.user.userdata)
+            #print(Need.objects.get(pk=pk).reported_by.all())
+            return needs_filter(request)
 
 @csrf_protect
 def report_information(request):
-    pk=int(request.POST['pk'])
-    info = Information.objects.get(pk=pk)
-    info.was_reported = True
-    info.number_reports += 1
-    info.save()
-    info.reported_by.add(request.user.userdata)
-    return information_filter(request)
+    if request.user.is_authenticated():
+        if request.is_ajax():
+            pk=int(request.POST['pk'])
+            info = Information.objects.get(pk=pk)
+            info.was_reported = True
+            info.number_reports += 1
+            info.save()
+            info.reported_by.add(request.user.userdata)
+            return information_filter(request)
 
 @csrf_protect
 def like_information(request):
-    pk=int(request.POST['pk'])
-    info = Information.objects.get(pk=pk)
-    info.was_liked = True
-    info.number_likes += 1
-    info.liked_by.add(request.user.userdata)
-    info.save()
-    hours_elapsed = int((timezone.now() - info.date).seconds/3600)
-    info.priority = priority_info_user(hours_elapsed, info.number_likes)
-    info.save()
-    return information_filter(request)
+    if request.user.is_authenticated():
+        if request.is_ajax():
+            pk=int(request.POST['pk'])
+            info = Information.objects.get(pk=pk)
+            info.was_liked = True
+            info.number_likes += 1
+            info.liked_by.add(request.user.userdata)
+            info.save()
+            hours_elapsed = int((timezone.now() - info.date).seconds/3600)
+            info.priority = priority_info_user(hours_elapsed, info.number_likes)
+            info.save()
+            return information_filter(request)
 
 @csrf_protect
 def unlike_information(request):
-    pk=int(request.POST['pk'])
-    info = Information.objects.get(pk=pk)
-    info.number_likes -= 1
-    if info.number_likes == 0:
-        info.was_liked = False
-    info.liked_by.remove(request.user.userdata)
-    info.save()
-    return information_filter(request)
+    if request.user.is_authenticated():
+        if request.is_ajax():
+            pk=int(request.POST['pk'])
+            info = Information.objects.get(pk=pk)
+            info.number_likes -= 1
+            if info.number_likes == 0:
+                info.was_liked = False
+            info.liked_by.remove(request.user.userdata)
+            info.save()
+            return information_filter(request)
 
 @csrf_protect
 def need_delete(request, pk):
@@ -1417,75 +1429,78 @@ def groups_all(request):
 
 def group_detail(request, name):
     if request.user.is_authenticated():
-        gro = request.user.groups.get(name=name)
-        if request.method == "POST":
-            form = GroupAddUserForm(request.POST)
-            if form.is_valid():
-                if 'add_group_member' in form.data:
-                    email = request.POST.get('email')
-                    if {'email': email} in User.objects.values('email'):
-                        user = User.objects.get(email=email)
-                        gro.user_set.add(user)
-                    else:
-                        messages.add_message(request, messages.INFO, 'wrong_email')
-        users = gro.user_set.all()
-        group = Groupdata.objects.get(name=gro.name)
-        claims = ClaimedArea.objects.filter(group=group.group)
-        groups = Groupdata.objects.all().order_by('name')
+        if request.user.groups.filter(name=name).exists():
+            gro = request.user.groups.get(name=name)
+            if request.method == "POST":
+                form = GroupAddUserForm(request.POST)
+                if form.is_valid():
+                    if 'add_group_member' in form.data:
+                        email = request.POST.get('email')
+                        if {'email': email} in User.objects.values('email'):
+                            user = User.objects.get(email=email)
+                            gro.user_set.add(user)
+                        else:
+                            messages.add_message(request, messages.INFO, 'wrong_email')
+            users = gro.user_set.all()
+            group = Groupdata.objects.get(name=gro.name)
+            claims = ClaimedArea.objects.filter(group=group.group)
+            groups = Groupdata.objects.all().order_by('name')
 
-        #for claim in claims:
-        needs = []
-        infos = []
-        if claims.exists():
-            query = Q(adrAsPoint__within=claims[0].poly)
-            for q in claims[1:]:
-                query |= Q(adrAsPoint__within=q.poly)
-            needs = Need.objects.filter(query)
-            infos = Information.objects.filter(query)
+            #for claim in claims:
+            needs = []
+            infos = []
+            if claims.exists():
+                query = Q(adrAsPoint__within=claims[0].poly)
+                for q in claims[1:]:
+                    query |= Q(adrAsPoint__within=q.poly)
+                needs = Need.objects.filter(query)
+                infos = Information.objects.filter(query)
 
 
-        #print(infos)
-        return render(request, 'basics/group_detail.html', {'group':group, 'groups':groups, 'users':users, 'needs':needs, 'infos':infos})
+            #print(infos)
+            return render(request, 'basics/group_detail.html', {'group':group, 'groups':groups, 'users':users, 'needs':needs, 'infos':infos})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def group_edit(request, pk):
     if request.user.is_authenticated():
-        if request.method == "GET":
-            group = Groupdata.objects.get(pk=pk)
-            return render(request, 'basics/group_edit.html', {'group': group})
-        elif request.method == "POST":
-            form = GroupEditForm(request.POST)
-            lat, lng = getAddress(request)
-            if form.is_valid():
+        if request.user.groups.filter(name=name).exists():
+            if request.method == "GET":
                 group = Groupdata.objects.get(pk=pk)
-                email = request.POST.get('email')
-                if request.POST.get('email', "") != "":
-                    group.email = request.POST.get('email')
-                if request.POST.get('phone') != "" :
-                    group.phone = request.POST.get('phone')
-                if lat != None and lng != None:
-                    address = Address.objects.create(latitude=lat, longditude=lng)
-                    group.address =address
-                if request.POST.get('page') != "":
-                    group.webpage=request.POST.get('page')
-                if request.POST.get('description') !="":
-                    group.description=request.POST.get('description')
-                group.save()
-                return group_detail(request, group.name)
+                return render(request, 'basics/group_edit.html', {'group': group})
+            elif request.method == "POST":
+                form = GroupEditForm(request.POST)
+                lat, lng = getAddress(request)
+                if form.is_valid():
+                    group = Groupdata.objects.get(pk=pk)
+                    email = request.POST.get('email')
+                    if request.POST.get('email', "") != "":
+                        group.email = request.POST.get('email')
+                    if request.POST.get('phone') != "" :
+                        group.phone = request.POST.get('phone')
+                    if lat != None and lng != None:
+                        address = Address.objects.create(latitude=lat, longditude=lng)
+                        group.address =address
+                    if request.POST.get('page') != "":
+                        group.webpage=request.POST.get('page')
+                    if request.POST.get('description') !="":
+                        group.description=request.POST.get('description')
+                    group.save()
+                    return group_detail(request, group.name)
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def group_leave(request, pk):
     #print(User.objects.get(email=request.user))
     if request.user.is_authenticated():
-        #if request.method == "POST":
-        groupDa = Groupdata.objects.get(pk=pk)
-        group = groupDa.group
-        group.user_set.remove(request.user)
-        group.save()
-        if len(group.user_set.all()) == 0:
-            group.delete()
+        if request.user.groups.filter(name=name).exists():
+            #if request.method == "POST":
+            groupDa = Groupdata.objects.get(pk=pk)
+            group = groupDa.group
+            group.user_set.remove(request.user)
+            group.save()
+            if len(group.user_set.all()) == 0:
+                group.delete()
 
     return redirect('basics:home')
 
