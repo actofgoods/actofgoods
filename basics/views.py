@@ -489,11 +489,7 @@ def home_filter(request):
             result_list = sorted(
                 chain(rel_comms),
                 key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-        #print(list(map(lambda x: x.pk, needs_you_help)))
-        #print(result_list)
-        #print(list(map(lambda x: x.pk, result_list)))
         t = loader.get_template('snippets/home_filter.html')
-        print(request)
         return HttpResponse(t.render({'request': request, 'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list}))
 
 
