@@ -4,7 +4,7 @@
 <div id="standard-modal">
 	<div class="modal-content">
 		<div class="modal-header">
-            <div class="col-sm-9">
+            <div class="col-sm-12">
                 <h2>Update your Information: {{information.headline}}</h2>
                 <h6><i>from {{ information.date }}{% if information.author_is_admin %} by <span style="color: #D36E5A;">Admin</span>{% elif information.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=information.group.name %}">{{ information.group.name }}</a>{% elif information.author == user %} by <span>you</span>{% endif %}</i></h6>
             </div>

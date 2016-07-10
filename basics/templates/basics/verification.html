@@ -1,48 +1,57 @@
 {% extends 'basics/base.html' %}
-
 {% block content %}
-<!-- Introduction Row -->
-	<div class="modal-dialog" id="sign-up">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h1 class="text-center">Verification</h1>
-			</div>
-			<div class="modal-body">
-                {% if active == False %}
 
-                <p> Before you can use this, please verify your account!</p>
+<div id="standard-modal">
+	<div class="modal-content">
+		<div class="modal-header">
+            {% if active == False %}
+				<h2 class="text-center" id="standard-modal-headline">Verification<br><small>Please verify your email.</small></h2>
+            {% else %}
+                {% if verified == True %}
+                    <h2 class="text-center" id="standard-modal-headline">Verification<br><small>Verification completed.</small></h2>
+                {% else %}
+                    <h2 class="text-center" id="standard-modal-headline">Verification<br><small>Verify your email through sign in.</small></h2>
+                {% endif %}
+            {% endif %}
+		</div>
+		<div class="modal-body">
+            {% if active == False %}
+
+                <p>Before you can use this, please verify your account!</p>
                 <p>Check your emails for further information!</p>
 
-                {% else %}
+            {% else %}
 
-
-				    {% if verified == True %}
+			    {% if verified == True %}
 
                     <p> Thank you for verifiying your Profile.</p>
 
-                   {% else %}
-                    <form class="form" role="form" method="post" accept-charset="UTF-8" id="login-nav">
+               {% else %}
+                    <form class="form" role="form" method="post" accept-charset="UTF-8">
                     {% csrf_token %}
-                    <div class="form-group">
-                        <input type="email" class="form-control input-lg" placeholder="email" name="email" />
-                     </div>
-
-	    	  				<div class="form-group">
-		      					<input type="password" class="form-control input-lg" placeholder="Password" name="password" required/>
-		  	    			</div>
-
                         <div class="form-group">
-                            <input type="submit" onclick="verifcation(pk)" class="btn btn-block btn-lg btn-primary" value="verify"/>
-						</div>
+                            <h4>Enter your email address:</h4>
+                            <input type="email" class="form-control input-lg" placeholder="Email" name="email" />
+                         </div>
+    	  				<div class="form-group">
+                            <h4>Enter your password:</h4>
+	      					<input type="password" class="form-control input-lg" placeholder="Password" name="password" required/>
+	  	    			</div>
+
+                        <div class="row">
+                            <div class="col-sm-3 col-sm-offset-9">
+                                <div class="form-group">
+                                    <input id="standard-grey-button-bold" type="submit" onclick="verifcation(pk)" class="btn btn-block btn-lg btn-primary" value="Verify"/>
+        						</div>
+                            </div>
+                        </div>
                     </form>
-
-
-                    {% endif %}
                 {% endif %}
+            {% endif %}
 
-			</div>
 		</div>
 	</div>
+</div>
 
 
 {% endblock %}

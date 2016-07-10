@@ -455,7 +455,7 @@
     function post_poly(){
     if(!saved){
         if(document.getElementById("claimname").value != "") {
-            if(poly.getPath().length > 4) {
+            if(poly.getPath().length > 2) {
                 $("#claim-new-area").fadeOut('fast')
         		pathi=save();
                 saved=true;
@@ -514,7 +514,6 @@
                 editable: true,
                 draggable: true
             });
-        google.maps.event.addListener(map, 'click', addPoint);
     }
     onedit=true;
     }
@@ -533,9 +532,7 @@
   		};
   		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
         loadClaims('2');
-
-        google.maps.event.addDomListener(claimname, 'change', function(){
-        });
+        google.maps.event.addListener(map, 'click', addPoint);
 	}
 
     function loadClaims(prop){
@@ -624,10 +621,10 @@
             var claim = new google.maps.Polygon({
                 paths: new google.maps.MVCArray(path),
                 strokeColor: '#5D5F5B',
-                strokeOpacity: 0.9,
+                strokeOpacity: 0.6,
                 strokeWeight: 3,
                 fillColor: '#5D5F5B',
-                fillOpacity: 0.35,
+                fillOpacity: 0.2,
                 editable: false
             });
             claim.addListener('click', function(event){
@@ -691,19 +688,30 @@
         }poly.setMap(map);
     }
 
-	function getLocation() {
-    	if (navigator.geolocation) {
-    	    navigator.geolocation.getCurrentPosition(showPosition);
-    	} else {
-    	    x.innerHTML = "Geolocation is not supported";
-    	    y.innerHTML = "by this browser.";
-    	}
-	}
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              };
+              placeMarker(pos);
+            }, 
+            function() {
+              handleLocationError(true, infoWindow, map.getCenter());
+            });
+        } else {
+            // Browser doesn't support Geolocation
+            handleLocationError(false, infoWindow, map.getCenter());
+          }
+    }
 
-	function showPosition(position) {
-    	var latlng={lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)};
-    	placeMarker(latlng);
-	}
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+      infoWindow.setPosition(pos);
+      infoWindow.setContent(browserHasGeolocation ?
+                            'Error: The Geolocation service failed.' :
+                            'Error: Your browser doesn\'t support geolocation.');
+    }
 
 
 	function placeMarker(location) {

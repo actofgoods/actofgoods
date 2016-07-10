@@ -406,19 +406,32 @@
 
 
 	function getLocation() {
-    	if (navigator.geolocation) {
-    	    navigator.geolocation.getCurrentPosition(showPosition);
-    	} else {
-    	    x.innerHTML = "Geolocation is not supported";
-    	    y.innerHTML = "by this browser.";
-    	}
-	}
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+              var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              };
+              placeMarker(pos);
+            }, 
+            function(positionError) {
+                alert(positionError);
+              handleLocationError(true, infowindow, map.getCenter());
+            });
+        } else {
+            // Browser doesn't support Geolocation
 
-	function showPosition(position) {
-    	var latlng={lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)};
-    	placeMarker(latlng);
-	}
+            handleLocationError(false, infowindow, map.getCenter());
+          }
+    }
 
+    function handleLocationError(browserHasGeolocation, infowindow, pos) {
+      if(!infowindow){ infowindow=new google.maps.InfoWindow(); infowindow.open(map)}
+      infowindow.setPosition(pos);
+      infowindow.setContent(browserHasGeolocation ?
+                            'Error: The Geolocation service failed.' :
+                            'Error: Your browser doesn\'t support geolocation.');
+    }
 
 	function placeMarker(location) {
 	    if(marker){
