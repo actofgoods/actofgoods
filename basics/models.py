@@ -145,6 +145,7 @@ class ContactUs(models.Model):
 
 class Room(models.Model):
 	name = models.CharField(primary_key=True , max_length=20)
+	group = models.ForeignKey(Group, null=True)
 	user_req = models.ForeignKey(User, blank=True, null=True)
 	need = models.ForeignKey(Need)
 	slug = models.SlugField()

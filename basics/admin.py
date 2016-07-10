@@ -16,7 +16,7 @@ admin.site.register(
 
 admin.site.register(
 	Room,
-	list_display=["name","user_req", "slug", "need"],
+	list_display=["name","user_req", "slug", "need", "group"],
 	prepopulated_fields={"slug": ("name",)},
 
 )

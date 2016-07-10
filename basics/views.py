@@ -112,13 +112,15 @@ def get_valid_rooms(user):
 @csrf_protect
 def kick_user(request, roomname):
     if request.user.is_authenticated():
+
         room = Room.objects.get(name=roomname)
-        text = "Helper was kicked."
-        if request.user == room.user_req:
-            text = "Helper leaved."
-        room.helper_out = True
-        room.save()
-        ChatMessage.objects.create(room=room, text=text, author=None)
+        if request.user == room.user_req or request.user == room.need.user:
+            text = "Helper was kicked."
+            if request.user == room.user_req:
+                text = "Helper leaved."
+            room.helper_out = True
+            room.save()
+            ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -248,6 +250,7 @@ def claim_refresh(request,name):
 
 @csrf_protect
 def claim_needs(request, name):
+    print("claim_needs")
     if request.user.is_authenticated():
         if request.user.groups.filter(name=name).exists():
             #TODO: Change this to somehing like user distance
@@ -257,7 +260,7 @@ def claim_needs(request, name):
                 claims = ClaimedArea.objects.filter(pk__in=liste)
             else:
                 claims = ClaimedArea.objects.filter(group=group.group)
-            needs=Need.objects.all().order_by('-priority', 'pk')
+            needs=Need.objects.all().exclude(author=request.user).order_by('-priority', 'pk')
 
             #for claim in claims:
             if claims.exists():
@@ -271,8 +274,9 @@ def claim_needs(request, name):
             if "" != request.POST['wordsearch']:
                 wordsearch = request.POST['wordsearch']
                 needs = needs.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
-            t = loader.get_template('snippets/claim_needs.html')
-            return HttpResponse(t.render({'user': request.user, 'needs':needs}))
+            print("snippet gets loaded")
+            t = loader.get_template('snippets/claim_needs_group.html')
+            return HttpResponse(t.render({'user': request.user, 'needs':needs, 'group':group}))
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -472,7 +476,7 @@ def home_filter(request):
                 infos = list(Information.objects.all().filter(author=request.user, group=group.group))
                 needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
                 comm = list(Comment.objects.all().filter(author=request.user, group=group.group))
-            else: 
+            else:
                 needs = list(Need.objects.all().filter(author=request.user))
                 infos = list(Information.objects.all().filter(author=request.user))
                 needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
@@ -892,6 +896,7 @@ def needs_all(request):
 
 @csrf_protect
 def needs_filter(request):
+    print("needs_filter")
     if request.user.is_authenticated():
         if request.is_ajax():
             #TODO: Change this to somehing like user distance
@@ -938,6 +943,7 @@ def needs_filter(request):
 
 @csrf_protect
 def needs_help(request, id):
+    print("wrong")
     #cat = CategoriesNeeds.objects.create(name="cool")
     if request.user.is_authenticated():
         if request.method == "GET":
@@ -956,7 +962,41 @@ def needs_help(request, id):
                 need.save()
                 return redirect('basics:chat_room', roomname=room.name)
             else:
-                print("User: " + request.user.email + " tried to help his own need: " + room.need.headline + "\n TODO: print error message for User" )
+                print("User: " + request.user.email + " tried to help his own need: " +  "\n TODO: print error message for User" )
+        #TODO: what todo if POST data is wrong or get comes in
+        #return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
+
+    return redirect('basics:actofgoods_startpage')
+
+
+@csrf_protect
+def needs_help_group(request, id, group_id):
+    #cat = CategoriesNeeds.objects.create(name="cool")
+    print("correct")
+    if request.user.is_authenticated():
+        if request.method == "GET":
+            group = Group.objects.get(id=group_id)
+            print(group.name)
+            if request.user not in list(group.user_set.all()):
+                #TODO: return 404
+                print("user was not in group")
+                return redirect('basics:actofgoods_startpage')
+            need = Need.objects.get(id=id)
+
+            if need.author != request.user:
+                #TODO: id_generator will return random string; Could be already in use
+                if Room.objects.filter(need=need).filter(Q(user_req=request.user)|Q(helper_out=False)).exists():
+                    #TODO: add error message, 'This need is currently in work'
+                    return redirect('basics:actofgoods_startpage')
+                room = Room.objects.create(name=id_generator(), group=group, need=need)
+                room.user_req = request.user
+                room.save()
+                helped_at = Helped.objects.create(was_helped_at=timezone.now())
+                need.was_helped_at = helped_at
+                need.save()
+                return redirect('basics:chat_room', roomname=room.name)
+            else:
+                print("User: " + request.user.email + " tried to help his own need: " + "\n TODO: print error message for User" )
         #TODO: what todo if POST data is wrong or get comes in
         #return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
 
