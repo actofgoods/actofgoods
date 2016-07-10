@@ -15,5 +15,4 @@ virtualenv ./venv
 #
 . ./venv/bin/activate
 # install software through pip in virtualenv
-ls
-pip3 install -r ./requirments.txt
+pip3 install -r ./requirments.txt -v
