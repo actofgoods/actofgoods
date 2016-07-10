@@ -1,30 +1,66 @@
 {% extends 'basics/base.html' %}
-
 {% block content %}
-<!-- Introduction Row -->
+
 	<div id="standard-modal">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h1 class="text-center">Edit Your Need</h1>
+                <div class="col-sm-12">
+                    <h2>Edit your Need: {{need.headline}}</h2>
+                    <h6><i>from {{ need.date }} category {{ need.categorie.name }}{% if need.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=need.group.name %}">{{ need.group.name }}</a>{% elif need.author == user %} by <span>you</span>{% endif %}</i></h6>
+                </div>
 			</div>
 			<div class="modal-body">
 				<form class="form" role="form" method="post" accept-charset="UTF-8">
 				    {% csrf_token %}
     				<div class="form-group">
+                        <h4>Change headline: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Change the headline of your need. This headline will represent your need for other user. Give a clearly short overview."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 					    <input type="description" class="form-control input-lg" placeholder= "headline" value="{{need.headline}}" name="desc"  >
 					</div>
-					<div class="form-group">
-					    <textarea type="text" class="form-control input-lg" placeholder= "description" value="" name="text"  >{{need.text}}</textarea>
-					</div>
-					<div class="form-group">
-						{% include "basics/map_testing.html" %}
+                    <div class="list-group-item" id="standard-list-group-item-white-div" style="padding-top: 5px; padding-bottom: 5px; margin-bottom: 15px; border-radius: 4px;">
+                        <h4><i>Current need description:</i></h4>
+                        <p style="word-wrap: break-word;">{{ need.text | linebreaksbr }}</p>
                     </div>
 					<div class="form-group">
-						<input id="standard-grey-button-bold" type="submit" onclick="profil_edit" class="btn btn-block btn-lg btn-primary" value="Save"/>
+                        <h4>Change description: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Change the description of your need. Give an accurate description of your need so that other user can realize your problem."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+					    <textarea type="text" class="form-control input-lg" placeholder= "description" value="" name="text"  >{{need.text}}</textarea>
 					</div>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-5 col-sm-6">
+                            <h4>Change the location for this need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="All user in the neighborhood of your given location will see your need."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-4">
+                            <div class="form-group">
+                                {% include "basics/map_testing.html" %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-4 col-lg-offset-8 col-md-4 col-md-offset-8 col-sm-6 col-sm-offset-6">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <a id="standard-grey-button-bold" class="btn btn-default btn-lg btn-block" type="button" href="{% url 'basics:home' %}"><span class="glyphicon glyphicon-chevron-left"></span> Back</a>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Save"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 				</form>
 			</div>
 		</div>
 	</div>
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 
 {% endblock %}
