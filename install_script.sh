@@ -20,7 +20,7 @@ pip3 install -r $DIR/requirements.txt
 # virtualenv deactivate
 deactivate
 # copy conf file to nginx
-sudo ln -sf $DIR/conf/actofgoods_nginx /etc/nginx/sites-available
+sudo cp $DIR/conf/actofgoods_nginx /etc/nginx/sites-available/actofgoods
 # create sys link for sites-availbe
-sudo ln -sf $DIR/conf/actofgoods /etc/nginx/sites-enabled
+sudo ln -s /etc/nginx/sites-available/actofgoods /etc/nginx/sites-enabled
 
