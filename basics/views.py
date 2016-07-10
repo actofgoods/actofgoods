@@ -648,7 +648,6 @@ def information_update(request, pk):
             text = request.POST.get('text', None)
             lat, lng = getAddress(request)
             if lat != None and lng != None:
-                print("alskdjlaskjdlaksjdlaksjdlkajd")
                 information.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
             if text != "":
                 information.text = information.text + "\n\n UPDATE " + timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z") +"\n\n" + text
