@@ -25,7 +25,7 @@ SECRET_KEY = 'qg@0gxcgi-x-f0_&#dligg^gr#&-g1t_y$v8@++tqe(ooa%bu#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 NORECAPTCHA_SITE_KEY = '6LdLNSETAAAAAPANCWc4cOCvtDAL3I6GYWwdI8j8'
 NORECAPTCHA_SECRET_KEY = '6LdLNSETAAAAALihggfxC9idnafiO32CB5GsZ6I9'
