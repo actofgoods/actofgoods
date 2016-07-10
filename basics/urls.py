@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^$', views.actofgoods_startpage, name='actofgoods_startpage'),
     url(r'^aboutus/$', views.aboutus, name='aboutus'),
     url(r'^admin_page/$', views.admin_page, name='admin_page'),
-    
+
     url(r'^chat/$', views.chat, name='chat'),
     url(r'^chat/(?P<roomname>[A-Za-z0-9]+)/$', views.chat_room, name='chat_room'),
     url(r'^chat/(?P<roomname>[A-Za-z0-9]+)/kick_user$', views.kick_user, name='kick_user'),
@@ -69,6 +69,7 @@ urlpatterns = [
     url(r'^needs_all/filter/$', views.needs_filter, name='needs_filter'),
     url(r'^needs_all/report/$', views.report_need, name='report_need'),
     url(r'^needs_help/(?P<id>\d+)/$', views.needs_help, name='needs_help'),
+    url(r'^needs_help/(?P<id>\d+)/(?P<group_id>\d+)$', views.needs_help_group, name='needs_help_group'),
     url(r'^needs_new/$', views.needs_new, name='needs_new'),
     url(r'^needs_finish/(?P<roomname>[A-Za-z0-9]+)/$', views.needs_finish, name='needs_finish'),
     url(r'^needs_timeline/$', views.needs_timeline, name='needs_timeline'),

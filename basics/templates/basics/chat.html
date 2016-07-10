@@ -544,7 +544,7 @@
           </div>
           <div className="row">
             <div className="col-sm-8" id="chat-info-container">
-                <p><i> {% if roomname|is_own:request.user %} You are getting help TODO{% else %} You are helping TODO{% endif %}</i></p>
+                <p><i> {% if roomname|is_own:request.user %} You are getting help {% if room.group %}by {{room.group.name}}{% endif %}{% else %} You are helping  {% if room.group %}as {{room.group.name}}{% endif %}{% endif %}</i></p>
             </div>
 
           </div>
