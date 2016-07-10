@@ -12,15 +12,15 @@ sudo apt-get install postgresql python3 python3-pip redis-server nginx postgresq
 # install virtualenv through pip
 pip3 install virtualenv
 # create virtualenv
-virtualenv $DIR/venv
+sudo virtualenv $DIR/venv
 #
-. $DIR/venv/bin/activate
+source $DIR/venv/bin/activate
 # install software through pip in virtualenv
 pip3 install -r $DIR/requirements.txt
 # virtualenv deactivate
 deactivate
 # copy conf file to nginx
-sudo cp $DIR/conf/actofgoods_nginx /etc/nginx/sites-available/actofgoods
+sudo ln -sf $DIR/conf/actofgoods_nginx /etc/nginx/sites-available
 # create sys link for sites-availbe
-sudo ln -s /etc/nginx/sites-available/actofgoods /etc/nginx/sites-enabled
+sudo ln -sf $DIR/conf/actofgoods /etc/nginx/sites-enabled
 
