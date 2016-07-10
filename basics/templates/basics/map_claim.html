@@ -455,7 +455,7 @@
     function post_poly(){
     if(!saved){
         if(document.getElementById("claimname").value != "") {
-            if(poly.getPath().length > 4) {
+            if(poly.getPath().length > 2) {
                 $("#claim-new-area").fadeOut('fast')
         		pathi=save();
                 saved=true;
@@ -514,7 +514,6 @@
                 editable: true,
                 draggable: true
             });
-        google.maps.event.addListener(map, 'click', addPoint);
     }
     onedit=true;
     }
@@ -533,9 +532,7 @@
   		};
   		map = new google.maps.Map(document.getElementById("map-container"),mapProp);
         loadClaims('2');
-
-        google.maps.event.addDomListener(claimname, 'change', function(){
-        });
+        google.maps.event.addListener(map, 'click', addPoint);
 	}
 
     function loadClaims(prop){
