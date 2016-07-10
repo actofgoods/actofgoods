@@ -69,8 +69,8 @@ claim_unfollow(request, name)
 =====================
 
 information_all(request)
-information_delete_comment(request, pk_inf, pk_comm)
 information_filter(request)
+information_delete_comment(request, pk_inf, pk_comm)
 information_new(request)
 information_update(request, pk)
 information_view(request, pk)
