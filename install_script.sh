@@ -15,5 +15,5 @@ virtualenv ./venv
 #
 . ./venv/bin/activate
 # install software through pip in virtualenv
-echo "$(pwd)"
+ls
 pip3 install -r ./requirments.txt
