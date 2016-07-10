@@ -18,7 +18,7 @@ def ws_add(message, room):
     if not (type(query_string) is str):
         print(type(query_string))
         query_string = query_string.decode('utf-8')
-    print(query_string.decode('utf-8'))
+    print(query_string)
     query = urllib.parse.parse_qs(query_string)
     print(query)
     if 'username' not in query:
