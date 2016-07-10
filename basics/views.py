@@ -447,6 +447,56 @@ def home(request):
 
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
+def home_filter(request):
+    if request.user.is_authenticated():
+        if request.POST['group']:
+            print(request.POST['group'])
+            group= Groupdata.objects.get(name=request.POST['group'])
+            needs = list(Need.objects.all().filter(author=request.user, group=group.group))
+            infos = list(Information.objects.all().filter(author=request.user, group=group.group))
+            needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
+            comm = list(Comment.objects.all().filter(author=request.user, group=group.group))
+        else: 
+            needs = list(Need.objects.all().filter(author=request.user))
+            infos = list(Information.objects.all().filter(author=request.user))
+            needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
+            comm = list(Comment.objects.all().filter(author=request.user))
+
+        rel_comms = []
+        for c in comm:
+            if not c.inf in rel_comms:
+                rel_comms.append(c)
+        activity=request.POST['activity']
+
+        if activity=="all_activities":
+            result_list = sorted(
+                chain(needs, infos, needs_you_help, rel_comms),
+                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+        elif activity=="posted_needs":
+            result_list = sorted(
+                chain(needs),
+                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+        elif activity=="needs_help":
+            result_list = sorted(
+                chain(needs_you_help),
+                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+        elif activity=="posted_information":
+            result_list = sorted(
+                chain(infos),
+                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+        elif activity=="written_comments":
+            result_list = sorted(
+                chain(rel_comms),
+                key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+        #print(list(map(lambda x: x.pk, needs_you_help)))
+        #print(result_list)
+        #print(list(map(lambda x: x.pk, result_list)))
+        t = loader.get_template('snippets/home_filter.html')
+        print(request)
+        return HttpResponse(t.render({'request': request, 'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list}))
+
+
 def delete_comment_timeline(request, pk):
     if request.user.is_authenticated():
         comment = Comment.objects.get(pk=pk)

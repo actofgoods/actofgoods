@@ -45,6 +45,7 @@ urlpatterns = [
     url(r'^faq_signin/$', views.faq_signin, name='faq_signin'),
     url(r'^faq_startpage/$', views.faq_startpage, name='faq_startpage'),
     url(r'^home/$', views.home, name='home'),
+    url(r'^home/filter/$', views.home_filter, name='home_filter'),  
     url(r'^immediate_aid/$', views.immediate_aid, name='immediate_aid'),
 
     url(r'^information_all/$', views.information_all, name='information_all'),
