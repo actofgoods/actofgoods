@@ -49,13 +49,6 @@ def actofgoods_startpage(request):
 def aboutus(request):
     return render(request, 'basics/aboutus.html')
 
-"""
-    Input: request
-
-    admin_page will be rendered and returned.
-"""
-def admin_page(request):
-    return render(request, 'basics/admin_page.html')
 
 """
     Needs authentication!
@@ -65,6 +58,8 @@ def admin_page(request):
     If user is not authenticated redirect to startpage.
     ...
 """
+
+@csrf_protect
 def change_password(request):
     if request.user.is_authenticated():
         if not request.user.is_active:
@@ -98,6 +93,7 @@ def change_password(request):
     If user is not authenticated redirect to startpage.
     Otherwise the chat page will be rendered and returned.
 """
+@csrf_protect
 def chat(request):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -113,6 +109,7 @@ def chat(request):
 def get_valid_rooms(user):
     return Room.objects.filter(Q(need__author =user) | Q(user_req = user, helper_out=False))
 
+@csrf_protect
 def kick_user(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
@@ -124,6 +121,7 @@ def kick_user(request, roomname):
         ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def needs_finish(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
@@ -140,6 +138,8 @@ def needs_finish(request, roomname):
     If user is not authenticated redirect to startpage.
     Otherwise the chat_room page will be rendered and returned.
 """
+
+@csrf_protect
 def chat_room(request, roomname):
     if request.user.is_authenticated():
         room = Room.objects.get(name=roomname)
@@ -623,7 +623,7 @@ def information_new(request):
                 infodata = Information(author=request.user, author_is_admin=author_is_admin, headline=data['headline'], text=data['text'], adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority, update_at=u)
                 infodata.group = group
                 infodata.save()
-                return redirect('basics:information_all')
+                return redirect('basics:actofgoods_startpage')
             else:
                 messages.add_message(request, messages.INFO, 'not_valid')
         info = InformationFormNew()
@@ -826,12 +826,12 @@ def logout(request):
 """
     will return map_testing for resing purposes
 """
-def map_testing(request):
-    return render(request, 'basics/map_testing.html')
 
 """
 Fills the Database with count needs of every category thats in the database
 """
+
+@csrf_protect
 def fill_needs(request, count):
     categories = CategoriesNeeds.objects.all()
     for category in categories:
@@ -850,6 +850,7 @@ def fill_needs(request, count):
     Otherwise a list of needs will be pult out of the database and added to ...
     The needs_all page will be rendered and returned.
 """
+@csrf_protect
 def needs_all(request):
     if request.user.is_authenticated():
         #TODO: Change this to somehing like user distance
@@ -889,6 +890,7 @@ def needs_all(request):
 
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def needs_filter(request):
     if request.user.is_authenticated():
         #TODO: Change this to somehing like user distance
@@ -967,6 +969,8 @@ def needs_help(request, id):
     If user is not authenticated redirect to startpage.
     Otherwise the needs_view_edit page will be rendered and returned.
 """
+
+@csrf_protect
 def needs_view(request, pk):
     if request.user.is_authenticated:
         need = get_object_or_404(Need, pk=pk)
@@ -1045,11 +1049,6 @@ def send_notifications(needdata):
     If user is not authenticated redirect to startpage.
     Otherwise the profil page will be rendered and returned.
 """
-def needs_timeline(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/needs_timeline.html')
-
-    return redirect('basics:actofgoods_startpage')
 
 """
     privacy, will render and return privacy.html
@@ -1065,6 +1064,8 @@ def privacy(request):
     If user is not authenticated redirect to startpage.
     Otherwise the profil page will be rendered and returned.
 """
+
+@csrf_protect
 def profil(request):
     if request.user.is_authenticated():
         userdata=request.user.userdata
@@ -1081,6 +1082,8 @@ def profil(request):
     if not it will render the profil_edit page again
     otherwise the profil will be changed.
 """
+
+@csrf_protect
 def profil_edit(request):
     if request.user.is_authenticated():
         if not request.user.is_active:
@@ -1134,6 +1137,7 @@ def profil_edit(request):
         return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all, 'selected': userdata.inform_about.all(),'form':form,'change':False})
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def profil_delete(request):
     user=request.user
     user.delete()
@@ -1183,6 +1187,7 @@ def register(request):
 
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def verification(request,pk):
     if request.user.is_authenticated():
         if request.user.userdata.pseudonym == pk:
@@ -1440,7 +1445,7 @@ def group_detail(request, name):
         return render(request, 'basics/group_detail.html', {'group':group, 'groups':groups, 'users':users, 'needs':needs, 'infos':infos})
     return redirect('basics:actofgoods_startpage')
 
-
+@csrf_protect
 def group_edit(request, pk):
     if request.user.is_authenticated():
         if request.method == "GET":
@@ -1467,6 +1472,7 @@ def group_edit(request, pk):
                 return group_detail(request, group.name)
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def group_leave(request, pk):
     #print(User.objects.get(email=request.user))
     if request.user.is_authenticated():
@@ -1480,6 +1486,7 @@ def group_leave(request, pk):
 
     return redirect('basics:home')
 
+@csrf_protect
 def group_detail_for_user(request, name):
     if request.user.is_authenticated():
         group = Groupdata.objects.get(name=name)

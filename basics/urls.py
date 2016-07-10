@@ -22,7 +22,6 @@ app_name = 'basics'
 urlpatterns = [
     url(r'^$', views.actofgoods_startpage, name='actofgoods_startpage'),
     url(r'^aboutus/$', views.aboutus, name='aboutus'),
-    url(r'^admin_page/$', views.admin_page, name='admin_page'),
     
     url(r'^chat/$', views.chat, name='chat'),
     url(r'^chat/(?P<roomname>[A-Za-z0-9]+)/$', views.chat_room, name='chat_room'),
@@ -64,7 +63,6 @@ urlpatterns = [
 
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
-    url(r'^maptesting/$', views.map_testing, name='map_testing'),
 
     url(r'^needs_all/$', views.needs_all, name='needs_all'),
     url(r'^needs_all/filter/$', views.needs_filter, name='needs_filter'),
@@ -72,7 +70,6 @@ urlpatterns = [
     url(r'^needs_help/(?P<id>\d+)/$', views.needs_help, name='needs_help'),
     url(r'^needs_new/$', views.needs_new, name='needs_new'),
     url(r'^needs_finish/(?P<roomname>[A-Za-z0-9]+)/$', views.needs_finish, name='needs_finish'),
-    url(r'^needs_timeline/$', views.needs_timeline, name='needs_timeline'),
     url(r'^needs_view/(?P<pk>\d+)/$', views.needs_view, name='needs_view'),
 
     url(r'^privacy/$', views.privacy, name='privacy'),
