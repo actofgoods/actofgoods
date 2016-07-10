@@ -15,4 +15,4 @@ virtualenv ./venv
 #
 . ./venv/bin/activate
 # install software through pip in virtualenv
-pip3 install -r ./requirments.txt -v
+cat ./requirements.txt | xargs pip install
