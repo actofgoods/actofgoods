@@ -5,6 +5,7 @@
 #!/bin/bash
 message=test
 echo "$message"
+apt-get update
 # install necessery programms through apt-get
 apt-get install postgresql python3 python3-pip redis-server nginx 
 # install virtualenv through pip
