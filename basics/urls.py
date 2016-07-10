@@ -22,7 +22,6 @@ app_name = 'basics'
 urlpatterns = [
     url(r'^$', views.actofgoods_startpage, name='actofgoods_startpage'),
     url(r'^aboutus/$', views.aboutus, name='aboutus'),
-    url(r'^admin_page/$', views.admin_page, name='admin_page'),
     
     url(r'^chat/$', views.chat, name='chat'),
     url(r'^chat/(?P<roomname>[A-Za-z0-9]+)/$', views.chat_room, name='chat_room'),
