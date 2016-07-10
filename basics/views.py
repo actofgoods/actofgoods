@@ -363,7 +363,7 @@ def claim_unfollow(request, name):
     return claim_information(request, name)
 
 
-@csrf_protect
+
 def contact_us(request):
     if request.method == "POST":
         form = ContactUsForm(request.POST)
@@ -412,6 +412,8 @@ def faq_startpage(request):
     If user is not authenticated redirect to startpage.
     Otherwise the faq page will be rendered and returned.
 """
+
+@csrf_protect
 def faq_signin(request):
     if request.user.is_authenticated():
         return render(request, 'basics/faq_signin.html')
@@ -426,6 +428,8 @@ def faq_signin(request):
     Otherwise a list of needs will be pult out of the database and added to ...
     The home page will be rendered and returned.
 """
+
+@csrf_protect
 def home(request):
     if request.user.is_authenticated():
         needs = list(Need.objects.all().filter(author=request.user))
@@ -492,7 +496,7 @@ def home_filter(request):
         t = loader.get_template('snippets/home_filter.html')
         return HttpResponse(t.render({'request': request, 'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list}))
 
-
+@csrf_protect
 def delete_comment_timeline(request, pk):
     if request.user.is_authenticated():
         comment = Comment.objects.get(pk=pk)
@@ -550,7 +554,7 @@ def information_all(request):
 
     return redirect('basics:actofgoods_startpage')
 
-
+@csrf_protect
 def information_filter(request):
     if request.user.is_authenticated():
         #TODO: Change this to somehing like user distance
@@ -631,19 +635,6 @@ def information_new(request):
 
     return redirect('basics:actofgoods_startpage')
 
-"""
-    Needs authentication!
-
-    Input: request (user)
-
-    If user is not authenticated redirect to startpage.
-    Otherwise the information_timeline page will be rendered and returned.
-"""
-def information_timeline(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/information_timeline.html')
-
-    return redirect('basics:actofgoods_startpage')
 
 """
     Needs authentication!
@@ -653,6 +644,8 @@ def information_timeline(request):
     If user is not authenticated redirect to startpage.
     Otherwise the needs_view_edit page will be rendered and returned.
 """
+
+@csrf_protect
 def information_view(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -662,6 +655,7 @@ def information_view(request, pk):
         return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def information_delete_comment(request, pk_inf, pk_comm):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -671,6 +665,7 @@ def information_delete_comment(request, pk_inf, pk_comm):
         return redirect('basics:information_view', pk=pk_inf)
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def information_view_comment(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -685,6 +680,7 @@ def information_view_comment(request, pk):
 
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def information_update(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -819,6 +815,8 @@ def login(request):
 
     Current user will be loged out.
 """
+
+@csrf_protect
 def logout(request):
     auth_logout(request)
     return HttpResponse(actofgoods_startpage(request))
@@ -1340,21 +1338,25 @@ def unlike_information(request):
     info.save()
     return information_filter(request)
 
+@csrf_protect
 def need_delete(request, pk):
     need = Need.objects.all().get(pk=pk)
     need.delete()
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def info_delete(request, pk):
     info = Information.objects.all().get(pk=pk)
     info.delete()
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def comm_delete(request, pk):
     comm = Comment.objects.all().get(pk=pk)
     comm.delete()
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def need_edit(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
@@ -1376,6 +1378,7 @@ def need_edit(request, pk):
         return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all()})
     return redirect('basics:actofgoods_startpage')
 
+@csrf_protect
 def info_edit(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})

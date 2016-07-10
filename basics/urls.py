@@ -55,7 +55,6 @@ urlpatterns = [
     url(r'^information_all/like/$', views.like_information, name='like_information'),
     url(r'^information_all/unlike/$', views.unlike_information, name='unlike_information'),
     url(r'^information_new/$', views.information_new, name='information_new'),
-    url(r'^information_timeline/$', views.information_timeline, name='information_timeline'),
     url(r'^information_view/(?P<pk>\d+)/$', views.information_view, name='information_view'),
     url(r'^information_view/(?P<pk>\d+)/comment$', views.information_view_comment, name='information_view_comment'),
     url(r'^information_view/comment/delete/(?P<pk_inf>\w+)/(?P<pk_comm>\w+)/$', views.information_delete_comment, name='information_delete_comment'),
