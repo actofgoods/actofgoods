@@ -15,7 +15,7 @@ import time
 @channel_session
 def ws_add(message, room):
     query_string = message["query_string"]
-    print(query_string)
+    print(query_string.decode('utf-8'))
     query = urllib.parse.parse_qs(message['query_string'])
     print(query)
     if 'username' not in query:
