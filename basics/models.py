@@ -193,6 +193,11 @@ class Room(models.Model):
 			self.need.save()
 		self.save()
 
+	def recent_message(self):
+		messages = list(ChatMessage.objects.filter(room=self).order_by('-date'))
+		if messages:
+			return messages[0].text
+		return ""
 
 class ChatMessage(models.Model):
 	author = models.ForeignKey(User, null=True)

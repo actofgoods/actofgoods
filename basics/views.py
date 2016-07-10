@@ -150,7 +150,7 @@ def chat_room(request, roomname):
             message_json = messages_to_json(messages)
             #Get all rooms where request.user is in contact with
             rooms = get_valid_rooms(request.user).exclude(name=roomname).order_by('-last_message')
-            rooms_json = rooms_to_json(rooms)
+            rooms_json = rooms_to_json(rooms, request.user)
             return render(request, 'basics/chat.html',{'name':name, 'room':room, 'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
 
     return redirect('basics:actofgoods_startpage')
@@ -174,17 +174,21 @@ def messages_to_json(messages):
     message_json += "]"
     return message_json
 
-def rooms_to_json(rooms):
+def rooms_to_json(rooms, user):
     rooms_json = "["
     if len(rooms) > 0:
         for room in rooms:
+            new_message =  "true" if room.new_message(user) else "false"
             rooms_json   += json.dumps({
                 'name': room.need.headline,
                 'hash': room.name,
+                'new': new_message,
+                'last_message': room.recent_message(),
                 'date': room.last_message.__str__()[:-13]
             }) + ","
         rooms_json = rooms_json[:-1]
     rooms_json += "]"
+    print(rooms_json)
     return rooms_json
 """
     Input: request
