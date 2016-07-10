@@ -1,0 +1,150 @@
+==========================================================================
+								SORTED-LIST
+==========================================================================
+
+=====================
+	   GENERAL
+=====================
+
+actofgoods_startpage(request)
+aboutus(request)
+contact_us(request)
+faq_startpage(request)
+faq_signin(request)
+home(request)
+home_filter(request)
+privacy(request)
+
+
+=====================
+ 	Profile & Req.
+=====================
+
+change_password(request)
+immediate_aid(request)
+login(request)
+logout(request)
+profil(request)
+profil_edit(request)
+profil_delete(request)
+register(request)
+reset_password_page(request)
+reset_password_confirmation(request)
+verification(request,pk)
+
+
+=====================
+		CHAT
+=====================
+
+chat(request)
+chat_room(request, roomname)
+get_valid_rooms(user)
+kick_user(request, roomname)
+messages_to_json(messages)
+needs_finish(request, roomname)
+rooms_to_json(rooms, user)
+
+
+=====================
+		CLAIM
+=====================
+
+claim(request, name)
+claim_post(request, name)
+claim_delete(request,name)
+claim_refresh(request,name)
+claim_information(request, name)
+claim_needs(request, name)
+claim_reportInfo(request, name)
+claim_reportNeed(request, name)
+claim_like(request, name)
+claim_unlike(request, name)
+claim_follow(request, name)
+claim_unfollow(request, name)
+
+
+=====================
+	 Information
+=====================
+
+information_all(request)
+information_delete_comment(request, pk_inf, pk_comm)
+information_filter(request)
+information_new(request)
+information_update(request, pk)
+information_view(request, pk)
+information_view_comment(request, pk)
+info_delete(request, pk)
+info_edit(request, pk)
+follow(request)
+unfollow(request)
+like_information(request)
+unlike_information(request)
+report_information(request)
+
+
+=====================
+		NEEDS
+=====================
+
+needs_all(request)
+needs_filter(request)
+needs_help(request, id)
+needs_new(request)
+needs_view(request, pk)
+need_delete(request, pk)
+need_edit(request, pk)
+report_need(request)
+
+
+
+=====================
+	  COMMENTS
+=====================
+
+comm_delete(request, pk)
+delete_comment_timeline(request, pk)
+report_comment(request, pk)
+
+
+=====================
+	   GROUPS
+=====================
+
+groups_all(request)
+group_detail(request, name)
+group_detail_for_user(request, name)
+group_edit(request, pk)
+group_leave(request, pk)
+
+
+=====================
+	   EXTRAS
+=====================
+
+getAddress(request)
+getLatLng(location)
+id_generator(size=6, chars=string.ascii_uppercase + string.digits)
+sendmail(email, content, subject)
+send_notifications(needdata)
+
+
+=====================
+	   PRIORITY
+=====================
+
+priority_need_user(x)
+priority_need_group(x)
+priority_info_user(x, likes)
+priority_info_group(x, likes)
+
+
+=====================
+	 ERROR-PAGES
+=====================
+
+bad_request(request)
+permission_denied(request)
+page_not_found(request)
+server_error(request)
