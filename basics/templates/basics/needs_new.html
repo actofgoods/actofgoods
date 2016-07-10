@@ -4,7 +4,7 @@
 <div id="standard-modal">
 	<div class="modal-content">
 		<div class="modal-header">
-            <h2 class="text-center" id="standard-modal-headline">Create new Need<br><small>Use this form to create your need so that other user can help you.</small></h2>
+            <h2 class="text-center" id="standard-modal-headline">Create new Need<br><small>Use this form to create a need so that other user can help you.</small></h2>
 		</div>
 		<div class="modal-body">
             <div class="row">
@@ -20,7 +20,7 @@
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
-                        <h4>Add a headline for your need: <a data-toggle="tooltip" title="geht das so?"><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        <h4>Headline for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This headline will represent your need for other user. Give a clearly short overview."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                         {% if messages %}
                             {% for message in messages %}
                                 {% if message.message == 'no_headline' %}
@@ -31,15 +31,15 @@
                             {% endfor %}
                         {% endif %}
                         <div class="form-group">
-                            <input type="description" class="form-control input-lg" placeholder="Headline" name="{{need.headline.name}}"  rows="4" maxlength="30"></textarea>
+                            <input type="description" class="form-control input-lg" placeholder="Headline" name="{{need.headline.name}}"  rows="4" maxlength="30" required></textarea>
                         </div>
-                        <h4>Choose a category for your need:</h4>
+                        <h4>Category for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Choose a suitable category for your need so that other user can find your need easily."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                         <select style="width: 100%;" name="{{need.categorie.name}}">
                             {% for categorie in categories%}
                                 <option value="{{categorie.id}}">{{categorie.name}}</option>
                             {% endfor %}
                         </select>
-                        <h4>Add a description for your need:</h4>
+                        <h4>Description for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Give an accurate description of your need so that other user can realize your problem."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                         {% if messages %}
                             {% for message in messages %}
                                 {% if message.message == 'no_text' %}
@@ -50,11 +50,13 @@
                             {% endfor %}
                         {% endif %}
                         <div class="form-group">
-                            <textarea type="description" class="form-control input-lg" placeholder="Description" name="{{need.text.name}}"  rows="4"></textarea>
+                            <textarea type="description" class="form-control input-lg" placeholder="Description" name="{{need.text.name}}"  rows="4" required></textarea>
                         </div>
-                        <h4>If you do not like to use your standard location for this need choose an other one.</h4>
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-lg-5 col-md-6 col-sm-8">
+                                <h4>Optional choose a location for this need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="If you don't choose a location then this need will use your standard location which is given in your profil. If you don't like to use your standard location for this need choose an other one."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-4">
                                 <div class="form-group">
                                     {% include "basics/map_testing.html" %}
                                 </div>
@@ -92,10 +94,10 @@
 	</div>
 </div>
 
-<style>
-    $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip();
-    });
-</style>
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 
 {% endblock %}

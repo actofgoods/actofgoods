@@ -5,28 +5,41 @@ import urllib.parse
 import logging
 from .models import *
 from channels import Group
-from channels.sessions import channel_session
+from channels.sessions import channel_session, enforce_ordering
 from .views import sendmail
 import psycopg2
 from django.db import transaction
 import threading
 import time
+from channels.auth import http_session_user, channel_session_user, channel_session_user_from_http
 
+
+@enforce_ordering(slight=True)
+@channel_session_user_from_http
 @channel_session
 def ws_add(message, room):
-    query = urllib.parse.parse_qs(message['query_string'])
+    query_string = message.user.username
+    if not (type(query_string) is str):
+        query_string = query_string.decode('utf-8')
+    print(query_string)
+    query = {"username" : message.user.username}
+    print(query)
     if 'username' not in query:
+        print("ws_add: no username")
         return
     logging.info('Adding websocket with username %s in room %s',
                  query['username'][0], room)
     Group('chat-%s' % room).add(message.reply_channel)
     message.channel_session['room'] = room
-    message.channel_session['username'] = query['username'][0]
+    message.channel_session['username'] = query['username']
+    print(message.channel_session['username'])
 
-
+@enforce_ordering(slight=True)
+@channel_session_user
 @channel_session
 def ws_echo(message):
     if 'username' not in message.channel_session:
+        print("no username")
         return
     with transaction.atomic():
         room = message.channel_session['room']

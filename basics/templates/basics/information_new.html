@@ -1,11 +1,11 @@
 {% extends 'basics/base.html' %}
-
 {% block content %}
+
 <!-- Introduction Row -->
 	<div id="standard-modal">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h1 class="text-center">create new Information or Question</h1>
+                <h2 class="text-center" id="standard-modal-headline">Create new Information or Question<br><small>Use this form to create an information for all users or a question to all users.</small></h2>
 			</div>
 			<div class="modal-body">
 				<form class="form" role="form" method="post" accept-charset="UTF-8">
@@ -19,35 +19,60 @@
                             {% endif %}
                         {% endfor %}
                     {% endif %}
-					<p style="font-size:160%;"> description <p\>
-						<div class="form-group">
-							<input type="description" class="form-control input-lg" placeholder="headline" name="headline"  rows="4" maxlength="30">
-						</div>
+					<h4>Headline for your information or question: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This headline will represent your information or question for other user. Give a clearly short overview."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 					<div class="form-group">
-						<textarea type="description" class="form-control input-lg" placeholder="description" name="text"  rows="4"></textarea>
+						<input type="description" class="form-control input-lg" placeholder="Headline" name="headline"  rows="4" maxlength="30" required>
 					</div>
-					{% if user.groups.all|length != 0 or user.is_staff %}
-						<p style="font-size:160%;"> post as </p>
-						<select class="form-control" name="group">
-							<option value="no_group">User</option>
-							{% if user.is_staff %}
-								<option value="admin">Admin</option>
-							{% endif %}
-							{% for group in user.groups.all %}
-								<option value="{{group.id}}">{{group.name}}</option>
-							{% endfor %}
-						</select>
-					{% endif %}
+                    <h4>Description for your information or question: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Give an accurate description of your information or question."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 					<div class="form-group">
-             				<p id="choose-location-text">If this information is not for your standard location from your profile choose an other one.
-      					{% include "basics/map_testing.html" %}</p>
+						<textarea type="description" class="form-control input-lg" placeholder="Description" name="text"  rows="4" required></textarea>
 					</div>
-
-					<div class="form-group">
-						<input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Create & Send"/>
-					</div>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 col-sm-5">
+                            <h4>Optional choose a location: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="If you don't choose a location then this information or question will use your standard location which is given in your profil. If you don't like to use your standard location for this information or question choose an other one."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-4">
+                            <div class="form-group">
+                                {% include "basics/map_testing.html" %}
+                            </div>
+                        </div>
+                    </div>
+                    {% if user.groups.all|length != 0 %}
+                        <div class="row">
+                            <div class="col-sm-5 col-sm-offset-4" style="margin-top: 5px; margin-bottom: 15px;">
+                                <select style="width: 100%;" name="group">
+                                    <option value="no_group">create as user</option>
+        							{% if user.is_staff %}
+        								<option value="admin">create as admin</option>
+        							{% endif %}
+        							{% for group in user.groups.all %}
+        								<option value="{{group.id}}">create as {{group.name}}</option>
+        							{% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Post"/>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="row">
+                            <div class="col-sm-3 col-sm-offset-9">
+                                <div class="form-group">
+                                    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Post"/>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
 				</form>
 			</div>
 		</div>
 	</div>
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 {% endblock %}

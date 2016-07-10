@@ -3,32 +3,6 @@
 {% block content %}
 <style>
 
-	/*#map-container {
-		height: 450px;
-	}*/
-
-	button, .btn-primary, .btn-primary:focus {
-		background-color: #bbd153;
-  		border-color: #70962c;
-  		color: #4C4E49;
-	}
-
-	.btn-primary:hover, .btn-primary:active:focus {
-		background-color: #96B440;
-		color: #4C4E49;
-	}
-
-	.modal-header > h2 {
-		color: #bbd153;
-		font-weight: bold;
-	}
-
-	.nav-tabs > li > a, .nav-tabs > li > a:hover, .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-		color: #70962c;
-	}
-
-
-
 	#address-label, #address-input {
 		margin-top: 5px;
 		margin-bottom: 5px;
@@ -38,6 +12,26 @@
 		margin-top: 12px;
 		margin-bottom: 12px;
 	}
+
+    #header-profile {
+        border: 1px solid #ddd;
+        border-bottom: 0px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        background-color: #EDEDED;
+        margin: 0px;
+        padding: 10px 15px;
+        text-align: center;
+    }
+
+    @media(max-width:768px){
+
+        #heading-button-over-last {
+            margin-bottom: 15px;
+        }
+
+    }
+
 
 	@media(max-width:768px) {
 
@@ -51,21 +45,31 @@
 
 	}
 
-
-
-
-
-
-	@media(max-width:768px) {
-
-        .button-with-15-margin-at-768px {
-                margin-bottom: 15px;
-        }
-
-    }
-
-
 </style>
+
+<div class="modal fade" id="myModal" role="dialog">
+                        <div class="modal-dialog">
+
+                         <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Delete Your Profile</h4>
+                                 </div>
+                                <div class="modal-body">
+                                    <p>If you delete your profile, your data will be permanently lost.</p>
+                                    <p>Would you like to rethink your decision?</p>
+                                </div>
+                                 <div class="modal-footer">
+                                    <button id="standard-grey-button-light" type="button" class="btn btn-default"  data-dismiss="modal">Rethink</button>
+                                    <a type="button" id="standard-grey-button-light" type="button" class="btn btn-default" href="{% url 'basics:profil_delete' %}">
+                                        <span class="glyphicon glyphicon-remove"></span> Delete
+                                    </a>
+                                 </div>
+                            </div>
+
+                        </div>
+                        </div>
 
 <div id="standard-modal">
     <div class="modal-content">
@@ -74,89 +78,99 @@
         </div>
         <div class="modal-body">
 
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <p id="description-label">Email:</p>
-                        </div>
-                        <div class="col-sm-8">
-                            <p id="description-text">{{user.email}}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <p id="description-label">Registered since:</p>
-                        </div>
-                        <div class="col-sm-8">
-                            <p id="description-text">{{user.date_joined}}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <p id="description-label">Auxiliary Radius:</p>
-                        </div>
-                        <div class="col-sm-8">
-                            <p id="description-text">{{Userdata.aux}} km</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <p id="description-label">Phone Number:</p>
-                        </div>
-                        <div class="col-sm-8">
-                            {% if Userdata.phone %}
-                                <p id="description-text">{{Userdata.phone}}</p>
-                            {% else %}
-                                <p id="description-text"><a id="green-link" href="{% url 'basics:profil_edit' %}">add phone number</a></p>
-                            {% endif %}
-                        </div>
+            <div class="row" style="margin-top: 15px;">
+                <div class="col-sm-12">
+                    <div class="row" id="header-profile">
+                        <a class="list-group-footer-button cursor-pointer" type="button"  href="{% url 'basics:profil_edit' %}">
+                            <div class="col-sm-6" id="heading-button-over-last">
+                                <span class="glyphicon glyphicon-pencil"></span> Edit my Profile
+                            </div>
+                        </a>
+                        <a id="button1" class="list-group-footer-button cursor-pointer" type="button" data-toggle="modal" data-target="#myModal">
+                            <div class="col-sm-6">
+                                <span class="glyphicon glyphicon-remove"></span> Delete my Account
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-sm-12">
-                    {% if Userdata.get_notifications %}
-                        <p id="description-label">You have chosen to be notified via email, if somebody in your given auxiliary radius needs help in the following categories:</p>
-                        <p id="description-text" style="padding-right: 20px; padding-left: 20px;"><i>
-                            {% for cat in Userdata.inform_about.all %}
-                                {% if forloop.last %}
-                                    {{cat.name}}.
+            <div class="list-group-item" id="standard-list-group-item-white-div" style="padding-top: 15px; margin-bottom: 15px; padding-bottom: 15px;">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Email:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p id="description-text">{{user.email}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Registered since:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p id="description-text">{{user.date_joined}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Auxiliary Radius:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                <p id="description-text">{{Userdata.aux}} km</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p id="description-label">Phone Number:</p>
+                            </div>
+                            <div class="col-sm-8">
+                                {% if Userdata.phone %}
+                                    <p id="description-text">{{Userdata.phone}}</p>
                                 {% else %}
-                                    {{cat.name}},
+                                    <p id="description-text"><a id="green-link" href="{% url 'basics:profil_edit' %}">add phone number</a></p>
                                 {% endif %}
-                            {% endfor %}
-                        </i></p>
-                    {% else %}
-                        <p id="description-label">Choose categories to let us know about what we should notify you via email, if somebody in your given auxiliary radius needs help.<br><a id="green-link" href="{% url 'basics:profil_edit' %}" style="font-weight: normal;">add categories</a></p>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-12">
-                    <p id="description-label">Your standard location:</p>
-                    <div id="map-container" style="height: 40%; margin-top: 15px;"></div>
-                </div>
-            </div>
-
-        </div>
-        <div class="modal-footer">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="float: right">
-                        <a id="standard-grey-button-light" class="btn btn-sm" href="{% url 'basics:profil_edit' %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-pencil"></span> Edit my profile</a>
-                        <a id="standard-grey-button-light" class="btn btn-sm" href="{% url 'basics:profil_delete' %}" style="margin-bottom: 15px;"><span class="glyphicon glyphicon-remove"></span> Delete my account</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        {% if Userdata.get_notifications %}
+                            <p id="description-label">You have chosen to be notified via email, if somebody in your given auxiliary radius needs help in the following categories:</p>
+                            <p id="description-text" style="padding-right: 20px; padding-left: 20px;"><i>
+                                {% for cat in Userdata.inform_about.all %}
+                                    {% if forloop.last %}
+                                        {{cat.name}}.
+                                    {% else %}
+                                        {{cat.name}},
+                                    {% endif %}
+                                {% endfor %}
+                            </i></p>
+                        {% else %}
+                            <p id="description-label">Choose categories to let us know about what we should notify you via email, if somebody in your given auxiliary radius needs help.<br><a id="green-link" href="{% url 'basics:profil_edit' %}" style="font-weight: normal;">add categories</a></p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p id="description-label">Your standard location:</p>
+                        <div id="map-container" style="height: 40%; margin-top: 15px; border: 1px solid #ddd;"></div>
+                    </div>
+                </div>
+
             </div>
+
         </div>
     </div>
 </div>

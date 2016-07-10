@@ -1,17 +1,25 @@
 {% extends 'basics/base.html' %}
-
 {% block content %}
-<!-- Introduction Row -->
-	<div id="standard-modal">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h1 class="text-center">Update Your Information</h1>
-			</div>
-			<div class="modal-body">
-				<form class="form" role="form" method="post" accept-charset="UTF-8">
-				  {% csrf_token %}
-          		<p class="text-center">{{information.text}}</p>
-          		{% if messages %}
+
+<div id="standard-modal">
+	<div class="modal-content">
+		<div class="modal-header">
+            <div class="col-sm-9">
+                <h2>Update your Information: {{information.headline}}</h2>
+                <h6><i>from {{ information.date }}{% if information.author_is_admin %} by <span style="color: #D36E5A;">Admin</span>{% elif information.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=information.group.name %}">{{ information.group.name }}</a>{% elif information.author == user %} by <span>you</span>{% endif %}</i></h6>
+            </div>
+		</div>
+		<div class="modal-body">
+
+            <div class="list-group-item" id="standard-list-group-item-white-div" style="padding-top: 5px; padding-bottom: 5px; margin-bottom: 20px; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;">
+                <h4><i>Current information description:</i></h4>
+                <p style="word-wrap: break-word;">{{ information.text | linebreaksbr }}</p>
+            </div>
+
+			<form class="form" role="form" method="post" accept-charset="UTF-8">
+			{% csrf_token %}
+
+                {% if messages %}
                     {% for message in messages %}
                         {% if message.message == 'empty_text' %}
                             <div class="error-messages">
@@ -20,19 +28,49 @@
                         {% endif %}
                     {% endfor %}
                 {% endif %}
-    			<div class="form-group">
-					    <input type="additional text" class="form-control input-lg" placeholder= "headline" value="{{need.headline}}" name="text"  >
-					</div>
 
-					<div class="form-group">
-						{% include "basics/map_testing.html" %}
+                <div class="form-group">
+                    <h4>Update your information: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Update your description of this information by adding an additional paragraph to your current description. This paragraph doesn't replace your current description."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+				    <input type="additional text" class="form-control input-lg" placeholder= "Additional Paragraph" value="{{need.headline}}" name="text"  >
+				</div>
+
+                <div class="row">
+                    <div class="col-lg-5 col-md-6 col-sm-8">
+                        <h4>Optinal change the location for this information: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="If you change the location of this information you have to add an additional paragraph to the information."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                     </div>
-					<div class="form-group">
-						<input id="standard-grey-button-bold" type="submit" onclick="profil_edit" class="btn btn-block btn-lg btn-primary" value="Save"/>
-					</div>
-				</form>
-			</div>
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <div class="form-group">
+                            {% include "basics/map_testing.html" %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4 col-lg-offset-8 col-md-4 col-md-offset-8 col-sm-6 col-sm-offset-6">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <a id="standard-grey-button-bold" class="btn btn-default btn-lg btn-block" type="button" href="{% url 'basics:home' %}"><span class="glyphicon glyphicon-chevron-left"></span> Back</a>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <input id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Update"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+			</form>
 		</div>
 	</div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 
 {% endblock %}
