@@ -1,39 +1,37 @@
-import datetime
+from .forms import *
+from .models import *
 from datetime import timedelta
-import random
-import smtplib
-import string
-import requests
-import json
-import numpy as np
-from django.http import JsonResponse
-from django.db.models import Q
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
-from django.template import loader
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_protect
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.message import MIMEMessage
-from django.utils import timezone
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.measure import Distance
-# Create your views here.
-from .forms import *
-from .models import *
+from django.db.models import Q
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.template import loader
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_protect
+from email.mime.message import MIMEMessage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from itertools import chain
 from math import *
+import datetime
+import json
+import numpy as np
+import random
+import requests
+import smtplib
+import string
 
 
 
-"""
-    Index:
-    -input: Cookies -> Informationen ob der Nutzer bereits Einlogg daten Hinterlegt hat
-    -output: Main- or Indexpage
-"""
+
+#=====================
+#	   GENERAL
+#=====================
+
 def actofgoods_startpage(request):
     registerform = UserFormRegister()
     needs = Need.objects.all()
@@ -41,23 +39,113 @@ def actofgoods_startpage(request):
         return redirect('basics:home')
     return render(request, 'basics/actofgoods_startpage.html', {'counter':len(needs),'registerform':registerform})
 
-"""
-    Input: request
-
-    aboutus page will be rendered and returned.
-"""
 def aboutus(request):
     return render(request, 'basics/aboutus.html')
 
+def contact_us(request):
+    if request.method == "POST":
+        form = ContactUsForm(request.POST)
+        if form.is_valid() :
+            email = request.POST.get('email')
+            headline = request.POST.get('headline')
+            text = request.POST.get('text')
+            if email != "":
+                if headline != "":
+                    if text != "":
+                        contactUsData = ContactUs(email=email, headline=headline, text=text)
+                        contactUsData.save()
+                        messages.add_message(request, messages.INFO, 'success contact us')
+                        return redirect('basics:actofgoods_startpage')
+                    else:
+                        messages.add_message(request, messages.INFO, 'no_description')
+                else:
+                    messages.add_message(request, messages.INFO, 'no_headline')
+            else:
+                messages.add_message(request, messages.INFO, 'empty_email')
+        else:
+            messages.add_message(request, messages.INFO, 'wrong_email')
+    return render(request, 'basics/contact_us.html')
 
-"""
-    Needs authentication!
+def faq_startpage(request):
+    return render(request, 'basics/faq_startpage.html')
 
-    Input: request (user)
+@csrf_protect
+def faq_signin(request):
+    if request.user.is_authenticated():
+        return render(request, 'basics/faq_signin.html')
+    return redirect('basics:actofgoods_startpage')
 
-    If user is not authenticated redirect to startpage.
-    ...
-"""
+@csrf_protect
+def home(request):
+    if request.user.is_authenticated():
+        needs = list(Need.objects.all().filter(author=request.user))
+        infos = list(Information.objects.all().filter(author=request.user))
+        needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
+        comm = list(Comment.objects.all().filter(author=request.user))
+        rel_comms = []
+        for c in comm:
+            if not c.inf in rel_comms:
+                rel_comms.append(c)
+        result_list = sorted(
+            chain(needs, infos, needs_you_help, rel_comms),
+            key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+
+        return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list})
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def home_filter(request):
+    if request.user.is_authenticated():
+        if request.is_ajax():
+            if request.POST['group']:
+                group= Groupdata.objects.get(name=request.POST['group'])
+                needs = list(Need.objects.all().filter(author=request.user, group=group.group))
+                infos = list(Information.objects.all().filter(author=request.user, group=group.group))
+                needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
+                comm = list(Comment.objects.all().filter(author=request.user, group=group.group))
+            else: 
+                needs = list(Need.objects.all().filter(author=request.user))
+                infos = list(Information.objects.all().filter(author=request.user))
+                needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
+                comm = list(Comment.objects.all().filter(author=request.user))
+
+            rel_comms = []
+            for c in comm:
+                if not c.inf in rel_comms:
+                    rel_comms.append(c)
+            activity=request.POST['activity']
+
+            if activity=="all_activities":
+                result_list = sorted(
+                    chain(needs, infos, needs_you_help, rel_comms),
+                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+            elif activity=="posted_needs":
+                result_list = sorted(
+                    chain(needs),
+                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+            elif activity=="needs_help":
+                result_list = sorted(
+                    chain(needs_you_help),
+                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+            elif activity=="posted_information":
+                result_list = sorted(
+                    chain(infos),
+                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+            elif activity=="written_comments":
+                result_list = sorted(
+                    chain(rel_comms),
+                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
+            t = loader.get_template('snippets/home_filter.html')
+            return HttpResponse(t.render({'request': request, 'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list}))
+
+def privacy(request):
+	return render(request, 'basics/privacy.html')
+
+
+
+#=====================
+# 	Profile & Req.
+#=====================
 
 @csrf_protect
 def change_password(request):
@@ -85,14 +173,238 @@ def change_password(request):
         return render(request,'basics/change_password.html',{'form':form,'change':change})
     return redirect('basics:actofgoods_startpage')
 
-"""
-    Needs authentication!
+@csrf_protect
+def immediate_aid(request):
 
-    Input: request (user)
+    form = ImmediateAidFormNew(initial={'email': ''})
+    need = NeedFormNew()
 
-    If user is not authenticated redirect to startpage.
-    Otherwise the chat page will be rendered and returned.
-"""
+    if request.method == "POST":
+        #This method is super deprecated we need to make it more secure
+        #it could lead to data sniffing and shitlot of problems;
+        #But to demonstrate our features and only to demonstrate
+        #it will send the given email his password
+
+
+        form = ImmediateAidFormNew(request.POST)
+        need = NeedFormNew(request.POST)
+
+        if form.is_valid() and need.is_valid():
+            password_d = id_generator(9)
+            check_password = password_d
+            if request.POST.get('email', "") != "":
+                lat, lng = getAddress(request)
+                if lat != None and lng != None:
+                    user_data = form.cleaned_data
+                    user = User.objects.create_user(username=user_data['email'], password=password_d, email=user_data['email'])
+                    userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                    userdata.save()
+                    content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
+                    subject = "Confirm Your Account"
+                    data = need.cleaned_data
+                    u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
+                    needdata = Need(author=user, group=None, headline=data['headline'], text=data['text'], categorie=data['categorie'], was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority_need_user(0), update_at=u)
+                    needdata.save()
+
+
+                    #Content could also be possibly HTML! this way beautifull emails are possible
+                    content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
+                    subject = "Welcome!"
+                    user = authenticate(username=user_data['email'],password=password_d)
+                    auth_login(request,user)
+
+                    sendmail(user.email, content, subject )
+                    return redirect('basics:actofgoods_startpage')
+                else:
+                    messages.add_message(request, messages.INFO, 'location_failed')
+            else:
+                messages.add_message(request, messages.INFO, 'wp')
+
+        else:
+            messages.add_message(request, messages.INFO, 'eae')
+
+    return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all, 'form' : form, 'need' : need })
+
+@csrf_protect
+def login(request):
+
+    if request.method == 'POST':
+        email = request.POST.get('email',None)
+        password = request.POST.get('password',None)
+        user = authenticate(username=email,password=password)
+        if user is not None:
+            if user.is_active:
+                auth_login(request,user)
+        else :
+            messages.add_message(request, messages.INFO, 'lw')
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def logout(request):
+    auth_logout(request)
+    return HttpResponse(actofgoods_startpage(request))
+
+@csrf_protect
+def profil(request):
+    if request.user.is_authenticated():
+        userdata=request.user.userdata
+        return render(request, 'basics/profil.html',{'Userdata':userdata, 'selected': userdata.inform_about.all()})
+    return redirect('basics:actofgoods_startpage')
+
+
+@csrf_protect
+def profil_edit(request):
+    if request.user.is_authenticated():
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active': False})
+        user=request.user
+        userdata=request.user.userdata
+        if request.method == "POST":
+            if request.POST.get('changePassword') == "on":
+                oldpw = request.POST['oldpw']
+                newpw1 = request.POST.get('newpw1')
+                newpw2 = request.POST.get('newpw2')
+                if (authenticate(username=user.email, password=oldpw) == user) and (newpw1 == newpw2):
+                    user.set_password(newpw1)
+                    user.save()
+                else:
+                    form = ProfileForm()
+                    return render(request, 'basics/profil_edit.html',
+                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all,
+                                   'selected': userdata.inform_about.all(), 'form': form, 'change':True})
+
+            email= request.POST.get('email',None)
+            phone = request.POST.get('phone',None)
+            aux= request.POST.get('aux',None)
+            lat, lng = getAddress(request)
+            if lat != None and lng != None:
+                userdata.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
+                userdata.save()
+            if aux != "":
+                try:
+                    userdata.aux= float(aux)
+                except ValueError:
+                    print("Something went wrong while converting float.")
+            if email!="":
+                user.email=email
+                user.save()
+            if phone!= "":
+                userdata.phone=phone
+            if request.POST.get('information') == "on":
+                userdata.get_notifications = True
+            else:
+                userdata.get_notifications=False
+            categories= request.POST.getlist('categories[]')
+            for c in CategoriesNeeds.objects.all():
+                if c.name in categories:
+                    userdata.inform_about.add(c)
+                else:
+                    userdata.inform_about.remove(c)
+            userdata.save()
+            return render(request, 'basics/profil.html', {'Userdata':userdata, 'selected': userdata.inform_about.all()})
+        form = ProfileForm()
+        return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all, 'selected': userdata.inform_about.all(),'form':form,'change':False})
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def profil_delete(request):
+    user=request.user
+    user.delete()
+    sendmail(user.email, "Auf Wiedersehen " + user.username + ", \n schade das sie ihr Profil gelöscht haben, aber keine Angst wir speichern all ihre Daten weiter 50 Jahre. \n"
+    +"Wenn sie sich nicht innerhalb von 3 Tagen wieder anmelden werden wir ihren Wohnort an den höchst bietenden verkaufen. Wir bedanken uns für ihr Verständni. \n\n Mit Freundlichen Grüßen Act of Goods", "Auf Wiedersehen!")
+    return actofgoods_startpage(request)
+
+
+@csrf_protect
+def register(request):
+    if request.method == 'POST':
+        form = UserFormRegister(request.POST)
+        if form.is_valid():
+            password = request.POST.get('password', "")
+            check_password = request.POST.get('check_password', "")
+            if password != "" and check_password != "" and request.POST.get('email', "") != "":
+                if password == check_password:
+                    lat, lng = getAddress(request)
+                    if lat != None and lng != None:
+                        data = form.cleaned_data
+                        user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
+                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                        userdata.save()
+                        content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
+                        subject = "Confirm Your Account"
+                        #sendmail(user.email, content, subject)
+                        return login(request)
+                    else:
+                        messages.add_message(request, messages.INFO, 'location_failed')
+                else:
+                    messages.add_message(request, messages.INFO, 'wp')
+
+        elif not form.is_valid():
+            messages.add_message(request, messages.INFO, 'eae')
+
+
+    return redirect('basics:actofgoods_startpage')
+
+def reset_password_page(request):
+    if request.method == "POST":
+        capForm = CaptchaForm(request.POST)
+        #This method is super deprecated we need to make it more secure
+        #it could lead to data sniffing and shitlot of problems;
+        #But to demonstrate our features and only to demonstrate
+        #it will send the given email his password
+        if 'email' in request.POST:
+            if capForm.is_valid():
+                email = request.POST['email']
+                user = User.objects.get(email = email)
+                if user is not None:
+                    new_password = id_generator(9)
+                    user.set_password(new_password)
+                    user.save()
+                    #Content could also be possibly HTML! this way beautifull emails are possible
+
+                    content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
+                    subject = "Reset Password - Act Of Goods"
+                    sendmail(email, content, subject )
+                    messages.add_message(request, messages.INFO, 'success reset password')
+                    return redirect('basics:actofgoods_startpage')
+            elif not capForm.is_valid():
+                messages.add_message(request, messages.INFO, 'wc')
+
+    return render(request, 'basics/password_reset.html')
+
+def reset_password_confirmation(request):
+    return render(request, 'basics/password_reset_confirmation.html')
+
+
+@csrf_protect
+def verification(request,pk):
+    if request.user.is_authenticated():
+        if request.user.userdata.pseudonym == pk:
+            user=request.user
+            user.is_active = True
+            user.save()
+            return render(request, 'basics/verification.html', {'verified':True, 'active':True})
+    if request.method == "POST":
+        form = UserFormRegister(request.POST)
+        email = request.POST.get('email', None)
+        password = request.POST.get('password', None)
+        user = authenticate(username=email, password=password)
+        if user is not None and user.userdata.pseudonym == pk :
+            auth_login(request, user)
+            user.is_active = True
+
+            user.save()
+            return render(request, 'basics/verification.html', {'verified': True, 'active':True})
+    form=UserFormRegister()
+    return render (request, 'basics/verification.html', {'verified':False, 'form':form, 'pk': pk, 'active': True})
+
+
+
+#=====================
+#		CHAT
+#=====================
+
+
 @csrf_protect
 def chat(request):
     if not request.user.is_active:
@@ -104,6 +416,22 @@ def chat(request):
                 return redirect('basics:chat_room', roomname=room.name)
             except:
                 return render(request,'basics/no_chat.html')
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def chat_room(request, roomname):
+    if request.user.is_authenticated():
+        room = Room.objects.get(name=roomname)
+        name = room.need.headline
+        if room.need.author == request.user or (room.user_req == request.user and not room.helper_out):
+            room.set_saw(request.user)
+            messages = ChatMessage.objects.filter(room=roomname).order_by('date')
+            message_json = messages_to_json(messages)
+            #Get all rooms where request.user is in contact with
+            rooms = get_valid_rooms(request.user).exclude(name=roomname).order_by('-last_message')
+            rooms_json = rooms_to_json(rooms, request.user)
+            return render(request, 'basics/chat.html',{'name':name, 'room':room, 'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
+
     return redirect('basics:actofgoods_startpage')
 
 def get_valid_rooms(user):
@@ -123,41 +451,6 @@ def kick_user(request, roomname):
             ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')
 
-@csrf_protect
-def needs_finish(request, roomname):
-    if request.user.is_authenticated():
-        room = Room.objects.get(name=roomname)
-        text = request.user.username + " finished."
-        print(room.name, request.user.username)
-        room.set_room_finished(request.user)
-        ChatMessage.objects.create(room=room, text=text, author=None)
-    return redirect('basics:actofgoods_startpage')
-"""
-    Needs authentication!
-
-    Input: request (user)
-
-    If user is not authenticated redirect to startpage.
-    Otherwise the chat_room page will be rendered and returned.
-"""
-
-@csrf_protect
-def chat_room(request, roomname):
-    if request.user.is_authenticated():
-        room = Room.objects.get(name=roomname)
-        name = room.need.headline
-        if room.need.author == request.user or (room.user_req == request.user and not room.helper_out):
-            room.set_saw(request.user)
-            messages = ChatMessage.objects.filter(room=roomname).order_by('date')
-            message_json = messages_to_json(messages)
-            #Get all rooms where request.user is in contact with
-            rooms = get_valid_rooms(request.user).exclude(name=roomname).order_by('-last_message')
-            rooms_json = rooms_to_json(rooms, request.user)
-            return render(request, 'basics/chat.html',{'name':name, 'room':room, 'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
-
-    return redirect('basics:actofgoods_startpage')
-
-
 def messages_to_json(messages):
     message_json = "["
     for message in messages:
@@ -176,6 +469,15 @@ def messages_to_json(messages):
     message_json += "]"
     return message_json
 
+@csrf_protect
+def needs_finish(request, roomname):
+    if request.user.is_authenticated():
+        room = Room.objects.get(name=roomname)
+        text = request.user.username + " finished."
+        room.set_room_finished(request.user)
+        ChatMessage.objects.create(room=room, text=text, author=None)
+    return redirect('basics:actofgoods_startpage')
+
 def rooms_to_json(rooms, user):
     rooms_json = "["
     if len(rooms) > 0:
@@ -190,13 +492,15 @@ def rooms_to_json(rooms, user):
             }) + ","
         rooms_json = rooms_json[:-1]
     rooms_json += "]"
-    print(rooms_json)
     return rooms_json
-"""
-    Input: request
 
-    contact_us page will be rendered and returned.
-"""
+
+
+#=====================
+#		CLAIM
+#=====================
+
+
 @csrf_protect
 def claim(request, name):
     if request.user.is_authenticated():
@@ -249,37 +553,6 @@ def claim_refresh(request,name):
             return HttpResponse(t.render({'index':index, 'poly': ClaimedArea.objects.get(pk=pk)}))
 
 @csrf_protect
-def claim_needs(request, name):
-    print("claim_needs")
-    if request.user.is_authenticated():
-        if request.user.groups.filter(name=name).exists():
-            #TODO: Change this to somehing like user distance
-            group = Groupdata.objects.get(name=name)
-            liste=request.POST.getlist('liste[]')
-            if liste:
-                claims = ClaimedArea.objects.filter(pk__in=liste)
-            else:
-                claims = ClaimedArea.objects.filter(group=group.group)
-            needs=Need.objects.all().exclude(author=request.user).order_by('-priority', 'pk')
-
-            #for claim in claims:
-            if claims.exists():
-                query = Q(adrAsPoint__within=claims[0].poly)
-                for q in claims[1:]:
-                    query |= Q(adrAsPoint__within=q.poly)
-                needs = needs.filter(query)
-            if "" != request.POST['category'] and "All" != request.POST['category']:
-                category = request.POST['category']
-                needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
-            if "" != request.POST['wordsearch']:
-                wordsearch = request.POST['wordsearch']
-                needs = needs.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
-            print("snippet gets loaded")
-            t = loader.get_template('snippets/claim_needs_group.html')
-            return HttpResponse(t.render({'user': request.user, 'needs':needs, 'group':group}))
-    return redirect('basics:actofgoods_startpage')
-
-@csrf_protect
 def claim_information(request, name):
     if request.user.is_authenticated():
         if request.user.groups.filter(name=name).exists():
@@ -306,18 +579,32 @@ def claim_information(request, name):
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
-def claim_reportNeed(request, name):
+def claim_needs(request, name):
     if request.user.is_authenticated():
-        pk=int(request.POST['pk'])
-        #print(pk)
-        need = Need.objects.get(pk=pk)
-        need.was_reported = True
-        need.number_reports += 1
-        need.save()
-        need.reported_by.add(request.user.userdata)
-        #print(Need.objects.get(pk=pk).reported_by.all())
-        t = loader.get_template('snippets/claim_report.html')
-        return HttpResponse(t.render({'user': request.user, 'need':need}))
+        if request.user.groups.filter(name=name).exists():
+            #TODO: Change this to somehing like user distance
+            group = Groupdata.objects.get(name=name)
+            liste=request.POST.getlist('liste[]')
+            if liste:
+                claims = ClaimedArea.objects.filter(pk__in=liste)
+            else:
+                claims = ClaimedArea.objects.filter(group=group.group)
+            needs=Need.objects.all().exclude(author=request.user).order_by('-priority', 'pk')
+
+            #for claim in claims:
+            if claims.exists():
+                query = Q(adrAsPoint__within=claims[0].poly)
+                for q in claims[1:]:
+                    query |= Q(adrAsPoint__within=q.poly)
+                needs = needs.filter(query)
+            if "" != request.POST['category'] and "All" != request.POST['category']:
+                category = request.POST['category']
+                needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
+            if "" != request.POST['wordsearch']:
+                wordsearch = request.POST['wordsearch']
+                needs = needs.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
+            t = loader.get_template('snippets/claim_needs_group.html')
+            return HttpResponse(t.render({'user': request.user, 'needs':needs, 'group':group}))
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -330,6 +617,19 @@ def claim_reportInfo(request, name):
         info.save()
         info.reported_by.add(request.user.userdata)
         return claim_information(request, name)
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def claim_reportNeed(request, name):
+    if request.user.is_authenticated():
+        pk=int(request.POST['pk'])
+        need = Need.objects.get(pk=pk)
+        need.was_reported = True
+        need.number_reports += 1
+        need.save()
+        need.reported_by.add(request.user.userdata)
+        t = loader.get_template('snippets/claim_report.html')
+        return HttpResponse(t.render({'user': request.user, 'need':need}))
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -378,162 +678,11 @@ def claim_unfollow(request, name):
 
 
 
-def contact_us(request):
-    if request.method == "POST":
-        form = ContactUsForm(request.POST)
-        if form.is_valid() :
-            email = request.POST.get('email')
-            headline = request.POST.get('headline')
-            text = request.POST.get('text')
-            if email != "":
-                if headline != "":
-                    if text != "":
-                        contactUsData = ContactUs(email=email, headline=headline, text=text)
-                        contactUsData.save()
-                        messages.add_message(request, messages.INFO, 'success contact us')
-                        return redirect('basics:actofgoods_startpage')
-                    else:
-                        messages.add_message(request, messages.INFO, 'no_description')
-                else:
-                    messages.add_message(request, messages.INFO, 'no_headline')
-            else:
-                messages.add_message(request, messages.INFO, 'empty_email')
-        else:
-            messages.add_message(request, messages.INFO, 'wrong_email')
-    return render(request, 'basics/contact_us.html')
+#=====================
+#	 Information
+#=====================
 
-"""
-    Input: String with an address
 
-    getLatLng will send an request to googleapis and recieve an json containing
-    latitude and longditude.
-"""
-def getLatLng(location):
-    location = location.replace(" ", "%20")
-    req = "https://maps.googleapis.com/maps/api/geocode/json?address=%s" % location #parameter
-    response = requests.get(req)
-    jsongeocode = response.json()
-    return jsongeocode['results'][0]['geometry']['location']['lat'], jsongeocode['results'][0]['geometry']['location']['lng']
-
-def faq_startpage(request):
-    return render(request, 'basics/faq_startpage.html')
-
-"""
-    Needs authentication!
-
-    Input: request (user)
-
-    If user is not authenticated redirect to startpage.
-    Otherwise the faq page will be rendered and returned.
-"""
-
-@csrf_protect
-def faq_signin(request):
-    if request.user.is_authenticated():
-        return render(request, 'basics/faq_signin.html')
-    return redirect('basics:actofgoods_startpage')
-
-"""
-    Needs authentication!
-
-    Input: request (user)
-
-    If user is not authenticated redirect to startpage.
-    Otherwise a list of needs will be pult out of the database and added to ...
-    The home page will be rendered and returned.
-"""
-
-@csrf_protect
-def home(request):
-    if request.user.is_authenticated():
-        needs = list(Need.objects.all().filter(author=request.user))
-        #print("You help here: ", needs)
-        infos = list(Information.objects.all().filter(author=request.user))
-        needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
-        comm = list(Comment.objects.all().filter(author=request.user))
-        rel_comms = []
-        for c in comm:
-            if not c.inf in rel_comms:
-                rel_comms.append(c)
-        result_list = sorted(
-            chain(needs, infos, needs_you_help, rel_comms),
-            key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-        #print(list(map(lambda x: x.pk, needs_you_help)))
-        #print(result_list)
-        #print(list(map(lambda x: x.pk, result_list)))
-        return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list})
-
-    return redirect('basics:actofgoods_startpage')
-
-@csrf_protect
-def home_filter(request):
-    if request.user.is_authenticated():
-        if request.is_ajax():
-            if request.POST['group']:
-                print(request.POST['group'])
-                group= Groupdata.objects.get(name=request.POST['group'])
-                needs = list(Need.objects.all().filter(author=request.user, group=group.group))
-                infos = list(Information.objects.all().filter(author=request.user, group=group.group))
-                needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
-                comm = list(Comment.objects.all().filter(author=request.user, group=group.group))
-            else:
-                needs = list(Need.objects.all().filter(author=request.user))
-                infos = list(Information.objects.all().filter(author=request.user))
-                needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
-                comm = list(Comment.objects.all().filter(author=request.user))
-
-            rel_comms = []
-            for c in comm:
-                if not c.inf in rel_comms:
-                    rel_comms.append(c)
-            activity=request.POST['activity']
-
-            if activity=="all_activities":
-                result_list = sorted(
-                    chain(needs, infos, needs_you_help, rel_comms),
-                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-            elif activity=="posted_needs":
-                result_list = sorted(
-                    chain(needs),
-                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-            elif activity=="needs_help":
-                result_list = sorted(
-                    chain(needs_you_help),
-                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-            elif activity=="posted_information":
-                result_list = sorted(
-                    chain(infos),
-                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-            elif activity=="written_comments":
-                result_list = sorted(
-                    chain(rel_comms),
-                    key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-            t = loader.get_template('snippets/home_filter.html')
-            return HttpResponse(t.render({'request': request, 'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list}))
-
-@csrf_protect
-def delete_comment_timeline(request, pk):
-    if request.user.is_authenticated():
-        comment = Comment.objects.get(pk=pk)
-        comment.delete()
-        return redirect('basics:home')
-    return redirect('basics:actofgoods_startpage')
-
-"""
-    id_generator generates a random string 6 chars long if no other size is provided.
-"""
-def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
-
-"""
-    Needs authentication!
-
-    Input: request (user)
-
-    If user is not authenticated redirect to startpage.
-    Otherwise a list of needs will be pult out of the database and added to ...
-    The needs_all page will be rendered and returned.
-"""
 @csrf_protect
 def information_all(request):
     if request.user.is_authenticated():
@@ -584,7 +733,6 @@ def information_filter(request):
             page = 1
             page_range = np.arange(1, 5)
             if request.method == "POST":
-                #print(request.POST)
                 if "" != request.POST['page']:
                     page = int(request.POST['page'])
                 if "" != request.POST['range']:
@@ -603,16 +751,16 @@ def information_filter(request):
             return HttpResponse(t.render({'user': request.user, 'infos':infos, 'page':page, 'page_range':page_range}))
     return redirect('basics:actofgoods_startpage')
 
-"""
-    Needs authentication!
+@csrf_protect
+def information_delete_comment(request, pk_inf, pk_comm):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated:
+        comment = Comment.objects.get(pk=pk_comm)
+        comment.delete()
+        return redirect('basics:information_view', pk=pk_inf)
+    return redirect('basics:actofgoods_startpage')
 
-    Input: request (user)
-
-    If user is not authenticated redirect to startpage.
-    If request method is POST 'immediate_aid' will check info form.
-    All being well, a new information is created and stored in database.
-
-"""
 @csrf_protect
 def information_new(request):
     if not request.user.is_active:
@@ -622,13 +770,11 @@ def information_new(request):
             info = InformationFormNew(request.POST)
             if info.is_valid():
                 lat, lng = getAddress(request)
-                #print(lat,lng)
                 u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                 priority = 0
                 group = None
                 author_is_admin = False
                 data = info.cleaned_data
-                #print(request.POST)
                 if request.POST.get('group') != 'no_group' and request.POST.get('group') != None and request.POST.get('group') != 'admin':
                     group = Group.objects.get(pk=request.POST.get('group'))
                     priority = priority_info_group(0, 0)
@@ -648,51 +794,6 @@ def information_new(request):
                 messages.add_message(request, messages.INFO, 'not_valid')
         info = InformationFormNew()
         return render(request, 'basics/information_new.html', {'info':info})
-
-    return redirect('basics:actofgoods_startpage')
-
-
-"""
-    Needs authentication!
-
-    Input: request (user)
-
-    If user is not authenticated redirect to startpage.
-    Otherwise the needs_view_edit page will be rendered and returned.
-"""
-
-@csrf_protect
-def information_view(request, pk):
-    if not request.user.is_active:
-        return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated:
-        information = get_object_or_404(Information, pk=pk)
-        comments = Comment.objects.filter(inf=information).order_by('date')
-        return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
-    return redirect('basics:actofgoods_startpage')
-
-@csrf_protect
-def information_delete_comment(request, pk_inf, pk_comm):
-    if not request.user.is_active:
-        return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated:
-        comment = Comment.objects.get(pk=pk_comm)
-        comment.delete()
-        return redirect('basics:information_view', pk=pk_inf)
-    return redirect('basics:actofgoods_startpage')
-
-@csrf_protect
-def information_view_comment(request, pk):
-    if not request.user.is_active:
-        return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated:
-        information = get_object_or_404(Information, pk=pk)
-        if request.method == "POST":
-            group = None
-            if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
-                group = Group.objects.get(pk=request.POST.get('group'))
-            comment = Comment.objects.create(inf=information, author=request.user, group=group, text=request.POST['comment_text'])
-        return redirect('basics:information_view', pk=pk)
 
     return redirect('basics:actofgoods_startpage')
 
@@ -719,6 +820,59 @@ def information_update(request, pk):
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
+def information_view(request, pk):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated:
+        information = get_object_or_404(Information, pk=pk)
+        comments = Comment.objects.filter(inf=information).order_by('date')
+        return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def information_view_comment(request, pk):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated:
+        information = get_object_or_404(Information, pk=pk)
+        if request.method == "POST":
+            group = None
+            if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
+                group = Group.objects.get(pk=request.POST.get('group'))
+            comment = Comment.objects.create(inf=information, author=request.user, group=group, text=request.POST['comment_text'])
+        return redirect('basics:information_view', pk=pk)
+
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def info_delete(request, pk):
+    info = Information.objects.all().get(pk=pk)
+    info.delete()
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def info_edit(request, pk):
+    if not request.user.is_active:
+        return render(request, 'basics/verification.html', {'active': False})
+    if request.user.is_authenticated():
+        info = Information.objects.all().get(pk=pk)
+        if request.method == "POST":
+            text = request.POST.get('text', None)
+            desc = request.POST.get('desc', None)
+            lat, lng = getAddress(request)
+            if lat != None and lng != None:
+                info.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
+            if text != "":
+                info.text = text
+            if desc != "":
+                info.headline = desc
+            info.save()
+            return actofgoods_startpage(request)
+        form = InformationFormNew()
+        return render(request, 'basics/info_edit.html', {'info': info})
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
 def follow(request):
     if request.user.is_authenticated():
         if request.is_ajax():
@@ -738,122 +892,54 @@ def unfollow(request):
             info.save()
             return information_filter(request)
 
-"""
-    Input: request(Email, Password)
-
-    If request method is POST 'immediate_aid' will check the need and user form.
-    Is everything valid, the method will proceed by creating a new password and user,
-    creating a new need and finaly send an email to the new created user, providing
-    greatings and his password.
-"""
 @csrf_protect
-def immediate_aid(request):
-
-    form = ImmediateAidFormNew(initial={'email': ''})
-    need = NeedFormNew()
-
-    if request.method == "POST":
-        #This method is super deprecated we need to make it more secure
-        #it could lead to data sniffing and shitlot of problems;
-        #But to demonstrate our features and only to demonstrate
-        #it will send the given email his password
-
-
-        form = ImmediateAidFormNew(request.POST)
-        need = NeedFormNew(request.POST)
-
-        # form.data.username = "user#" + str(User.objects.count())
-        ##print(request.POST)
-        ##print(form.data)
-        if form.is_valid() and need.is_valid():
-            ##print(need.data)
-            password_d = id_generator(9)
-            check_password = password_d
-            if request.POST.get('email', "") != "":
-                lat, lng = getAddress(request)
-                if lat != None and lng != None:
-                    user_data = form.cleaned_data
-                    user = User.objects.create_user(username=user_data['email'], password=password_d, email=user_data['email'])
-                    userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
-                    userdata.save()
-                    content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
-                    subject = "Confirm Your Account"
-                    #print("\n",need.cleaned_data['categorie'],"\n")
-                    data = need.cleaned_data
-                    u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
-                    needdata = Need(author=user, group=None, headline=data['headline'], text=data['text'], categorie=data['categorie'], was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority_need_user(0), update_at=u)
-                    needdata.save()
-
-
-                    #Content could also be possibly HTML! this way beautifull emails are possible
-                    content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
-                    subject = "Welcome!"
-                    user = authenticate(username=user_data['email'],password=password_d)
-                    auth_login(request,user)
-
-                    sendmail(user.email, content, subject )
-                    return redirect('basics:actofgoods_startpage')
-                else:
-                    messages.add_message(request, messages.INFO, 'location_failed')
-            else:
-                messages.add_message(request, messages.INFO, 'wp')
-
-        else:
-            messages.add_message(request, messages.INFO, 'eae')
-            #print(need.data)
-
-    return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all, 'form' : form, 'need' : need })
-
-
-
-"""
-    Input: request(Email, Password)
-
-    If request method is POST 'login' will authenticate a user with the
-    email and password provided. If a suitable user is found it will be logged in.
-    Otherwise the login page will be returned with an error above login form.
-"""
-@csrf_protect
-def login(request):
-
-    if request.method == 'POST':
-        email = request.POST.get('email',None)
-        password = request.POST.get('password',None)
-        user = authenticate(username=email,password=password)
-        #print(user)
-        if user is not None:
-            if user.is_active:
-                auth_login(request,user)
-        else :
-            messages.add_message(request, messages.INFO, 'lw')
-    return redirect('basics:actofgoods_startpage')
-
-"""
-    Needs authentication!
-
-    Input: request (user)
-
-    Current user will be loged out.
-"""
+def like_information(request):
+    if request.user.is_authenticated():
+        if request.is_ajax():
+            pk=int(request.POST['pk'])
+            info = Information.objects.get(pk=pk)
+            info.was_liked = True
+            info.number_likes += 1
+            info.liked_by.add(request.user.userdata)
+            info.save()
+            hours_elapsed = int((timezone.now() - info.date).seconds/3600)
+            info.priority = priority_info_user(hours_elapsed, info.number_likes)
+            info.save()
+            return information_filter(request)
 
 @csrf_protect
-def logout(request):
-    auth_logout(request)
-    return HttpResponse(actofgoods_startpage(request))
-    #return render(request, 'basics/actofgoods_startpage.html')
-"""
-    will return map_testing for resing purposes
-"""
+def unlike_information(request):
+    if request.user.is_authenticated():
+        if request.is_ajax():
+            pk=int(request.POST['pk'])
+            info = Information.objects.get(pk=pk)
+            info.number_likes -= 1
+            if info.number_likes == 0:
+                info.was_liked = False
+            info.liked_by.remove(request.user.userdata)
+            info.save()
+            return information_filter(request)
 
-"""
-    Needs authentication!
+@csrf_protect
+def report_information(request):
+    if request.user.is_authenticated():
+        if request.is_ajax():
+            pk=int(request.POST['pk'])
+            info = Information.objects.get(pk=pk)
+            info.was_reported = True
+            info.number_reports += 1
+            info.save()
+            info.reported_by.add(request.user.userdata)
+            return information_filter(request)
 
-    Input: request (user)
 
-    If user is not authenticated redirect to startpage.
-    Otherwise a list of needs will be pult out of the database and added to ...
-    The needs_all page will be rendered and returned.
-"""
+
+
+#=====================
+#		NEEDS
+#=====================
+
+
 @csrf_protect
 def needs_all(request):
     if request.user.is_authenticated():
@@ -896,7 +982,6 @@ def needs_all(request):
 
 @csrf_protect
 def needs_filter(request):
-    print("needs_filter")
     if request.user.is_authenticated():
         if request.is_ajax():
             #TODO: Change this to somehing like user distance
@@ -912,7 +997,6 @@ def needs_filter(request):
             page = 1
             page_range = np.arange(1, 5)
             if request.method == "POST":
-                #print(request.POST)
                 if "" != request.POST['page']:
                     page = int(request.POST['page'])
                 if "" != request.POST['category'] and "All" != request.POST['category']:
@@ -943,7 +1027,6 @@ def needs_filter(request):
 
 @csrf_protect
 def needs_help(request, id):
-    print("wrong")
     #cat = CategoriesNeeds.objects.create(name="cool")
     if request.user.is_authenticated():
         if request.method == "GET":
@@ -968,18 +1051,14 @@ def needs_help(request, id):
 
     return redirect('basics:actofgoods_startpage')
 
-
 @csrf_protect
 def needs_help_group(request, id, group_id):
     #cat = CategoriesNeeds.objects.create(name="cool")
-    print("correct")
     if request.user.is_authenticated():
         if request.method == "GET":
             group = Group.objects.get(id=group_id)
-            print(group.name)
             if request.user not in list(group.user_set.all()):
                 #TODO: return 404
-                print("user was not in group")
                 return redirect('basics:actofgoods_startpage')
             need = Need.objects.get(id=id)
 
@@ -1002,33 +1081,6 @@ def needs_help_group(request, id, group_id):
 
     return redirect('basics:actofgoods_startpage')
 
-"""
-    Needs authentication!
-
-    Input: request (user)
-
-    If user is not authenticated redirect to startpage.
-    Otherwise the needs_view_edit page will be rendered and returned.
-"""
-
-@csrf_protect
-def needs_view(request, pk):
-    if request.user.is_authenticated:
-        need = get_object_or_404(Need, pk=pk)
-        return render (request, 'basics/needs_view.html', {'need':need})
-
-    return redirect('basics:actofgoods_startpage')
-
-"""
-    Needs authentication!
-
-    Input: request (user, headline, text: will be maintext of the need)
-
-    If user is not authenticated redirect to startpage.
-    Otherwise POST requests will be checked if the form is correctly delivered.
-    If so, a new need is created in the database and the user will be redirected
-    to needs_all.
-"""
 @csrf_protect
 def needs_new(request):
     if not request.user.is_active:
@@ -1037,15 +1089,12 @@ def needs_new(request):
     if request.user.is_authenticated():
         if request.method == "POST":
             need = NeedFormNew(request.POST)
-            #print(need)
             if need.is_valid():
                 lat, lng = getAddress(request)
                 if lat == None or lng == None:
                     lat, lng =request.user.userdata.get_lat_lng()
 
                 data = need.cleaned_data
-                print('head')
-                print(data['headline'])
                 if data['headline'] != "":
                     if data['text'] != "":
                         group = None
@@ -1075,337 +1124,18 @@ def needs_new(request):
 
     return redirect('basics:actofgoods_startpage')
 
-
-def send_notifications(needdata):
-    users_to_inform = needdata.categorie.userdata_set.all()
-    users_to_inform = filter(lambda x: x.adrAsPoint.distance(needdata.adrAsPoint)< x.aux, users_to_inform)
-    for user in users_to_inform:
-        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text, "Somebody needs your help: " + needdata.categorie.name)
-
-"""
-    Needs authentication!
-
-    Input: request (user)
-
-    If user is not authenticated redirect to startpage.
-    Otherwise the profil page will be rendered and returned.
-"""
-
-"""
-    privacy, will render and return privacy.html
-"""
-def privacy(request):
-	return render(request, 'basics/privacy.html')
-
-"""
-    Needs authentication!
-
-    Input: request (user)
-
-    If user is not authenticated redirect to startpage.
-    Otherwise the profil page will be rendered and returned.
-"""
-
 @csrf_protect
-def profil(request):
-    if request.user.is_authenticated():
-        userdata=request.user.userdata
-        return render(request, 'basics/profil.html',{'Userdata':userdata, 'selected': userdata.inform_about.all()})
-    return redirect('basics:actofgoods_startpage')
-
-"""
-    Needs authentication!
-
-    Input: request (user, email, pseudonym, phonenumber)
-
-    If user is not authenticated redirect to startpage.
-    Else this method will check if user the given data is valid.
-    if not it will render the profil_edit page again
-    otherwise the profil will be changed.
-"""
-
-@csrf_protect
-def profil_edit(request):
-    if request.user.is_authenticated():
-        if not request.user.is_active:
-            return render(request, 'basics/verification.html', {'active': False})
-        user=request.user
-        userdata=request.user.userdata
-        if request.method == "POST":
-            if request.POST.get('changePassword') == "on":
-                oldpw = request.POST['oldpw']
-                newpw1 = request.POST.get('newpw1')
-                newpw2 = request.POST.get('newpw2')
-                if (authenticate(username=user.email, password=oldpw) == user) and (newpw1 == newpw2):
-                    user.set_password(newpw1)
-                    user.save()
-                else:
-                    form = ProfileForm()
-                    return render(request, 'basics/profil_edit.html',
-                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all,
-                                   'selected': userdata.inform_about.all(), 'form': form, 'change':True})
-
-            email= request.POST.get('email',None)
-            phone = request.POST.get('phone',None)
-            aux= request.POST.get('aux',None)
-            lat, lng = getAddress(request)
-            if lat != None and lng != None:
-                userdata.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
-                userdata.save()
-            if aux != "":
-                try:
-                    userdata.aux= float(aux)
-                except ValueError:
-                    print ("Not a float")
-            if email!="":
-                user.email=email
-                user.save()
-            if phone!= "":
-                userdata.phone=phone
-            if request.POST.get('information') == "on":
-                userdata.get_notifications = True
-            else:
-                userdata.get_notifications=False
-            categories= request.POST.getlist('categories[]')
-            for c in CategoriesNeeds.objects.all():
-                if c.name in categories:
-                    userdata.inform_about.add(c)
-                else:
-                    userdata.inform_about.remove(c)
-            userdata.save()
-            return render(request, 'basics/profil.html', {'Userdata':userdata, 'selected': userdata.inform_about.all()})
-        form = ProfileForm()
-        return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all, 'selected': userdata.inform_about.all(),'form':form,'change':False})
-    return redirect('basics:actofgoods_startpage')
-
-@csrf_protect
-def profil_delete(request):
-    user=request.user
-    user.delete()
-    sendmail(user.email, "Auf Wiedersehen " + user.username + ", \n schade das sie ihr Profil gelöscht haben, aber keine Angst wir speichern all ihre Daten weiter 50 Jahre. \n"
-    +"Wenn sie sich nicht innerhalb von 3 Tagen wieder anmelden werden wir ihren Wohnort an den höchst bietenden verkaufen. Wir bedanken uns für ihr Verständni. \n\n Mit Freundlichen Grüßen Act of Goods", "Auf Wiedersehen!")
-    return actofgoods_startpage(request)
-
-"""
-    Register:
-    -input: request(email, password, check_password)
-
-    register, will check the data submitted from the form. If correct a new user
-    will be created and an email send to the email-address submitted.
-
-"""
-@csrf_protect
-def register(request):
-    if request.method == 'POST':
-        form = UserFormRegister(request.POST)
-        # form.data.username = "user#" + str(User.objects.count())
-        #print(request.POST)
-        ##print(form.data)
-        if form.is_valid():
-            # #print(form.cleaned_data)
-            password = request.POST.get('password', "")
-            check_password = request.POST.get('check_password', "")
-            if password != "" and check_password != "" and request.POST.get('email', "") != "":
-                if password == check_password:
-                    lat, lng = getAddress(request)
-                    if lat != None and lng != None:
-                        data = form.cleaned_data
-                        user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
-                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
-                        userdata.save()
-                        content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
-                        subject = "Confirm Your Account"
-                        #sendmail(user.email, content, subject)
-                        return login(request)
-                    else:
-                        messages.add_message(request, messages.INFO, 'location_failed')
-                else:
-                    messages.add_message(request, messages.INFO, 'wp')
-
-        elif not form.is_valid():
-            messages.add_message(request, messages.INFO, 'eae')
-
+def needs_view(request, pk):
+    if request.user.is_authenticated:
+        need = get_object_or_404(Need, pk=pk)
+        return render (request, 'basics/needs_view.html', {'need':need})
 
     return redirect('basics:actofgoods_startpage')
-
-@csrf_protect
-def verification(request,pk):
-    if request.user.is_authenticated():
-        if request.user.userdata.pseudonym == pk:
-            user=request.user
-            user.is_active = True
-            user.save()
-            return render(request, 'basics/verification.html', {'verified':True, 'active':True})
-    if request.method == "POST":
-        form = UserFormRegister(request.POST)
-        email = request.POST.get('email', None)
-        password = request.POST.get('password', None)
-        user = authenticate(username=email, password=password)
-        #print(email,password)
-        if user is not None and user.userdata.pseudonym == pk :
-            auth_login(request, user)
-            user.is_active = True
-
-            user.save()
-            return render(request, 'basics/verification.html', {'verified': True, 'active':True})
-    form=UserFormRegister()
-    return render (request, 'basics/verification.html', {'verified':False, 'form':form, 'pk': pk, 'active': True})
-
-
-def getAddress(request):
-    try:
-        address = request.POST['address']
-        lat = request.POST['lat']
-        lng = request.POST['lng']
-        if not lat == "" and not lng == "":
-            lat = float(lat)
-            lng = float(lng)
-            #print(lat,lng)
-        elif address != "":
-            lat, lng = getLatLng(address)
-        else:
-            lat = None
-            lng = None
-
-        print("current address lat: ", lat, " lng ", lng)
-        return lat, lng
-    except:
-        return None, None
-
-
-"""
-    Input: request
-    Output: if the method is POST and captcher and email are valid, a new
-    password is generated and send via his email. He then will be redirected
-    to reset_password_confirmation page.
-"""
-
-def reset_password_page(request):
-    #If request.method is POST, reset_password_page will
-    #parse the email provided and send an email
-    #Else the reset_password_page.html is shown
-    if request.method == "POST":
-        capForm = CaptchaForm(request.POST)
-        #This method is super deprecated we need to make it more secure
-        #it could lead to data sniffing and shitlot of problems;
-        #But to demonstrate our features and only to demonstrate
-        #it will send the given email his password
-        if 'email' in request.POST:
-            if capForm.is_valid():
-                email = request.POST['email']
-                user = User.objects.get(email = email)
-                if user is not None:
-                    new_password = id_generator(9)
-                    user.set_password(new_password)
-                    user.save()
-                    #print(new_password)
-                    #Content could also be possibly HTML! this way beautifull emails are possible
-
-                    content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
-                    subject = "Reset Password - Act Of Goods"
-                    sendmail(email, content, subject )
-                    messages.add_message(request, messages.INFO, 'success reset password')
-                    return redirect('basics:actofgoods_startpage')
-            elif not capForm.is_valid():
-                messages.add_message(request, messages.INFO, 'wc')
-
-    return render(request, 'basics/password_reset.html')
-
-"""
-    Renders password_reset_confirmation.html and returns it.
-"""
-def reset_password_confirmation(request):
-    return render(request, 'basics/password_reset_confirmation.html')
-
-"""
-    Input: email, content: What will be the message body, subject
-
-    sendmail, will send an email via the GMAIL smtp server and the
-    our GmailAccount to the given email-address.
-"""
-def sendmail(email, content, subject):
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = subject
-    msg.attach(MIMEText(content))
-
-    mail = smtplib.SMTP('smtp.gmail.com', 587)
-    mail.ehlo()
-    mail.starttls()
-    mail.login('actofgoods@gmail.com', 'actofgoods123')
-    mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
-    mail.close()
-
-@csrf_protect
-def report_need(request):
-    if request.user.is_authenticated():
-        if request.is_ajax():
-            pk=int(request.POST['pk'])
-            #print(pk)
-            need = Need.objects.get(pk=pk)
-
-            need.was_reported = True
-            need.number_reports += 1
-            need.save()
-            need.reported_by.add(request.user.userdata)
-            #print(Need.objects.get(pk=pk).reported_by.all())
-            return needs_filter(request)
-
-@csrf_protect
-def report_information(request):
-    if request.user.is_authenticated():
-        if request.is_ajax():
-            pk=int(request.POST['pk'])
-            info = Information.objects.get(pk=pk)
-            info.was_reported = True
-            info.number_reports += 1
-            info.save()
-            info.reported_by.add(request.user.userdata)
-            return information_filter(request)
-
-@csrf_protect
-def like_information(request):
-    if request.user.is_authenticated():
-        if request.is_ajax():
-            pk=int(request.POST['pk'])
-            info = Information.objects.get(pk=pk)
-            info.was_liked = True
-            info.number_likes += 1
-            info.liked_by.add(request.user.userdata)
-            info.save()
-            hours_elapsed = int((timezone.now() - info.date).seconds/3600)
-            info.priority = priority_info_user(hours_elapsed, info.number_likes)
-            info.save()
-            return information_filter(request)
-
-@csrf_protect
-def unlike_information(request):
-    if request.user.is_authenticated():
-        if request.is_ajax():
-            pk=int(request.POST['pk'])
-            info = Information.objects.get(pk=pk)
-            info.number_likes -= 1
-            if info.number_likes == 0:
-                info.was_liked = False
-            info.liked_by.remove(request.user.userdata)
-            info.save()
-            return information_filter(request)
 
 @csrf_protect
 def need_delete(request, pk):
     need = Need.objects.all().get(pk=pk)
     need.delete()
-    return redirect('basics:actofgoods_startpage')
-
-@csrf_protect
-def info_delete(request, pk):
-    info = Information.objects.all().get(pk=pk)
-    info.delete()
-    return redirect('basics:actofgoods_startpage')
-
-@csrf_protect
-def comm_delete(request, pk):
-    comm = Comment.objects.all().get(pk=pk)
-    comm.delete()
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -1431,25 +1161,37 @@ def need_edit(request, pk):
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
-def info_edit(request, pk):
-    if not request.user.is_active:
-        return render(request, 'basics/verification.html', {'active': False})
+def report_need(request):
     if request.user.is_authenticated():
-        info = Information.objects.all().get(pk=pk)
-        if request.method == "POST":
-            text = request.POST.get('text', None)
-            desc = request.POST.get('desc', None)
-            lat, lng = getAddress(request)
-            if lat != None and lng != None:
-                info.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
-            if text != "":
-                info.text = text
-            if desc != "":
-                info.headline = desc
-            info.save()
-            return actofgoods_startpage(request)
-        form = InformationFormNew()
-        return render(request, 'basics/info_edit.html', {'info': info})
+        if request.is_ajax():
+            pk=int(request.POST['pk'])
+            need = Need.objects.get(pk=pk)
+
+            need.was_reported = True
+            need.number_reports += 1
+            need.save()
+            need.reported_by.add(request.user.userdata)
+            return needs_filter(request)
+
+
+
+#=====================
+#	  COMMENTS
+#=====================
+
+
+@csrf_protect
+def comm_delete(request, pk):
+    comm = Comment.objects.all().get(pk=pk)
+    comm.delete()
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def delete_comment_timeline(request, pk):
+    if request.user.is_authenticated():
+        comment = Comment.objects.get(pk=pk)
+        comment.delete()
+        return redirect('basics:home')
     return redirect('basics:actofgoods_startpage')
 
 def report_comment(request, pk):
@@ -1459,9 +1201,12 @@ def report_comment(request, pk):
     comment.reported_by.add(request.user.userdata)
     return information_view(request, comment.inf.pk)
 
-####################################################################################################################################################
-###                             Group functions
-####################################################################################################################################################
+
+
+#=====================
+#	   GROUPS
+#=====================
+
 
 def groups_all(request):
     groups = Groupdata.objects.all().order_by('name')
@@ -1496,9 +1241,14 @@ def group_detail(request, name):
                 needs = Need.objects.filter(query)
                 infos = Information.objects.filter(query)
 
-
-            #print(infos)
             return render(request, 'basics/group_detail.html', {'group':group, 'groups':groups, 'users':users, 'needs':needs, 'infos':infos})
+    return redirect('basics:actofgoods_startpage')
+
+@csrf_protect
+def group_detail_for_user(request, name):
+    if request.user.is_authenticated():
+        group = Groupdata.objects.get(name=name)
+        return render(request, 'basics/group_detail_for_user.html', {'group':group})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -1531,10 +1281,8 @@ def group_edit(request, pk):
 
 @csrf_protect
 def group_leave(request, pk):
-    #print(User.objects.get(email=request.user))
     if request.user.is_authenticated():
         if request.user.groups.filter(name=name).exists():
-            #if request.method == "POST":
             groupDa = Groupdata.objects.get(pk=pk)
             group = groupDa.group
             group.user_set.remove(request.user)
@@ -1544,17 +1292,65 @@ def group_leave(request, pk):
 
     return redirect('basics:home')
 
-@csrf_protect
-def group_detail_for_user(request, name):
-    if request.user.is_authenticated():
-        group = Groupdata.objects.get(name=name)
-        return render(request, 'basics/group_detail_for_user.html', {'group':group})
-    return redirect('basics:actofgoods_startpage')
 
 
-####################################################################################################################################################
-###                             Priority Functions
-####################################################################################################################################################
+#=====================
+#	   EXTRAS
+#=====================
+
+
+def getAddress(request):
+    try:
+        address = request.POST['address']
+        lat = request.POST['lat']
+        lng = request.POST['lng']
+        if not lat == "" and not lng == "":
+            lat = float(lat)
+            lng = float(lng)
+        elif address != "":
+            lat, lng = getLatLng(address)
+        else:
+            lat = None
+            lng = None
+
+        return lat, lng
+    except:
+        return None, None
+
+def getLatLng(location):
+    location = location.replace(" ", "%20")
+    req = "https://maps.googleapis.com/maps/api/geocode/json?address=%s" % location #parameter
+    response = requests.get(req)
+    jsongeocode = response.json()
+    return jsongeocode['results'][0]['geometry']['location']['lat'], jsongeocode['results'][0]['geometry']['location']['lng']
+
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+def sendmail(email, content, subject):
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg.attach(MIMEText(content))
+
+    mail = smtplib.SMTP('smtp.gmail.com', 587)
+    mail.ehlo()
+    mail.starttls()
+    mail.login('actofgoods@gmail.com', 'actofgoods123')
+    mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
+    mail.close()
+
+def send_notifications(needdata):
+    users_to_inform = needdata.categorie.userdata_set.all()
+    users_to_inform = filter(lambda x: x.adrAsPoint.distance(needdata.adrAsPoint)< x.aux, users_to_inform)
+    for user in users_to_inform:
+        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text, "Somebody needs your help: " + needdata.categorie.name)
+
+
+
+#=====================
+#	   PRIORITY
+#=====================
+
 
 def priority_need_user(x):
     """x is number of hours since need was posted"""
@@ -1587,9 +1383,11 @@ def priority_info_group(x, likes):
     return 0
 
 
-####################################################################################################################################################
-###                             Error Views
-####################################################################################################################################################
+
+#=====================
+#	 ERROR-PAGES
+#=====================
+
 
 def bad_request(request):
     return render(request, 'basics/404.html', {'content': "400 - Bad Request"})

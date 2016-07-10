@@ -6,7 +6,6 @@ def add_rooms(request):
     user = request.user
     if user.is_authenticated():
         rooms = Room.objects.filter(Q(need__author =user) | Q(user_req = user))
-        print(len(rooms))
         if len(rooms) > 0 :
             new_messages_count = 0
             rooms_json = "["
@@ -21,7 +20,5 @@ def add_rooms(request):
                     }) + ","
             rooms_json = rooms_json[:-1]
             rooms_json += "]"
-            print("Rooms that have no updates and need to be viewed:")
-            print(rooms_json)
             return {'channels':rooms_json, 'new_messages':new_messages_count}
-    return {'cahnnels':'[]', 'new_messages':0}
+    return {'channels':'[]', 'new_messages':0}
