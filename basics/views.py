@@ -28,6 +28,7 @@ import string
 
 
 
+
 #=====================
 #	   GENERAL
 #=====================
@@ -235,8 +236,7 @@ def login(request):
         password = request.POST.get('password',None)
         user = authenticate(username=email,password=password)
         if user is not None:
-            if user.is_active:
-                auth_login(request,user)
+            auth_login(request,user)
         else :
             messages.add_message(request, messages.INFO, 'lw')
     return redirect('basics:actofgoods_startpage')
@@ -316,12 +316,20 @@ def profil_delete(request):
     +"Wenn sie sich nicht innerhalb von 3 Tagen wieder anmelden werden wir ihren Wohnort an den höchst bietenden verkaufen. Wir bedanken uns für ihr Verständni. \n\n Mit Freundlichen Grüßen Act of Goods", "Auf Wiedersehen!")
     return actofgoods_startpage(request)
 
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 
 @csrf_protect
 def register(request):
     if request.method == 'POST':
         form = UserFormRegister(request.POST)
         if form.is_valid():
+            id = id_generator(8)
+            while():
+                if (Userdata.objects.all().filter(id == id) == 0):
+                    break
+                id = id_generator(8)
             password = request.POST.get('password', "")
             check_password = request.POST.get('check_password', "")
             if password != "" and check_password != "" and request.POST.get('email', "") != "":
@@ -330,9 +338,11 @@ def register(request):
                     if lat != None and lng != None:
                         data = form.cleaned_data
                         user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
-                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
+                        userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), verification_id = id)
                         userdata.save()
-                        content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
+                        #user.is_active = False
+                        #user.save()
+                        content = "Thank you for joining Actofgoods \n\n Soon you will be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.verification_id)
                         subject = "Confirm Your Account"
                         #sendmail(user.email, content, subject)
                         return login(request)
@@ -366,7 +376,7 @@ def reset_password_page(request):
 
                     content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
                     subject = "Reset Password - Act Of Goods"
-                    sendmail(email, content, subject )
+                    #sendmail(email, content, subject )
                     messages.add_message(request, messages.INFO, 'success reset password')
                     return redirect('basics:actofgoods_startpage')
             elif not capForm.is_valid():
@@ -378,27 +388,30 @@ def reset_password_confirmation(request):
     return render(request, 'basics/password_reset_confirmation.html')
 
 
+
+
+
 @csrf_protect
-def verification(request,pk):
+def verification(request,id):
     if request.user.is_authenticated():
-        if request.user.userdata.pseudonym == pk:
+        if request.user.userdata.verification_id == id:
             user=request.user
             user.is_active = True
             user.save()
             return render(request, 'basics/verification.html', {'verified':True, 'active':True})
     if request.method == "POST":
         form = UserFormRegister(request.POST)
+
         email = request.POST.get('email', None)
         password = request.POST.get('password', None)
         user = authenticate(username=email, password=password)
-        if user is not None and user.userdata.pseudonym == pk :
+        if user is not None and user.userdata.verification_id == id :
             auth_login(request, user)
             user.is_active = True
-
             user.save()
             return render(request, 'basics/verification.html', {'verified': True, 'active':True})
     form=UserFormRegister()
-    return render (request, 'basics/verification.html', {'verified':False, 'form':form, 'pk': pk, 'active': True})
+    return render (request, 'basics/verification.html', {'verified':False, 'form':form, 'id': id, 'active': True})
 
 
 
@@ -508,7 +521,7 @@ def claim(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
         if request.user.groups.filter(name=name).exists():
             categories=CategoriesNeeds.objects.all
-            return render(request, 'basics/map_claim.html', {'categories': categories,'group': name, 'polygons': ClaimedArea.objects.all(), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
+            return render(request, 'basics/map_claim.html', {'categories': categories,'group': name, 'polygons': ClaimedArea.objects.order_by('pk'), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
