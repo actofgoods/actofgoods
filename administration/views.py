@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
 from basics.models import Userdata, Groupdata, CategoriesNeeds, ContactUs, Need, Information, Comment
 from django.contrib.auth.models import User, Group
-from administration.forms import GroupFormRegister, SearchUserForm, RequestForm
+from administration.forms import GroupFormRegister, SearchUserForm, RequestForm, SearchGroupForm
 from basics.forms import CategoriesForm
 from basics.views import getAddress, sendmail
 from basics.models import Address
@@ -81,7 +81,8 @@ def groups(request):
         return redirect('basics:home')
     if request.method == "POST":
         form = GroupFormRegister(request.POST)
-        if form.is_valid() :
+        search_form = SearchGroupForm(request.POST)
+        if form.is_valid() and not search_form.is_valid():
             if 'create_group' in form.data:
                 email = request.POST.get('email')
                 name = request.POST.get('name')
@@ -89,7 +90,6 @@ def groups(request):
                 if is_GO == None:
                     is_GO = False
                 if {'email': email} in User.objects.values('email') and not Group.objects.filter(name=name):
-                    #address = Address.objects.create(latitude=0.0, longditude=0.0)
                     data = form.cleaned_data
                     group = Group.objects.create(name=name)
                     user = User.objects.get(email=email)
@@ -104,7 +104,8 @@ def groups(request):
                     messages.add_message(request, messages.INFO, 'wrong_group')
                 else :
                     messages.add_message(request, messages.INFO, 'wrong_emailAndGroup')
-            elif 'search_group' in form.data:
+        elif not form.is_valid() and search_form.is_valid():
+            if 'search_group' in form.data:
                 name = request.POST.get('name')
                 if {'name':name} in Group.objects.values('name'):
                     gro = Group.objects.get(name=name)
