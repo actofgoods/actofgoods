@@ -268,7 +268,7 @@ def profil_edit(request):
             lat, lng = getAddress(request)
 
             if email != "":
-                if (len(User.objects.all().filter(email=email)) == 0):
+                if (len(User.objects.all().filter(email=email)) == 0 or email == user.email):
                     user.email = email
                     user.save()
                 else:
