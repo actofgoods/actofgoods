@@ -1,0 +1,94 @@
+
+Delete-Button für Need
+
+<a class="list-group-footer-button" type="button" onclick="deletePrompt('need', '{{elem.pk}}')" >
+    <div class="col-sm-6">
+        <span class="glyphicon glyphicon-remove"></span> Delete
+    </div>
+</a>
+
+
+Delete-Button für Comment
+
+<a class="list-group-footer-button" type="button" onclick="deletePrompt('comment', '{{elem.pk}}')" >
+    <div class="col-sm-6">
+        <span class="glyphicon glyphicon-remove"></span> Delete
+    </div>
+</a>
+
+
+Die jeweiligen Modals für Need/Comment können irgendwo rangefügt werden.
+Am Besten weitesgehend unten und nicht Random irgendwo zwischen dem Code.
+
+Modal für Need:
+
+<div class="modal fade" id="NeedDeleteModal" role="dialog">
+    <div class="modal-dialog">
+
+     <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete Your Need</h4>
+             </div>
+            <div class="modal-body">
+                <p>If you delete This Need, the data will be permanently lost.</p>
+                <p>Would you like to rethink your decision?</p>
+            </div>
+             <div class="modal-footer">
+                <button id="standard-grey-button-light" type="button" class="btn btn-default" data-dismiss="modal">Rethink</button>
+                <a id="NeedButtonDelete" type="button" class="btn btn-default standard-grey-button-light" href="">
+                    <span class="glyphicon glyphicon-remove"></span> Delete
+                </a>
+             </div>
+        </div>
+
+    </div>
+</div>
+
+Modal für Comment:
+
+<div class="modal fade" id="CommentDeleteModal" role="dialog">
+	<div class="modal-dialog">
+
+	 <!-- Modal content-->
+	    <div class="modal-content">
+	        <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+	            <h4 class="modal-title">Delete This Comment</h4>
+	         </div>
+	        <div class="modal-body">
+	            <p>If you delete This Comment, the data will be permanently lost.</p>
+	            <p>Would you like to rethink your decision?</p>
+	        </div>
+	         <div class="modal-footer">
+	            <button id="standard-grey-button-light" type="button" class="btn btn-default" data-dismiss="modal">Rethink</button>
+	            <a id="CommentButtonDelete" type="button" class="btn btn-default standard-grey-button-light" href="">
+	                <span class="glyphicon glyphicon-remove"></span> Delete
+	            </a>
+	         </div>
+	    </div>
+
+	</div>
+</div>
+
+
+Skript unten einfügen:
+
+<script>
+
+function deletePrompt(conf, pk){
+	if (conf=="need"){
+		document.getElementById("NeedButtonDelete").setAttribute('href',"{% url 'basics:need_delete' pk=0 %}".replace("0", pk))
+		$('#NeedDeleteModal').modal('show');
+	}
+	else if (conf=="comment"){
+		document.getElementById("CommentButtonDelete").setAttribute('href',"{% url 'basics:delete_comment_timeline' pk=0 %}".replace("0", pk))
+		$('#CommentDeleteModal').modal('show');
+	}
+	else {
+		alert("Opps. Something went wrong :(");
+	}
+}
+
+</script>

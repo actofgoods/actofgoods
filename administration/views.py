@@ -82,7 +82,7 @@ def groups(request):
     if request.method == "POST":
         form = GroupFormRegister(request.POST)
         search_form = SearchGroupForm(request.POST)
-        if form.is_valid() and not search_form.is_valid():
+        if form.is_valid():
             if 'create_group' in form.data:
                 email = request.POST.get('email')
                 name = request.POST.get('name')
