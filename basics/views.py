@@ -465,7 +465,7 @@ def kick_user(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
 
         room = Room.objects.get(name=roomname)
-        if request.user == room.user_req or request.user == room.need.user:
+        if request.user == room.user_req or request.user == room.need.author:
             text = "Helper was kicked."
             if request.user == room.user_req:
                 text = "Helper leaved."
@@ -496,7 +496,16 @@ def messages_to_json(messages):
 def needs_finish(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
         room = Room.objects.get(name=roomname)
-        text = request.user.username + " finished."
+        if room.need.author == request.user:
+            if room.need.group:
+                text = "The need owner " + room.need.group.name + " considered the matter as settled."
+            else:
+                text = "The need owner considered the matter as settled."
+        else:
+            if room.group:
+                text = "The helper " + room.need.group.name + " considered the matter as settled."
+            else:
+                text = "The helper considered the matter as settled."
         room.set_room_finished(request.user)
         ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')

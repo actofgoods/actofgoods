@@ -11,7 +11,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 
   <body>
-  <!--<div class = "row " style="min-height: 500px; box-shadow: 0 0 30px black; height:70%; border-radius: 1em;" >-->
 
 
 <style>
@@ -119,6 +118,15 @@
     #chats-date-headline {
         color: #000000;
     }
+
+    #chat-in-chats-headline{
+        color: #70962c;
+    }
+
+    #recieve-new-message {
+        float: right;
+    }
+
 
 /*---------- start Messages ----------*/
 
@@ -250,7 +258,7 @@
                               <span aria-hidden="true">&times;</span>
                           </button>
                           <h2 style="word-wrap: break-word;">{{room.need.headline}}</h2>
-                          <h6><i>from {{ room.need.date }} in category {{ room.need.categorie.name }} {% if room.need.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=elem.group.name %}">{{ room.need.group.name }}</a>{% elif room.need.author == user %} by <span>you</span>{% endif %}</i></h6>
+                          <h6><i>from {{ room.need.date }} in category {{ room.need.categorie.name }} {% if room.need.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=room.need.group.name %}">{{ room.need.group.name }}</a>{% elif room.need.author == user %} by <span>you</span>{% endif %}</i></h6>
                       </div>
                       <div class="modal-body">
                           <p style="word-wrap: break-word;">{{ room.need|get_short_text:512|linebreaksbr }}</p>
@@ -269,7 +277,7 @@
   'use strict';
 
   var LoadingBar = function LoadingBar(props) {
-    return React.createElement('div', { className: 'mdl-progress mdl-js-progress mdl-progress__indeterminate' });
+    return React.createElement('div', { className: 'do-nothing' });
   };
 
 
@@ -547,7 +555,7 @@
 
               {% if roomname|is_own:request.user %}
 
-                    {% if not room.user_req %}
+                    {% if room.user_req %}
 
                         {% if not room.helper_out %}
 
@@ -599,9 +607,10 @@
           </div>
           <div className="row">
             <div className="col-sm-8" id="chat-info-container">
-                <p><i> {% if roomname|is_own:request.user %} You are getting help {% if room.group %}by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=room.group.name %}">{{room.group.name}}</a>{% endif %}{% else %} You are helping  {% if room.group %}as <a id="green-link" href="{% url 'basics:group_detail_for_user' name=room.group.name %}">{{room.group.name}}</a>{% endif %}{% endif %}</i></p>
+                {% if not room.helper_out %}
+                    <p><i> {% if roomname|is_own:request.user %} {% if room.need.group %} <a id="green-link" href="{% url 'basics:group_detail_for_user' name=room.need.group.name %}">{{room.need.group.name}}</a> is{% else %} You are{% endif %} getting help {% if room.group %}by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=room.group.name %}">{{room.group.name}}</a>{% endif %}{% else %} {% if room.group %} <a id="green-link" href="{% url 'basics:group_detail_for_user' name=room.group.name %}">{{room.group.name}}</a> is{% else %} You are{% endif %} helping  {% if room.need.group %}<a id="green-link" href="{% url 'basics:group_detail_for_user' name=room.need.group.name %}">{{room.need.group.name}}</a>{% endif %}{% endif %}</i></p>
+                {% endif %}
             </div>
-
           </div>
 
           <MessageList>
@@ -626,16 +635,16 @@
       new_msg=(<span className="badge">new</span>)
     }
     return (
-        <a className="list-group-item" id="standard-list-group-item-div" href={href}>
+        <a className="list-group-item" href={href}>
             <div className="row">
                 <div className="col-sm-12">
-                    <h4 >{props['room']['name']}</h4>
+                    <h4 class="list-group-item-heading" id="chat-in-chats-headline">{props['room']['name']} <div id="recieve-new-message">{new_msg}</div></h4>
                 </div>
                 <div className="col-sm-12">
-                    <h5 >{props['room']['last_message']}{new_msg}</h5>
+                    <h5 class="list-group-item-text">{props['room']['last_message']}</h5>
                 </div>
                 <div className="col-sm-12">
-                    <h6 id="chats-date-headline">{props['room']['date']}</h6>
+                    <h6 id="chats-date-headline"><i>{props['room']['date']}</i></h6>
                 </div>
             </div>
         </a>
