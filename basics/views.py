@@ -78,6 +78,8 @@ def faq_signin(request):
 
 @csrf_protect
 def home(request):
+    if request.user.is_superuser:
+        return redirect('administration:requests')
     if request.user.is_authenticated():
         needs = list(Need.objects.all().filter(author=request.user))
         infos = list(Information.objects.all().filter(author=request.user))
@@ -246,7 +248,7 @@ def logout(request):
 
 @csrf_protect
 def profil(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         userdata=request.user.userdata
         return render(request, 'basics/profil.html',{'Userdata':userdata, 'selected': userdata.inform_about.all()})
     return redirect('basics:actofgoods_startpage')
@@ -254,7 +256,7 @@ def profil(request):
 
 @csrf_protect
 def profil_edit(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active': False})
         user=request.user
@@ -430,7 +432,7 @@ def verification(request,id):
 def chat(request):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.method == "GET":
             try:
                 room=get_valid_rooms(request.user).latest('last_message')
@@ -441,7 +443,7 @@ def chat(request):
 
 @csrf_protect
 def chat_room(request, roomname):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         room = Room.objects.get(name=roomname)
         name = room.need.headline
         if room.need.author == request.user or (room.user_req == request.user and not room.helper_out):
@@ -460,7 +462,7 @@ def get_valid_rooms(user):
 
 @csrf_protect
 def kick_user(request, roomname):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
 
         room = Room.objects.get(name=roomname)
         if request.user == room.user_req or request.user == room.need.user:
@@ -492,7 +494,7 @@ def messages_to_json(messages):
 
 @csrf_protect
 def needs_finish(request, roomname):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         room = Room.objects.get(name=roomname)
         text = request.user.username + " finished."
         room.set_room_finished(request.user)
@@ -524,15 +526,15 @@ def rooms_to_json(rooms, user):
 
 @csrf_protect
 def claim(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.user.groups.filter(name=name).exists():
             categories=CategoriesNeeds.objects.all
-            return render(request, 'basics/map_claim.html', {'categories': categories,'group': name, 'polygons': ClaimedArea.objects.all(), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
+            return render(request, 'basics/map_claim.html', {'categories': categories,'group': name, 'polygons': ClaimedArea.objects.order_by('pk'), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def claim_post(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.user.groups.filter(name=name).exists():
             if request.method=="POST":
                 poly_path=request.POST['path']
@@ -554,7 +556,7 @@ def claim_post(request, name):
 
 @csrf_protect
 def claim_delete(request,name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.user.groups.filter(name=name).exists():
             if request.method=="POST":
                 pk=request.POST['pk']
@@ -566,7 +568,7 @@ def claim_delete(request,name):
 
 @csrf_protect
 def claim_refresh(request,name):
-   if request.user.is_authenticated():
+   if request.user.is_authenticated() and not request.user.is_superuser:
         if request.user.groups.filter(name=name).exists():
             index=request.POST['index']
             pk = request.POST['pk']
@@ -575,7 +577,7 @@ def claim_refresh(request,name):
 
 @csrf_protect
 def claim_information(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.user.groups.filter(name=name).exists():
             #TODO: Change this to somehing like user distance
             group = Groupdata.objects.get(name=name)
@@ -601,7 +603,7 @@ def claim_information(request, name):
 
 @csrf_protect
 def claim_needs(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.user.groups.filter(name=name).exists():
             #TODO: Change this to somehing like user distance
             group = Groupdata.objects.get(name=name)
@@ -631,7 +633,7 @@ def claim_needs(request, name):
 
 @csrf_protect
 def claim_reportInfo(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
         info.was_reported = True
@@ -643,7 +645,7 @@ def claim_reportInfo(request, name):
 
 @csrf_protect
 def claim_reportNeed(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         pk=int(request.POST['pk'])
         need = Need.objects.get(pk=pk)
         need.was_reported = True
@@ -656,7 +658,7 @@ def claim_reportNeed(request, name):
 
 @csrf_protect
 def claim_like(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
         info.was_liked = True
@@ -670,7 +672,7 @@ def claim_like(request, name):
 
 @csrf_protect
 def claim_unlike(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
         info.number_likes -= 1
@@ -682,7 +684,7 @@ def claim_unlike(request, name):
 
 @csrf_protect
 def claim_follow(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
         info.followed_by.add(request.user.userdata)
@@ -691,7 +693,7 @@ def claim_follow(request, name):
 
 @csrf_protect
 def claim_unfollow(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
         info.followed_by.remove(request.user.userdata)
@@ -707,7 +709,7 @@ def claim_unfollow(request, name):
 
 @csrf_protect
 def information_all(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         #TODO: Change this to somehing like user distance
         if request.user.userdata:
             dist = request.user.userdata.aux
@@ -742,7 +744,7 @@ def information_all(request):
 
 @csrf_protect
 def information_filter(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.is_ajax():
             #TODO: Change this to somehing like user distance
             if request.user.userdata:
@@ -777,7 +779,7 @@ def information_filter(request):
 def information_delete_comment(request, pk_inf, pk_comm):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated:
+    if request.user.is_authenticated() and not request.user.is_superuser:
         comment = Comment.objects.get(pk=pk_comm)
         comment.delete()
         return redirect('basics:information_view', pk=pk_inf)
@@ -787,7 +789,7 @@ def information_delete_comment(request, pk_inf, pk_comm):
 def information_new(request):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.method == "POST":
             info = InformationFormNew(request.POST)
             if info.is_valid():
@@ -823,7 +825,7 @@ def information_new(request):
 def information_update(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         information= Information.objects.all().get(pk=pk)
         if request.method == "POST":
             text = request.POST.get('text', None)
@@ -845,7 +847,7 @@ def information_update(request, pk):
 def information_view(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated:
+    if request.user.is_authenticated() and not request.user.is_superuser:
         information = get_object_or_404(Information, pk=pk)
         comments = Comment.objects.filter(inf=information).order_by('date')
         return render (request, 'basics/information_view.html', {'information':information, 'comments':comments})
@@ -855,7 +857,7 @@ def information_view(request, pk):
 def information_view_comment(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated:
+    if request.user.is_authenticated() and not request.user.is_superuser:
         information = get_object_or_404(Information, pk=pk)
         if request.method == "POST":
             group = None
@@ -868,15 +870,16 @@ def information_view_comment(request, pk):
 
 @csrf_protect
 def info_delete(request, pk):
-    info = Information.objects.all().get(pk=pk)
-    info.delete()
+    if request.user.is_authenticated() and not request.user.is_superuser:
+        info = Information.objects.all().get(pk=pk)
+        info.delete()
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def info_edit(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         info = Information.objects.all().get(pk=pk)
         if request.method == "POST":
             text = request.POST.get('text', None)
@@ -896,7 +899,7 @@ def info_edit(request, pk):
 
 @csrf_protect
 def follow(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = Information.objects.get(pk=pk)
@@ -906,7 +909,7 @@ def follow(request):
 
 @csrf_protect
 def unfollow(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = Information.objects.get(pk=pk)
@@ -916,7 +919,7 @@ def unfollow(request):
 
 @csrf_protect
 def like_information(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = Information.objects.get(pk=pk)
@@ -931,7 +934,7 @@ def like_information(request):
 
 @csrf_protect
 def unlike_information(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = Information.objects.get(pk=pk)
@@ -944,7 +947,7 @@ def unlike_information(request):
 
 @csrf_protect
 def report_information(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = Information.objects.get(pk=pk)
@@ -964,7 +967,7 @@ def report_information(request):
 
 @csrf_protect
 def needs_all(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         #TODO: Change this to somehing like user distance
         if request.user.userdata:
             dist = request.user.userdata.aux
@@ -1004,7 +1007,7 @@ def needs_all(request):
 
 @csrf_protect
 def needs_filter(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.is_ajax():
             #TODO: Change this to somehing like user distance
             if request.user.userdata:
@@ -1050,7 +1053,7 @@ def needs_filter(request):
 @csrf_protect
 def needs_help(request, id):
     #cat = CategoriesNeeds.objects.create(name="cool")
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.method == "GET":
             need = Need.objects.get(id=id)
 
@@ -1076,7 +1079,7 @@ def needs_help(request, id):
 @csrf_protect
 def needs_help_group(request, id, group_id):
     #cat = CategoriesNeeds.objects.create(name="cool")
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.method == "GET":
             group = Group.objects.get(id=group_id)
             if request.user not in list(group.user_set.all()):
@@ -1108,7 +1111,7 @@ def needs_new(request):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
         #cat = CategoriesNeeds.objects.create(name="cool")
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.method == "POST":
             need = NeedFormNew(request.POST)
             if need.is_valid():
@@ -1148,7 +1151,7 @@ def needs_new(request):
 
 @csrf_protect
 def needs_view(request, pk):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated() and not request.user.is_superuser:
         need = get_object_or_404(Need, pk=pk)
         return render (request, 'basics/needs_view.html', {'need':need})
 
@@ -1156,15 +1159,16 @@ def needs_view(request, pk):
 
 @csrf_protect
 def need_delete(request, pk):
-    need = Need.objects.all().get(pk=pk)
-    need.delete()
+    if request.user.is_authenticated() and not request.user.is_superuser:
+        need = Need.objects.all().get(pk=pk)
+        need.delete()
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def need_edit(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         need= Need.objects.all().get(pk=pk)
         if request.method == "POST":
             text = request.POST.get('text', None)
@@ -1184,7 +1188,7 @@ def need_edit(request, pk):
 
 @csrf_protect
 def report_need(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.is_ajax():
             pk=int(request.POST['pk'])
             need = Need.objects.get(pk=pk)
@@ -1204,23 +1208,25 @@ def report_need(request):
 
 @csrf_protect
 def comm_delete(request, pk):
-    comm = Comment.objects.all().get(pk=pk)
-    comm.delete()
+    if request.user.is_authenticated() and not request.user.is_superuser:
+        comm = Comment.objects.all().get(pk=pk)
+        comm.delete()
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def delete_comment_timeline(request, pk):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         comment = Comment.objects.get(pk=pk)
         comment.delete()
         return redirect('basics:home')
     return redirect('basics:actofgoods_startpage')
 
 def report_comment(request, pk):
-    comment = Comment.objects.get(pk=pk)
-    comment.was_reported = True
-    comment.number_reports += 1
-    comment.reported_by.add(request.user.userdata)
+    if request.user.is_authenticated() and not request.user.is_superuser:
+        comment = Comment.objects.get(pk=pk)
+        comment.was_reported = True
+        comment.number_reports += 1
+        comment.reported_by.add(request.user.userdata)
     return information_view(request, comment.inf.pk)
 
 
@@ -1235,7 +1241,7 @@ def groups_all(request):
     return render(request, 'basics/groups_all.html', {'groups':groups})
 
 def group_detail(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.user.groups.filter(name=name).exists():
             gro = request.user.groups.get(name=name)
             if request.method == "POST":
@@ -1268,15 +1274,15 @@ def group_detail(request, name):
 
 @csrf_protect
 def group_detail_for_user(request, name):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         group = Groupdata.objects.get(name=name)
         return render(request, 'basics/group_detail_for_user.html', {'group':group})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def group_edit(request, pk):
-    if request.user.is_authenticated():
-        if request.user.groups.filter(name=name).exists():
+    if request.user.is_authenticated() and not request.user.is_superuser:
+        if request.user.groups.filter(pk=pk).exists():
             if request.method == "GET":
                 group = Groupdata.objects.get(pk=pk)
                 return render(request, 'basics/group_edit.html', {'group': group})
@@ -1303,7 +1309,7 @@ def group_edit(request, pk):
 
 @csrf_protect
 def group_leave(request, pk):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and not request.user.is_superuser:
         if request.user.groups.filter(name=name).exists():
             groupDa = Groupdata.objects.get(pk=pk)
             group = groupDa.group

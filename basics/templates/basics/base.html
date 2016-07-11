@@ -79,6 +79,7 @@
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
+							{% if not user.is_superuser %}
 							<li {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}">Home</a></li>
                             <li {% if "/needs" in request.path %} class="active" {% endif %}><a href="{% url 'basics:needs_all' %}">Needs</a></li>
                             <li {% if "/information" in request.path %} class="active" {% endif %}><a href="{% url 'basics:information_all' %}">Information</a></li>
@@ -93,11 +94,14 @@
 								    </ul>
 							    </li>
                             {% endif %}
+                            {% endif %}
 						</ul>
 
 						<ul class="nav navbar-nav navbar-right">
 							{% if user.is_staff %}
+							{% if not user.is_superuser %}
 								<li id="navbar-with-divider" {% if "/administration/requests/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:requests' %}">Administration</a></li>
+							{% endif %}
 							{% endif %}
                             <li {% if "/faq_signin/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:faq_signin'%}">FAQ</a></li>
 							{% if not user.is_superuser %}
