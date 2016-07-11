@@ -506,7 +506,7 @@ def claim(request, name):
     if request.user.is_authenticated():
         if request.user.groups.filter(name=name).exists():
             categories=CategoriesNeeds.objects.all
-            return render(request, 'basics/map_claim.html', {'categories': categories,'group': name, 'polygons': ClaimedArea.objects.all(), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
+            return render(request, 'basics/map_claim.html', {'categories': categories,'group': name, 'polygons': ClaimedArea.objects.order_by('pk'), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
