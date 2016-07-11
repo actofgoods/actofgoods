@@ -260,6 +260,21 @@ def profil_edit(request):
         user=request.user
         userdata=request.user.userdata
         if request.method == "POST":
+            email = request.POST.get('email', None)
+            phone = request.POST.get('phone', None)
+            aux = request.POST.get('aux', None)
+            lat, lng = getAddress(request)
+
+            if email != "":
+                if (len(User.objects.all().filter(email=email)) == 0):
+                    user.email = email
+                    user.save()
+                else:
+                    form = ProfileForm()
+                    return render(request, 'basics/profil_edit.html',
+                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all,
+                                   'selected': userdata.inform_about.all(), 'form': form, 'email': True, 'change':False})
+
             if request.POST.get('changePassword') == "on":
                 oldpw = request.POST['oldpw']
                 newpw1 = request.POST.get('newpw1')
@@ -271,12 +286,9 @@ def profil_edit(request):
                     form = ProfileForm()
                     return render(request, 'basics/profil_edit.html',
                                   {'userdata': userdata, 'categories': CategoriesNeeds.objects.all,
-                                   'selected': userdata.inform_about.all(), 'form': form, 'change':True})
+                                   'selected': userdata.inform_about.all(), 'form': form, 'change':True })
 
-            email= request.POST.get('email',None)
-            phone = request.POST.get('phone',None)
-            aux= request.POST.get('aux',None)
-            lat, lng = getAddress(request)
+
             if lat != None and lng != None:
                 userdata.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
                 userdata.save()
@@ -285,9 +297,7 @@ def profil_edit(request):
                     userdata.aux= float(aux)
                 except ValueError:
                     print("Something went wrong while converting float.")
-            if email!="":
-                user.email=email
-                user.save()
+
             if phone!= "":
                 userdata.phone=phone
             if request.POST.get('information') == "on":
@@ -324,9 +334,7 @@ def register(request):
         form = UserFormRegister(request.POST)
         if form.is_valid():
             id = id_generator(8)
-            while():
-                if (Userdata.objects.all().filter(id == id) == 0):
-                    break
+            while(len(Userdata.objects.all().filter(id == id)) != 0):
                 id = id_generator(8)
             password = request.POST.get('password', "")
             check_password = request.POST.get('check_password', "")
