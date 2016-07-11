@@ -284,7 +284,7 @@
 
               url: "needs/",
               type: "POST",
-              data: {csrfmiddlewaretoken: '{{ csrf_token }}', group:'{{group}}', category: $("#category").val(), wordsearch: $("#need-wordsearch").val(), liste: liste},
+              data: {csrfmiddlewaretoken: '{{ csrf_token }}', category: $("#category").val(), wordsearch: $("#need-wordsearch").val(), liste: liste},
 
               beforeSend: function() {
                 $('#need-list').html("<div class='modal-body' style='padding-bottom: 0px;'' id='loader'><center><img src='{% static 'basics/images/loader.gif' %}'/></center></div><br>");

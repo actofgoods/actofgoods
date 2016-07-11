@@ -21,18 +21,13 @@ def ws_add(message, room):
     query_string = message.user.username
     if not (type(query_string) is str):
         query_string = query_string.decode('utf-8')
-    print(query_string)
     query = {"username" : message.user.username}
-    print(query)
     if 'username' not in query:
         print("ws_add: no username")
         return
-    logging.info('Adding websocket with username %s in room %s',
-                 query['username'][0], room)
     Group('chat-%s' % room).add(message.reply_channel)
     message.channel_session['room'] = room
     message.channel_session['username'] = query['username']
-    print(message.channel_session['username'])
 
 @enforce_ordering(slight=True)
 @channel_session_user
@@ -49,14 +44,10 @@ def ws_echo(message):
         db_room = Room.objects.get(name=room)
         if db_room.helper_out:
             return
-        print(message.channel_session['username'])
         author = User.objects.get(username=message.channel_session['username'])
         text = message.content['text']
-        print("THIS IS THE MESSAGE TEXT")
-        print(text)
         if text == "ack":
             db_room.set_saw(author)
-            print(db_room.req_saw, db_room.off_saw)
             return
     if text == "number" :
         if Userdata.objects.get(user=author).phone == "" or Userdata.objects.get(user=author).phone == None:
@@ -71,7 +62,6 @@ def ws_echo(message):
     db_room.last_message = datetime.now()
     db_room.save()
     user = db_room.user_req
-    print(user)
     if user == author:
         user = db_room.need.author
     t1 = threading.Thread(target=email_check,args=(user,author, room, text,))
