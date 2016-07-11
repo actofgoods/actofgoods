@@ -84,7 +84,7 @@ urlpatterns = [
 
 	url(r'^contact_us/$', views.contact_us, name='contact_us'),
     url(r'^comment/report/(?P<pk>\d+)/$', views.report_comment, name='report_comment'),
-    url(r'^verification/(?P<pk>\w+)$', views.verification, name='verification'),
+    url(r'^verification/(?P<id>\w+)$', views.verification, name='verification'),
 	url(r'^need_edit/(?P<pk>\w+)$', views.need_edit, name='need_edit'),
     url(r'^need_delete/(?P<pk>\w+)$', views.need_delete, name='need_delete'),
     url(r'^info_edit/(?P<pk>\w+)$', views.info_edit, name='info_edit'),
