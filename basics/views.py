@@ -589,7 +589,7 @@ def claim_needs(request, name):
                 claims = ClaimedArea.objects.filter(pk__in=liste)
             else:
                 claims = ClaimedArea.objects.filter(group=group.group)
-            needs=Need.objects.all().exclude(author=request.user).order_by('-priority', 'pk')
+            needs=Need.objects.all().exclude(author=request.user).exclude(group=group.group).order_by('-priority', 'pk')
 
             #for claim in claims:
             if claims.exists():
