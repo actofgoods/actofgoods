@@ -103,7 +103,7 @@ def home_filter(request):
                 infos = list(Information.objects.all().filter(author=request.user, group=group.group))
                 needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
                 comm = list(Comment.objects.all().filter(author=request.user, group=group.group))
-            else: 
+            else:
                 needs = list(Need.objects.all().filter(author=request.user))
                 infos = list(Information.objects.all().filter(author=request.user))
                 needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
@@ -604,6 +604,7 @@ def claim_needs(request, name):
                 wordsearch = request.POST['wordsearch']
                 needs = needs.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
             t = loader.get_template('snippets/claim_needs_group.html')
+            needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
             return HttpResponse(t.render({'user': request.user, 'needs':needs, 'group':group}))
     return redirect('basics:actofgoods_startpage')
 
