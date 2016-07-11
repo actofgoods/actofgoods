@@ -11,6 +11,8 @@
 				    {% csrf_token %}
 
 					<div class="form-group">
+                        {% if email == True %} <p>This email already existed!</p>
+                        <p>If you tried changing anything else, remember that these changes have not been saved as well! </p>{% endif %}
                         <h4>Change your email address: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This email address is only visible for you unless you are member of an organisation. All member of your organisations can see your email address."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 						<input type="description" class="form-control input-lg" value= {{ user.email }} name="email" maxlength="255" >
 					</div>
