@@ -4,35 +4,10 @@
                 <div class="timeline-tip"></div>
                 <div class="list-group" style="margin-bottom: 0px; margin-top: 15px;">
                     {% for elem in result_list %}
-
-                        <div class="modal fade" id="myModal" role="dialog">
-                            <div class="modal-dialog">
-
-                             <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">Delete Your Need</h4>
-                                     </div>
-                                    <div class="modal-body">
-                                        <p>If you delete This Need, the data will be permanently lost.</p>
-                                        <p>Would you like to rethink your decision?</p>
-                                    </div>
-                                     <div class="modal-footer">
-                                        <button id="standard-grey-button-light" type="button" class="btn btn-default" data-dismiss="modal">Rethink</button>
-                                        <a id="standard-grey-button-light" type="button" class="btn btn-default" href="{% url 'basics:need_delete' pk=elem.pk %}">
-                                            <span class="glyphicon glyphicon-remove"></span> Delete
-                                        </a>
-                                     </div>
-                                </div>
-
-                            </div>
-                        </div>
-
                         {% if elem in infos %}
                             <!-- information -->
                             <div class="row">
-                                <div class="timeline-badge" title="your information"><i class="glyphicon glyphicon-info-sign"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your information"><i class="glyphicon glyphicon-info-sign"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
@@ -60,7 +35,7 @@
                         {% elif elem in needs %}
                             <!-- need request -->
                             <div class="row">
-                                <div class="timeline-badge" title="your requested need"><i class="glyphicon glyphicon-question-sign"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your requested need"><i class="glyphicon glyphicon-question-sign"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
@@ -78,7 +53,7 @@
                                                     <span class="glyphicon glyphicon-pencil"></span> Edit
                                                 </div>
                                             </a>
-                                            <a class="list-group-footer-button" type="button" data-toggle="modal" data-target="#myModal" >
+                                            <a class="list-group-footer-button" type="button" onclick="deletePrompt('need', '{{elem.pk}}')" >
                                                 <div class="col-sm-6">
                                                     <span class="glyphicon glyphicon-remove"></span> Delete
                                                 </div></a>
@@ -110,7 +85,7 @@
                         {% elif elem in needs_you_help %}
                             <!-- need your help -->
                             <div class="row">
-                                <div class="timeline-badge" title="need your help"><i class="glyphicon glyphicon-header" style="padding-top: 7px; padding-left: 6px"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="need your help"><i class="glyphicon glyphicon-header" style="padding-top: 7px; padding-left: 6px"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
@@ -156,7 +131,7 @@
                         {% else %}
                             <!-- comment on information -->
                             <div class="row">
-                                <div class="timeline-badge" title="your written comment"><i class="glyphicon glyphicon-comment"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your written comment"><i class="glyphicon glyphicon-comment"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                       <div class="row">
@@ -175,7 +150,7 @@
                                                     <span class="glyphicon glyphicon-search"></span> Details
                                                 </div>
                                             </a>
-                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:delete_comment_timeline' pk=elem.pk %}">
+                                            <a class="list-group-footer-button" type="button" onclick="deletePrompt('comment', '{{elem.pk}}')" >
                                                 <div class="col-sm-6">
                                                     <span class="glyphicon glyphicon-remove"></span> Delete
                                                 </div>

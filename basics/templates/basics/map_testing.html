@@ -415,8 +415,8 @@
               placeMarker(pos);
             }, 
             function(positionError) {
-                alert(positionError);
-              handleLocationError(true, infowindow, map.getCenter());
+                alert("Something went wrong! :(");
+                handleLocationError(true, infowindow, map.getCenter());
             });
         } else {
             // Browser doesn't support Geolocation
