@@ -26,3 +26,8 @@ class RequestForm(forms.Form):
     class Meta:
         model = ContactUs
         fields = ['key']
+
+class SearchGroupForm(forms.Form):
+	class Meta:
+		model = Groupdata
+		fields = ['name']

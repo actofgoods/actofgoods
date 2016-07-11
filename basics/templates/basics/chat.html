@@ -527,9 +527,9 @@
           {!this.state.connected ? React.createElement(LoadingBar, null) : null}
 
           <div className="row" id="header-css-chat">
-              <a className="col-sm-7" id="header-css-description-container "  data-toggle="modal" data-target="#need-modal" type="button">
-                  <p id="header-css-chat-description">Chat: {{name}}</p>
-              </a>
+              <div className="col-sm-7" id="header-css-description-container">
+                  <p id="header-css-chat-description">Chat: <a id="green-link" data-toggle="modal" data-target="#need-modal">{{name}}</a></p>
+              </div>
 
               <a className="list-group-footer-button cursor-pointer {% if room.helper_out %}not-active {% endif %}"  type="button" href="{% url 'basics:needs_finish' roomname=roomname %}">
                   <div className="col-sm-2" id="header-css-middle-button-container">
@@ -544,7 +544,7 @@
           </div>
           <div className="row">
             <div className="col-sm-8" id="chat-info-container">
-                <p><i> {% if roomname|is_own:request.user %} You are getting help {% if room.group %}by {{room.group.name}}{% endif %}{% else %} You are helping  {% if room.group %}as {{room.group.name}}{% endif %}{% endif %}</i></p>
+                <p><i> {% if roomname|is_own:request.user %} You are getting help {% if room.group %}by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=room.group.name %}">{{room.group.name}}</a>{% endif %}{% else %} You are helping  {% if room.group %}as <a id="green-link" href="{% url 'basics:group_detail_for_user' name=room.group.name %}">{{room.group.name}}</a>{% endif %}{% endif %}</i></p>
             </div>
 
           </div>
