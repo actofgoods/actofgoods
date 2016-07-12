@@ -42,3 +42,7 @@ def get_room_need_user_finished_off_active_chat(need):
 @register.filter
 def get_room_helper_out_becuase_of_kick_or_leave(need, user):
     return Room.objects.get(need=need, user_req=user).helper_out
+
+@register.filter
+def get_groups_of_user(user):
+    return user.groups.all().order_by('name')

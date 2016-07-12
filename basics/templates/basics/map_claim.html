@@ -148,12 +148,9 @@
                         <div id="map-container" style="border: 1px solid #ddd;"></div>
                     </div>
 
-
-                    <div class="col-sm-12" style="height: 40px ;text-align: right; border: 1px solid #ddd; margin-top: 4px;">
-                    	<h5>Check your boxes and get your needs and informationen in those claims!</h5>
-                    </div>
                     <div class="col-sm-12">
                         <div class="col-sm-12" id="outer-claim-scroll">
+                            <h5 style="text-align: right;">Check your boxes and get your needs and informationen in those claims!</h5>
                             <div style="max-height: 410px; overflow-y: scroll;">
                                 <div class="col-sm-12">
                                     <div class="list-group" id="poly-list">
@@ -700,7 +697,7 @@
                 lng: position.coords.longitude
               };
               placeMarker(pos);
-            }, 
+            },
             function() {
               handleLocationError(true, infoWindow, map.getCenter());
             });
