@@ -33,7 +33,6 @@ sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server > /etc/supervisor/conf.d/ac
 createdb -U postgres actofgoods
 psql -U postgres -c "CREATE USER actofgoods WITH PASSWORD 'saft231';"
 psql -U postgres -c "Grant all privileges on database actofgoods to actofgoods;"
-exit
 # makemigrations
 python3 $DIR/manage.py makemigrations
 # migrate to database
