@@ -30,9 +30,9 @@ sudo service nginx reload
 # copy to supervisor
 sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server > /etc/supervisor/conf.d/actofgoods.conf
 # create db
-createdb actofgoods
-psql -c "CREATE USER actofgoods WITH PASSWORD 'saft231';"
-psql -c "Grant all privileges on database actofgoods to actofgoods;"
+createdb -U postgres actofgoods
+psql -U postgres -c "CREATE USER actofgoods WITH PASSWORD 'saft231';"
+psql -U postgres -c "Grant all privileges on database actofgoods to actofgoods;"
 exit
 # makemigrations
 python3 $DIR/manage.py makemigrations
