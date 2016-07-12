@@ -28,4 +28,8 @@ sudo rm /etc/nginx/sites-enabled/default
 # reload nginx
 sudo service nginx reload
 # copy to supervisor
-sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server > /etc/nginx/sites-available/actofgoods
+sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server > /etc/supervisor/conf.d/actofgoods.conf
+# reread supervisor
+sudo supervisorctl reread
+# reload supervisor
+sudo supervisorctl reload
