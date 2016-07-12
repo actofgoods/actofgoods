@@ -44,7 +44,7 @@ class Userdata(models.Model):
 	inform_about = models.ManyToManyField(CategoriesNeeds)
 	aux = models.PositiveIntegerField(default=50)
 	adrAsPoint=models.PointField(null=True)
-	verification_id = models.CharField(max_length = 8)
+	verification_id = models.CharField(max_length = 8, null=True)
 	def __unicode__(self):
 		return self.pseudonym
 

@@ -20,7 +20,7 @@
                                 {% endif %}
                             {% endfor %}
                         {% endif %}
-                        <h4>Headline for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This headline will represent your need for other user. Give a clearly short overview."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        <h4>Headline for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This headline will represent your need to those who want to help. Give a clear, short overview."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                         {% if messages %}
                             {% for message in messages %}
                                 {% if message.message == 'no_headline' %}
@@ -33,13 +33,13 @@
                         <div class="form-group">
                             <input type="description" class="form-control input-lg" placeholder="Headline" name="{{need.headline.name}}"  rows="4" maxlength="30" required></textarea>
                         </div>
-                        <h4>Category for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Choose a suitable category for your need so that other user can find your need easily."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        <h4>Category for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Choose a suitable category for your need. It will make it easier to be found and you might be receiving help much faster!"><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                         <select style="width: 100%;" name="{{need.categorie.name}}">
                             {% for categorie in categories%}
                                 <option value="{{categorie.id}}">{{categorie.name}}</option>
                             {% endfor %}
                         </select>
-                        <h4>Description for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Give an accurate description of your need so that other user can realize your problem."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        <h4>Description for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="In order to receive only qualified answers, give a detailed, accurate description of what you need!"><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                         {% if messages %}
                             {% for message in messages %}
                                 {% if message.message == 'no_text' %}
@@ -54,7 +54,7 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-5 col-md-6 col-sm-8">
-                                <h4>Optional choose a location for this need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="If you don't choose a location then this need will use your standard location which is given in your profil. If you don't like to use your standard location for this need choose an other one."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                                <h4>Optional choose a location for this need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="If you do not want to use your standard location, choose another one, otherwise we will use the standard one!"><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-4">
                                 <div class="form-group">

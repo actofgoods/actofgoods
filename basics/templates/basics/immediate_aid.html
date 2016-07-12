@@ -10,26 +10,26 @@
             <form class="form" role="form" method="post" accept-charset="UTF-8">
             {%csrf_token%}
                 <div class="form-group">
-                    <h4>Enter an email address: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="We need your email address to create an account for you and send you your password. Notice that nobody will see your email address.  "><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                    <h4>Enter an email address: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="You need to enter your email address in order to receive your password and further information. It is only visible in your private profile for yourself.  "><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                     <input type="Email" class="form-control input-lg" placeholder="Email" name="email"  rows="4" value="{{form.email.value}}" maxlength="255"></textarea>
                 </div>
-                <h4>Enter a headline for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This headline will represent your need for other user. Give a clearly short overview."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                <h4>Enter a headline for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This headline will represent your need to those who want to help. Give a clear, short overview."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                 <div class="form-group">
                     <input type="description" class="form-control input-lg" placeholder="Headline" name="headline"  rows="4" value="{{need_form.headline.value}}" maxlength="30"></textarea>
                 </div>
-                <h4>Choose a category for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Choose a suitable category for your need so that other user can find your need easily."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                <h4>Choose a category for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Choose a suitable category for your need. It will make it easier to be found and you w receive help much faster!""><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                 <select style="width: 100%" name="{{need.categorie.name}}">
                     {% for categorie in categories%}
                         <option value="{{categorie.id}}">{{categorie.name}}</option>
                     {% endfor %}
                 </select>
-                <h4>Write a description of your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Give an accurate description of your need so that other user can realize your problem."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                <h4>Write a description for your need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="In order to get only qualified answers, give a detailed, accurate description of what you need!"><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                 <div class="form-group">
                     <textarea type="description" class="form-control input-lg" placeholder="Description" name="text"  rows="4" value="{{need_form.text.value}}">{{need_form.text.value}}</textarea>
                 </div>
                 <div class="row">
                     <div class="col-lg-4 col-md-5 col-sm-7">
-                        <h4>Choose a location where you need help: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="We need a location to let people in your neighborhood know that you need help. Later you can change this location in your profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        <h4>Choose a location where you need help: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="To ensure, that those who see your need are in your direct surrounding enter your location. If neccessary you can change it later on!"><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-4">
                         <div class="form-group">

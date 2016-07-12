@@ -11,7 +11,9 @@
 				    {% csrf_token %}
 
 					<div class="form-group">
-                        <h4>Change your email address: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This email address is only visible for you unless you are member of an organisation. All member of your organisations can see your email address."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        {% if email == True %} <p>This email already existed!</p>
+                        <p>If you tried changing anything else, remember that these changes have not been saved as well! </p>{% endif %}
+                        <h4>Change your email address: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This email address is only visible for yourself unless you are member of an organisation. In this case it will be seen by those who are in the same organisation."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 						<input type="description" class="form-control input-lg" value= {{ user.email }} name="email" maxlength="255" >
 					</div>
 
@@ -45,10 +47,10 @@
 
 					<div class="form-group">
 						{% if userdata.phone == "" %}
-                            <h4>Add a phone number: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This phone number is only visible for you. If you add a phone number you can send your phone number in a chat with by one click."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Add a phone number: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This phone number is only visible for you. If you add a phone number you can send your phone number in a chat with one simple click."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                             <input type="description" class="form-control input-lg" placeholder="Phone Number" name="phone" maxlength="13" >
 						{% else %}
-                            <h4>Change your phone number: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This phone number is only visible for you. In a chat with an other user you can send your phone number by one click."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Change your phone number: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This phone number is only visible for you. In a chat with a user you can send your phone number with one simple click."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 							<input type="description" class="form-control input-lg" value= {{ userdata.phone }} name="phone"  >
 						{% endif %}
 					</div>
@@ -56,7 +58,7 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-6">
-                                <h4>Change your auxiliary radius: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="The auxiliary radius is your default radius where you get needs and information from other users."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                                <h4>Change your auxiliary radius: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="You will see all information and needs which are inside your auxilarity radius."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-4">
                                 <div class="input-group">
@@ -69,7 +71,7 @@
 
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-6">
-                            <h4>Change your standard location: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="This location is only visible for you. We need your roughly location to show you needs and information in your neighborhood."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Change your standard location: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="This location is only visible for yourself. We need your rough location to show you needs and information in your surrounding."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-4">
                             <div class="form-group">
@@ -80,7 +82,7 @@
 
                     <div class="form-group">
 
-                        <h4><span><input type = "checkbox" name="information" {% if userdata.get_notifications %} checked {% endif %} onclick=$("#categories").fadeToggle();></span> Inform me via email <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="If you check this box you will get information in your neighborhood. Additionaly you can choose categories where you want to be informed if somebody in your auxiliary radius needs help in one of your choosen categories."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        <h4><span><input type = "checkbox" name="information" {% if userdata.get_notifications %} checked {% endif %} onclick=$("#categories").fadeToggle();></span> Inform me via email <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="If you check this box you will receive an email everytime someone posts a need within your auxilarity radius. You need to choose Those Categories you want to be informed about"><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 
     					<div id="categories" {% if not userdata.get_notifications %} style="display: none" {% endif %}>
 

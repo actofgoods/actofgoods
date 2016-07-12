@@ -51,7 +51,10 @@
 	font-weight: bold;
 }
 
-#standard-green-button-light:hover, #standard-green-button-bold:hover, .standard-green-button-light:hover, .standard-green-button-bold:hover {
+#standard-green-button-light:hover,
+#standard-green-button-bold:hover,
+.standard-green-button-light:hover,
+.standard-green-button-bold:hover {
     background-color: #96B440;
 }
 /* end green button light/bold */
@@ -84,6 +87,14 @@
 #standard-grey-button-bold:hover,
 .standard-grey-button-light:hover,
 .standard-grey-button-bold:hover,
+#standard-grey-button-light:focus,
+#standard-grey-button-bold:focus,
+.standard-grey-button-light:focus,
+.standard-grey-button-bold:focus,
+#standard-grey-button-light:active,
+#standard-grey-button-bold:active,
+.standard-grey-button-light:active,
+.standard-grey-button-bold:active,
 #standard-grey-button-light:active:focus,
 #standard-grey-button-bold:active:focus,
 .standard-grey-button-light:active:focus,

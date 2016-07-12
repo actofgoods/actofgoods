@@ -47,29 +47,7 @@
 
 </style>
 
-<div class="modal fade" id="myModal" role="dialog">
-                        <div class="modal-dialog">
 
-                         <!-- Modal content-->
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Delete Your Account</h4>
-                                 </div>
-                                <div class="modal-body">
-                                    <p>If you delete your account, your data will be permanently lost.</p>
-                                    <p>Would you like to rethink your decision?</p>
-                                </div>
-                                 <div class="modal-footer">
-                                    <button id="standard-grey-button-light" type="button" class="btn btn-default"  data-dismiss="modal">Rethink</button>
-                                    <a type="button" id="standard-grey-button-light" type="button" class="btn btn-default" href="{% url 'basics:profil_delete' %}">
-                                        <span class="glyphicon glyphicon-remove"></span> Delete
-                                    </a>
-                                 </div>
-                            </div>
-
-                        </div>
-                        </div>
 
 <div id="standard-modal">
     <div class="modal-content">
@@ -86,7 +64,7 @@
                                 <span class="glyphicon glyphicon-pencil"></span> Edit my Profile
                             </div>
                         </a>
-                        <a id="button1" class="list-group-footer-button cursor-pointer" type="button" data-toggle="modal" data-target="#myModal">
+                        <a id="button1" class="list-group-footer-button cursor-pointer" type="button" onclick="deletePrompt()">
                             <div class="col-sm-6">
                                 <span class="glyphicon glyphicon-remove"></span> Delete my Account
                             </div>
@@ -175,7 +153,43 @@
     </div>
 </div>
 
+
 <script src="http://maps.googleapis.com/maps/api/js"></script>
+<div class="modal fade" id="CommentDeleteModal" role="dialog">
+	<div class="modal-dialog">
+
+	 <!-- Modal content-->
+	    <div class="modal-content">
+	        <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+	            <h4 class="modal-title">Delete Your Account</h4>
+	         </div>
+	        <div class="modal-body">
+	            <p>If you delete your account, your data will be permanently lost.</p>
+	            <p>Would you like to rethink your decision?</p>
+	        </div>
+	         <div class="modal-footer">
+	            <button id="standard-grey-button-light" type="button" class="btn btn-default" data-dismiss="modal">Rethink</button>
+	            <a id="CommentButtonDelete" type="button" class="btn btn-default standard-grey-button-light" href="">
+	                <span class="glyphicon glyphicon-remove"></span> Delete
+	            </a>
+	         </div>
+	    </div>
+
+	</div>
+</div>
+
+
+<script>
+
+function deletePrompt(){
+		document.getElementById("CommentButtonDelete").setAttribute('href',"{% url 'basics:profil_delete' %}")
+		$('#CommentDeleteModal').modal('show');
+	}
+
+</script>
+
+
 <script>
 
 
@@ -242,5 +256,7 @@
   	google.maps.event.addDomListener(window, 'load', initialize);
 
 </script>
+
+
 
 {% endblock %}

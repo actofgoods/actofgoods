@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 		<title>Act of Goods</title>
+        {% load filter%}
 		{% load staticfiles %}
 		<link rel="icon" href="{% static 'basics/images/icon.ico' %}">
 
@@ -79,6 +80,7 @@
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav navbar-left">
+							{% if not user.is_superuser %}
 							<li {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}">Home</a></li>
                             <li {% if "/needs" in request.path %} class="active" {% endif %}><a href="{% url 'basics:needs_all' %}">Needs</a></li>
                             <li {% if "/information" in request.path %} class="active" {% endif %}><a href="{% url 'basics:information_all' %}">Information</a></li>
@@ -87,17 +89,20 @@
                                 <li id="navbar-with-divider" {% if "/groups" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
 								    <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Organisations <span class="caret"></span></a>
 								    <ul id="navbar-dropdown-menu" class="dropdown-menu">
-                	                    {% for group in user.groups.all %}
+                	                    {% for group in user|get_groups_of_user %}
 									            <li {% if "/groups/detail/{{group.name}}/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:group_detail' name=group.name %}">{{group.name}}</a></li>
                                         {% endfor %}
 								    </ul>
 							    </li>
                             {% endif %}
+                            {% endif %}
 						</ul>
 
 						<ul class="nav navbar-nav navbar-right">
 							{% if user.is_staff %}
+							{% if not user.is_superuser %}
 								<li id="navbar-with-divider" {% if "/administration/requests/" in request.path %} class="active" {% endif %}><a href="{% url 'administration:requests' %}">Administration</a></li>
+							{% endif %}
 							{% endif %}
                             <li {% if "/faq_signin/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:faq_signin'%}">FAQ</a></li>
 							{% if not user.is_superuser %}

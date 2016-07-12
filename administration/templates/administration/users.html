@@ -79,31 +79,6 @@
                 {% endif %}
                     {% if usr %}
 
-                        <div class="modal fade" id="userDeleteSearch" role="dialog">
-                        <div class="modal-dialog">
-
-                         <!-- Modal content-->
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Delete This User</h4>
-                                 </div>
-                                <div class="modal-body">
-                                    <p>If you delete this user, his data will be permanently lost.</p>
-                                    <p>Would you like to rethink your decision?</p>
-                                </div>
-                                 <div class="modal-footer">
-                                     <a id="standard-grey-button-light" type="button" class="btn btn-default"  href="{% url 'administration:user_delete' pk=usr.pk %}">
-
-                                                    <span class="glyphicon glyphicon-remove"></span> Delete
-                                                </a>
-                                    <button id="standard-grey-button-light" type="button" class="btn btn-default"  data-dismiss="modal">Rethink</button>
-                                 </div>
-                            </div>
-
-                            </div>
-                            </div>
-
 
 
                         <div class="list-group-item" id="standard-list-group-item-div">
@@ -113,8 +88,8 @@
                                 </div>
                                 {% if not usr.is_staff%}
                                 <div class="col-sm-3">
-                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" data-toggle="modal" data-target="#userDeleteSearch"  title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
-                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" onclick="deletePrompt('{{usr.pk}}')" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=usr.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
                                 </div>
                                {% else %}
                                <div class="col-sm-3">
@@ -127,31 +102,6 @@
                     {% if users %}
                         {% for user in users %}
 
-                            <div class="modal fade" id="userDelete" role="dialog">
-                            <div class="modal-dialog">
-
-                            <!-- Modal content-->
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Delete This User</h4>
-                                 </div>
-                                <div class="modal-body">
-                                    <p>If you delete this user, his data will be permanently lost.</p>
-                                    <p>Would you like to rethink your decision?</p>
-                                </div>
-                                 <div class="modal-footer">
-                                     <a id="standard-grey-button-light" type="button" class="btn btn-default"  href="{% url 'administration:user_delete' pk=user.pk %}">
-
-                                                    <span class="glyphicon glyphicon-remove"></span> Delete
-                                                </a>
-                                    <button id="standard-grey-button-light" type="button" class="btn btn-default"  data-dismiss="modal">Rethink</button>
-                                 </div>
-                            </div>
-
-                            </div>
-                            </div>
-
 
                             {% if user.email %}
 
@@ -162,9 +112,9 @@
                                         </div>
                                         {% if not user.is_staff %}
                                         <div class="col-sm-3">
-                                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" data-toggle="modal" data-target="#userDelete"   title="Delete User" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
-                                            <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
-                                        </div>
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" onclick="deletePrompt('{{user.pk}}')" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                    <a id="standard-grey-button-light" class="btn btn-default btn-sml" href="{% url 'administration:make_admin' pk=user.pk %}" title="Set User as Admin" style="margin: 2px; float: right;"><span class="glyphicon glyphicon-sunglasses"></span> Admin</a>
+                                </div>
                                         {% else %}
                                         <div class="col-sm-3">
                                             <p style="float: right">This user is an admin.</p>
@@ -180,5 +130,37 @@
             </div><!-- end list all or only one user -->
         </div>
     </div><!-- end all users -->
+
+<div class="modal fade" id="userDeleteModal" role="dialog">
+	<div class="modal-dialog">
+
+	 <!-- Modal content-->
+	    <div class="modal-content">
+	        <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+	            <h4 class="modal-title">Delete This User</h4>
+	         </div>
+	        <div class="modal-body">
+	            <p>If you delete This User, his data will be permanently lost.</p>
+	            <p>Would you like to rethink your decision?</p>
+	        </div>
+	         <div class="modal-footer">
+	            <button id="standard-grey-button-light" type="button" class="btn btn-default" data-dismiss="modal">Rethink</button>
+	            <a id="userButtonDelete" type="button" class="btn btn-default standard-grey-button-light" href="">
+	                <span class="glyphicon glyphicon-remove"></span> Delete
+	            </a>
+	         </div>
+	    </div>
+
+	</div>
+</div>
+
+<script>
+function deletePrompt(pk){
+		document.getElementById("userButtonDelete").setAttribute('href',"{% url 'administration:user_delete' pk=0 %}".replace("0", pk))
+		$('#userDeleteModal').modal('show');
+	}
+
+</script>
 
 {% endblock %}

@@ -223,7 +223,7 @@
                             <select style="width: 100%;" name="activities" id="activities">
                                 <option value="all_activities">all activities</option>
                                 <option value="posted_needs">posted needs</option>
-                                <option value="needs_help">needs where you help</option>
+                                <option value="needs_help">needs where you helped</option>
                                 <option value="posted_information">posted information</option>
                                 <option value="written_comments">written comments</option>
                             </select>
@@ -248,7 +248,7 @@
                             <select style="width: 100%" name="activities" id="activities">
                                 <option value="all_activities">all activities</option>
                                 <option value="posted_needs">posted needs</option>
-                                <option value="needs_help">needs where you help</option>
+                                <option value="needs_help">needs where you helped</option>
                                 <option value="posted_information">posted information</option>
                                 <option value="written_comments">written comments</option>
                             </select>
@@ -259,47 +259,24 @@
                 {% endif %}
             </div>
         </div>
+
+
         <div class="modal-body" id="modal-body">
             {% if result_list %}
             <div class="timeline">
                 <div class="timeline-tip"></div>
                 <div class="list-group" style="margin-bottom: 0px; margin-top: 15px;">
                     {% for elem in result_list %}
-
-                        <div class="modal fade" id="myModal" role="dialog">
-                            <div class="modal-dialog">
-
-                             <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title">Delete Your Need</h4>
-                                     </div>
-                                    <div class="modal-body">
-                                        <p>If you delete This Need, the data will be permanently lost.</p>
-                                        <p>Would you like to rethink your decision?</p>
-                                    </div>
-                                     <div class="modal-footer">
-                                        <button id="standard-grey-button-light" type="button" class="btn btn-default" data-dismiss="modal">Rethink</button>
-                                        <a id="standard-grey-button-light" type="button" class="btn btn-default" href="{% url 'basics:need_delete' pk=elem.pk %}">
-                                            <span class="glyphicon glyphicon-remove"></span> Delete
-                                        </a>
-                                     </div>
-                                </div>
-
-                            </div>
-                        </div>
-
                         {% if elem in infos %}
                             <!-- information -->
                             <div class="row">
-                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your information"><i class="glyphicon glyphicon-info-sign"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="you informed"><i class="glyphicon glyphicon-info-sign"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
                                               <a href="{% url 'basics:information_view' pk=elem.id %}">
                                                   <div class="col-sm-12">
-                                                      <h4 class="list-group-item-heading" style="color: #333; hover.color: #333; word-wrap: break-word;">{{ elem.headline }}<div style="font-size: .83em; color: #555; hover.color: #555; float: right;"><span class="glyphicon glyphicon-chevron-up"></span>{{ elem.number_likes }}</div></h4>
+                                                      <h4 class="list-group-item-heading" style="color: #333; hover.color: #333; word-wrap: break-word;">{{ elem.headline }}<div id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="The number of vote up's for this information."  style="font-size: .83em; color: #555; hover.color: #555; float: right; cursor: pointer;"><span class="glyphicon glyphicon-chevron-up"></span>{{ elem.number_likes }}</div></h4>
                                                       <p class="list-group-item-text" style="color: #555; hover.color: #555; word-wrap: break-word;">{{ elem|get_short_text:512|linebreaksbr  }}</p>
                                                       <h6 style="color: #555; hover.color: #555;"><br><i>from {{ elem.date }} {% if elem.author_is_admin %} by <span style="color: #D36E5A;">Admin</span>{% elif elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
                                                   </div>
@@ -321,12 +298,22 @@
                         {% elif elem in needs %}
                             <!-- need request -->
                             <div class="row">
-                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your requested need"><i class="glyphicon glyphicon-question-sign"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="you asked for"><i class="glyphicon glyphicon-question-sign"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
                                             <div class="col-sm-12" data-toggle="modal" data-target=".n{{elem.id}}" id="cursor-pointer">
-                                                <h4 class="list-group-item-heading" style="word-wrap: break-word;">{{ elem.headline }}<div style="font-size: .83em; color: #555; hover.color: #555; float: right; "><span title="wait for help" class="glyphicon glyphicon-hourglass"></span></div></h4>
+                                                <h4 class="list-group-item-heading" style="word-wrap: break-word;">{{ elem.headline }}
+                                                    <div style="font-size: .83em; color: #555; hover.color: #555; float: right; ">
+                                                        {% if not elem.was_helped_at or elem|get_room_helper_out %}
+                                                            <span id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="You waiting for help." class="glyphicon glyphicon-hourglass"></span>
+                                                        {% elif elem.done  %}
+                                                            <span id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="Your helper and you considered the matter as settled." class="glyphicon glyphicon-ok"></span>
+                                                        {% else %}
+                                                            <span id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="You are communicating with your helper." class="glyphicon glyphicon-comment"></span>
+                                                        {% endif %}
+                                                    </div>
+                                                </h4>
                                                 <p class="list-group-item-text" style="word-wrap: break-word;">{{ elem|get_short_text:512|linebreaksbr }}</p>
                                                 <h6><br><i>from {{ elem.date }} in category {{ elem.categorie.name }} {% if elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
                                             </div>
@@ -334,15 +321,43 @@
                                     </a>
                                     <div class="list-group-footer">
                                         <div class="row">
-                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:need_edit' pk=elem.pk%}">
-                                                <div class="col-sm-6" id="list-group-footer-button-margin">
-                                                    <span class="glyphicon glyphicon-pencil"></span> Edit
-                                                </div>
-                                            </a>
-                                            <a class="list-group-footer-button" type="button" data-toggle="modal" data-target="#myModal" >
-                                                <div class="col-sm-6">
-                                                    <span class="glyphicon glyphicon-remove"></span> Delete
-                                                </div></a>
+                                            {% if not elem.was_helped_at or elem|get_room_helper_out %}
+                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:need_edit' pk=elem.pk%}">
+                                                    <div class="col-sm-6" id="list-group-footer-button-margin">
+                                                        <span class="glyphicon glyphicon-pencil"></span> Edit
+                                                    </div>
+                                                </a>
+                                                <a class="list-group-footer-button" id="cursor-pointer" type="button" onclick="deletePrompt('need', '{{elem.pk}}')" >
+                                                    <div class="col-sm-6">
+                                                        <span class="glyphicon glyphicon-remove"></span> Delete
+                                                    </div>
+                                                </a>
+                                            {% elif elem.done  %}
+                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:chat_room' roomname=elem|get_roomname_off_active_chat%}">
+                                                    <div class="col-sm-12">
+                                                        <span class="glyphicon glyphicon-comment"></span> Chat History
+                                                    </div>
+                                                </a>
+                                            {% else %}
+                                                {% if elem|get_room_need_user_finished_off_active_chat %}
+                                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:chat_room' roomname=elem|get_roomname_off_active_chat%}">
+                                                        <div class="col-sm-12">
+                                                            <span class="glyphicon glyphicon-comment"></span> Chat
+                                                        </div>
+                                                    </a>
+                                                {% else %}
+                                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:chat_room' roomname=elem|get_roomname_off_active_chat%}">
+                                                        <div class="col-sm-6" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-comment"></span> Chat
+                                                        </div>
+                                                    </a>
+                                                    <a class="list-group-footer-button" id="cursor-pointer" type="button" href="{% url 'basics:needs_finish' roomname=elem|get_roomname_off_active_chat %}">
+                                                        <div class="col-sm-6">
+                                                            <span class="glyphicon glyphicon-ok"></span> Done
+                                                        </div>
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -371,12 +386,22 @@
                         {% elif elem in needs_you_help %}
                             <!-- need your help -->
                             <div class="row">
-                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="need your help"><i class="glyphicon glyphicon-header" style="padding-top: 7px; padding-left: 6px"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="you helped"><i class="glyphicon glyphicon-header" style="padding-top: 7px; padding-left: 6px"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
                                             <div class="col-sm-12" data-toggle="modal" data-target=".nh{{elem.id}}" id="cursor-pointer">
-                                                <h4 class="list-group-item-heading" style="word-wrap: break-word;">{{ elem.headline }}</h4>
+                                                <h4 class="list-group-item-heading" style="word-wrap: break-word;">{{ elem.headline }}
+                                                    <div style="font-size: .83em; color: #555; hover.color: #555; float: right; ">
+                                                        {% if elem|get_room_helper_out_becuase_of_kick_or_leave:request.user %}
+                                                            <span id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="You have leaved the chat with the need owner or the need owner kicked you from the chat." class="glyphicon glyphicon-log-out"></span>
+                                                        {% elif elem.done  %}
+                                                            <span id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="The need owner and you considered the matter as settled." class="glyphicon glyphicon-ok"></span>
+                                                        {% else %}
+                                                            <span id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="You are communicating with the need owner." class="glyphicon glyphicon-comment"></span>
+                                                        {% endif %}
+                                                    </div>
+                                                </h4>
                                                 <p class="list-group-item-text" style="word-wrap: break-word;">{{ elem|get_short_text:512|linebreaksbr }}</p>
                                                 <h6><br><i>from {{ elem.was_helped_at.was_helped_at }} in category {{ elem.categorie.name }} {% if elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% endif %}</i></h6>    <!-- TODO change date -->
                                             </div>
@@ -384,11 +409,38 @@
                                     </a>
                                     <div class="list-group-footer">
                                         <div class="row">
-                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:chat_room' roomname=elem|get_roomname:request.user%}">
-                                                <div class="col-sm-12">
-                                                    <span class="glyphicon glyphicon-comment"></span> Chat
-                                                </div>
-                                            </a>
+                                            {% if elem|get_room_helper_out_becuase_of_kick_or_leave:request.user %}
+                                                <a class="list-group-footer-button" type="button" href="">
+                                                    <div class="col-sm-12">
+                                                        <span class="glyphicon glyphicon-comment"></span> Chat History
+                                                    </div>
+                                                </a>
+                                            {% elif elem.done  %}
+                                                <a class="list-group-footer-button" type="button" href="{% url 'basics:chat_room' roomname=elem|get_roomname:request.user%}">
+                                                    <div class="col-sm-12">
+                                                        <span class="glyphicon glyphicon-comment"></span> Chat History
+                                                    </div>
+                                                </a>
+                                            {% else %}
+                                                {% if elem|get_room_need_user_finished_off_active_chat %}
+                                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:chat_room' roomname=elem|get_roomname:request.user%}">
+                                                        <div class="col-sm-6" id="list-group-footer-button-margin">
+                                                            <span class="glyphicon glyphicon-comment"></span> Chat
+                                                        </div>
+                                                    </a>
+                                                    <a class="list-group-footer-button" id="cursor-pointer" type="button" href="{% url 'basics:needs_finish' roomname=elem|get_roomname_off_active_chat %}">
+                                                        <div class="col-sm-6">
+                                                            <span class="glyphicon glyphicon-ok"></span> Done
+                                                        </div>
+                                                    </a>
+                                                {% else %}
+                                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:chat_room' roomname=elem|get_roomname:request.user%}">
+                                                        <div class="col-sm-12">
+                                                            <span class="glyphicon glyphicon-comment"></span> Chat
+                                                        </div>
+                                                    </a>
+                                                {% endif %}
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -414,10 +466,39 @@
                                 </div>
                             </div>
 
+                        {% elif elem in followed_infos %}
+
+                            <!-- followed information information -->
+                            <div class="row">
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your followed information"><i class="glyphicon glyphicon-bookmark" style="padding-top: 8px; padding-left: 7px;"></i></div>
+                                <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
+                                    <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
+                                        <div class="row">
+                                              <a href="{% url 'basics:information_view' pk=elem.id %}">
+                                                  <div class="col-sm-12">
+                                                      <h4 class="list-group-item-heading" style="color: #333; hover.color: #333; word-wrap: break-word;">{{ elem.headline }}<div id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="The number of vote up's for this information." style="font-size: .83em; color: #555; hover.color: #555; float: right; cursor: pointer;"><span class="glyphicon glyphicon-chevron-up"></span>{{ elem.number_likes }}</div></h4>
+                                                      <p class="list-group-item-text" style="color: #555; hover.color: #555; word-wrap: break-word;">{{ elem|get_short_text:512|linebreaksbr  }}</p>
+                                                      <h6 style="color: #555; hover.color: #555;"><br><i>from {{ elem.date }} {% if elem.author_is_admin %} by <span style="color: #D36E5A;">Admin</span>{% elif elem.group %} by <span style="color: #70962c;">{{ elem.group.name }}</span>{% elif elem.author == user %} by <span>you</span>{% endif %}</i></h6>
+                                                  </div>
+                                              </a>
+                                        </div>
+                                  </div>
+                                  <div class="list-group-footer">
+                                      <div class="row">
+                                          <a class="list-group-footer-button" type="button" style="cursor:pointer" id="unfollow{{elem.pk}}" onclick="unfollow({{elem.pk}})"><!-- TODO -->
+                                              <div class="col-sm-12">
+                                                  <span class="glyphicon glyphicon-bookmark"></span> Unfollow
+                                              </div>
+                                          </a>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+
                         {% else %}
                             <!-- comment on information -->
                             <div class="row">
-                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your written comment"><i class="glyphicon glyphicon-comment"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your commented"><i class="glyphicon glyphicon-comment"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                       <div class="row">
@@ -436,7 +517,7 @@
                                                     <span class="glyphicon glyphicon-search"></span> Details
                                                 </div>
                                             </a>
-                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:delete_comment_timeline' pk=elem.pk %}">
+                                            <a class="list-group-footer-button" type="button" onclick="deletePrompt('comment', '{{elem.pk}}')" >
                                                 <div class="col-sm-6">
                                                     <span class="glyphicon glyphicon-remove"></span> Delete
                                                 </div>
@@ -480,6 +561,106 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="NeedDeleteModal" role="dialog">
+    <div class="modal-dialog">
+
+     <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete Your Need</h4>
+             </div>
+            <div class="modal-body">
+                <p>If you delete This Need, the data will be permanently lost.</p>
+                <p>Would you like to rethink your decision?</p>
+            </div>
+             <div class="modal-footer">
+                <button id="standard-grey-button-light" type="button" class="btn btn-default" data-dismiss="modal">Rethink</button>
+                <a id="NeedButtonDelete" type="button" class="btn btn-default standard-grey-button-light" href="">
+                    <span class="glyphicon glyphicon-remove"></span> Delete
+                </a>
+             </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="CommentDeleteModal" role="dialog">
+<div class="modal-dialog">
+
+ <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Delete This Comment</h4>
+         </div>
+        <div class="modal-body">
+            <p>If you delete This Comment, the data will be permanently lost.</p>
+            <p>Would you like to rethink your decision?</p>
+        </div>
+         <div class="modal-footer">
+            <button id="standard-grey-button-light" type="button" class="btn btn-default" data-dismiss="modal">Rethink</button>
+            <a id="CommentButtonDelete" type="button" class="btn btn-default standard-grey-button-light" href="">
+                <span class="glyphicon glyphicon-remove"></span> Delete
+            </a>
+         </div>
+    </div>
+
+</div>
+</div>
+
+
+<script>
+
+function deletePrompt(conf, pk){
+	if (conf=="need"){
+		document.getElementById("NeedButtonDelete").setAttribute('href',"{% url 'basics:need_delete' pk=0 %}".replace("0", pk))
+		$('#NeedDeleteModal').modal('show');
+	}
+	else if (conf=="comment"){
+		document.getElementById("CommentButtonDelete").setAttribute('href',"{% url 'basics:delete_comment_timeline' pk=0 %}".replace("0", pk))
+		$('#CommentDeleteModal').modal('show');
+	}
+	else {
+		alert("Opps. Something went wrong :(");
+	}
+}
+
+function unfollow(pk){
+    if ($('#group').length > 0) {
+        if ($("#group").val() == "your_activities") {
+            group=null;
+        }
+        else{
+        group= $("#group").val();
+        }
+    }
+    else{
+        group=null;
+    }
+
+    $.ajax({
+        url: "unfollow/",
+        type: "POST",
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, activity: $("#activities").val(), group: group},
+
+        success: function(data){
+        $('#modal-body').html(data);
+            console.log("success");
+        },
+
+        error: function(xhr, errmsg, err){
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+
+}
+
+</script>
+
+
 
 <script>
 function filter(){

@@ -13,47 +13,47 @@
 
 					<div class="form-group">
 						{% if group.email == "" %}
-                            <h4>Add an email address: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This email address is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Add an email address: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Enter a public email address if you want to be contacted by our users ! It will be visible in your public profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                             <input type="email" class="form-control input-lg" placeholder=Email name="email" maxlength="254">
 						{% else %}
-                            <h4>Change email address: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This email address is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Change email address: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Enter a public email address if you want to be contacted by our users ! It will be visible in your public profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 							<input type="email" class="form-control input-lg" value= '{{ group.email }}' name="email" maxlength="254">
 						{% endif %}
 					</div>
 
 					<div class="form-group">
 						{% if group.phone == "" %}
-                            <h4>Add a phone number: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This phone number is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Add a phone number: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Enter a public phonenumber, e.g. your information office! It will be visible in your public profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                             <input type="description" class="form-control input-lg" placeholder="Phone Number" name="phone" maxlength="15" >
 						{% else %}
-                            <h4>Change phone number: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This phone number is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Change phone number: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Enter a public phonenumber, e.g. your information office! It will be visible in your public profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 							<input type="description" class="form-control input-lg" value= {{ group.phone }} name="phone" maxlength="15" >
 						{% endif %}
 					</div>
 
 					<div class="form-group">
 						{% if group.webpage == "" %}
-                            <h4>Add a webpage: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This webpage link is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Add a webpage: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="To give our users the possibility of learning more about your organisition, you could publish the link leading to your official website"><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 							<input type="description" class="form-control input-lg" placeholder=Webpage name="page" maxlength="256" >
 						{% else %}
-                            <h4>Change webpage: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This webpage link is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Change webpage: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="To give our users the possibility of learning more about your organisition, you could publish the link leading to your official website"><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 							<input type="description" class="form-control input-lg" value= {{ group.webpage }} name="page" maxlength="256" >
 						{% endif %}
 					</div>
 
 					<div class="form-group">
 						{% if group.description == "" %}
-                            <h4>Add a description: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This description of your organisation is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Add a description: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This description of your organisation is visible for all users of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 							<textarea type="description" class="form-control input-lg" placeholder="Description" name="description"  rows="4"></textarea>
 						{% else %}
-                            <h4>Change description: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This description of your organisation is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Change description: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This description of your organisation is visible for all users of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 							<textarea type="description" class="form-control input-lg" name="description"  rows="4">{{ group.description }}</textarea>
 						{% endif %}
 
 					</div>
                     <div class="row">
                         <div class="col-lg-7 col-md-8 col-sm-12">
-                            <h4>Choose/or change the location of the head office of your organisation: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This location of the head office from your organisation is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Choose/or change the location of the head office of your organisation: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="This location of your organisations head office is visible for all user of Act of Goods in your organisation profile."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-4">
                             <div class="form-group">

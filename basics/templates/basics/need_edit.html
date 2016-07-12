@@ -13,7 +13,7 @@
 				<form class="form" role="form" method="post" accept-charset="UTF-8">
 				    {% csrf_token %}
     				<div class="form-group">
-                        <h4>Change headline: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Change the headline of your need. This headline will represent your need for other user. Give a clearly short overview."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        <h4>Change headline: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Change the headline of your need. This headline will represent your need to those who want to help. Give a clear, short overview."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 					    <input type="description" class="form-control input-lg" placeholder= "headline" value="{{need.headline}}" name="desc"  >
 					</div>
                     <div class="list-group-item" id="standard-list-group-item-white-div" style="padding-top: 5px; padding-bottom: 5px; margin-bottom: 15px; border-radius: 4px;">
@@ -21,12 +21,12 @@
                         <p style="word-wrap: break-word;">{{ need.text | linebreaksbr }}</p>
                     </div>
 					<div class="form-group">
-                        <h4>Change description: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Change the description of your need. Give an accurate description of your need so that other user can realize your problem."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                        <h4>Change description: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom"  title="Change the description of your need. In order to get only qualified answers, give a detailed, accurate description of what you need!"><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
 					    <textarea type="text" class="form-control input-lg" placeholder= "description" value="" name="text"  >{{need.text}}</textarea>
 					</div>
                     <div class="row">
                         <div class="col-lg-4 col-md-5 col-sm-6">
-                            <h4>Change the location for this need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="All user in the neighborhood of your given location will see your need."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
+                            <h4>Change the location for this need: <a id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="All users in the surrounding of your given location will see your need."><span class="glyphicon glyphicon-question-sign" style="color: #5D5F5B;"></span></a></h4>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-4">
                             <div class="form-group">
