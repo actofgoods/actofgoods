@@ -23,5 +23,5 @@ deactivate
 sudo cp $DIR/conf/actofgoods_nginx /etc/nginx/sites-available/actofgoods
 # create sys link for sites-availbe
 sudo ln -s /etc/nginx/sites-available/actofgoods /etc/nginx/sites-enabled
-
+# enable site
 sudo rm /etc/nginx/sites-enabled/default
