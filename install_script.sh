@@ -30,7 +30,6 @@ sudo service nginx reload
 # copy to supervisor
 sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server > /etc/supervisor/conf.d/actofgoods.conf
 # create db
-sudo su - postgres
 createdb actofgoods
 psql -c "CREATE USER actofgoods WITH PASSWORD 'saft231';"
 psql -c "Grant all privileges on database actofgoods to actofgoods;"
