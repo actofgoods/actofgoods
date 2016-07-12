@@ -19,6 +19,8 @@ source $DIR/venv/bin/activate
 pip3 install -r $DIR/requirements.txt
 # virtualenv deactivate
 deactivate
+#
+sed -e "s/\${DIR}/$DIR/" $DIR/conf/actofgoods_nginx
 # copy conf file to nginx
 sudo cp $DIR/conf/actofgoods_nginx /etc/nginx/sites-available/actofgoods
 # create sys link for sites-availbe
