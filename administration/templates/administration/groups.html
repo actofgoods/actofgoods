@@ -23,12 +23,7 @@
                                         <p>Group with this name already exists!</p>
                                     </div>
                                 </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    {% if messages %}
-                        {% for message in messages %}
-                            {% if message.message == 'wrong_emailAndGroup' %}
+                            {% elif message.message == 'wrong_emailAndGroup' %}
                                 <div class="form-group">
                                     <div class="error-messages">
                                         <p>Group with this Name already exists and User with this E-Mail doesn't exist!</p>
@@ -48,12 +43,7 @@
                                         <p>User with this E-Mail doesn't exist</p>
                                     </div>
                                 </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    {% if messages %}
-                        {% for message in messages %}
-                            {% if message.message == 'wrong_form' %}
+                            {% elif message.message == 'wrong_form' %}
                                 <div class="form-group">
                                     <div class="error-messages">
                                         <p>You need to fill in all Fields!</p>
@@ -99,7 +89,7 @@
                 <form class="form" role="form" method="POST" accept-charset="UTF-8">
                 {%csrf_token%}
                     <div class="form-group">
-                        <input type="name" class="form-control input-lg" placeholder="Group Name" name="name" maxlength="30" required/>
+                        <input type="name" class="form-control input-lg" placeholder="Group Name" name="name" pattern="[a-zA-Z0-9 ]+" maxlength="30" required/>
                     </div>
                     <div class="form-group">
                         <input name="search_group" id="standard-grey-button-bold" type="submit" class="btn btn-block btn-lg btn-primary" value="Search"/>
