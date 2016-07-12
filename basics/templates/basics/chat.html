@@ -257,7 +257,7 @@
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                           </button>
-                          <h2 style="word-wrap: break-word;">{{room.need.headline}}</h2>
+                          <h2 style="word-wrap: break-word;">Need: {{room.need.headline}}</h2>
                           <h6><i>from {{ room.need.date }} in category {{ room.need.categorie.name }} {% if room.need.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=room.need.group.name %}">{{ room.need.group.name }}</a>{% elif room.need.author == user %} by <span>you</span>{% endif %}</i></h6>
                       </div>
                       <div class="modal-body">

@@ -24,3 +24,21 @@ def has_number(user):
     if  Userdata.objects.get(user=user).phone != None and Userdata.objects.get(user=user).phone != "":
         return True
     return False
+
+@register.filter
+def get_room_helper_out(need):
+    if len(Room.objects.filter(need=need, helper_out=False)) == 1:
+        return False
+    return True
+
+@register.filter
+def get_roomname_off_active_chat(need):
+    return Room.objects.get(need=need, helper_out=False).name
+
+@register.filter
+def get_room_need_user_finished_off_active_chat(need):
+    return Room.objects.get(need=need, helper_out=False).need_user_finished
+
+@register.filter
+def get_room_helper_out_becuase_of_kick_or_leave(need, user):
+    return Room.objects.get(need=need, user_req=user).helper_out

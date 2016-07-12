@@ -83,6 +83,13 @@ def home(request):
     if request.user.is_authenticated():
         needs = list(Need.objects.all().filter(author=request.user))
         infos = list(Information.objects.all().filter(author=request.user))
+        usr_pk = request.user.userdata.pk
+        all_infos = Information.objects.all()
+        followed_infos = []
+        for i in all_infos:
+            follower = i.followed_by
+            if len(follower.filter(pk = usr_pk)) != 0:
+                followed_infos.append(i)
         needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
         comm = list(Comment.objects.all().filter(author=request.user))
         rel_comms = []
@@ -90,10 +97,10 @@ def home(request):
             if not c.inf in rel_comms:
                 rel_comms.append(c)
         result_list = sorted(
-            chain(needs, infos, needs_you_help, rel_comms),
+            chain(needs, infos, needs_you_help, rel_comms, followed_infos),
             key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
 
-        return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list})
+        return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'followed_infos': followed_infos, 'result_list': result_list})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
