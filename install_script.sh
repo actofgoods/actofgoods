@@ -8,7 +8,7 @@ message=test
 echo "$message"
 sudo apt-get update
 # install necessery programms through apt-get
-sudo apt-get install postgresql python3 python3-pip redis-server nginx postgresql-contrib libpq-dev
+sudo apt-get install postgresql python3 python3-pip redis-server nginx postgresql-contrib libpq-dev supervisor
 # install virtualenv through pip
 pip3 install virtualenv
 # create virtualenv
@@ -25,3 +25,7 @@ sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_nginx > /etc/nginx/sites-available
 sudo ln -s /etc/nginx/sites-available/actofgoods /etc/nginx/sites-enabled
 # enable site
 sudo rm /etc/nginx/sites-enabled/default
+# reload nginx
+sudo service nginx reload
+# copy to supervisor
+sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server > /etc/nginx/sites-available/actofgoods
