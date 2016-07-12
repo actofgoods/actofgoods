@@ -473,7 +473,7 @@ def chat_room(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
         room = Room.objects.get(name=roomname)
         name = room.need.headline
-        if room.need.author == request.user or (room.user_req == request.user and not room.helper_out):
+        if room.need.author == request.user or (room.user_req == request.user):
             room.set_saw(request.user)
             messages = ChatMessage.objects.filter(room=roomname).order_by('date')
             message_json = messages_to_json(messages)

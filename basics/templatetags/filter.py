@@ -32,6 +32,10 @@ def get_room_helper_out(need):
     return True
 
 @register.filter
+def get_roomname_off_inactive_chat(need, user):
+    return Room.objects.get(need=need, user_req=user).name
+
+@register.filter
 def get_roomname_off_active_chat(need):
     return Room.objects.get(need=need, helper_out=False).name
 
