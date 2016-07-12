@@ -32,12 +32,8 @@ sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server > /etc/supervisor/conf.d/ac
 # create db
 sudo su - postgres
 createdb actofgoods
-createuser -P actofgoods -s
-saft231
-saft231
-psql
-Grant all privileges on database actofgoods to actofgoods
-\q
+psql -c "CREATE USER actofgoods WITH PASSWORD 'saft231';"
+psql -c "Grant all privileges on database actofgoods to actofgoods;"
 exit
 # makemigrations
 python3 $DIR/manage.py makemigrations
