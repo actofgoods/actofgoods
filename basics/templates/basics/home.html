@@ -223,7 +223,7 @@
                             <select style="width: 100%;" name="activities" id="activities">
                                 <option value="all_activities">all activities</option>
                                 <option value="posted_needs">posted needs</option>
-                                <option value="needs_help">needs where you help</option>
+                                <option value="needs_help">needs where you helped</option>
                                 <option value="posted_information">posted information</option>
                                 <option value="written_comments">written comments</option>
                             </select>
@@ -270,7 +270,7 @@
                         {% if elem in infos %}
                             <!-- information -->
                             <div class="row">
-                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your information"><i class="glyphicon glyphicon-info-sign"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="you informed"><i class="glyphicon glyphicon-info-sign"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
@@ -298,7 +298,7 @@
                         {% elif elem in needs %}
                             <!-- need request -->
                             <div class="row">
-                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your requested need"><i class="glyphicon glyphicon-question-sign"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="you asked for"><i class="glyphicon glyphicon-question-sign"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
@@ -386,7 +386,7 @@
                         {% elif elem in needs_you_help %}
                             <!-- need your help -->
                             <div class="row">
-                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="need your help"><i class="glyphicon glyphicon-header" style="padding-top: 7px; padding-left: 6px"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="you helped"><i class="glyphicon glyphicon-header" style="padding-top: 7px; padding-left: 6px"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <a class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                         <div class="row">
@@ -498,7 +498,7 @@
                         {% else %}
                             <!-- comment on information -->
                             <div class="row">
-                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your written comment"><i class="glyphicon glyphicon-comment"></i></div>
+                                <div class="timeline-badge" id="tooltip-info" data-toggle="tooltip" data-placement="bottom" title="your commented"><i class="glyphicon glyphicon-comment"></i></div>
                                 <div {% if forloop.counter0|divisibleby:2 %} class="col-sm-6" id="left-timeline-block" {% else %} class="col-sm-6 col-sm-offset-6" id="right-timeline-block" {% endif %}>
                                     <div class="list-group-item {% if forloop.counter0|divisibleby:2 %} timeline-panel-right {% else %} timeline-panel-left {% endif %}" id="standard-list-group-item-div">
                                       <div class="row">

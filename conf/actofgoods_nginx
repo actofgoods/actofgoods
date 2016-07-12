@@ -1,4 +1,4 @@
-pstream actofgoods_server {
+upstream actofgoods_server {
   # fail_timeout=0 means we always retry an upstream even if it failed
   # to return a good HTTP response (in case the Unicorn master nukes a
   # single worker for timing out).
@@ -20,13 +20,13 @@ server {
   listen   80;
   server_name 10.200.1.40;
 
-  access_log /home/ubuntu/github/logs/nginx-access.log;
-  error_log /home/ubuntu/github/logs/nginx-error.log debug;
+  access_log ${DIR}/logs/nginx-access.log;
+  error_log ${DIR}/logs/nginx-error.log debug;
 
 
 
   location /static/ {
-    root  /home/ubuntu/github/actofgoods/basics;
+    root  ${DIR}/basics;
   }
 
   location / {
