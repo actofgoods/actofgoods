@@ -14,15 +14,13 @@ pip3 install virtualenv
 # create virtualenv
 sudo virtualenv $DIR/venv
 #
-source $DIR/venv/bin/activate
+. $DIR/venv/bin/activate
 # install software through pip in virtualenv
 pip3 install -r $DIR/requirements.txt
 # virtualenv deactivate
 deactivate
 #
-sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_nginx
-# copy conf file to nginx
-sudo cp $DIR/conf/actofgoods_nginx /etc/nginx/sites-available/actofgoods
+sudo sh -c "sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_nginx > /etc/nginx/sites-available/actofgoods"
 # create sys link for sites-availbe
 sudo ln -s /etc/nginx/sites-available/actofgoods /etc/nginx/sites-enabled
 # enable site
