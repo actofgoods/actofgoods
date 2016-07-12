@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 		<title>Act of Goods</title>
+        {% load filter%}
 		{% load staticfiles %}
 		<link rel="icon" href="{% static 'basics/images/icon.ico' %}">
 
@@ -88,7 +89,7 @@
                                 <li id="navbar-with-divider" {% if "/groups" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
 								    <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Organisations <span class="caret"></span></a>
 								    <ul id="navbar-dropdown-menu" class="dropdown-menu">
-                	                    {% for group in user.groups.all %}
+                	                    {% for group in user|get_groups_of_user %}
 									            <li {% if "/groups/detail/{{group.name}}/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:group_detail' name=group.name %}">{{group.name}}</a></li>
                                         {% endfor %}
 								    </ul>
