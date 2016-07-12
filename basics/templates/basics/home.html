@@ -485,7 +485,7 @@
                                   </div>
                                   <div class="list-group-footer">
                                       <div class="row">
-                                          <a class="list-group-footer-button" type="button" style="cursor:pointer" id="unfollow{{info.pk}}" onclick="unfollow({{info.pk}})"><!-- TODO -->
+                                          <a class="list-group-footer-button" type="button" style="cursor:pointer" id="unfollow{{elem.pk}}" onclick="unfollow({{elem.pk}})"><!-- TODO -->
                                               <div class="col-sm-12">
                                                   <span class="glyphicon glyphicon-bookmark"></span> Unfollow
                                               </div>
@@ -626,6 +626,36 @@ function deletePrompt(conf, pk){
 	else {
 		alert("Opps. Something went wrong :(");
 	}
+}
+
+function unfollow(pk){
+    if ($('#group').length > 0) {
+        if ($("#group").val() == "your_activities") {
+            group=null;
+        }
+        else{
+        group= $("#group").val();
+        }
+    }
+    else{
+        group=null;
+    }
+
+    $.ajax({
+        url: "unfollow/",
+        type: "POST",
+        data: {csrfmiddlewaretoken: '{{ csrf_token }}', pk: pk, activity: $("#activities").val(), group: group},
+
+        success: function(data){
+        $('#modal-body').html(data);
+            console.log("success");
+        },
+
+        error: function(xhr, errmsg, err){
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+
 }
 
 </script>

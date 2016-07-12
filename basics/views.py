@@ -126,8 +126,15 @@ def home_filter(request):
             activity=request.POST['activity']
 
             if activity=="all_activities":
+                usr_pk = request.user.userdata.pk
+                followed_infos = []
+                all_infos = Information.objects.all()
+                for i in all_infos:
+                    follower = i.followed_by
+                    if len(follower.filter(pk = usr_pk)) != 0:
+                        followed_infos.append(i)
                 result_list = sorted(
-                    chain(needs, infos, needs_you_help, rel_comms),
+                    chain(needs, infos, needs_you_help, rel_comms, followed_infos),
                     key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
             elif activity=="posted_needs":
                 result_list = sorted(
@@ -146,7 +153,18 @@ def home_filter(request):
                     chain(rel_comms),
                     key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
             t = loader.get_template('snippets/home_filter.html')
-            return HttpResponse(t.render({'request': request, 'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'result_list': result_list}))
+            return HttpResponse(t.render({'request': request, 'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'followed_infos': followed_infos, 'result_list': result_list}))
+
+@csrf_protect
+def home_unfollow(request):
+    if request.user.is_authenticated() and not request.user.is_superuser:
+        if request.is_ajax():
+            pk=int(request.POST['pk'])
+            info = Information.objects.get(pk=pk)
+            info.followed_by.remove(request.user.userdata)
+            info.save()
+            return home_filter(request)
+
 
 def privacy(request):
 	return render(request, 'basics/privacy.html')
