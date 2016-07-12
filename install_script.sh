@@ -22,13 +22,29 @@ pip3 install -r $DIR/requirements.txt
 # Copy file to nginx sites-availble
 sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_nginx > /etc/nginx/sites-available/actofgoods
 # create sys link for sites-availbe
-sudo ln -s /etc/nginx/sites-available/actofgoods /etc/nginx/sites-enabled
+sudo ln -sf /etc/nginx/sites-available/actofgoods /etc/nginx/sites-enabled
 # enable site
 sudo rm /etc/nginx/sites-enabled/default
 # reload nginx
 sudo service nginx reload
 # copy to supervisor
 sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server > /etc/supervisor/conf.d/actofgoods.conf
+# create db
+sudo su - postgres
+createdb actofgoods
+createuser -P actofgoods -s
+saft231
+saft231
+psql
+Grant all privileges on database actofgoods to actofgoods
+\q
+exit
+# makemigrations
+python3 $DIR/manage.py makemigrations
+# migrate to database
+python3 $DIR/manage.py migrate
+# load supervisord
+sudo supervisord
 # reread supervisor
 sudo supervisorctl reread
 # reload supervisor
