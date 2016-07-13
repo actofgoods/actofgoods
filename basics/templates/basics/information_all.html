@@ -68,7 +68,7 @@
 
 
 <script>
-
+function initialisiere(){
     $(window).ready(function() {
         if($('.button-float').offset().top + 70 >= $('#footer').offset().top - 20){
             $('.button-float').css('position', 'absolute');
@@ -96,7 +96,7 @@
              $('.button-float').css('bottom', '20px');
          }
      });
-
+}
 </script>
 
 <script>
@@ -136,7 +136,7 @@ function filter(){
 
       success: function(data){
         $('#insert').html(data);
-        console.log("success");
+        initialisiere();
       },
 
       error: function(xhr, errmsg, err){

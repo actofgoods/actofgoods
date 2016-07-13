@@ -13,7 +13,7 @@ export LC_CTYPE="en_US.UTF-8"
 sudo apt install postgresql python3 python3-pip redis-server nginx postgresql-contrib libpq-dev supervisor postgis virtualenv
 # create virtualenv
 virtualenv $DIR/venv
-#
+# Activate virtualenv
 . $DIR/venv/bin/activate
 # install software through pip in virtualenv
 pip3 install -r $DIR/requirements.txt
@@ -21,7 +21,7 @@ pip3 install -r $DIR/requirements.txt
 deactivate
 # copy nginx conf
 sudo cp $DIR/conf/actofgoods_nginx /etc/nginx/sites-available/actofgoods
-# Copy file to nginx sites-availble
+# Set right file to nginx sites-availble
 sudo sed -i "s!\${DIR}!$DIR!" /etc/nginx/sites-available/actofgoods
 # create sys link for sites-availbe
 sudo ln -sf /etc/nginx/sites-available/actofgoods /etc/nginx/sites-enabled
@@ -32,7 +32,7 @@ sudo service nginx reload
 # copy file for supervisor
 sudo cp $DIR/conf/actofgoods_server /etc/supervisor/conf.d/actofgoods.conf
 # edit conf for supervisor
-sudo sed -i "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server
+sudo sed -i "s!\${DIR}!$DIR!" /etc/supervisor/conf.d/actofgoods.conf
 # create db
 sudo -u postgres psql -c "CREATE DATABASE actofgoods;"
 sudo -u postgres psql -c "CREATE USER actofgoods WITH PASSWORD 'saft231';"
@@ -44,6 +44,8 @@ python3 $DIR/manage.py makemigrations
 python3 $DIR/manage.py makemigrations basics
 # migrate to database
 python3 $DIR/manage.py migrate
+# settings allowed host
+sed -i 's!DEBUG = True!DEBUG = False!' $DIR/actofgoods/settings.py
 # create logs
 mkdir $DIR/logs
 touch $DIR/logs/nginx-access.log
