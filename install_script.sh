@@ -32,7 +32,7 @@ sudo service nginx reload
 # copy file for supervisor
 sudo cp $DIR/conf/actofgoods_server /etc/supervisor/conf.d/actofgoods.conf
 # edit conf for supervisor
-sudo sed -i "s!\${DIR}!$DIR!" $DIR/conf/actofgoods.conf
+sudo sed -i "s!\${DIR}!$DIR!" /etc/supervisor/conf.d/actofgoods.conf
 # create db
 sudo -u postgres psql -c "CREATE DATABASE actofgoods;"
 sudo -u postgres psql -c "CREATE USER actofgoods WITH PASSWORD 'saft231';"
