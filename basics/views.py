@@ -753,7 +753,7 @@ def information_all(request):
             dist=500
         cards_per_page = 10
         wordsearch = ""
-        infos = Information.objects.all()
+        infos = Information.objects.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         for i in infos:
             if i.update_at.update_at < timezone.now():
                 hours_elapsed = int((timezone.now() - i.date).seconds/3600)
@@ -782,14 +782,22 @@ def information_all(request):
 def information_filter(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
         if request.is_ajax():
-            #TODO: Change this to somehing like user distance
-            if request.user.userdata:
-                dist = request.user.userdata.aux
-            else:
-                dist=500
             cards_per_page = 10
             wordsearch = ""
-            infos=Information.objects.all().order_by('-priority', 'pk')
+            dist= int(request.POST['range'].replace(',',''))
+            infos=Information.objects.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
+            if "" == request.POST['wordsearch']:
+                for i in infos:
+                    if i.update_at.update_at < timezone.now():
+                        hours_elapsed = int((timezone.now() - i.date).seconds/3600)
+                        i.update_at.update_at = timezone.now() + timedelta(hours=1)
+                        if i.group:
+                            priority = priority_info_group(hours_elapsed, i.number_likes)
+                        else:
+                            priority = priority_info_user(hours_elapsed, i.number_likes)
+                        i.priority = priority
+                        i.save()
+
             page = 1
             page_range = np.arange(1, 5)
             if request.method == "POST":
@@ -1012,7 +1020,7 @@ def needs_all(request):
         category = "All"
         cards_per_page = 10
         wordsearch = ""
-        needs = Need.objects.all()
+        needs = Need.objects.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
         for n in needs:
             if n.update_at.update_at < timezone.now():
                 hours_elapsed = int((timezone.now() - n.date).seconds/3600)
@@ -1045,16 +1053,24 @@ def needs_all(request):
 def needs_filter(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
         if request.is_ajax():
-            #TODO: Change this to somehing like user distance
-            if request.user.userdata:
-                dist = request.user.userdata.aux
-            else:
-                dist=500
             category = "All"
             cards_per_page = 10
             wordsearch = ""
-            needs=Need.objects.all().order_by('-priority', 'pk')
+            dist= int(request.POST['range'].replace(',',''))
+            needs=Need.objects.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist))).order_by('-priority', 'pk')
             needs = needs.exclude(author=request.user)
+            if "" == request.POST['wordsearch']:
+                for n in needs:
+                    if n.update_at.update_at < timezone.now():
+                        hours_elapsed = int((timezone.now() - n.date).seconds/3600)
+                        n.update_at.update_at = timezone.now() + timedelta(hours=1)
+                        if n.group:
+                            priority = priority_need_group(hours_elapsed)
+                        else:
+                            priority = priority_need_user(hours_elapsed)
+                        n.priority = priority
+                        n.save()
+
             page = 1
             page_range = np.arange(1, 5)
             if request.method == "POST":

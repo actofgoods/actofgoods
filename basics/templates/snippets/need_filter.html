@@ -1,100 +1,100 @@
 {% load filter%}
-        <div class="modal-body" style="padding-bottom: 0px;" id="modal-body">
-            <div class="list-group" style="margin-bottom: 0px;" id="need-list">
-                {% if needs %}
-                    {% for need in needs %}
+<div class="modal-body" style="padding-bottom: 0px;" id="modal-body">
+    <div class="list-group" style="margin-bottom: 0px;" id="need-list">
+        {% if needs %}
+            {% for need in needs %}
 
-                        <!-- list all needs -->
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <a class="list-group-item" id="standard-list-group-item-div">
-                                    <div class="row">
-                                        <div class="col-sm-12" data-toggle="modal" data-target=".{{ need.id }}" id="cursor-pointer">
-                                            <h4 class="list-group-item-heading">{{ need.headline }}</h4>
-                                            <p class="list-group-item-text" style="word-wrap: break-word;">{{ need|get_short_text:160 }}</p>
-                                            <h6><br>from: {{ need.date }} / category: {{ need.categorie.name }}{% if need.group %} / by: <span style="color: #70962c;">{{ need.group.name }}</span>{% endif %}</h6>
-                                        </div>
-                                    </div>
-                                </a>
+                <!-- list all needs -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <a class="list-group-item" id="standard-list-group-item-div">
+                            <div class="row">
+                                <div class="col-sm-12" data-toggle="modal" data-target=".{{ need.id }}" id="cursor-pointer">
+                                    <h4 class="list-group-item-heading">{{ need.headline }}</h4>
+                                    <p class="list-group-item-text" style="word-wrap: break-word;">{{ need|get_short_text:160 }}</p>
+                                    <h6><br><i>from {{ need.date }} in category {{ need.categorie.name }}{% if need.group %} by <span style="color: #70962c;">{{ need.group.name }}</span>{% endif %}</i></h6>
+                                </div>
+                            </div>
+                        </a>
 
-                                <div class="list-group-footer" style="margin-bottom: 15px;">
-                                     {% if not user.userdata in need.reported_by.all %}
-                                        <div class="row">
-                                            <a class="list-group-footer-button" type="button" href="{% url 'basics:needs_help' id=need.id %}">
-                                                <div class="col-sm-6" id="list-group-footer-button-margin">
-                                                    <span class="glyphicon glyphicon-comment"></span> Help
-                                                </div>
-                                            </a>
-                                             <a class="list-group-footer-button" type="button" style="cursor:pointer" id="report{{need.pk}}"" onclick="report({{need.pk}})"">
-                                                <div class="col-sm-6">
-                                                     <span class="glyphicon glyphicon-ban-circle"></span> Report
-                                                </div>
-                                            </a>
+                        <div class="list-group-footer" style="margin-bottom: 15px;">
+                             {% if not user.userdata in need.reported_by.all %}
+                                <div class="row">
+                                    <a class="list-group-footer-button" type="button" href="{% url 'basics:needs_help' id=need.id %}">
+                                        <div class="col-sm-6" id="list-group-footer-button-margin">
+                                            <span class="glyphicon glyphicon-comment"></span> Help
                                         </div>
-                                     {% else %}
-                                         <div class="row">
-                                             <a class="list-group-footer-button" type="button" href="{% url 'basics:needs_help' id=need.id %}">
-                                                 <div class="col-sm-12">
-                                                     <span class="glyphicon glyphicon-comment"></span> Help
-                                                 </div>
-                                             </a>
+                                    </a>
+                                     <a class="list-group-footer-button" type="button" style="cursor:pointer" id="report{{need.pk}}" onclick="report({{need.pk}})">
+                                        <div class="col-sm-6">
+                                             <span class="glyphicon glyphicon-ban-circle"></span> Report
+                                        </div>
+                                    </a>
+                                </div>
+                             {% else %}
+                                 <div class="row">
+                                     <a class="list-group-footer-button" type="button" href="{% url 'basics:needs_help' id=need.id %}">
+                                         <div class="col-sm-12">
+                                             <span class="glyphicon glyphicon-comment"></span> Help
                                          </div>
-                                     {% endif %}
-                                </div>
-
-                            </div>
+                                     </a>
+                                 </div>
+                             {% endif %}
                         </div>
 
-                        <!-- modal for every need -->
-                        <div class="modal fade {{ need.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                        <h2>{{need.headline}}</h2>
-                                        <h6>from: {{ need.date }} / category: {{ need.categorie.name }}{% if need.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=need.group.name %}">{{ need.group.name }}</a>{% endif %}</h6>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p style="word-wrap: break-word;">{{ need.text|linebreaksbr }}</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:needs_help' id=need.id %}';" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-comment"></span> Help</button>
-                                        {% if not user.userdata in need.reported_by.all %}
-                                          <button  type="button" class="btn btn-default btn-sml standard-grey-button-light " data-dismiss="modal" onclick="report({{need.pk}})" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-ban-circle"></span> Report</button>
-                                        {% endif %}
-                                        <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal" style="margin-bottom: 10px;">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% empty %}
-                        <h4>There are no needs.</h4>
-                    {% endfor %}
-                {% endif %}
-            </div>
-        </div>
-        <div class="modal-footer">
-            <div class="row">
-                <div class="col-xs-12 col-sm-offset-2 col-sm-8 text-center">
-                    <nav>
-                        <ul class="pagination">
-                            <li style="cursor:pointer" {% if 1 == page %}class="disabled"{% endif %}><a id="pagination-left-right" value="{{number}}" onclick="submit_page(this)" aria-label="Previous"><span aria-hidden="true" class="glyphicon glyphicon-menu-left"></span></a></li>
-                            {% for number in page_range %}
-                                {% if number == page %}
-                                    <li class="active"><a id="pagination-number-active" onclick="submit_page(this)" value="{{number}}">{{number}} <span class="sr-only">(current)</span></a></li>
-                                {% else %}
-                                    <li><a id="pagination-number" onclick="submit_page(this)" style="cursor:pointer" value="{{number}}">{{number}}</a></li>
-                                {% endif %}
-                            {% endfor %}
-                            <li>
-                                <a id="pagination-left-right" style="cursor:pointer" onclick="submit_page(this)" value="{{number}}" aria-label="Next">
-                                    <span aria-hidden="true" class="glyphicon glyphicon-menu-right"></span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                    </div>
                 </div>
-            </div>
+
+                <!-- modal for every need -->
+                <div class="modal fade {{ need.id }}"  role="dialog" aria-labelledby="request" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h2>{{need.headline}}</h2>
+                                <h6><i>from {{ need.date }} in category {{ need.categorie.name }}{% if need.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=need.group.name %}">{{ need.group.name }}</a>{% endif %}</i></h6>
+                            </div>
+                            <div class="modal-body">
+                                <p style="word-wrap: break-word;">{{ need.text|linebreaksbr }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:needs_help' id=need.id %}';" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-comment"></span> Help</button>
+                                {% if not user.userdata in need.reported_by.all %}
+                                  <button  type="button" class="btn btn-default btn-sml standard-grey-button-light " data-dismiss="modal" onclick="report({{need.pk}})" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-ban-circle"></span> Report</button>
+                                {% endif %}
+                                <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal" style="margin-bottom: 10px;">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <h4>There are no needs.</h4>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="row">
+        <div class="col-xs-12 col-sm-offset-2 col-sm-8 text-center">
+            <nav>
+                <ul class="pagination">
+                    <li style="cursor:pointer" {% if 1 == page %}class="disabled"{% endif %}><a id="pagination-left-right" value="{{number}}" onclick="submit_page(this)" aria-label="Previous"><span aria-hidden="true" class="glyphicon glyphicon-menu-left"></span></a></li>
+                    {% for number in page_range %}
+                        {% if number == page %}
+                            <li class="active"><a id="pagination-number-active" onclick="submit_page(this)" value="{{number}}">{{number}} <span class="sr-only">(current)</span></a></li>
+                        {% else %}
+                            <li><a id="pagination-number" onclick="submit_page(this)" style="cursor:pointer" value="{{number}}">{{number}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    <li>
+                        <a id="pagination-left-right" style="cursor:pointer" onclick="submit_page(this)" value="{{number}}" aria-label="Next">
+                            <span aria-hidden="true" class="glyphicon glyphicon-menu-right"></span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
+    </div>
+</div>
