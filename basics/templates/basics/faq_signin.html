@@ -246,30 +246,36 @@
                     </div>
                     <div id="collapseGroups" class="panel-collapse collapse">
                         <div class="panel-body">
-                            <p> Organization's enable NGO's to stay connected on the Act of Goods website. </p>
-			   <p> <b>Your Organization's Profile </b></p>
-			   <p> You can edit your profile at anytime, ensuring that all of your information is up-to-date. This will allow people to connect through act of goods. </p>
-                            <br>
-                            <img src="http://tubtul.org/actofgoodsFotos/organisation_overview.PNG" alt="" style="width:100%;">
-                            <br>
-                            <br>
-			   <p> <b>Your Organization's Profile </b></p>
-			   <p> You can edit your profile at anytime, ensuring that all of your information is up-to-date. This will allow people to connect through act of goods. <br> As a member of an organization you can search for more members of your organization on acts of goods and connect with them and add them to the organization's act of goods group. <br>
-If someone leaves a group, they are unable to automatically join again. Someone must send them an invitation again.  </p>
-                            <br>
-                            <img src="http://tubtul.org/actofgoodsFotos/organisation_overview.PNG" alt="" style="width:100%;">
-                           <br>
-                            <br>
-			   <p> <b>Edit Your Organization's Profile </b></p>
-			   <p> You can edit your profile at anytime, ensuring that all of your information is up-to-date. This will allow people to connect through act of goods. </p>
-                            <br>
-                            <img src="http://tubtul.org/actofgoodsFotos/organisation_edit_profil.PNG" alt="" style="width:100%;">
-                           <br>
-                            <br>
-			   <p> <b>Areas claimed:</b></p>
-			   <p> Organizations can claim areas of land where help is needed. In order to make a new claim, simply click on the 'new claim' button located in the top left corner and click on the area of land that needs help.  As the person who claims this need, you are responsible for ensuring that enough help is provided. The colours indicate the various organizations that claimed land. The various organizations providing help can also be seen in the list below.<br>When you click on the organization, you can also see what other organizations have requested in other areas.<br>With the filter button, you can filter needs and areas where claims have been made. </p>
-                            <br>
-                            <img src="http://tubtul.org/actofgoodsFotos/areas_claimed.PNG" alt="" style="width:100%;">
+                            {% if user.groups.all|length == 0 %}
+                            <p>Organization's are groups </p>
+
+                            {%else%}
+                           <p> Organization's enable NGO's to stay connected on the Act of Goods website. </p>
+                           <p> <b>Your Organization's Profile </b></p>
+                           <p> You can edit your profile at anytime, ensuring that all of your information is up-to-date. This will allow people to connect through act of goods. </p>
+                                        <br>
+                                        <img src="http://tubtul.org/actofgoodsFotos/organisation_overview.PNG" alt="" style="width:100%;">
+                                        <br>
+                                        <br>
+                           <p> <b>Your Organization's Profile </b></p>
+                           <p> You can edit your profile at anytime, ensuring that all of your information is up-to-date. This will allow people to connect through act of goods. <br> As a member of an organization you can search for more members of your organization on acts of goods and connect with them and add them to the organization's act of goods group. <br>
+            If someone leaves a group, they are unable to automatically join again. Someone must send them an invitation again.  </p>
+                                        <br>
+                                        <img src="http://tubtul.org/actofgoodsFotos/organisation_overview.PNG" alt="" style="width:100%;">
+                                       <br>
+                                        <br>
+                           <p> <b>Edit Your Organization's Profile </b></p>
+                           <p> You can edit your profile at anytime, ensuring that all of your information is up-to-date. This will allow people to connect through act of goods. </p>
+                                        <br>
+                                        <img src="http://tubtul.org/actofgoodsFotos/organisation_edit_profil.PNG" alt="" style="width:100%;">
+                                       <br>
+                                        <br>
+                           <p> <b>Areas claimed:</b></p>
+                           <p> Organizations can claim areas of land where help is needed. In order to make a new claim, simply click on the 'new claim' button located in the top left corner and click on the area of land that needs help.  As the person who claims this need, you are responsible for ensuring that enough help is provided. The colours indicate the various organizations that claimed land. The various organizations providing help can also be seen in the list below.<br>When you click on the organization, you can also see what other organizations have requested in other areas.<br>With the filter button, you can filter needs and areas where claims have been made. </p>
+                                        <br>
+                                        <img src="http://tubtul.org/actofgoodsFotos/areas_claimed.PNG" alt="" style="width:100%;">
+
+                            {%endif%}
                         </div>
                     </div>
                 </div>
