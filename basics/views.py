@@ -727,7 +727,7 @@ def claim_reportNeed(request, name):
         need.save()
         need.reported_by.add(request.user.userdata)
         t = loader.get_template('snippets/claim_report.html')
-        return HttpResponse(t.render({'user': request.user, 'need':need}))
+        return HttpResponse(t.render({'user': request.user, 'need':need, 'group':Groupdata.objects.get(name=name)}))
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -737,7 +737,7 @@ def claim_like(request, name):
             return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
-        if Userdata.objects.get(user=request.user) in need.liked_by.all():
+        if Userdata.objects.get(user=request.user) in info.liked_by.all():
             return permission_denied(request)
         info.was_liked = True
         info.number_likes += 1
