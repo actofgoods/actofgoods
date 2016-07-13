@@ -798,6 +798,7 @@ def information_filter(request):
                         i.priority = priority
                         i.save()
 
+            infos=infos.order_by('-priority','pk')
             page = 1
             page_range = np.arange(1, 5)
             if request.method == "POST":
