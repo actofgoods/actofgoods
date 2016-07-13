@@ -703,7 +703,7 @@ def claim_reportInfo(request, name):
             return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
-        if request.user in info.reported_by:
+        if Userdata.objects.get(user=request.user) in need.reported_by.all():
             return permission_denied(request)
         info.was_reported = True
         info.number_reports += 1
@@ -720,7 +720,7 @@ def claim_reportNeed(request, name):
         pk=int(request.POST['pk'])
 
         need = get_object_or_404(Need, pk=pk)
-        if request.user in need.reported_by:
+        if Userdata.objects.get(user=request.user) in need.reported_by.all():
             return permission_denied(request)
         need.was_reported = True
         need.number_reports += 1
@@ -737,7 +737,7 @@ def claim_like(request, name):
             return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
-        if request.user in info.liked_by:
+        if Userdata.objects.get(user=request.user) in need.liked_by.all():
             return permission_denied(request)
         info.was_liked = True
         info.number_likes += 1
@@ -1024,7 +1024,7 @@ def unlike_information(request):
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = get_object_or_404(Information, pk=pk)
-            if request.user in info.liked:
+            if Userdata.objects.get(user=request.user) in need.liked_by.all():
                 return permission_denied(request)
             info.number_likes -= 1
             if info.number_likes == 0:
@@ -1041,7 +1041,7 @@ def report_information(request):
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = get_object_or_404(Information, pk=pk)
-            if request.user in need.reported_by:
+            if Userdata.objects.get(user=request.user) in need.reported_by.all():
                 return permission_denied(request)
             info.was_reported = True
             info.number_reports += 1
@@ -1283,7 +1283,7 @@ def report_need(request):
         if request.is_ajax():
             pk=int(request.POST['pk'])
             need = get_object_or_404(Need, pk=pk)
-            if request.user in need.reported_by:
+            if Userdata.objects.get(user=request.user) in need.reported_by.all():
                 return permission_denied(request)
             need.was_reported = True
             need.number_reports += 1
@@ -1322,7 +1322,7 @@ def report_comment(request, pk):
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
         comment = get_object_or_404(Comment, pk=pk)# Comment.objects.get(pk=pk)
-        if request.user in comment.reported_by:
+        if Userdata.objects.get(user=request.user) in need.reported_by.all():
             return permission_denied(request)
         comment.was_reported = True
         comment.number_reports += 1
