@@ -703,7 +703,7 @@ def claim_reportInfo(request, name):
             return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
-        if Userdata.objects.get(user=request.user) in need.reported_by.all():
+        if Userdata.objects.get(user=request.user) in info.reported_by.all():
             return permission_denied(request)
         info.was_reported = True
         info.number_reports += 1
@@ -1041,7 +1041,7 @@ def report_information(request):
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = get_object_or_404(Information, pk=pk)
-            if Userdata.objects.get(user=request.user) in need.reported_by.all():
+            if Userdata.objects.get(user=request.user) in info.reported_by.all():
                 return permission_denied(request)
             info.was_reported = True
             info.number_reports += 1
@@ -1322,7 +1322,7 @@ def report_comment(request, pk):
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
         comment = get_object_or_404(Comment, pk=pk)# Comment.objects.get(pk=pk)
-        if Userdata.objects.get(user=request.user) in need.reported_by.all():
+        if Userdata.objects.get(user=request.user) in comment.reported_by.all():
             return permission_denied(request)
         comment.was_reported = True
         comment.number_reports += 1
@@ -1480,6 +1480,7 @@ def sendmail(email, content, subject):
     mail.starttls()
     mail.login('actofgoods@gmail.com', 'actofgoods123')
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
+    print("message should have been sendd")
     mail.close()
 
 def send_notifications(needdata):
