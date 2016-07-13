@@ -81,26 +81,7 @@ def home(request):
     if request.user.is_superuser:
         return redirect('administration:requests')
     if request.user.is_authenticated():
-        needs = list(Need.objects.all().filter(author=request.user))
-        infos = list(Information.objects.all().filter(author=request.user))
-        usr_pk = request.user.userdata.pk
-        all_infos = Information.objects.all()
-        followed_infos = []
-        for i in all_infos:
-            follower = i.followed_by
-            if len(follower.filter(pk = usr_pk)) != 0:
-                followed_infos.append(i)
-        needs_you_help = list(map(lambda x: x.need, list(Room.objects.all().filter(user_req=request.user))))
-        comm = list(Comment.objects.all().filter(author=request.user))
-        rel_comms = []
-        for c in comm:
-            if not c.inf in rel_comms:
-                rel_comms.append(c)
-        result_list = sorted(
-            chain(needs, infos, needs_you_help, rel_comms, followed_infos),
-            key=lambda instance: instance.was_helped_at.was_helped_at if hasattr(instance, 'was_helped_at') and instance not in needs else instance.date, reverse=True)
-
-        return render(request, 'basics/home.html', {'needs': needs, 'infos': infos, 'needs_you_help': needs_you_help, 'followed_infos': followed_infos, 'result_list': result_list})
+        return render(request, 'basics/home.html')
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -762,30 +743,7 @@ def information_all(request):
             dist = request.user.userdata.aux
         else:
             dist=500
-        cards_per_page = 10
-        wordsearch = ""
-        infos = Information.objects.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
-        for i in infos:
-            if i.update_at.update_at < timezone.now():
-                hours_elapsed = int((timezone.now() - i.date).seconds/3600)
-                i.update_at.update_at = timezone.now() + timedelta(hours=1)
-                if i.group:
-                    priority = priority_info_group(hours_elapsed, i.number_likes)
-                else:
-                    priority = priority_info_user(hours_elapsed, i.number_likes)
-                i.priority = priority
-                i.save()
-
-        infos=infos.order_by('-priority','pk')
-        page = 1
-        page_range = np.arange(1, 5)
-        if request.method == "GET":
-            if not request.user.is_superuser:
-                infos=infos.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
-        max_page = int(len(infos)/cards_per_page)+1
-        infos = infos[cards_per_page*(page-1):cards_per_page*(page)]
-        page_range = np.arange(1,max_page+1)
-        return render(request, 'basics/information_all.html',{'infos':infos, 'wordsearch':wordsearch, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
+        return render(request, 'basics/information_all.html',{'range':dist})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -1030,34 +988,7 @@ def needs_all(request):
         else:
             dist=500
         category = "All"
-        cards_per_page = 10
-        wordsearch = ""
-        needs = Need.objects.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
-        for n in needs:
-            if n.update_at.update_at < timezone.now():
-                hours_elapsed = int((timezone.now() - n.date).seconds/3600)
-                n.update_at.update_at = timezone.now() + timedelta(hours=1)
-                if n.group:
-                    priority = priority_need_group(hours_elapsed)
-                else:
-                    priority = priority_need_user(hours_elapsed)
-                n.priority = priority
-                n.save()
-
-        needs=needs.order_by('-priority','pk')
-        needs = needs.exclude(author=request.user).filter(done=False)
-        page = 1
-        page_range = np.arange(1, 5)
-        if request.method == "GET":
-            if not request.user.is_superuser:
-                needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
-        #TODO: this way is fucking slow and should be changed but i didn't found a better solution
-        needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
-        max_page = int(len(needs)/cards_per_page)+1
-        needs = needs[cards_per_page*(page-1):cards_per_page*(page)]
-        #needs.sort(key=lambda x: (-x.priority, x.pk))
-        page_range = np.arange(1,max_page+1)
-        return render(request, 'basics/needs_all.html',{'needs':needs,'categorie':CategoriesNeeds.objects.all, 'category':category, 'wordsearch':wordsearch, 'cards_per_page':cards_per_page, 'range':dist, 'page':page, 'page_range':page_range})
+        return render(request, 'basics/needs_all.html',{'categorie':CategoriesNeeds.objects.all, 'category':category, 'range':dist})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -1069,7 +1000,7 @@ def needs_filter(request):
             cards_per_page = 10
             wordsearch = ""
             dist= int(request.POST['range'].replace(',',''))
-            needs=Need.objects.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist))).order_by('-priority', 'pk')
+            needs=Need.objects.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
             needs = needs.exclude(author=request.user)
             if "" == request.POST['wordsearch']:
                 for n in needs:
@@ -1082,7 +1013,7 @@ def needs_filter(request):
                             priority = priority_need_user(hours_elapsed)
                         n.priority = priority
                         n.save()
-
+            needs=needs.order_by('-priority', 'pk')
             page = 1
             page_range = np.arange(1, 5)
             if request.method == "POST":
