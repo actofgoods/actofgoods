@@ -471,9 +471,13 @@ def chat(request):
 @csrf_protect
 def chat_room(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
-        room = Room.objects.get(name=roomname)
+        try:
+            room = Room.objects.get(name=roomname)
+        except Room.DoesNotExist:
+            return page_not_found(request)
         name = room.need.headline
         if room.need.author == request.user or (room.user_req == request.user):
+            print(request.user.username)
             room.set_saw(request.user)
             messages = ChatMessage.objects.filter(room=roomname).order_by('date')
             message_json = messages_to_json(messages)
@@ -481,7 +485,8 @@ def chat_room(request, roomname):
             rooms = get_valid_rooms(request.user).exclude(name=roomname).order_by('-last_message')
             rooms_json = rooms_to_json(rooms, request.user)
             return render(request, 'basics/chat.html',{'name':name, 'room':room, 'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
-
+        else:
+            return permission_denied(request)
     return redirect('basics:actofgoods_startpage')
 
 def get_valid_rooms(user):
@@ -491,7 +496,10 @@ def get_valid_rooms(user):
 def kick_user(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
 
-        room = Room.objects.get(name=roomname)
+        try:
+            room = Room.objects.get(name=roomname)
+        except Room.DoesNotExist:
+            return page_not_found(request)
         if request.user == room.user_req or request.user == room.need.author:
             text = "Helper was kicked."
             if request.user == room.user_req:
@@ -499,6 +507,8 @@ def kick_user(request, roomname):
             room.helper_out = True
             room.save()
             ChatMessage.objects.create(room=room, text=text, author=None)
+        else:
+            return permission_denied(request)
     return redirect('basics:actofgoods_startpage')
 
 def messages_to_json(messages):
@@ -522,17 +532,22 @@ def messages_to_json(messages):
 @csrf_protect
 def needs_finish(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
-        room = Room.objects.get(name=roomname)
+        try:
+            room = Room.objects.get(name=roomname)
+        except Room.DoesNotExist:
+            return page_not_found(request);
         if room.need.author == request.user:
             if room.need.group:
                 text = "The need owner " + room.need.group.name + " considered the matter as settled."
             else:
                 text = "The need owner considered the matter as settled."
-        else:
+        elif room.user_req == request.user:
             if room.group:
                 text = "The helper " + room.need.group.name + " considered the matter as settled."
             else:
                 text = "The helper considered the matter as settled."
+        else:
+            return permission_denied(request)
         room.set_room_finished(request.user)
         ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')
