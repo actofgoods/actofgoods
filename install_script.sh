@@ -7,10 +7,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 message=test
 echo "$message"
 sudo apt-get update
+# local
+sudo locale-gen en_US.UTF-8
+export LC_ALL="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
 # install necessery programms through apt-get
-sudo apt-get install postgresql python3 python3-pip redis-server nginx postgresql-contrib libpq-dev supervisor postgis
-# install virtualenv through pip
-pip3 install virtualenv
+sudo apt-get install postgresql python3 python3-pip redis-server nginx postgresql-contrib libpq-dev supervisor postgis virtualenv
 # create virtualenv
 virtualenv $DIR/venv
 #
