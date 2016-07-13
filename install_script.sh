@@ -4,8 +4,6 @@
 # ------------------------------------------------------------
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-message=test
-echo "$message"
 sudo apt-get update
 # local
 sudo locale-gen en_US.UTF-8
@@ -21,7 +19,7 @@ virtualenv $DIR/venv
 pip3 install -r $DIR/requirements.txt
 # virtualenv deactivate
 deactivate
-# copy 
+# copy nginx conf
 sudo cp $DIR/conf/actofgoods_nginx /etc/nginx/sites-available/actofgoods
 # Copy file to nginx sites-availble
 sudo sed -i "s!\${DIR}!$DIR!" /etc/nginx/sites-available/actofgoods
@@ -31,9 +29,9 @@ sudo ln -sf /etc/nginx/sites-available/actofgoods /etc/nginx/sites-enabled
 sudo rm /etc/nginx/sites-enabled/default
 # reload nginx
 sudo service nginx reload
-# copy file
+# copy file for supervisor
 cp $DIR/conf/actofgoods_server /etc/supervisor/conf.d/actofgoods.conf
-# copy to supervisor
+# edit conf for supervisor
 sudo sed -i "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server
 # create db
 sudo -u postgres psql -c "CREATE DATABASE actofgoods;"
@@ -42,6 +40,8 @@ sudo -u postgres psql -c "Grant all privileges on database actofgoods to actofgo
 sudo -u postgres psql -c "ALTER USER actofgoods with superuser;"
 # makemigrations
 python3 $DIR/manage.py makemigrations
+# makemigrations basics
+python3 $DIR/manage.py makemigrations basics
 # migrate to database
 python3 $DIR/manage.py migrate
 # create logs
