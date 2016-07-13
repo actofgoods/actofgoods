@@ -112,10 +112,11 @@ def groups(request):
                     return render(request, 'administration/groups.html', {'gro':gro})
                 else:
                     messages.add_message(request, messages.INFO, 'group_not_exists')
+            else:
+                messages.add_message(request, messages.INFO, 'wrong_email')
         else:
             messages.add_message(request, messages.INFO, 'wrong_form')
     groups = Group.objects.all().order_by('name')
-
     return render(request, 'administration/groups.html', {'groups': groups})
 
 @csrf_exempt

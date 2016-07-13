@@ -1,311 +1,259 @@
 {% extends 'basics/base.html' %}
-
 {% block content %}
-<!-- Introduction Row -->
-       <!-- Introduction Row -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">FAQ
-                    <small>How does it work?</small>
-                </h1>
-	   </div>
-	</div>	
-
-
-
-<div class="container">
-    <br />
-
-    <div class="alert alert-warning alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        
-
-    </div>
-
-    <br />
-
-    <div class="panel-group" id="accordion">
-        <div class="faqHeader">General questions</div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Information about the home page</a>
-                </h4>
-            </div>
-            <div id="collapseOne" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <p>Act of Goods is a platform that helps people in emergencies or natural disasters. Give away the items you no longer need and trade with others in your area for items that you do! It's simple: just sign up with your email address and location, so that we know where you can help others, as well as where you would be able to pick up items that you need. Everytime you add a new need, you can change your need location as well as profile location. Act of Goods takes confidentiality very seriously and all of your information will be anonymous. In order to make a trade with another user, simply send them a message using our chat system. </p> <p> The immediate aid button allows you to start helping others immediately without signing up first!  </p>
-<p> 2 people currently have needs! Sign up to provide them with the item they are looking for.  </p>
-<p> We want to help others in times of need, and we know many people feel the same way. Therefore, we have developed this platform to enable everyday citizens to make a real difference. There are already many NGO's working tirelessly to help people around the world. If you or your organization are interested in working with us, we are always looking to continually develop partnerships with other organizations. </p>
-
-		    <img src="http://tubtul.org/actofgoodsFotos/home1.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTen">What happens if I contact Act of Goods?</a>
-                </h4>
-            </div>
-            <div id="collapseTen" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> We want to help others in times of need, and we know many people feel the same way. Therefore, we have developed this platform to enable everyday citizens to make a real difference. There are already many NGO's working tirelessly to help people around the world. If you or your organization are interested in working with us, we are always looking to continually develop partnerships with other organizations. </p>
-			<br>
-			<img src="http://tubtul.org/actofgoodsFotos/contactUs.PNG" alt="" style="width:50%;">
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseEleven">Why do I have to choose a Location and how does it work?</a>
-                </h4>
-            </div>
-            <div id="collapseEleven" class="panel-collapse collapse">
-                <div class="panel-body">
-		   <p> Providing us with the location enables us to figure out where you can best meet the needs of others, and where others could meet your needs. You are always anonymous, and if you move or have items available in a different location, you can change the location for that specific item, as well as the location on your profile. It is possible to have a different location of an item, than stated on your profile.  </p>
-                   <p> Please provide us with your exact location by filling in the form.</p>
-			<br>
-			<img src="http://tubtul.org/actofgoodsFotos/createNewNeedsChooseLocation.PNG" alt="" style="width:100%;">
-			<br>
-			<br>
-                   <p> Allow Google to track your location by clicking "Get Location" </p>
-			<br>
-			<img src="http://tubtul.org/actofgoodsFotos/createNewNeedsChooseLocationYOUR.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">What can I do with immediate Aid?</a>
-                </h4>
-            </div>
-            <div id="collapseTwo" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> The Immediate Aid button enables you to start helping others immediately. In the category button you can find the current needs that people have. The provide us with your location, and a short yet clear headline of your item. Finally, please provide us with a description of the item and click submit.  </p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/immediateAid.PNG" alt="" style="width:50%;">
-                </div>
-            </div>
-        </div>
-        <div class="faqHeader">Signed up as a user</div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseHomeLogedIn">What do I see on the homepage if I am logged in?</a>
-                </h4>
-            </div>
-            <div id="collapseHomeLogedIn" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> on the hompage users can see a newsfeed of all the most relevant needs, whether this need has been met, as well as where this item is needed. Users can filter the newsfeed based on item categories that are currently in demand.</p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/homeLogedInCategory.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">How can I sumit a new Need?</a>
-                </h4>
-            </div>
-            <div id="collapseThree" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> Submit a new need first by naming the category of your need. The  provide a short yet clear headline so that other users know what you are looking for, along with your location so that we can match who can meet your need. Finally, provide a description of your need.  </p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/createNewNeeds.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSix">Recent Active Needs?</a>
-                </h4>
-            </div>
-            <div id="collapseSix" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> Make a difference by providing items for the newest needs! On the left side you will see a comment button, where other users can write what they think about the need, or how they can help. The location button lets users know where help is needed, and the like button allows users to show others that they find this need important or highly relevent. The algorithm will highlight needs with many likes. The help button allows users to start privately chatting with the person in need directly and annonymously. Finally, if you feel that this post is suspiscous or inappropriate you can notifty us simply by clicking on the report button. The Act of Goods team will then look into it. </p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/activeNeeds.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseEight">Meet a need</a>
-                </h4>
-            </div>
-            <div id="collapseEight" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> Start chatting with those in need anonomously and immediately and use the chat to organize how you can help others.   </p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/getInContactWithHelper.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseNine">What is an information template and how can I create one?</a>
-                </h4>
-            </div>
-            <div id="collapseNine" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p>Information templates enable users to provide important information and create updates to share with users. Simply follow the template below, and the information newsfeed with be updated with your new information. </p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/createnewInformation.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-	<div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseGroups">What are groups?</a>
-                </h4>
-            </div>
-            <div id="collapseGroups" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> Groups enable NGO's to stay connected on the Act of Goods website. </p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/groups.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-	
-
-        <div class="faqHeader">Administration FAQ</div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">How can I switch between administration and normal user?</a>
-                </h4>
-            </div>
-            <div id="collapseFour" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> In the top corner on the righthand side, administrators can see a button, where they can simply switch between the administrators normal profile and their administration profile</p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/Admin/adminUserArea.PNG" alt="" style="width:20%;">
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSeven">Dividing Requests between co-workers</a>
-                </h4>
-            </div>
-            <div id="collapseSeven" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> When a new request for a user emerges, adminitrators can decide to take on a request simply by clicking on the button below.</p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/Admin/requestsanfrage.PNG" alt="" style="width:100%;">
-		   <br>
-		   <br>
-		   <p> An administrator that has inidicated that they will take on a request, will then receive a notification. </p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/Admin/requestsInProgress.PNG" alt="" style="width:100%;">
-		   <br>
-		   <br>
-		   <p> Once the request is finished, click on done, and the information will be submitted and the administrator can move onto the next request. </p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/Admin/requestsleer.PNG" alt="" style="width:100%;">
-		   <br>
-                </div>
-            </div>
-        </div>
-	<div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseCategories"> Category Overview</a>
-                </h4>
-            </div>
-            <div id="collapseCategories" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> Here administrators can add new categories, delete categories that are no longer relevant, as well as search and filter categoreis.</p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/Admin/Categories2a.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-	<div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseGroupsAdmin">Groups Overview</a>
-                </h4>
-            </div>
-            <div id="collapseGroupsAdmin" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p>Here administrators can add new groups, delete groups that are no longer relevant, as well as search and filter groups.</p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/Admin/Groups.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-	<div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseInformation">Information Overview</a>
-                </h4>
-            </div>
-            <div id="collapseInformation" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> Administrators can see an overview of all the information from the information newsfeed. </p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/Admin/FilterInformation.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-	<div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseUser">User Overview</a>
-                </h4>
-            </div>
-            <div id="collapseUser" class="panel-collapse collapse">
-                <div class="panel-body">
-                   <p> Administrators have the ability to see the list of users, as well as delete any users that have been reported. Administrators can also appoint new administrators. </p>
-		   <br>
-		   <img src="http://tubtul.org/actofgoodsFotos/Admin/UserLeer.PNG" alt="" style="width:100%;">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <style>
-    .faqHeader {
-        font-size: 27px;
-        margin: 20px;
-    }
 
-    .panel-heading [data-toggle="collapse"]:after {
-        font-family: 'Glyphicons Halflings';
-        content: ""; /* "play" icon */
-        float: right;
-        color: #F58723;
-        font-size: 18px;
-        line-height: 22px;
-        /* rotate "play" icon from > (right arrow) to down arrow */
-        -webkit-transform: rotate(-90deg);
-        -moz-transform: rotate(-90deg);
-        -ms-transform: rotate(-90deg);
-        -o-transform: rotate(-90deg);
-        transform: rotate(-90deg);
-    }
+#top-panel {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    box-shadow: none;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
 
-    .panel-heading [data-toggle="collapse"].collapsed:after {
-        /* rotate "play" icon from > (right arrow) to ^ (up arrow) */
-        -webkit-transform: rotate(90deg);
-        -moz-transform: rotate(90deg);
-        -ms-transform: rotate(90deg);
-        -o-transform: rotate(90deg);
-        transform: rotate(90deg);
-        color: #454444;
-    }
+#inner-panel {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    box-shadow: none;
+    border-radius: 0px;
+    border-top: 0px;
+}
+
+#bottom-panel {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    box-shadow: none;
+    border-top: 0px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+#inner-panel > .panel-heading,
+#bottom-panel > .panel-heading {
+    background-color: #EDEDED;
+    border-radius: 0px;
+}
+
+#inner-panel > .collapsed {
+    background-color: #FAFAFA;
+    border-radius: 0px;
+}
+
+#top-panel > .panel-heading {
+    background-color: #EDEDED;
+}
+
+#top-panel > .collapsed {
+    background-color: #FAFAFA;
+}
+
+#bottom-panel > .collapsed {
+    background-color: #FAFAFA;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+#accordion > .panel > .panel-heading:hover {
+    background-color: #EDEDED;
+}
+
+/*.panel-heading [data-toggle="collapse"]:after {*/
+    /*font-family: 'Glyphicons Halflings';*/
+    /*content: "";*/
+     /* "play" icon */
+     /*float: right;
+    color: #F58723;
+    font-size: 18px;
+    line-height: 22px;*/
+    /* rotate "play" icon from > (right arrow) to down arrow */
+    /*-webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);*/
+}
+
+/*.panel-heading [data-toggle="collapse"].collapsed:after {*/
+    /* rotate "play" icon from > (right arrow) to ^ (up arrow) */
+    /*-webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);*/
+    /*color: #454444;
+}*/
+
+
 </style>
 
+<div id="standard-modal">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h2 class="text-center" id="standard-modal-headline">FAQ<br><small>Here you find all frequently asked questions.</small></h2>
+		</div>
+		<div class="modal-body">
+            <div class="panel-group" id="accordion">
+
+                <h2>General questions</h2>
+                <div class="panel panel-default" id="top-panel">
+                    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" id="cursor-pointer">
+                        <h4>Information about the home page</h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p>Act of Goods is a platform that helps people in emergencies or natural disasters. Give away the items you no longer need and trade with others in your area for items that you do! It's simple: just sign up with your email address and location, so that we know where you can help others, as well as where you would be able to pick up items that you need. Everytime you add a new need, you can change your need location as well as profile location. Act of Goods takes confidentiality very seriously and all of your information will be anonymous. In order to make a trade with another user, simply send them a message using our chat system. </p> <p> The immediate aid button allows you to start helping others immediately without signing up first!  </p>
+                            <p>2 people currently have needs! Sign up to provide them with the item they are looking for.  </p>
+                            <p>We want to help others in times of need, and we know many people feel the same way. Therefore, we have developed this platform to enable everyday citizens to make a real difference. There are already many NGO's working tirelessly to help people around the world. If you or your organization are interested in working with us, we are always looking to continually develop partnerships with other organizations. </p>
+
+                            <img src="http://tubtul.org/actofgoodsFotos/home1.PNG" alt="" style="width:100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default" id="inner-panel">
+                    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTen"  id="cursor-pointer">
+                        <h4 class="panel-title">
+                            <h4>What happens if I contact Act of Goods?</h4>
+                        </h4>
+                    </div>
+                    <div id="collapseTen" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p> We want to help others in times of need, and we know many people feel the same way. Therefore, we have developed this platform to enable everyday citizens to make a real difference. There are already many NGO's working tirelessly to help people around the world. If you or your organization are interested in working with us, we are always looking to continually develop partnerships with other organizations. </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/contactUs.PNG" alt="" style="width:50%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default" id="inner-panel">
+                    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseEleven" id="cursor-pointer">
+                        <h4 class="panel-title">
+                            <h4>Why do I have to choose a Location and how does it work?</h4>
+                        </h4>
+                    </div>
+                    <div id="collapseEleven" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p> Providing us with the location enables us to figure out where you can best meet the needs of others, and where others could meet your needs. You are always anonymous, and if you move or have items available in a different location, you can change the location for that specific item, as well as the location on your profile. It is possible to have a different location of an item, than stated on your profile.  </p>
+                            <p> Please provide us with your exact location by filling in the form.</p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/createNewNeedsChooseLocation.PNG" alt="" style="width:100%;">
+                            <br>
+                            <br>
+                            <p> Allow Google to track your location by clicking "Get Location" </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/createNewNeedsChooseLocationYOUR.PNG" alt="" style="width:100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default" id="bottom-panel">
+                    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" id="cursor-pointer">
+                        <h4 class="panel-title">
+                            <h4>What can I do with immediate Aid?</h4>
+                        </h4>
+                    </div>
+                    <div id="collapseTwo" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p> The Immediate Aid button enables you to start helping others immediately. In the category button you can find the current needs that people have. The provide us with your location, and a short yet clear headline of your item. Finally, please provide us with a description of the item and click submit.  </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/immediateAid.PNG" alt="" style="width:50%;">
+                        </div>
+                    </div>
+                </div>
+
+
+                <h2>Signed up as a user</h2>
+                <div class="panel panel-default" id="top-panel">
+                    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseHomeLogedIn" id="cursor-pointer">
+                        <h4 class="panel-title">
+                            <h4>What do I see on the homepage if I am logged in?</h4>
+                        </h4>
+                    </div>
+                    <div id="collapseHomeLogedIn" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p> on the hompage users can see a newsfeed of all the most relevant needs, whether this need has been met, as well as where this item is needed. Users can filter the newsfeed based on item categories that are currently in demand.</p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/user_timeline.PNG" alt="" style="width:100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default" id="inner-panel">
+                    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" id="cursor-pointer">
+                        <h4 class="panel-title">
+                            <h4>How can I sumit a new Need?</h4>
+                        </h4>
+                    </div>
+                    <div id="collapseThree" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p> Submit a new need first by naming the category of your need. The  provide a short yet clear headline so that other users know what you are looking for, along with your location so that we can match who can meet your need. Finally, provide a description of your need.  </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/create_new_need.PNG" alt="" style="width:80%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default" id="inner-panel">
+                    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSix" id="cursor-pointer">
+                        <h4 class="panel-title">
+                            <h4>Recent Active Needs?</h4>
+                        </h4>
+                    </div>
+                    <div id="collapseSix" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p> Make a difference by providing items for the newest needs! On the left side you will see a comment button, where other users can write what they think about the need, or how they can help. The help button allows users to start privately chatting with the person in need directly and annonymously. Finally, if you feel that this post is suspiscous or inappropriate you can notifty us simply by clicking on the report button. The Act of Goods team will then look into it. </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/needs_timeline.PNG" alt="" style="width:100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default" id="inner-panel">
+                    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseEight" id="cursor-pointer">
+                        <h4 class="panel-title">
+                            <h4>Meet a need</h4>
+                        </h4>
+                    </div>
+                    <div id="collapseEight" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p> Start chatting with those in need anonomously and immediately and use the chat to organize how you can help others.   </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/getInContactWithHelper.PNG" alt="" style="width:100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default" id="inner-panel">
+                    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseNine" id="cursor-pointer">
+                        <h4 class="panel-title">
+                            <h4>What is an information template and how can I create one?</h4>
+                        </h4>
+                    </div>
+                    <div id="collapseNine" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p>Information templates enable users to provide important information and create updates to share with users. Simply follow the template below, and the information newsfeed with be updated with your new information. </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/createnewInformation.PNG" alt="" style="width:100%;">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default" id="bottom-panel">
+                    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseGroups" id="cursor-pointer">
+                        <h4 class="panel-title">
+                            <h4>What are groups?</h4>
+                        </h4>
+                    </div>
+                    <div id="collapseGroups" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p> Groups enable NGO's to stay connected on the Act of Goods website. </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/groups.PNG" alt="" style="width:100%;">
+                        </div>
+                    </div>
+                </div>
+           
+                
+            </div>
+		</div>
+	</div>
+</div>
 {% endblock %}
