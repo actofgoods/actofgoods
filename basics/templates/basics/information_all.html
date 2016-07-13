@@ -27,7 +27,7 @@
                             <div class="col-sm-6" style="margin-bottom: 15px;">
                                 <div class="input-group">
                                     <span class="input-group-addon">Range:</span>
-                                    <input type="text" class="form-control" id="range" value="{{range}}" name="range" aria-describedby="basic-addon3" maxlength="5"></input>
+                                    <input type="text" class="form-control" id="range" value="{{range}}" name="range" aria-describedby="basic-addon3" maxlength="5" pattern="\d*"></input>
                                     <span class="input-group-addon">km</span>
                                 </div>
                             </div>
@@ -110,7 +110,7 @@ function submit_page(button){
 $(document).ready(filter);
 
 function filter(){
-
+  if(document.getElementById("range").value != "" && document.getElementById("range").value.match(/^[0-9]+$/)) {
   $.ajaxSetup({
       data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
   });
@@ -132,6 +132,8 @@ function filter(){
         console.log(xhr.status + ": " + xhr.responseText);
       }
     });
+    }
+    else{$("#range").notify("Please enter a valid range.",{className: "error", position: "top-left"})}
 }
 
 </script>
