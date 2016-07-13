@@ -26,8 +26,8 @@
 
 	<style>
 		* {
-	    		margin: 0;
-    			padding: 0;
+    		margin: 0;
+			padding: 0;
 		}
 		html, body {
 			height: 100%;
@@ -82,15 +82,15 @@
 						<ul class="nav navbar-nav navbar-left">
 							{% if not user.is_superuser %}
 							<li {% if "/home/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:home' %}">Home</a></li>
-                            <li {% if "/needs" in request.path %} class="active" {% endif %}><a href="{% url 'basics:needs_all' %}">Needs</a></li>
+                            <li {% if "/needs" in request.path or "/need_edit/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:needs_all' %}">Needs</a></li>
                             <li {% if "/information" in request.path %} class="active" {% endif %}><a href="{% url 'basics:information_all' %}">Information</a></li>
 							<li {% if user.groups.all|length == 0 %} id="navbar-with-divider" {% endif %} {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}">Chats  <span class="badge" id="badge-container"></span></a></li>
                             {% if user.groups.all|length != 0 %}
-                                <li id="navbar-with-divider" {% if "/groups" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
+                                <li id="navbar-with-divider" {% if "/groups" in request.path or "/claim" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
 								    <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Organisations <span class="caret"></span></a>
 								    <ul id="navbar-dropdown-menu" class="dropdown-menu">
                 	                    {% for group in user|get_groups_of_user %}
-									            <li {% if "/groups/detail/"|concatenate:group.name in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:group_detail' name=group.name %}">{{group.name}}</a></li>
+									            <li {% if "/groups/detail/"|concatenate:group.name in request.path or "/claim/"|concatenate:group.name in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:group_detail' name=group.name %}">{{group.name}}</a></li>
                                         {% endfor %}
 								    </ul>
 							    </li>
@@ -106,7 +106,7 @@
 							{% endif %}
                             <li {% if "/faq_signin/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:faq_signin'%}">FAQ</a></li>
 							{% if not user.is_superuser %}
-							<li {% if "/profil/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}">Profil</a></li>
+							<li {% if "/profil/" in request.path or "/profil_edit/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:profil' %}">Profil</a></li>
 							{% endif %}
 							<li><a href="{% url 'basics:logout' %}">Logout</a></li>
 						</ul>
@@ -135,7 +135,7 @@
 					<div class="collapse navbar-collapse" id="navbar-collapse">
                         <div id="navbar-with-divider">
 						    <ul class="nav navbar-nav navbar-left">
-							    <li {% if "/aboutus/" not in request.path and "/privacy/" not in request.path and "/immediate_aid/" not in request.path and "/contact_us/" not in request.path and "/faq_startpage/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
+							    <li {% if "/reset_password/" not in request.path and "/aboutus/" not in request.path and "/privacy/" not in request.path and "/immediate_aid/" not in request.path and "/contact_us/" not in request.path and "/faq_startpage/" not in request.path %} class="active" {% endif %}><a href="{% url 'basics:login' %}">Home</a></li>
                                 <li {% if "/faq_startpage/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:faq_startpage'%}">FAQ</a></li>
                                 <li {% if "/contact_us/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:contact_us'%}">Contact Us</a></li>
                                 <li {% if "/aboutus/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:aboutus'%}">About Us</a></li>
