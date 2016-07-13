@@ -58,7 +58,7 @@
                                                 <div class="col-sm-9" id="comment-meta-data">
                                                     <p><i>from {{ comment.date }}{% if comment.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=comment.group.name %}">{{ comment.group.name }}</a>{% elif comment.author == user %} by <span>you</span>{% endif %}</i></p>
                                                 </div>
-                                                <a class="list-group-footer-button" type="button" onclick="deletePrompt('{{information.pk}}','{{comment.pk}}')" >
+                                                <a class="list-group-footer-button cursor-pointer" type="button" onclick="deletePrompt('{{information.pk}}','{{comment.pk}}')" >
                                                     <div class="col-sm-3">
                                                         <span class="glyphicon glyphicon-remove"></span> Delete
                                                     </div>
@@ -217,6 +217,7 @@ function deletePrompt(pkInf, pkComm){
       map.setCenter(marker.getPosition());
   }
   google.maps.event.addDomListener(window, 'load', initialize);
+
 
 </script>
 
