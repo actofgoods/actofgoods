@@ -857,8 +857,9 @@ def information_delete_comment(request, pk_inf, pk_comm):
         return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated() and not request.user.is_superuser:
         comment = Comment.objects.get(pk=pk_comm)
-        comment.delete()
-        return redirect('basics:information_view', pk=pk_inf)
+        if request.user == comment.author:
+            comment.delete()
+            return redirect('basics:information_view', pk=pk_inf)
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
