@@ -348,12 +348,12 @@
             {% if request.user|has_number %}
                 <div className="col-sm-8 col-sm-offset-4">
                     <div className="row">
-                        <div className="col-sm-6 {% if room.helper_out %}not-active {% endif %}" id="chat-send-number-container" onClick={props.sendNumber.bind(null, 'number')}>
+                        <div className="col-sm-6 {% if room.helper_out or room.need.done %}not-active {% endif %}" id="chat-send-number-container" onClick={props.sendNumber.bind(null, 'number')}>
                             <a id="standard-grey-button-light" className="btn btn-primary btn-block">
                                 <span className="glyphicon glyphicon-earphone"></span> Send Number
                             </a>
                         </div>
-                        <div className="col-sm-6 {% if room.helper_out %}not-active {% endif %}" id="send-button-container">
+                        <div className="col-sm-6 {% if room.helper_out or room.need.done %}not-active {% endif %}" id="send-button-container">
                             <button onClick={props.handleClick}
                             className= 'btn btn-primary btn-block'
                             id="standard-grey-button-light"
@@ -364,7 +364,7 @@
                     </div>
                 </div>
             {% else %}
-                    <div className="col-sm-4 col-sm-offset-8 {% if room.helper_out %}not-active {% endif %}" id="send-button-container">
+                    <div className="col-sm-4 col-sm-offset-8 {% if room.helper_out or room.need.done %}not-active {% endif %}" id="send-button-container">
                         <button onClick={props.handleClick}
                         className= 'btn btn-primary btn-block'
                         id="standard-grey-button-light"

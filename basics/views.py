@@ -35,7 +35,7 @@ import string
 
 def actofgoods_startpage(request):
     registerform = UserFormRegister()
-    needs = Need.objects.all()
+    needs = Need.objects.all().filter(done=False)
     if request.user.is_authenticated():
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
@@ -237,6 +237,7 @@ def immediate_aid(request):
                     auth_login(request,user)
 
                     sendmail(user.email, content, subject )
+                    send_notifications(needdata)
                     return redirect('basics:actofgoods_startpage')
                 else:
                     messages.add_message(request, messages.INFO, 'location_failed')
@@ -1487,7 +1488,7 @@ def send_notifications(needdata):
     users_to_inform = needdata.categorie.userdata_set.all()
     users_to_inform = filter(lambda x: x.adrAsPoint.distance(needdata.adrAsPoint)< x.aux, users_to_inform)
     for user in users_to_inform:
-        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text, "Somebody needs your help: " + needdata.categorie.name)
+        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text + "\n http://127.0.0.1:8000/needs_help/%s" %(needdata.id), "Somebody needs your help: " + needdata.categorie.name )
 
 
 
