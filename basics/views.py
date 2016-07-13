@@ -660,7 +660,7 @@ def claim_information(request, name):
                 infos = infos.filter(query)
             if "" != request.POST['wordsearch']:
                 wordsearch = request.POST['wordsearch']
-                infos = infos.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
+                infos = infos.filter(Q(headline__icontains=wordsearch) | Q(text__icontains=wordsearch))
             t = loader.get_template('snippets/claim_informations.html')
             return HttpResponse(t.render({'user': request.user, 'infos':infos}))
     return redirect('basics:actofgoods_startpage')
@@ -691,7 +691,7 @@ def claim_needs(request, name):
                 needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
             if "" != request.POST['wordsearch']:
                 wordsearch = request.POST['wordsearch']
-                needs = needs.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
+                needs = needs.filter(Q(headline__icontains=wordsearch) | Q(text__icontains=wordsearch))
             t = loader.get_template('snippets/claim_needs_group.html')
             needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
             return HttpResponse(t.render({'user': request.user, 'needs':needs, 'group':group}))
