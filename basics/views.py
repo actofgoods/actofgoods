@@ -817,7 +817,7 @@ def information_filter(request):
                         infos=infos.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
                 if "" != request.POST['wordsearch']:
                     wordsearch = request.POST['wordsearch']
-                    infos = infos.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))
+                    infos = infos.filter(Q(headline__icontains=request.POST['wordsearch']) | Q(text__icontains=request.POST['wordsearch']))
                 if "" != request.POST['cards_per_page']:
                     cards_per_page = int(request.POST['cards_per_page'])
             max_page = int(len(infos)/cards_per_page)+1
@@ -1084,7 +1084,7 @@ def needs_filter(request):
                         needs=needs.filter(adrAsPoint__distance_lte=(request.user.userdata.adrAsPoint, Distance(km=dist)))
                 if "" != request.POST['wordsearch']:
                     wordsearch = request.POST['wordsearch']
-                    needs = needs.filter(Q(headline__contains=request.POST['wordsearch']) | Q(text__contains=request.POST['wordsearch']))
+                    needs = needs.filter(Q(headline__icontains=request.POST['wordsearch']) | Q(text__icontains=request.POST['wordsearch']))
                 if "" != request.POST['cards_per_page']:
                     cards_per_page = int(request.POST['cards_per_page'])
             elif request.method == "GET":
