@@ -21,16 +21,20 @@ virtualenv $DIR/venv
 pip3 install -r $DIR/requirements.txt
 # virtualenv deactivate
 deactivate
+# copy 
+sudo cp $DIR/conf/actofgoods_nginx /etc/nginx/sites-available/actofgoods
 # Copy file to nginx sites-availble
-sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_nginx > /etc/nginx/sites-available/actofgoods
+sudo sed -i "s!\${DIR}!$DIR!" /etc/nginx/sites-available/actofgoods
 # create sys link for sites-availbe
 sudo ln -sf /etc/nginx/sites-available/actofgoods /etc/nginx/sites-enabled
 # enable site
 sudo rm /etc/nginx/sites-enabled/default
 # reload nginx
 sudo service nginx reload
+# copy file
+cp $DIR/conf/actofgoods_server /etc/supervisor/conf.d/actofgoods.conf
 # copy to supervisor
-sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server > /etc/supervisor/conf.d/actofgoods.conf
+sudo sed -i "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server
 # create db
 sudo -u postgres psql -c "CREATE DATABASE actofgoods;"
 sudo -u postgres psql -c "CREATE USER actofgoods WITH PASSWORD 'saft231';"
