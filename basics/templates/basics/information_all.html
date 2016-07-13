@@ -49,7 +49,7 @@
                         <input type="button" class="btn btn-block btn-lg btn-primary standard-grey-button-bold" onclick="location.href='{% url 'basics:information_all' %}'" value="Clear Filter"/>
                     </div>
                     <div class="col-sm-3 col-sm-offset-2" style="margin-top: 5px;">
-                        <input id="standard-grey-button-bold" type="button" class="btn btn-block btn-lg btn-primary" onclick="filter()" value="Filter"/>
+                        <input id="filterbutton" type="button" class="btn btn-block btn-lg btn-primary standard-grey-button-bold" onclick="filter()" value="Filter"/>
                     </div>
                 </div>
 
@@ -100,6 +100,17 @@
 </script>
 
 <script>
+
+$(document).ready(function() {
+  $("input").keypress(function(e) {
+    if (e.which == 13) {
+      $('#filterbutton').click();
+      return false;
+    }
+
+    return true;
+  });
+});
 
 function submit_page(button){
   var button = $(button).attr("value");

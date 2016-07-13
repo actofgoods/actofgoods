@@ -55,7 +55,7 @@
                         <input type="button" class="btn btn-block btn-lg btn-primary standard-grey-button-bold" onclick="location.href='{% url 'basics:needs_all' %}'" value="Clear Filter"/>
                     </div>
                     <div class="col-sm-3 col-sm-offset-2" style="margin-top: 5px;">
-                        <input id="standard-grey-button-bold" type="button" onclick="filter()" class="btn btn-block btn-lg btn-primary" value="Filter"/>
+                        <input id="filterbutton" type="button" onclick="filter()" class="btn btn-block btn-lg btn-primary standard-grey-button-bold" value="Filter"/>
                     </div>
                 </div>
             </form>
@@ -111,12 +111,25 @@
 </script>
 
 <script>
-    function submit_page(button){
-      var button = $(button).attr("value");
-      $("#page").val(button);
-      console.log($(button).attr("value"));
-      filter();
+
+$(document).ready(function() {
+  $("input").keypress(function(e) {
+    if (e.which == 13) {
+      $('#filterbutton').click();
+      return false;
     }
+
+    return true;
+  });
+});
+
+
+function submit_page(button){
+  var button = $(button).attr("value");
+  $("#page").val(button);
+  console.log($(button).attr("value"));
+  filter();
+}
 $(document).ready(filter);
 function filter(){
   if(document.getElementById("range").value != "" && document.getElementById("range").value.match(/^[0-9]+$/)) {
