@@ -18,7 +18,7 @@ virtualenv $DIR/venv
 # install software through pip in virtualenv
 pip3 install -r $DIR/requirements.txt
 # virtualenv deactivate
-# deactivate
+deactivate
 # Copy file to nginx sites-availble
 sed -e "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_nginx > /etc/nginx/sites-available/actofgoods
 # create sys link for sites-availbe
