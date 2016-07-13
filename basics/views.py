@@ -1480,6 +1480,7 @@ def sendmail(email, content, subject):
     mail.starttls()
     mail.login('actofgoods@gmail.com', 'actofgoods123')
     mail.sendmail('actofgoods@gmail.com', email, msg.as_string())
+    print("message should have been sendd")
     mail.close()
 
 def send_notifications(needdata):
