@@ -63,33 +63,6 @@
     background-color: #EDEDED;
 }
 
-/*.panel-heading [data-toggle="collapse"]:after {*/
-    /*font-family: 'Glyphicons Halflings';*/
-    /*content: "";*/
-     /* "play" icon */
-     /*float: right;
-    color: #F58723;
-    font-size: 18px;
-    line-height: 22px;*/
-    /* rotate "play" icon from > (right arrow) to down arrow */
-    /*-webkit-transform: rotate(-90deg);
-    -moz-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    transform: rotate(-90deg);*/
-}
-
-/*.panel-heading [data-toggle="collapse"].collapsed:after {*/
-    /* rotate "play" icon from > (right arrow) to ^ (up arrow) */
-    /*-webkit-transform: rotate(90deg);
-    -moz-transform: rotate(90deg);
-    -ms-transform: rotate(90deg);
-    -o-transform: rotate(90deg);
-    transform: rotate(90deg);*/
-    /*color: #454444;
-}*/
-
-
 </style>
 
 <div id="standard-modal">
@@ -174,9 +147,28 @@
                     </div>
                     <div id="collapseHomeLogedIn" class="panel-collapse collapse">
                         <div class="panel-body">
-                            <p> on the hompage users can see a newsfeed of all the most relevant needs, whether this need has been met, as well as where this item is needed. Users can filter the newsfeed based on item categories that are currently in demand.</p>
+                            <p> on the hompage users can see a newsfeed of all the most relevant needs, your own needs and important information. Users can filter the newsfeed based on item categories that are currently in demand and with one click a user can start chatting.</p>
                             <br>
                             <img src="http://tubtul.org/actofgoodsFotos/user_timeline.PNG" alt="" style="width:100%;">
+                        </div>
+                    </div>
+                </div>
+		<div class="panel panel-default" id="inner-panel">
+                    <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseProfile" id="cursor-pointer">
+                        <h4 class="panel-title">
+                            <h4>User Profile</h4>
+                        </h4>
+                    </div>
+                    <div id="collapseProfile" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p> Here you can either create or delete a profile Please note that when you delete your profile, all data will be permanently deleted. </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/user_profile.PNG" alt="" style="width:80%;">
+			<br>
+			<br>
+			<p> As a user you can create a profile. You can also indicate your location radius of where you can provide help. By implementing your telephone number, you can automatically send your phone number to the people that you chat with simply by clicking on a button.  If you want to get emails notifying you of different needs in your area, check on �inform me via email�.  </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/edit_your_profile.PNG" alt="" style="width:80%;">
                         </div>
                     </div>
                 </div>
@@ -191,6 +183,11 @@
                             <p> Submit a new need first by naming the category of your need. The  provide a short yet clear headline so that other users know what you are looking for, along with your location so that we can match who can meet your need. Finally, provide a description of your need.  </p>
                             <br>
                             <img src="http://tubtul.org/actofgoodsFotos/create_new_need.PNG" alt="" style="width:80%;">
+                            <br>
+                            <br>
+			    <p> If you are a member of a organization and when you create a new need, you can select if this need is for you or if it is for an organization that you represent. </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/create_new_need_as_organisation.PNG" alt="" style="width:80%;">
                         </div>
                     </div>
                 </div>
@@ -202,7 +199,7 @@
                     </div>
                     <div id="collapseSix" class="panel-collapse collapse">
                         <div class="panel-body">
-                            <p> Make a difference by providing items for the newest needs! On the left side you will see a comment button, where other users can write what they think about the need, or how they can help. The help button allows users to start privately chatting with the person in need directly and annonymously. Finally, if you feel that this post is suspiscous or inappropriate you can notifty us simply by clicking on the report button. The Act of Goods team will then look into it. </p>
+                            <p> Make a difference by providing items for the newest needs! The help button allows users to start privately chatting with the person in need directly and annonymously. Finally, if you feel that this post is suspiscous or inappropriate you can notifty us simply by clicking on the report button. The Act of Goods team will then look into it. </p>
                             <br>
                             <img src="http://tubtul.org/actofgoodsFotos/needs_timeline.PNG" alt="" style="width:100%;">
                         </div>
@@ -216,9 +213,14 @@
                     </div>
                     <div id="collapseEight" class="panel-collapse collapse">
                         <div class="panel-body">
-                            <p> Start chatting with those in need anonomously and immediately and use the chat to organize how you can help others.   </p>
+                            <p> You can chat with people that want to meet a need, and if you feel that this person is the correct contact for you, decide on a meeting point or exchange telephone numbers.  </p>
                             <br>
-                            <img src="http://tubtul.org/actofgoodsFotos/getInContactWithHelper.PNG" alt="" style="width:100%;">
+                            <img src="http://tubtul.org/actofgoodsFotos/chate.PNG" alt="" style="width:70%;">
+                            <br>
+			     <br>
+			    <p> On the top left corner you can see the need that this person can meet. If you leave a chat, it will automatically be deleted and you can no longer look at it. </p>
+                            <br>
+                            <img src="http://tubtul.org/actofgoodsFotos/chate_show_need.PNG" alt="" style="width:70%;">
                         </div>
                     </div>
                 </div>
@@ -232,26 +234,53 @@
                         <div class="panel-body">
                             <p>Information templates enable users to provide important information and create updates to share with users. Simply follow the template below, and the information newsfeed with be updated with your new information. </p>
                             <br>
-                            <img src="http://tubtul.org/actofgoodsFotos/createnewInformation.PNG" alt="" style="width:100%;">
+                            <img src="http://tubtul.org/actofgoodsFotos/create_new_information.PNG" alt="" style="width:70%;">
                         </div>
                     </div>
                 </div>
                 <div class="panel panel-default" id="bottom-panel">
                     <div class="panel-heading collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseGroups" id="cursor-pointer">
                         <h4 class="panel-title">
-                            <h4>What are groups?</h4>
+                            <h4>What are Organization's?</h4>
                         </h4>
                     </div>
                     <div id="collapseGroups" class="panel-collapse collapse">
                         <div class="panel-body">
-                            <p> Groups enable NGO's to stay connected on the Act of Goods website. </p>
-                            <br>
-                            <img src="http://tubtul.org/actofgoodsFotos/groups.PNG" alt="" style="width:100%;">
+                            {% if user.groups.all|length == 0 %}
+                            <p>A organization is supposed to represent an actual organization such as NATO or Greenpeace. This platform can help many organisations further their initiatives and make a meaningful impact on the lives of others.</p>
+
+                            {%else%}
+                           <p> Organization's enable NGO's to stay connected on the Act of Goods website. </p>
+                           <p> <b>Your Organization's Profile </b></p>
+                           <p> You can edit your profile at anytime, ensuring that all of your information is up-to-date. This will allow people to connect through act of goods. </p>
+                                        <br>
+                                        <img src="http://tubtul.org/actofgoodsFotos/organisation_overview.PNG" alt="" style="width:100%;">
+                                        <br>
+                                        <br>
+                           <p> <b>Your Organization's Profile </b></p>
+                           <p> You can edit your profile at anytime, ensuring that all of your information is up-to-date. This will allow people to connect through act of goods. <br> As a member of an organization you can search for more members of your organization on acts of goods and connect with them and add them to the organization's act of goods group. <br>
+            If someone leaves a group, they are unable to automatically join again. Someone must send them an invitation again.  </p>
+                                        <br>
+                                        <img src="http://tubtul.org/actofgoodsFotos/organisation_overview.PNG" alt="" style="width:100%;">
+                                       <br>
+                                        <br>
+                           <p> <b>Edit Your Organization's Profile </b></p>
+                           <p> You can edit your profile at anytime, ensuring that all of your information is up-to-date. This will allow people to connect through act of goods. </p>
+                                        <br>
+                                        <img src="http://tubtul.org/actofgoodsFotos/organisation_edit_profil.PNG" alt="" style="width:100%;">
+                                       <br>
+                                        <br>
+                           <p> <b>Areas claimed:</b></p>
+                           <p> Organizations can claim areas of land where help is needed. In order to make a new claim, simply click on the 'new claim' button located in the top left corner and click on the area of land that needs help.  As the person who claims this need, you are responsible for ensuring that enough help is provided. The colours indicate the various organizations that claimed land. The various organizations providing help can also be seen in the list below.<br>When you click on the organization, you can also see what other organizations have requested in other areas.<br>With the filter button, you can filter needs and areas where claims have been made. </p>
+                                        <br>
+                                        <img src="http://tubtul.org/actofgoodsFotos/areas_claimed.PNG" alt="" style="width:100%;">
+
+                            {%endif%}
                         </div>
                     </div>
                 </div>
-           
-                
+
+
             </div>
 		</div>
 	</div>
