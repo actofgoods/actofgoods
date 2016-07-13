@@ -85,16 +85,16 @@
                             <li {% if "/needs" in request.path or "/need_edit/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:needs_all' %}">Needs</a></li>
                             <li {% if "/information" in request.path %} class="active" {% endif %}><a href="{% url 'basics:information_all' %}">Information</a></li>
 							<li {% if user.groups.all|length == 0 %} id="navbar-with-divider" {% endif %} {% if "/chat/" in request.path %} class="active" {% endif %}><a href="{% url 'basics:chat' %}">Chats  <span class="badge" id="badge-container"></span></a></li>
-                                {% if user.groups.all|length != 0 %}
-                                    <li id="navbar-with-divider" {% if "/groups" in request.path or "/claim" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
-    								    <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Organisations <span class="caret"></span></a>
-    								    <ul id="navbar-dropdown-menu" class="dropdown-menu">
-                    	                    {% for group in user|get_groups_of_user %}
-    									        <li {% if "/{{group.name}}/" in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:group_detail' name=group.name %}">{{group.name}}</a></li>
-                                            {% endfor %}
-    								    </ul>
-    							    </li>
-                                {% endif %}
+                            {% if user.groups.all|length != 0 %}
+                                <li id="navbar-with-divider" {% if "/groups" in request.path or "/claim" in request.path %} class="dropdown active" {% else %} class="dropdown" {% endif %}>
+								    <a id="navbar-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown">Organisations <span class="caret"></span></a>
+								    <ul id="navbar-dropdown-menu" class="dropdown-menu">
+                	                    {% for group in user|get_groups_of_user %}
+									            <li {% if "/groups/detail/"|concatenate:group.name in request.path or "/claim/"|concatenate:group.name in request.path %} id="active-dropdown" {% endif %}><a href="{% url 'basics:group_detail' name=group.name %}">{{group.name}}</a></li>
+                                        {% endfor %}
+								    </ul>
+							    </li>
+                            {% endif %}
                             {% endif %}
 						</ul>
 

@@ -50,3 +50,7 @@ def get_room_helper_out_becuase_of_kick_or_leave(need, user):
 @register.filter
 def get_groups_of_user(user):
     return user.groups.all().order_by('name')
+
+@register.filter
+def concatenate(string1, string2):
+    return string1 + ""+string2
