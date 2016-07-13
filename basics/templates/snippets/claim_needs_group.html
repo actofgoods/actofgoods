@@ -5,14 +5,14 @@
                               <!-- list all needs -->
                               <div class="row">
                                   <div class="col-sm-12">
-                              <a class="list-group-item" id="standard-list-group-item-div">
+                              <a class="list-group-item cursor-pointer" id="standard-list-group-item-div">
                                   <div class="row">
                                       <div class="col-sm-12" data-toggle="modal" data-target=".{{ need.id }}">
                                           <h4 class="list-group-item-heading">{{ need.headline }}</h4>
                                           <p class="list-group-item-text">{{ need|get_short_text:160 }}</p>
                                       </div>
                                       <div class="col-sm-9" data-toggle="modal" data-target=".{{ need.id }}">
-                                          <h6><br>priority: {{ need.priority }} / pk: {{ need.pk }} / from: {{ need.date }} / category: {{ need.categorie.name }}{% if need.group %} / by: <span style="color: #70962c;">{{ need.group.name }}</span>{% endif %}</h6>
+                                          <h6><br><i>from {{ need.date }} category {{ need.categorie.name }}{% if need.group %} by <span style="color: #70962c;">{{ need.group.name }}</span>{% endif %}</i></h6>
                                       </div>
                                   </div>
                               </a>
@@ -25,7 +25,7 @@
                                                     <span class="glyphicon glyphicon-comment"></span> Help
                                                 </div>
                                             </a>
-                                             <a class="list-group-footer-button" type="button" style="cursor:pointer" id="report{{need.pk}}"" onclick="reportNeed({{need.pk}})"">
+                                             <a class="list-group-footer-button" type="button" style="cursor:pointer" id="report{{need.pk}}" onclick="reportNeed({{need.pk}})">
                                                 <div class="col-sm-6">
                                                      <span class="glyphicon glyphicon-ban-circle"></span> Report
                                                 </div>
@@ -54,17 +54,17 @@
                                                   <span aria-hidden="true">&times;</span>
                                               </button>
                                               <h2>{{need.headline}}</h2>
-                                              <h6>from: {{ need.date }} / category: {{ need.categorie.name }}{% if need.group %} / by: <a id="green-link" href="{% url 'basics:group_detail_for_user' name=need.group.name %}">{{ need.group.name }}</a>{% endif %}</h6>
+                                              <h6><i>from {{ need.date }} category {{ need.categorie.name }}{% if need.group %} by <a id="green-link" href="{% url 'basics:group_detail_for_user' name=need.group.name %}">{{ need.group.name }}</a>{% endif %}</i></h6>
                                           </div>
                                           <div class="modal-body">
                                               <p>{{ need.text|linebreaksbr }}</p>
                                           </div>
                                           <div class="modal-footer">
-                                              <button type="button" id="standard-grey-button-bold" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:aboutus' %}';" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-comment"></span> Help</button>
+                                              <button type="button" class="btn btn-default btn-sml standard-grey-button-light " onclick="location.href='{% url 'basics:aboutus' %}';" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-comment"></span> Help</button>
                                               {% if not user.userdata in need.reported_by.all %}
-                                                <button  type="button" id="standard-grey-button-bold" data-dismiss="modal" class="btn btn-default btn-sml standard-grey-button-light " onclick="report({{need.pk}})"" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-ban-circle"></span>Report</button>
+                                                <button  type="button" data-dismiss="modal" class="btn btn-default btn-sml standard-grey-button-light " onclick="report({{need.pk}})" style="margin-bottom: 10px;"><span class="glyphicon glyphicon-ban-circle"></span> Report</button>
                                               {% endif %}
-                                              <button id="standard-grey-button-bold" type="button" class="btn btn-primary" data-dismiss="modal" style="margin-bottom: 10px;">Close</button>
+                                              <button id="standard-grey-button-light" type="button" class="btn btn-primary" data-dismiss="modal" style="margin-bottom: 10px;">Close</button>
                                           </div>
                                       </div>
                                   </div>
