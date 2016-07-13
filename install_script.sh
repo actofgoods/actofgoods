@@ -45,7 +45,7 @@ python3 $DIR/manage.py makemigrations basics
 # migrate to database
 python3 $DIR/manage.py migrate
 # settings allowed host
-sed 's!DEBUG = True!DEBUG = False!' $DIR/actofgoods/settings.py
+sed -i 's!DEBUG = True!DEBUG = False!' $DIR/actofgoods/settings.py
 # create logs
 mkdir $DIR/logs
 touch $DIR/logs/nginx-access.log
