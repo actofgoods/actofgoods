@@ -470,9 +470,13 @@ def chat_room(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
-        room = Room.objects.get(name=roomname)
+        try:
+            room = Room.objects.get(name=roomname)
+        except Room.DoesNotExist:
+            return page_not_found(request)
         name = room.need.headline
         if room.need.author == request.user or (room.user_req == request.user):
+            print(request.user.username)
             room.set_saw(request.user)
             messages = ChatMessage.objects.filter(room=roomname).order_by('date')
             message_json = messages_to_json(messages)
@@ -480,7 +484,8 @@ def chat_room(request, roomname):
             rooms = get_valid_rooms(request.user).exclude(name=roomname).order_by('-last_message')
             rooms_json = rooms_to_json(rooms, request.user)
             return render(request, 'basics/chat.html',{'name':name, 'room':room, 'roomname':roomname, 'messages':message_json, 'rooms':rooms, 'rooms_json':rooms_json})
-
+        else:
+            return permission_denied(request)
     return redirect('basics:actofgoods_startpage')
 
 def get_valid_rooms(user):
@@ -491,7 +496,10 @@ def kick_user(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
-        room = Room.objects.get(name=roomname)
+        try:
+            room = Room.objects.get(name=roomname)
+        except Room.DoesNotExist:
+            return page_not_found(request)
         if request.user == room.user_req or request.user == room.need.author:
             text = "Helper was kicked."
             if request.user == room.user_req:
@@ -499,6 +507,8 @@ def kick_user(request, roomname):
             room.helper_out = True
             room.save()
             ChatMessage.objects.create(room=room, text=text, author=None)
+        else:
+            return permission_denied(request)
     return redirect('basics:actofgoods_startpage')
 
 def messages_to_json(messages):
@@ -524,17 +534,22 @@ def needs_finish(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
-        room = Room.objects.get(name=roomname)
+        try:
+            room = Room.objects.get(name=roomname)
+        except Room.DoesNotExist:
+            return page_not_found(request);
         if room.need.author == request.user:
             if room.need.group:
                 text = "The need owner " + room.need.group.name + " considered the matter as settled."
             else:
                 text = "The need owner considered the matter as settled."
-        else:
+        elif room.user_req == request.user:
             if room.group:
                 text = "The helper " + room.need.group.name + " considered the matter as settled."
             else:
                 text = "The helper considered the matter as settled."
+        else:
+            return permission_denied(request)
         room.set_room_finished(request.user)
         ChatMessage.objects.create(room=room, text=text, author=None)
     return redirect('basics:actofgoods_startpage')
@@ -688,6 +703,8 @@ def claim_reportInfo(request, name):
             return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
+        if request.user in info.reported_by:
+            return permission_denied(request)
         info.was_reported = True
         info.number_reports += 1
         info.save()
@@ -701,7 +718,10 @@ def claim_reportNeed(request, name):
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
-        need = Need.objects.get(pk=pk)
+
+        need = get_object_or_404(Need, pk=pk)
+        if request.user in need.reported_by:
+            return permission_denied(request)
         need.was_reported = True
         need.number_reports += 1
         need.save()
@@ -717,6 +737,8 @@ def claim_like(request, name):
             return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
+        if request.user in info.liked_by:
+            return permission_denied(request)
         info.was_liked = True
         info.number_likes += 1
         info.liked_by.add(request.user.userdata)
@@ -925,9 +947,9 @@ def information_view_comment(request, pk):
 @csrf_protect
 def info_delete(request, pk):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        info = get_object_or_404(Information, pk=pk)
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
-        info = Information.objects.all().get(pk=pk)
         info.delete()
     return redirect('basics:actofgoods_startpage')
 
@@ -936,7 +958,7 @@ def info_edit(request, pk):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated() and not request.user.is_superuser:
-        info = Information.objects.all().get(pk=pk)
+        info = get_object_or_404(Information, pk=pk)
         if request.method == "POST":
             text = request.POST.get('text', None)
             desc = request.POST.get('desc', None)
@@ -960,7 +982,7 @@ def follow(request):
             return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
-            info = Information.objects.get(pk=pk)
+            info = get_object_or_404(Information, pk=pk)
             info.followed_by.add(request.user.userdata)
             info.save()
             return information_filter(request)
@@ -972,7 +994,7 @@ def unfollow(request):
             return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
-            info = Information.objects.get(pk=pk)
+            info = get_object_or_404(Information, pk=pk)
             info.followed_by.remove(request.user.userdata)
             info.save()
             return information_filter(request)
@@ -984,7 +1006,7 @@ def like_information(request):
             return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
-            info = Information.objects.get(pk=pk)
+            info = get_object_or_404(Information, pk=pk)
             info.was_liked = True
             info.number_likes += 1
             info.liked_by.add(request.user.userdata)
@@ -1001,7 +1023,9 @@ def unlike_information(request):
             return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
-            info = Information.objects.get(pk=pk)
+            info = get_object_or_404(Information, pk=pk)
+            if request.user in info.liked:
+                return permission_denied(request)
             info.number_likes -= 1
             if info.number_likes == 0:
                 info.was_liked = False
@@ -1016,7 +1040,9 @@ def report_information(request):
             return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
-            info = Information.objects.get(pk=pk)
+            info = get_object_or_404(Information, pk=pk)
+            if request.user in need.reported_by:
+                return permission_denied(request)
             info.was_reported = True
             info.number_reports += 1
             info.save()
@@ -1077,7 +1103,11 @@ def needs_filter(request):
                     page = int(request.POST['page'])
                 if "" != request.POST['category'] and "All" != request.POST['category']:
                     category = request.POST['category']
-                    needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
+                    try:
+                        categoriesNeeds = CategoriesNeeds.objects.get(name=category)
+                    except CategoriesNeeds.DoesNotExist:
+                        return bad_request(request)
+                    needs = needs.filter(categorie=categoriesNeeds)
                 if "" != request.POST['range']:
                     dist= int(request.POST['range'].replace(',',''))
                     if not request.user.is_superuser:
@@ -1108,8 +1138,7 @@ def needs_help(request, id):
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
         if request.method == "GET":
-            need = Need.objects.get(id=id)
-
+            need = get_object_or_404(Need, id=id)
             if need.author != request.user:
                 #TODO: id_generator will return random string; Could be already in use
                 if Room.objects.filter(need=need).filter(Q(user_req=request.user)|Q(helper_out=False)).exists():
@@ -1123,10 +1152,7 @@ def needs_help(request, id):
                 need.save()
                 return redirect('basics:chat_room', roomname=room.name)
             else:
-                print("User: " + request.user.email + " tried to help his own need: " +  "\n TODO: print error message for User" )
-        #TODO: what todo if POST data is wrong or get comes in
-        #return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
-
+                return permission_denied(request)
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -1136,11 +1162,14 @@ def needs_help_group(request, id, group_id):
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
         if request.method == "GET":
-            group = Group.objects.get(id=group_id)
+            try:
+                group = Group.objects.get(id=group_id)
+            except Group.DoesNotExist:
+                return bad_request(request)
             if request.user not in list(group.user_set.all()):
-                #TODO: return 404
-                return redirect('basics:actofgoods_startpage')
-            need = Need.objects.get(id=id)
+                return permission_denied(request)
+
+            need = get_object_or_404(Need, id=id)
 
             if need.author != request.user:
                 #TODO: id_generator will return random string; Could be already in use
@@ -1155,9 +1184,7 @@ def needs_help_group(request, id, group_id):
                 need.save()
                 return redirect('basics:chat_room', roomname=room.name)
             else:
-                print("User: " + request.user.email + " tried to help his own need: " + "\n TODO: print error message for User" )
-        #TODO: what todo if POST data is wrong or get comes in
-        #return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
+                return permission_denied(request)
 
     return redirect('basics:actofgoods_startpage')
 
@@ -1180,7 +1207,10 @@ def needs_new(request):
                         group = None
                         priority = 0
                         if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
-                            group = Group.objects.get(pk=request.POST.get('group'))
+                            try:
+                                group = Group.objects.get(id=group_id)
+                            except Group.DoesNotExist:
+                                return bad_request(request)
                             priority = priority_need_group(0)
                         else:
                             priority = priority_need_user(0)
@@ -1252,8 +1282,9 @@ def report_need(request):
             return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
-            need = Need.objects.get(pk=pk)
-
+            need = get_object_or_404(Need, pk=pk)
+            if request.user in need.reported_by:
+                return permission_denied(request)
             need.was_reported = True
             need.number_reports += 1
             need.save()
@@ -1290,7 +1321,9 @@ def report_comment(request, pk):
     if request.user.is_authenticated() and not request.user.is_superuser:
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
-        comment = Comment.objects.get(pk=pk)
+        comment = get_object_or_404(Comment, pk=pk)# Comment.objects.get(pk=pk)
+        if request.user in comment.reported_by:
+            return permission_denied(request)
         comment.was_reported = True
         comment.number_reports += 1
         comment.reported_by.add(request.user.userdata)
@@ -1312,14 +1345,20 @@ def group_detail(request, name):
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
-            gro = request.user.groups.get(name=name)
+            try:
+                gro = request.user.groups.get(name=name)
+            except Group.DoesNotExist:
+                return bad_request(request)
             if request.method == "POST":
                 form = GroupAddUserForm(request.POST)
                 if form.is_valid():
                     if 'add_group_member' in form.data:
                         email = request.POST.get('email')
                         if {'email': email} in User.objects.values('email'):
-                            user = User.objects.get(email=email)
+                            try:
+                                user = User.objects.get(email=email)
+                            except User.DoesNotExist:
+                                return bad_request(request)
                             gro.user_set.add(user)
                         else:
                             messages.add_message(request, messages.INFO, 'wrong_email')
@@ -1346,7 +1385,7 @@ def group_detail_for_user(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
-        group = Groupdata.objects.get(name=name)
+        group = get_object_or_404(Groupdata, name=name)#Groupdata.objects.get(name=name)
         return render(request, 'basics/group_detail_for_user.html', {'group':group})
     return redirect('basics:actofgoods_startpage')
 
@@ -1355,29 +1394,31 @@ def group_edit(request, pk):
     if request.user.is_authenticated() and not request.user.is_superuser:
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
-        if request.user.groups.filter(pk=pk).exists():
-            if request.method == "GET":
-                group = Groupdata.objects.get(pk=pk)
-                return render(request, 'basics/group_edit.html', {'group': group})
-            elif request.method == "POST":
-                form = GroupEditForm(request.POST)
-                lat, lng = getAddress(request)
-                if form.is_valid():
-                    group = Groupdata.objects.get(pk=pk)
-                    email = request.POST.get('email')
-                    if request.POST.get('email', "") != "":
-                        group.email = request.POST.get('email')
-                    if request.POST.get('phone') != "" :
-                        group.phone = request.POST.get('phone')
-                    if lat != None and lng != None:
-                        address = Address.objects.create(latitude=lat, longditude=lng)
-                        group.address =address
-                    if request.POST.get('page') != "":
-                        group.webpage=request.POST.get('page')
-                    if request.POST.get('description') !="":
-                        group.description=request.POST.get('description')
-                    group.save()
-                    return group_detail(request, group.name)
+        if request.method == "GET":
+            group = get_object_or_404(Groupdata, pk=pk)
+            return render(request, 'basics/group_edit.html', {'group': group})
+        elif request.method == "POST":
+            form = GroupEditForm(request.POST)
+            lat, lng = getAddress(request)
+            if form.is_valid():
+                group = get_object_or_404(Groupdata, pk=pk)
+                email = request.POST.get('email')
+                if request.POST.get('email', "") != "":
+                    group.email = request.POST.get('email')
+                if request.POST.get('phone') != "" :
+                    group.phone = request.POST.get('phone')
+                if lat != None and lng != None:
+                    address = Address.objects.create(latitude=lat, longditude=lng)
+                    group.address =address
+                if request.POST.get('page') != "":
+                    group.webpage=request.POST.get('page')
+                if request.POST.get('description') !="":
+                    group.description=request.POST.get('description')
+                group.save()
+                return group_detail(request, group.name)
+            else:
+                return bad_request(request)
+
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -1386,7 +1427,7 @@ def group_leave(request, pk):
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
-            groupDa = Groupdata.objects.get(pk=pk)
+            groupDa = get_object_or_404(Groupdata, pk=pk)
             group = groupDa.group
             group.user_set.remove(request.user)
             group.save()
