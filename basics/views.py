@@ -37,6 +37,8 @@ def actofgoods_startpage(request):
     registerform = UserFormRegister()
     needs = Need.objects.all()
     if request.user.is_authenticated():
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         return redirect('basics:home')
     return render(request, 'basics/actofgoods_startpage.html', {'counter':len(needs),'registerform':registerform})
 
@@ -81,6 +83,8 @@ def home(request):
     if request.user.is_superuser:
         return redirect('administration:requests')
     if request.user.is_authenticated():
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         needs = list(Need.objects.all().filter(author=request.user))
         infos = list(Information.objects.all().filter(author=request.user))
         usr_pk = request.user.userdata.pk
@@ -106,6 +110,8 @@ def home(request):
 @csrf_protect
 def home_filter(request):
     if request.user.is_authenticated():
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             if request.POST['group']:
                 group= Groupdata.objects.get(name=request.POST['group'])
@@ -158,6 +164,8 @@ def home_filter(request):
 @csrf_protect
 def home_unfollow(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = Information.objects.get(pk=pk)
@@ -212,11 +220,8 @@ def immediate_aid(request):
         #it could lead to data sniffing and shitlot of problems;
         #But to demonstrate our features and only to demonstrate
         #it will send the given email his password
-
-
         form = ImmediateAidFormNew(request.POST)
         need = NeedFormNew(request.POST)
-
         if form.is_valid() and need.is_valid():
             password_d = id_generator(9)
             check_password = password_d
@@ -233,8 +238,6 @@ def immediate_aid(request):
                     u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                     needdata = Need(author=user, group=None, headline=data['headline'], text=data['text'], categorie=data['categorie'], was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority_need_user(0), update_at=u)
                     needdata.save()
-
-
                     #Content could also be possibly HTML! this way beautifull emails are possible
                     content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
                     subject = "Welcome!"
@@ -255,7 +258,6 @@ def immediate_aid(request):
 
 @csrf_protect
 def login(request):
-
     if request.method == 'POST':
         email = request.POST.get('email',None)
         password = request.POST.get('password',None)
@@ -274,6 +276,8 @@ def logout(request):
 @csrf_protect
 def profil(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         userdata=request.user.userdata
         return render(request, 'basics/profil.html',{'Userdata':userdata, 'selected': userdata.inform_about.all()})
     return redirect('basics:actofgoods_startpage')
@@ -291,7 +295,6 @@ def profil_edit(request):
             phone = request.POST.get('phone', None)
             aux = request.POST.get('aux', None)
             lat, lng = getAddress(request)
-
             if email != "":
                 if (len(User.objects.all().filter(email=email)) == 0 or email == user.email):
                     user.email = email
@@ -301,7 +304,6 @@ def profil_edit(request):
                     return render(request, 'basics/profil_edit.html',
                                   {'userdata': userdata, 'categories': CategoriesNeeds.objects.all,
                                    'selected': userdata.inform_about.all(), 'form': form, 'email': True, 'change':False})
-
             if request.POST.get('changePassword') == "on":
                 oldpw = request.POST['oldpw']
                 newpw1 = request.POST.get('newpw1')
@@ -314,8 +316,6 @@ def profil_edit(request):
                     return render(request, 'basics/profil_edit.html',
                                   {'userdata': userdata, 'categories': CategoriesNeeds.objects.all,
                                    'selected': userdata.inform_about.all(), 'form': form, 'change':True })
-
-
             if lat != None and lng != None:
                 userdata.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
                 userdata.save()
@@ -324,7 +324,6 @@ def profil_edit(request):
                     userdata.aux= float(aux)
                 except ValueError:
                     print("Something went wrong while converting float.")
-
             if phone!= "":
                 userdata.phone=phone
             if request.POST.get('information') == "on":
@@ -345,10 +344,13 @@ def profil_edit(request):
 
 @csrf_protect
 def profil_delete(request):
-    user=request.user
-    user.delete()
-    sendmail(user.email, "Auf Wiedersehen " + user.username + ", \n schade das sie ihr Profil gelöscht haben, aber keine Angst wir speichern all ihre Daten weiter 50 Jahre. \n"
-    +"Wenn sie sich nicht innerhalb von 3 Tagen wieder anmelden werden wir ihren Wohnort an den höchst bietenden verkaufen. Wir bedanken uns für ihr Verständni. \n\n Mit Freundlichen Grüßen Act of Goods", "Auf Wiedersehen!")
+    if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
+        user=request.user
+        user.delete()
+        sendmail(user.email, "Auf Wiedersehen " + user.username + ", \n schade das sie ihr Profil gelöscht haben, aber keine Angst wir speichern all ihre Daten weiter 50 Jahre. \n"
+        +"Wenn sie sich nicht innerhalb von 3 Tagen wieder anmelden werden wir ihren Wohnort an den höchst bietenden verkaufen. Wir bedanken uns für ihr Verständni. \n\n Mit Freundlichen Grüßen Act of Goods", "Auf Wiedersehen!")
     return actofgoods_startpage(request)
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
@@ -429,6 +431,8 @@ def reset_password_confirmation(request):
 @csrf_protect
 def verification(request,id):
     if request.user.is_authenticated():
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.user.userdata.verification_id == id:
             user=request.user
             user.is_active = True
@@ -457,20 +461,23 @@ def verification(request,id):
 
 @csrf_protect
 def chat(request):
-    if not request.user.is_active:
-        return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated() and not request.user.is_superuser:
-        if request.method == "GET":
-            try:
-                room=get_valid_rooms(request.user).latest('last_message')
-                return redirect('basics:chat_room', roomname=room.name)
-            except:
-                return render(request,'basics/no_chat.html')
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active': False})
+        if request.user.is_authenticated() and not request.user.is_superuser:
+            if request.method == "GET":
+                try:
+                    room=get_valid_rooms(request.user).latest('last_message')
+                    return redirect('basics:chat_room', roomname=room.name)
+                except:
+                    return render(request,'basics/no_chat.html')
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
 def chat_room(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         room = Room.objects.get(name=roomname)
         name = room.need.headline
         if room.need.author == request.user or (room.user_req == request.user):
@@ -490,7 +497,8 @@ def get_valid_rooms(user):
 @csrf_protect
 def kick_user(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
-
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         room = Room.objects.get(name=roomname)
         if request.user == room.user_req or request.user == room.need.author:
             text = "Helper was kicked."
@@ -522,6 +530,8 @@ def messages_to_json(messages):
 @csrf_protect
 def needs_finish(request, roomname):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         room = Room.objects.get(name=roomname)
         if room.need.author == request.user:
             if room.need.group:
@@ -563,6 +573,8 @@ def rooms_to_json(rooms, user):
 @csrf_protect
 def claim(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
             categories=CategoriesNeeds.objects.all
             return render(request, 'basics/map_claim.html', {'categories': categories,'group': name, 'polygons': ClaimedArea.objects.order_by('pk'), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
@@ -571,6 +583,8 @@ def claim(request, name):
 @csrf_protect
 def claim_post(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
             if request.method=="POST":
                 poly_path=request.POST['path']
@@ -593,6 +607,8 @@ def claim_post(request, name):
 @csrf_protect
 def claim_delete(request,name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
             if request.method=="POST":
                 pk=request.POST['pk']
@@ -605,6 +621,8 @@ def claim_delete(request,name):
 @csrf_protect
 def claim_refresh(request,name):
    if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
             index=request.POST['index']
             pk = request.POST['pk']
@@ -614,6 +632,8 @@ def claim_refresh(request,name):
 @csrf_protect
 def claim_information(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
             #TODO: Change this to somehing like user distance
             group = Groupdata.objects.get(name=name)
@@ -640,6 +660,8 @@ def claim_information(request, name):
 @csrf_protect
 def claim_needs(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
             #TODO: Change this to somehing like user distance
             group = Groupdata.objects.get(name=name)
@@ -670,6 +692,8 @@ def claim_needs(request, name):
 @csrf_protect
 def claim_reportInfo(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
         info.was_reported = True
@@ -682,6 +706,8 @@ def claim_reportInfo(request, name):
 @csrf_protect
 def claim_reportNeed(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         need = Need.objects.get(pk=pk)
         need.was_reported = True
@@ -695,6 +721,8 @@ def claim_reportNeed(request, name):
 @csrf_protect
 def claim_like(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
         info.was_liked = True
@@ -709,6 +737,8 @@ def claim_like(request, name):
 @csrf_protect
 def claim_unlike(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
         info.number_likes -= 1
@@ -721,6 +751,8 @@ def claim_unlike(request, name):
 @csrf_protect
 def claim_follow(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
         info.followed_by.add(request.user.userdata)
@@ -730,6 +762,8 @@ def claim_follow(request, name):
 @csrf_protect
 def claim_unfollow(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
         info.followed_by.remove(request.user.userdata)
@@ -746,6 +780,8 @@ def claim_unfollow(request, name):
 @csrf_protect
 def information_all(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         #TODO: Change this to somehing like user distance
         if request.user.userdata:
             dist = request.user.userdata.aux
@@ -781,6 +817,8 @@ def information_all(request):
 @csrf_protect
 def information_filter(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             cards_per_page = 10
             wordsearch = ""
@@ -835,6 +873,8 @@ def information_new(request):
     if not request.user.is_active:
         return render(request, 'basics/verification.html', {'active': False})
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.method == "POST":
             info = InformationFormNew(request.POST)
             if info.is_valid():
@@ -916,6 +956,8 @@ def information_view_comment(request, pk):
 @csrf_protect
 def info_delete(request, pk):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         info = Information.objects.all().get(pk=pk)
         info.delete()
     return redirect('basics:actofgoods_startpage')
@@ -945,6 +987,8 @@ def info_edit(request, pk):
 @csrf_protect
 def follow(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = Information.objects.get(pk=pk)
@@ -955,6 +999,8 @@ def follow(request):
 @csrf_protect
 def unfollow(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = Information.objects.get(pk=pk)
@@ -965,6 +1011,8 @@ def unfollow(request):
 @csrf_protect
 def like_information(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = Information.objects.get(pk=pk)
@@ -980,6 +1028,8 @@ def like_information(request):
 @csrf_protect
 def unlike_information(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = Information.objects.get(pk=pk)
@@ -993,6 +1043,8 @@ def unlike_information(request):
 @csrf_protect
 def report_information(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = Information.objects.get(pk=pk)
@@ -1013,6 +1065,8 @@ def report_information(request):
 @csrf_protect
 def needs_all(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         #TODO: Change this to somehing like user distance
         if request.user.userdata:
             dist = request.user.userdata.aux
@@ -1053,6 +1107,8 @@ def needs_all(request):
 @csrf_protect
 def needs_filter(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             category = "All"
             cards_per_page = 10
@@ -1107,6 +1163,8 @@ def needs_filter(request):
 def needs_help(request, id):
     #cat = CategoriesNeeds.objects.create(name="cool")
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.method == "GET":
             need = Need.objects.get(id=id)
 
@@ -1133,6 +1191,8 @@ def needs_help(request, id):
 def needs_help_group(request, id, group_id):
     #cat = CategoriesNeeds.objects.create(name="cool")
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.method == "GET":
             group = Group.objects.get(id=group_id)
             if request.user not in list(group.user_set.all()):
@@ -1205,6 +1265,8 @@ def needs_new(request):
 @csrf_protect
 def needs_view(request, pk):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         need = get_object_or_404(Need, pk=pk)
         return render (request, 'basics/needs_view.html', {'need':need})
 
@@ -1213,6 +1275,8 @@ def needs_view(request, pk):
 @csrf_protect
 def need_delete(request, pk):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         need = Need.objects.all().get(pk=pk)
         need.delete()
     return redirect('basics:actofgoods_startpage')
@@ -1242,6 +1306,8 @@ def need_edit(request, pk):
 @csrf_protect
 def report_need(request):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.is_ajax():
             pk=int(request.POST['pk'])
             need = Need.objects.get(pk=pk)
@@ -1262,6 +1328,8 @@ def report_need(request):
 @csrf_protect
 def comm_delete(request, pk):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         comm = Comment.objects.all().get(pk=pk)
         comm.delete()
     return redirect('basics:actofgoods_startpage')
@@ -1269,6 +1337,8 @@ def comm_delete(request, pk):
 @csrf_protect
 def delete_comment_timeline(request, pk):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         comment = Comment.objects.get(pk=pk)
         comment.delete()
         return redirect('basics:home')
@@ -1276,6 +1346,8 @@ def delete_comment_timeline(request, pk):
 
 def report_comment(request, pk):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         comment = Comment.objects.get(pk=pk)
         comment.was_reported = True
         comment.number_reports += 1
@@ -1295,6 +1367,8 @@ def groups_all(request):
 
 def group_detail(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
             gro = request.user.groups.get(name=name)
             if request.method == "POST":
@@ -1328,6 +1402,8 @@ def group_detail(request, name):
 @csrf_protect
 def group_detail_for_user(request, name):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         group = Groupdata.objects.get(name=name)
         return render(request, 'basics/group_detail_for_user.html', {'group':group})
     return redirect('basics:actofgoods_startpage')
@@ -1335,6 +1411,8 @@ def group_detail_for_user(request, name):
 @csrf_protect
 def group_edit(request, pk):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(pk=pk).exists():
             if request.method == "GET":
                 group = Groupdata.objects.get(pk=pk)
@@ -1363,6 +1441,8 @@ def group_edit(request, pk):
 @csrf_protect
 def group_leave(request, pk):
     if request.user.is_authenticated() and not request.user.is_superuser:
+        if not request.user.is_active:
+            return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
             groupDa = Groupdata.objects.get(pk=pk)
             group = groupDa.group
@@ -1370,7 +1450,6 @@ def group_leave(request, pk):
             group.save()
             if len(group.user_set.all()) == 0:
                 group.delete()
-
     return redirect('basics:home')
 
 
