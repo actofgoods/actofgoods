@@ -111,7 +111,7 @@ def home_filter(request):
                 if not c.inf in rel_comms:
                     rel_comms.append(c)
             activity=request.POST['activity']
-
+            followed_infos = []
             if activity=="all_activities":
                 usr_pk = request.user.userdata.pk
                 followed_infos = []
