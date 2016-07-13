@@ -247,7 +247,7 @@ def immediate_aid(request):
         else:
             messages.add_message(request, messages.INFO, 'eae')
 
-    return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all, 'form' : form, 'need' : need })
+    return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all().order_by('name'), 'form' : form, 'need' : need })
 
 @csrf_protect
 def login(request):
@@ -296,7 +296,7 @@ def profil_edit(request):
                 else:
                     form = ProfileForm()
                     return render(request, 'basics/profil_edit.html',
-                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all,
+                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all().order_by('name'),
                                    'selected': userdata.inform_about.all(), 'form': form, 'email': True, 'change':False})
             if request.POST.get('changePassword') == "on":
                 oldpw = request.POST['oldpw']
@@ -308,7 +308,7 @@ def profil_edit(request):
                 else:
                     form = ProfileForm()
                     return render(request, 'basics/profil_edit.html',
-                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all,
+                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all().order_by('name'),
                                    'selected': userdata.inform_about.all(), 'form': form, 'change':True })
             if lat != None and lng != None:
                 userdata.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
@@ -325,7 +325,7 @@ def profil_edit(request):
             else:
                 userdata.get_notifications=False
             categories= request.POST.getlist('categories[]')
-            for c in CategoriesNeeds.objects.all():
+            for c in CategoriesNeeds.objects.all().order_by('name'):
                 if c.name in categories:
                     userdata.inform_about.add(c)
                 else:
@@ -333,7 +333,7 @@ def profil_edit(request):
             userdata.save()
             return render(request, 'basics/profil.html', {'Userdata':userdata, 'selected': userdata.inform_about.all()})
         form = ProfileForm()
-        return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all, 'selected': userdata.inform_about.all(),'form':form,'change':False})
+        return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all().order_by('name'), 'selected': userdata.inform_about.all(),'form':form,'change':False})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -585,7 +585,7 @@ def claim(request, name):
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
-            categories=CategoriesNeeds.objects.all
+            categories=CategoriesNeeds.objects.all().order_by('name')
             return render(request, 'basics/map_claim.html', {'categories': categories,'group': name, 'polygons': ClaimedArea.objects.order_by('pk'), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
     return redirect('basics:actofgoods_startpage')
 
@@ -1071,7 +1071,7 @@ def needs_all(request):
         else:
             dist=500
         category = "All"
-        return render(request, 'basics/needs_all.html',{'categorie':CategoriesNeeds.objects.all, 'category':category, 'range':dist})
+        return render(request, 'basics/needs_all.html',{'categorie':CategoriesNeeds.objects.all().order_by('name'), 'category':category, 'range':dist})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -1233,7 +1233,7 @@ def needs_new(request):
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
         c.save
-        return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
+        return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all().order_by('name')})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -1275,7 +1275,7 @@ def need_edit(request, pk):
             need.save()
             return actofgoods_startpage(request)
         form = NeedFormNew()
-        return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all()})
+        return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all().order_by('name')})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
