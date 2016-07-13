@@ -1,6 +1,10 @@
 {% extends 'basics/base.html' %}
 {% block content %}
 
+<head>
+    {% load staticfiles %}
+</head>
+
 <style>
 
 #top-panel {
@@ -63,33 +67,6 @@
     background-color: #EDEDED;
 }
 
-/*.panel-heading [data-toggle="collapse"]:after {*/
-    /*font-family: 'Glyphicons Halflings';*/
-    /*content: "";*/
-     /* "play" icon */
-     /*float: right;
-    color: #F58723;
-    font-size: 18px;
-    line-height: 22px;*/
-    /* rotate "play" icon from > (right arrow) to down arrow */
-    /*-webkit-transform: rotate(-90deg);
-    -moz-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    transform: rotate(-90deg);*/
-}
-
-/*.panel-heading [data-toggle="collapse"].collapsed:after {*/
-    /* rotate "play" icon from > (right arrow) to ^ (up arrow) */
-    /*-webkit-transform: rotate(90deg);
-    -moz-transform: rotate(90deg);
-    -ms-transform: rotate(90deg);
-    -o-transform: rotate(90deg);
-    transform: rotate(90deg);*/
-    /*color: #454444;
-}*/
-
-
 </style>
 
 <div id="standard-modal">
@@ -111,7 +88,7 @@
                             <p>2 people currently have needs! Sign up to provide them with the item they are looking for.  </p>
                             <p>We want to help others in times of need, and we know many people feel the same way. Therefore, we have developed this platform to enable everyday citizens to make a real difference. There are already many NGO's working tirelessly to help people around the world. If you or your organization are interested in working with us, we are always looking to continually develop partnerships with other organizations. </p>
 
-                            <img src="http://tubtul.org/actofgoodsFotos/home1.PNG" alt="" style="width:100%;">
+                            <img src={% static 'basics/images/home1.PNG' %} alt="" style="width:100%;">
                         </div>
                     </div>
                 </div>
@@ -125,7 +102,7 @@
                         <div class="panel-body">
                             <p> We want to help others in times of need, and we know many people feel the same way. Therefore, we have developed this platform to enable everyday citizens to make a real difference. There are already many NGO's working tirelessly to help people around the world. If you or your organization are interested in working with us, we are always looking to continually develop partnerships with other organizations. </p>
                             <br>
-                            <img src="http://tubtul.org/actofgoodsFotos/contactUs.PNG" alt="" style="width:50%;">
+                            <img src={% static 'basics/images/contactUs.PNG' %} alt="" style="width:100%;">
                         </div>
                     </div>
                 </div>
@@ -140,12 +117,12 @@
                             <p> Providing us with the location enables us to figure out where you can best meet the needs of others, and where others could meet your needs. You are always anonymous, and if you move or have items available in a different location, you can change the location for that specific item, as well as the location on your profile. It is possible to have a different location of an item, than stated on your profile.  </p>
                             <p> Please provide us with your exact location by filling in the form.</p>
                             <br>
-                            <img src="http://tubtul.org/actofgoodsFotos/createNewNeedsChooseLocation.PNG" alt="" style="width:100%;">
+                            <img src={% static 'basics/images/createNewNeedsChooseLocation.PNG' %} alt="" style="width:100%;">
                             <br>
                             <br>
                             <p> Allow Google to track your location by clicking "Get Location" </p>
                             <br>
-                            <img src="http://tubtul.org/actofgoodsFotos/createNewNeedsChooseLocationYOUR.PNG" alt="" style="width:100%;">
+                            <img src={% static 'basics/images/createNewNeedsChooseLocationYOUR.PNG' %} alt="" style="width:100%;">
                         </div>
                     </div>
                 </div>
@@ -159,11 +136,11 @@
                         <div class="panel-body">
                             <p> The Immediate Aid button enables you to start helping others immediately. In the category button you can find the current needs that people have. The provide us with your location, and a short yet clear headline of your item. Finally, please provide us with a description of the item and click submit.  </p>
                             <br>
-                            <img src="http://tubtul.org/actofgoodsFotos/immediateAid.PNG" alt="" style="width:50%;">
+                            <img src={% static 'basics/images/immediateAid.PNG' %} alt="" style="width:100%;">
                         </div>
                     </div>
                 </div>
-	   </div> 
+	   </div>
 	</div>
     </div>
 </div>

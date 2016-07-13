@@ -111,7 +111,7 @@ def home_filter(request):
                 if not c.inf in rel_comms:
                     rel_comms.append(c)
             activity=request.POST['activity']
-
+            followed_infos = []
             if activity=="all_activities":
                 usr_pk = request.user.userdata.pk
                 followed_infos = []
@@ -847,7 +847,7 @@ def information_filter(request):
             infos = infos[cards_per_page*(page-1):cards_per_page*(page)]
             page_range = np.arange(1,max_page+1)
             t = loader.get_template('snippets/info_filter.html')
-            return HttpResponse(t.render({'user': request.user, 'infos':infos, 'page':page, 'page_range':page_range}))
+            return HttpResponse(t.render({'user': request.user, 'infos':infos, 'page':page, 'page_range':page_range, 'cards_per_page':cards_per_page, 'size': len(infos)}))
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -1128,7 +1128,7 @@ def needs_filter(request):
             #needs.sort(key=lambda x: (-x.priority, x.pk))
             page_range = np.arange(1,max_page+1)
             t = loader.get_template('snippets/need_filter.html')
-            return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range}))
+            return HttpResponse(t.render({'user': request.user, 'needs':needs, 'page':page, 'page_range':page_range, 'cards_per_page':cards_per_page, 'size': len(needs)}))
     return redirect('basics:actofgoods_startpage')
 
 
