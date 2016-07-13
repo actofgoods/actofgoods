@@ -38,9 +38,15 @@ sudo -u postgres psql -c "ALTER USER actofgoods with superuser;"
 python3 $DIR/manage.py makemigrations
 # migrate to database
 python3 $DIR/manage.py migrate
+# create logs
+mkdir $DIR/logs
+touch $DIR/logs/nginx-access.log
+touch $DIR/logs/nginx-error.log
 # load supervisord
 sudo supervisord
 # reread supervisor
 sudo supervisorctl reread
 # reload supervisor
 sudo supervisorctl reload
+# reload nginx
+sudo service nginx reload
