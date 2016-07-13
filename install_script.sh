@@ -4,13 +4,13 @@
 # ------------------------------------------------------------
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-sudo apt-get update
+sudo apt update
 # local
 sudo locale-gen en_US.UTF-8
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 # install necessery programms through apt-get
-sudo apt-get install postgresql python3 python3-pip redis-server nginx postgresql-contrib libpq-dev supervisor postgis virtualenv
+sudo apt install postgresql python3 python3-pip redis-server nginx postgresql-contrib libpq-dev supervisor postgis virtualenv
 # create virtualenv
 virtualenv $DIR/venv
 #
@@ -30,7 +30,7 @@ sudo rm /etc/nginx/sites-enabled/default
 # reload nginx
 sudo service nginx reload
 # copy file for supervisor
-cp $DIR/conf/actofgoods_server /etc/supervisor/conf.d/actofgoods.conf
+sudo cp $DIR/conf/actofgoods_server /etc/supervisor/conf.d/actofgoods.conf
 # edit conf for supervisor
 sudo sed -i "s!\${DIR}!$DIR!" $DIR/conf/actofgoods_server
 # create db
