@@ -35,7 +35,7 @@ import string
 
 def actofgoods_startpage(request):
     registerform = UserFormRegister()
-    needs = Need.objects.all()
+    needs = Need.objects.all().filter(done=False)
     if request.user.is_authenticated():
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
@@ -237,6 +237,7 @@ def immediate_aid(request):
                     auth_login(request,user)
 
                     sendmail(user.email, content, subject )
+                    send_notifications(needdata)
                     return redirect('basics:actofgoods_startpage')
                 else:
                     messages.add_message(request, messages.INFO, 'location_failed')
@@ -660,7 +661,7 @@ def claim_information(request, name):
                 infos = infos.filter(query)
             if "" != request.POST['wordsearch']:
                 wordsearch = request.POST['wordsearch']
-                infos = infos.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
+                infos = infos.filter(Q(headline__icontains=wordsearch) | Q(text__icontains=wordsearch))
             t = loader.get_template('snippets/claim_informations.html')
             return HttpResponse(t.render({'user': request.user, 'infos':infos}))
     return redirect('basics:actofgoods_startpage')
@@ -691,7 +692,7 @@ def claim_needs(request, name):
                 needs = needs.filter(categorie=CategoriesNeeds.objects.get(name=category))
             if "" != request.POST['wordsearch']:
                 wordsearch = request.POST['wordsearch']
-                needs = needs.filter(Q(headline__contains=wordsearch) | Q(text__contains=wordsearch))
+                needs = needs.filter(Q(headline__icontains=wordsearch) | Q(text__icontains=wordsearch))
             t = loader.get_template('snippets/claim_needs_group.html')
             needs = [s for s in needs if not Room.objects.filter(need=s).filter(Q(helper_out=False)| Q(user_req=request.user)).exists()]
             return HttpResponse(t.render({'user': request.user, 'needs':needs, 'group':group}))
@@ -728,7 +729,7 @@ def claim_reportNeed(request, name):
         need.save()
         need.reported_by.add(request.user.userdata)
         t = loader.get_template('snippets/claim_report.html')
-        return HttpResponse(t.render({'user': request.user, 'need':need}))
+        return HttpResponse(t.render({'user': request.user, 'need':need, 'group':Groupdata.objects.get(name=name)}))
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -738,7 +739,7 @@ def claim_like(request, name):
             return render(request, 'basics/verification.html', {'active':False})
         pk=int(request.POST['pk'])
         info = Information.objects.get(pk=pk)
-        if Userdata.objects.get(user=request.user) in need.liked_by.all():
+        if Userdata.objects.get(user=request.user) in info.liked_by.all():
             return permission_denied(request)
         info.was_liked = True
         info.number_likes += 1
@@ -1025,7 +1026,7 @@ def unlike_information(request):
         if request.is_ajax():
             pk=int(request.POST['pk'])
             info = get_object_or_404(Information, pk=pk)
-            if Userdata.objects.get(user=request.user) in need.liked_by.all():
+            if Userdata.objects.get(user=request.user) in info.liked_by.all():
                 return permission_denied(request)
             info.number_likes -= 1
             if info.number_likes == 0:
@@ -1488,7 +1489,7 @@ def send_notifications(needdata):
     users_to_inform = needdata.categorie.userdata_set.all()
     users_to_inform = filter(lambda x: x.adrAsPoint.distance(needdata.adrAsPoint)< x.aux, users_to_inform)
     for user in users_to_inform:
-        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text, "Somebody needs your help: " + needdata.categorie.name)
+        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text + "\n http://127.0.0.1:8000/needs_help/%s" %(needdata.id), "Somebody needs your help: " + needdata.categorie.name )
 
 
 
