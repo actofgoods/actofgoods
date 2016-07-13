@@ -362,7 +362,7 @@ def register(request):
         if form.is_valid():
             id = id_generator(8)
             while():
-                if(len(Userdata.objects.all().filter(id == id)) != 0):
+                if(len(Userdata.objects.all().filter(id = id)) != 0):
                     break;
                 id = id_generator(8)
             password = request.POST.get('password', "")
