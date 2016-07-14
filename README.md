@@ -5,7 +5,7 @@ Details zu datenbank stehen in settings.py
 
 #Automatic Installation for ubuntu/debian:
 
-Use install_script.sh to install automatic and deploy the server
+Use install_script.sh to install automatic and deploy the server  
 If you want to use a different Database system, you have to change the settings.py and the install script.
 
 #Manual Installation:
