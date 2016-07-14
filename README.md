@@ -43,25 +43,25 @@ Run following command in the directory of the project:
 virtualenv venv
 If you want to install it somewhere else, you have to change run.bash to the correct directory
 
-Install python package:
-All at wants:
+Install python package:  
+All at wants:  
 pip3 install -r requirments
 
-deactivate the virtualenv
+deactivate the virtualenv  
 
-Create database and user for database:
-sudo -u postgres psql -c "CREATE DATABASE actofgoods;"
-sudo -u postgres psql -c "CREATE USER actofgoods WITH PASSWORD 'saft231';"
-sudo -u postgres psql -c "Grant all privileges on database actofgoods to actofgoods;"
-sudo -u postgres psql -c "ALTER USER actofgoods with superuser;"
-If you changed settings.py the database change the commands to your needs
+Create database and user for database:  
+sudo -u postgres psql -c "CREATE DATABASE actofgoods;"  
+sudo -u postgres psql -c "CREATE USER actofgoods WITH PASSWORD 'saft231';"  
+sudo -u postgres psql -c "Grant all privileges on database actofgoods to actofgoods;"  
+sudo -u postgres psql -c "ALTER USER actofgoods with superuser;"  
+If you changed settings.py the database change the commands to your needs  
 
-Copy file conf/actofgoods_nginx to the installtion of nginx inside the nginx-availble and change the name to actofgoods.
-Change ${DIR} to right way to your copy of the project
-Now create a systemlink of actofgoods in the sites-enabled
-Now reload nginx
+Copy file conf/actofgoods_nginx to the installtion of nginx inside the nginx-availble and change the name to actofgoods.  
+Change ${DIR} to right way to your copy of the project  
+Now create a systemlink of actofgoods in the sites-enabled  
+Now reload nginx  
 
-Copy file conf/actofgoods_server to superviser/conf.d
-Change name to actofgoods.conf
-Change ${DIR} in the file to way to run.bash
-Reload supervisor
+Copy file conf/actofgoods_server to superviser/conf.d  
+Change name to actofgoods.conf  
+Change ${DIR} in the file to way to run.bash  
+Reload supervisor  
