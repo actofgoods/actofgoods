@@ -31,8 +31,6 @@ nginx
 supervisor (running python server):
 supervisor
 
-#Requirements:
-
 PACKAGE-INSTALL:
 pip install -r requirements.txt
 
