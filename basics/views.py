@@ -371,11 +371,11 @@ def register(request):
                         user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
                         userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), verification_id = id)
                         userdata.save()
-                        user.is_active = False
-                        user.save()
+                        # user.is_active = False
+                        # user.save()
                         content = "Thank you for joining Actofgoods \n\n Soon you will be able to help people in your neighbourhood \n\n but please verify your account first on http://10.200.1.40/verification/%s"%(userdata.verification_id)
                         subject = "Confirm Your Account"
-                        sendmail(user.email, content, subject)
+                        # sendmail(user.email, content, subject)
                         return login(request)
                     else:
                         messages.add_message(request, messages.INFO, 'location_failed')
