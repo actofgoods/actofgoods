@@ -1,56 +1,67 @@
 [![Stories in Ready](https://badge.waffle.io/actofgoods/actofgoods.png?label=ready&title=Ready)](https://waffle.io/actofgoods/actofgoods)
-# actofgoods  
+# actofgoods
 Postgressql siehe hier:https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-django-application-on-ubuntu-14-04  
 Details zu datenbank stehen in settings.py
 
+#Automatic Installation for ubuntu/debian:
+
+Use install_script.sh to install automatic and deploy the server
+If you want to use a different Database system, you have to change the settings.py and the install script.
+
+#Manual Installation:
+
+Install from your package manager (for example yum) following packages:
+
+Database:
+postgresql
+postgis
+postgresql-contrib
+libpq-dev
+
+Python:
+python3
+python3-pip
+
+Redis (Chat):
+redis-server
+
+Nginx (Reverse proxy):
+nginx
+
+supervisor (running python server):
+supervisor
 
 #Requirements:
 
 PACKAGE-INSTALL:
 pip install -r requirements.txt
 
+virtualenv
 
-ALTERNATIVE:
+Now create a virtualenv:
+Run following command in the directory of the project:
+virtualenv venv
+If you want to install it somewhere else, you have to change run.bash to the correct directory
 
-pip install requests
+Install python package:
+All at wants:
+pip3 install -r requirments
 
-pip install django-nocaptcha-recaptcha
+deactivate the virtualenv
 
-If you got problems with database try:
+Create database and user for database:
+sudo -u postgres psql -c "CREATE DATABASE actofgoods;"
+sudo -u postgres psql -c "CREATE USER actofgoods WITH PASSWORD 'saft231';"
+sudo -u postgres psql -c "Grant all privileges on database actofgoods to actofgoods;"
+sudo -u postgres psql -c "ALTER USER actofgoods with superuser;"
+If you changed settings.py the database change the commands to your needs
 
-python manage.py makemigrations basics
+Copy file conf/actofgoods_nginx to the installtion of nginx inside the nginx-availble and change the name to actofgoods.
+Change ${DIR} to right way to your copy of the project
+Now create a systemlink of actofgoods in the sites-enabled
+Now reload nginx
 
-=== CHANNEL install ===
-
-pip install -U channels
-
-=== Redis Layer install ===
-
-pip install asgi_redis
-
-wget http://download.redis.io/redis-stable.tar.gz
-
-tar xvzf redis-stable.tar.gz
-
-cd redis-stable
-
-make
-
-sudo make install
-
-#Database
-
-sudo su - postgres
-
-psql
-
-CREATE DATABASE actofgoods
-- New database will be created
-
-DROP DATABASE actofgoods
-- Database will be droped
-
-GRANT ALL PRIVILEGES ON DATABASE actofgoods TO actofgoods;
-
-ALTER USER django CREATEDB;
-- will give the user permission to create new databases.
+Copy file conf/actofgoods_server to superviser/conf.d
+Change name to actofgoods.conf
+Change ${DIR} in the file to way to run.bash
+Reload supervisor
