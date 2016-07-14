@@ -224,14 +224,14 @@ def immediate_aid(request):
                     user = User.objects.create_user(username=user_data['email'], password=password_d, email=user_data['email'])
                     userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     userdata.save()
-                    content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
+                    content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://10.200.1.40/verification/%s"%(userdata.pseudonym)
                     subject = "Confirm Your Account"
                     data = need.cleaned_data
                     u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                     needdata = Need(author=user, group=None, headline=data['headline'], text=data['text'], categorie=data['categorie'], was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority_need_user(0), update_at=u)
                     needdata.save()
                     #Content could also be possibly HTML! this way beautifull emails are possible
-                    content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
+                    content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://10.200.1.40 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
                     subject = "Welcome!"
                     user = authenticate(username=user_data['email'],password=password_d)
                     auth_login(request,user)
@@ -247,7 +247,7 @@ def immediate_aid(request):
         else:
             messages.add_message(request, messages.INFO, 'eae')
 
-    return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all, 'form' : form, 'need' : need })
+    return render(request, 'basics/immediate_aid.html', {'categories': CategoriesNeeds.objects.all().order_by('name'), 'form' : form, 'need' : need })
 
 @csrf_protect
 def login(request):
@@ -296,7 +296,7 @@ def profil_edit(request):
                 else:
                     form = ProfileForm()
                     return render(request, 'basics/profil_edit.html',
-                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all,
+                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all().order_by('name'),
                                    'selected': userdata.inform_about.all(), 'form': form, 'email': True, 'change':False})
             if request.POST.get('changePassword') == "on":
                 oldpw = request.POST['oldpw']
@@ -308,7 +308,7 @@ def profil_edit(request):
                 else:
                     form = ProfileForm()
                     return render(request, 'basics/profil_edit.html',
-                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all,
+                                  {'userdata': userdata, 'categories': CategoriesNeeds.objects.all().order_by('name'),
                                    'selected': userdata.inform_about.all(), 'form': form, 'change':True })
             if lat != None and lng != None:
                 userdata.adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng))
@@ -325,7 +325,7 @@ def profil_edit(request):
             else:
                 userdata.get_notifications=False
             categories= request.POST.getlist('categories[]')
-            for c in CategoriesNeeds.objects.all():
+            for c in CategoriesNeeds.objects.all().order_by('name'):
                 if c.name in categories:
                     userdata.inform_about.add(c)
                 else:
@@ -333,7 +333,7 @@ def profil_edit(request):
             userdata.save()
             return render(request, 'basics/profil.html', {'Userdata':userdata, 'selected': userdata.inform_about.all()})
         form = ProfileForm()
-        return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all, 'selected': userdata.inform_about.all(),'form':form,'change':False})
+        return render(request, 'basics/profil_edit.html', {'userdata':userdata, 'categories': CategoriesNeeds.objects.all().order_by('name'), 'selected': userdata.inform_about.all(),'form':form,'change':False})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -371,11 +371,11 @@ def register(request):
                         user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
                         userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), verification_id = id)
                         userdata.save()
-                        #user.is_active = False
-                        #user.save()
-                        content = "Thank you for joining Actofgoods \n\n Soon you will be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.verification_id)
+                        # user.is_active = False
+                        # user.save()
+                        content = "Thank you for joining Actofgoods \n\n Soon you will be able to help people in your neighbourhood \n\n but please verify your account first on http://10.200.1.40/verification/%s"%(userdata.verification_id)
                         subject = "Confirm Your Account"
-                        #sendmail(user.email, content, subject)
+                        # sendmail(user.email, content, subject)
                         return login(request)
                     else:
                         messages.add_message(request, messages.INFO, 'location_failed')
@@ -405,7 +405,7 @@ def reset_password_page(request):
                     user.save()
                     #Content could also be possibly HTML! this way beautifull emails are possible
 
-                    content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
+                    content = 'Your new password is %s. Please change your password after you have logged in. \n http://10.200.1.40'%(new_password)
                     subject = "Reset Password - Act Of Goods"
                     #sendmail(email, content, subject )
                     messages.add_message(request, messages.INFO, 'success reset password')
@@ -585,7 +585,7 @@ def claim(request, name):
         if not request.user.is_active:
             return render(request, 'basics/verification.html', {'active':False})
         if request.user.groups.filter(name=name).exists():
-            categories=CategoriesNeeds.objects.all
+            categories=CategoriesNeeds.objects.all().order_by('name')
             return render(request, 'basics/map_claim.html', {'categories': categories,'group': name, 'polygons': ClaimedArea.objects.order_by('pk'), 'polyuser': ClaimedArea.objects.order_by('pk').filter(group=request.user.groups.get(name=name))})
     return redirect('basics:actofgoods_startpage')
 
@@ -1071,7 +1071,7 @@ def needs_all(request):
         else:
             dist=500
         category = "All"
-        return render(request, 'basics/needs_all.html',{'categorie':CategoriesNeeds.objects.all, 'category':category, 'range':dist})
+        return render(request, 'basics/needs_all.html',{'categorie':CategoriesNeeds.objects.all().order_by('name'), 'category':category, 'range':dist})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -1211,7 +1211,7 @@ def needs_new(request):
                         priority = 0
                         if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
                             try:
-                                group = Group.objects.get(id=group_id)
+                                group = Group.objects.get(id=request.POST.get('group'))
                             except Group.DoesNotExist:
                                 return bad_request(request)
                             priority = priority_need_group(0)
@@ -1233,7 +1233,7 @@ def needs_new(request):
         need = NeedFormNew()
         c = CategoriesNeeds(name="Others")
         c.save
-        return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all})
+        return render(request, 'basics/needs_new.html', {'need':need, 'categories': CategoriesNeeds.objects.all().order_by('name')})
 
     return redirect('basics:actofgoods_startpage')
 
@@ -1275,7 +1275,7 @@ def need_edit(request, pk):
             need.save()
             return actofgoods_startpage(request)
         form = NeedFormNew()
-        return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all()})
+        return render(request, 'basics/need_edit.html', {'need':need, 'categories': CategoriesNeeds.objects.all().order_by('name')})
     return redirect('basics:actofgoods_startpage')
 
 @csrf_protect
@@ -1330,6 +1330,7 @@ def report_comment(request, pk):
         comment.was_reported = True
         comment.number_reports += 1
         comment.reported_by.add(request.user.userdata)
+        comment.save()
     return information_view(request, comment.inf.pk)
 
 
@@ -1490,7 +1491,7 @@ def send_notifications(needdata):
     users_to_inform = needdata.categorie.userdata_set.all()
     users_to_inform = filter(lambda x: x.adrAsPoint.distance(needdata.adrAsPoint)< x.aux, users_to_inform)
     for user in users_to_inform:
-        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text + "\n http://127.0.0.1:8000/needs_help/%s" %(needdata.id), "Somebody needs your help: " + needdata.categorie.name )
+        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text + "\n http://10.200.1.40/needs_help/%s" %(needdata.id), "Somebody needs your help: " + needdata.categorie.name )
 
 
 
