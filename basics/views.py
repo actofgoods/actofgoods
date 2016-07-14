@@ -1210,7 +1210,7 @@ def needs_new(request):
                         priority = 0
                         if request.POST.get('group') != 'no_group' and request.POST.get('group') != None:
                             try:
-                                group = Group.objects.get(id=group_id)
+                                group = Group.objects.get(id=request.POST.get('group'))
                             except Group.DoesNotExist:
                                 return bad_request(request)
                             priority = priority_need_group(0)
