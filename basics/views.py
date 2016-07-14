@@ -224,14 +224,14 @@ def immediate_aid(request):
                     user = User.objects.create_user(username=user_data['email'], password=password_d, email=user_data['email'])
                     userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)))
                     userdata.save()
-                    content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.pseudonym)
+                    content = "Thank you for joining Actofgoods \n\n You will soon be able to help people in your neighbourhood \n\n but please verify your account first on http://10.200.1.40/verification/%s"%(userdata.pseudonym)
                     subject = "Confirm Your Account"
                     data = need.cleaned_data
                     u=Update.objects.create(update_at=(timezone.now() + timedelta(hours=1)))
                     needdata = Need(author=user, group=None, headline=data['headline'], text=data['text'], categorie=data['categorie'], was_reported=False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), priority=priority_need_user(0), update_at=u)
                     needdata.save()
                     #Content could also be possibly HTML! this way beautifull emails are possible
-                    content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://127.0.0.1:8000 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
+                    content = "You are a part of Act of Goods! \n Help people in your hood. \n See ya http://10.200.1.40 \n Maybe we should give a direct link to your need, but its not implemented yet. \n Oh you need your password: %s"% (password_d)
                     subject = "Welcome!"
                     user = authenticate(username=user_data['email'],password=password_d)
                     auth_login(request,user)
@@ -371,11 +371,11 @@ def register(request):
                         user = User.objects.create_user(username=data['email'], password=data['password'], email=data['email'],)
                         userdata = Userdata(user=user,pseudonym=("user" + str(User.objects.count())), get_notifications= False, adrAsPoint=GEOSGeometry('POINT(%s %s)' % (lat, lng)), verification_id = id)
                         userdata.save()
-                        #user.is_active = False
-                        #user.save()
-                        content = "Thank you for joining Actofgoods \n\n Soon you will be able to help people in your neighbourhood \n\n but please verify your account first on http://127.0.0.1:8000/verification/%s"%(userdata.verification_id)
+                        # user.is_active = False
+                        # user.save()
+                        content = "Thank you for joining Actofgoods \n\n Soon you will be able to help people in your neighbourhood \n\n but please verify your account first on http://10.200.1.40/verification/%s"%(userdata.verification_id)
                         subject = "Confirm Your Account"
-                        #sendmail(user.email, content, subject)
+                        # sendmail(user.email, content, subject)
                         return login(request)
                     else:
                         messages.add_message(request, messages.INFO, 'location_failed')
@@ -405,7 +405,7 @@ def reset_password_page(request):
                     user.save()
                     #Content could also be possibly HTML! this way beautifull emails are possible
 
-                    content = 'Your new password is %s. Please change your password after you have logged in. \n http://127.0.0.1:8000'%(new_password)
+                    content = 'Your new password is %s. Please change your password after you have logged in. \n http://10.200.1.40'%(new_password)
                     subject = "Reset Password - Act Of Goods"
                     #sendmail(email, content, subject )
                     messages.add_message(request, messages.INFO, 'success reset password')
@@ -1491,7 +1491,7 @@ def send_notifications(needdata):
     users_to_inform = needdata.categorie.userdata_set.all()
     users_to_inform = filter(lambda x: x.adrAsPoint.distance(needdata.adrAsPoint)< x.aux, users_to_inform)
     for user in users_to_inform:
-        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text + "\n http://127.0.0.1:8000/needs_help/%s" %(needdata.id), "Somebody needs your help: " + needdata.categorie.name )
+        sendmail(user.user.email, needdata.headline + "\n\n"+ needdata.text + "\n http://10.200.1.40/needs_help/%s" %(needdata.id), "Somebody needs your help: " + needdata.categorie.name )
 
 
 
