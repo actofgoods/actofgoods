@@ -1330,6 +1330,7 @@ def report_comment(request, pk):
         comment.was_reported = True
         comment.number_reports += 1
         comment.reported_by.add(request.user.userdata)
+        comment.save()
     return information_view(request, comment.inf.pk)
 
 
